@@ -59,7 +59,7 @@ Species.getAll = (name, result) => {
 
 Species.updateById = (id, species, result) => {
   sql.query(
-    "UPDATE species SET name = ? WHERE id = ?",
+    "UPDATE Species SET name = ? WHERE id = ?",
     [species.name, id],
     (err, res) => {
       if (err) {
@@ -81,7 +81,7 @@ Species.updateById = (id, species, result) => {
 };
 
 Species.remove = (id, result) => {
-  sql.query("DELETE FROM species WHERE id = ?", id, (err, res) => {
+  sql.query("DELETE FROM Species WHERE id = ?", id, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -100,7 +100,7 @@ Species.remove = (id, result) => {
 };
 
 Species.removeAll = result => {
-  sql.query("DELETE FROM species", (err, res) => {
+  sql.query("DELETE FROM Species", (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);

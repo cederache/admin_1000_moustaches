@@ -8,7 +8,7 @@ const Animals = function(animal) {
 };
 
 Animals.create = (newAnimal, result) => {
-  sql.query("INSERT INTO animals SET ?", newAnimal, (err, res) => {
+  sql.query("INSERT INTO Animals SET ?", newAnimal, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -21,7 +21,7 @@ Animals.create = (newAnimal, result) => {
 };
 
 Animals.findById = (id, result) => {
-  sql.query(`SELECT * FROM animals WHERE id = ${id}`, (err, res) => {
+  sql.query(`SELECT * FROM Animals WHERE id = ${id}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -40,7 +40,7 @@ Animals.findById = (id, result) => {
 };
 
 Animals.getAll = (name, result) => {
-  let query = "SELECT * FROM animals";
+  let query = "SELECT * FROM Animals";
 
   if (name) {
     query += ` WHERE name LIKE '%${name}%'`;
@@ -60,7 +60,7 @@ Animals.getAll = (name, result) => {
 
 Animals.updateById = (id, animal, result) => {
   sql.query(
-    "UPDATE animals SET name = ? WHERE id = ?",
+    "UPDATE Animals SET name = ? WHERE id = ?",
     [animal.name, id],
     (err, res) => {
       if (err) {
@@ -82,7 +82,7 @@ Animals.updateById = (id, animal, result) => {
 };
 
 Animals.remove = (id, result) => {
-  sql.query("DELETE FROM animals WHERE id = ?", id, (err, res) => {
+  sql.query("DELETE FROM Animals WHERE id = ?", id, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -101,7 +101,7 @@ Animals.remove = (id, result) => {
 };
 
 Animals.removeAll = result => {
-  sql.query("DELETE FROM animals", (err, res) => {
+  sql.query("DELETE FROM Animals", (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
