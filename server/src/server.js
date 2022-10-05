@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 
 const app = express();
 
@@ -11,6 +12,9 @@ app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());
+
+// Protection against well known vulnerabilities
+app.use(helmet());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
