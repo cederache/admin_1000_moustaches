@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 
+var glob = require( 'glob' );
+var path = require( 'path' );
+
 const app = express();
 
 var corsOptions = {
@@ -25,10 +28,9 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to 1000 moustaches admin application." });
 });
 
-require("../app/routes/animals.routes.js")(app);
-require("../app/routes/species.routes.js")(app);
-require("../app/routes/hostFamilies.routes.js")(app);
-require("../app/routes/veterinarians.routes.js")(app);
+glob.sync( './app/routes/**/*.js' ).forEach( function( file ) {
+  require( path.resolve( file ) )(app);
+});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3001;
