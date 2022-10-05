@@ -1,26 +1,28 @@
 const sql = require("./db.js");
 
+const tableName = "Species";
+
 // constructor
 const Species = function(species) {
     this.id = species.id;
     this.name = species.name;
 };
 
-Species.create = (newSpecies, result) => {
-  sql.query("INSERT INTO Species SET ?", newSpecies, (err, res) => {
+Species.create = (newEntity, result) => {
+  sql.query(`INSERT INTO ${tableName} SET ?`, newEntity, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
       return;
     }
 
-    console.log("created species: ", { id: res.insertId, ...newSpecies });
-    result(null, { id: res.insertId, ...newSpecies });
+    console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
+    result(null, { id: res.insertId, ...newEntity });
   });
 };
 
 Species.findById = (id, result) => {
-  sql.query(`SELECT * FROM Species WHERE id = ${id}`, (err, res) => {
+  sql.query(`SELECT * FROM ${tableName} WHERE id = ${id}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -28,18 +30,18 @@ Species.findById = (id, result) => {
     }
 
     if (res.length) {
-      console.log("found species: ", res[0]);
+      console.log(`found ${tableName}: `, res[0]);
       result(null, res[0]);
       return;
     }
 
-    // not found Species with the id
+    // not found entity with the id
     result({ kind: "not_found" }, null);
   });
 };
 
 Species.getAll = (name, result) => {
-  let query = "SELECT * FROM Species";
+  let query = `SELECT * FROM ${tableName}`;
 
   if (name) {
     query += ` WHERE name LIKE '%${name}%'`;
@@ -52,15 +54,15 @@ Species.getAll = (name, result) => {
       return;
     }
 
-    console.log("species: ", res);
+    console.log(`${tableName}: `, res);
     result(null, res);
   });
 };
 
-Species.updateById = (id, species, result) => {
+Species.updateById = (id, animal, result) => {
   sql.query(
-    "UPDATE Species SET name = ? WHERE id = ?",
-    [species.name, id],
+    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
+    [animal.name, id],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -69,19 +71,19 @@ Species.updateById = (id, species, result) => {
       }
 
       if (res.affectedRows == 0) {
-        // not found Species with the id
+        // not found Animal with the id
         result({ kind: "not_found" }, null);
         return;
       }
 
-      console.log("updated species: ", { id: id, ...species });
-      result(null, { id: id, ...species });
+      console.log(`updated ${tableName}: `, { id: id, ...animals });
+      result(null, { id: id, ...animals });
     }
   );
 };
 
 Species.remove = (id, result) => {
-  sql.query("DELETE FROM Species WHERE id = ?", id, (err, res) => {
+  sql.query(`DELETE FROM ${tableName} WHERE id = ?`, id, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -89,25 +91,25 @@ Species.remove = (id, result) => {
     }
 
     if (res.affectedRows == 0) {
-      // not found Species with the id
+      // not found Animal with the id
       result({ kind: "not_found" }, null);
       return;
     }
 
-    console.log("deleted species with id: ", id);
+    console.log(`deleted ${tableName} with id: `, id);
     result(null, res);
   });
 };
 
 Species.removeAll = result => {
-  sql.query("DELETE FROM Species", (err, res) => {
+  sql.query(`DELETE FROM ${tableName}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
       return;
     }
 
-    console.log(`deleted ${res.affectedRows} species`);
+    console.log(`deleted ${res.affectedRows} ${tableName}`);
     result(null, res);
   });
 };
