@@ -21,7 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
+  // TODO: Add documentation here
+  res.json({ message: "Welcome to 1000 moustaches admin application." });
 });
 
 require("../app/routes/animals.routes.js")(app);
