@@ -3,12 +3,12 @@ const sql = require("./db.js");
 const tableName = "VeterinarianInterventions";
 
 // constructor
-const VeterinarianInterventions = function(veterinarianIntervention) {
-    this.id = veterinarianIntervention.id;
-    this.veterinarian_id = veterinarianIntervention.veterinarian_id;
-    this.date = veterinarianIntervention.date;
-    this.dsecription = veterinarianIntervention.description;
-    this.animal_id = veterinarianIntervention.animal_id;
+const VeterinarianInterventions = function (veterinarianIntervention) {
+  this.id = veterinarianIntervention.id;
+  this.veterinarian_id = veterinarianIntervention.veterinarian_id;
+  this.date = veterinarianIntervention.date;
+  this.dsecription = veterinarianIntervention.description;
+  this.animal_id = veterinarianIntervention.animal_id;
 };
 
 VeterinarianInterventions.create = (newEntity, result) => {
@@ -104,7 +104,7 @@ VeterinarianInterventions.remove = (id, result) => {
   });
 };
 
-VeterinarianInterventions.removeAll = result => {
+VeterinarianInterventions.removeAll = (result) => {
   sql.query(`DELETE FROM ${tableName}`, (err, res) => {
     if (err) {
       console.log("error: ", err);

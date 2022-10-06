@@ -22,23 +22,23 @@
 //   'dark',
 // ];
 
-export const getColor = (availableColor = 'primary') => {
-  if (typeof window === 'undefined') {
-    return null;
-  }
+export const getColor = (availableColor = "primary") => {
+    if (typeof window === "undefined") {
+        return null;
+    }
 
-  const color = window
-    .getComputedStyle(document.documentElement)
-    .getPropertyValue(`--${availableColor}`);
+    const color = window
+        .getComputedStyle(document.documentElement)
+        .getPropertyValue(`--${availableColor}`);
 
-  return color;
+    return color;
 };
 
 export const getThemeColors = () => [
-  'primary',
-  'secondary',
-  'success',
-  'info',
-  'warning',
-  'danger',
+    "primary",
+    "secondary",
+    "success",
+    "info",
+    "warning",
+    "danger",
 ];

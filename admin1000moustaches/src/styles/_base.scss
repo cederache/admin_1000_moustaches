@@ -26,17 +26,17 @@ button,
 .navbar,
 .brand,
 .alert {
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-family: Poppins, Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-weight: $font-weight-normal;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-family: Poppins, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: $font-weight-normal;
 }
 
 .cr-app {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  overflow-x: hidden;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
 }

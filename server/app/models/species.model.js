@@ -3,9 +3,9 @@ const sql = require("./db.js");
 const tableName = "Species";
 
 // constructor
-const Species = function(species) {
-    this.id = species.id;
-    this.name = species.name;
+const Species = function (species) {
+  this.id = species.id;
+  this.name = species.name;
 };
 
 Species.create = (newEntity, result) => {
@@ -101,7 +101,7 @@ Species.remove = (id, result) => {
   });
 };
 
-Species.removeAll = result => {
+Species.removeAll = (result) => {
   sql.query(`DELETE FROM ${tableName}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
