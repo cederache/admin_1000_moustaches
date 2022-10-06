@@ -96,10 +96,10 @@ function AnimalDetailPage({ match, ...props }) {
                     <Row>
                         <Col xs={6}>
                             <Label>Date de naissance</Label>
-                            {(animal.birthdate || {}).rawValue == null && (
+                            {(animal.birthdate || {}).rawValue === null && (
                                 <Input value="-" readOnly />
                             )}
-                            {(animal.birthdate || {}).rawValue != null && (
+                            {(animal.birthdate || {}).rawValue !== null && (
                                 <Input
                                     type="date"
                                     value={animal.birthdate.input}
@@ -119,10 +119,10 @@ function AnimalDetailPage({ match, ...props }) {
                     <Row>
                         <Col xs={6}>
                             <Label>Date de PEC</Label>
-                            {(animal.entry_date || {}).rawValue == null && (
+                            {(animal.entry_date || {}).rawValue === null && (
                                 <Input value="-" readOnly />
                             )}
-                            {(animal.entry_date || {}).rawValue != null && (
+                            {(animal.entry_date || {}).rawValue !== null && (
                                 <Input
                                     type="date"
                                     value={animal.entry_date.input}
@@ -160,10 +160,10 @@ function AnimalDetailPage({ match, ...props }) {
                     <Row>
                         <Col xs={6}>
                             <Label>Date de sortie</Label>
-                            {(animal.exit_date || {}).rawValue == null && (
+                            {(animal.exit_date || {}).rawValue === null && (
                                 <Input value="-" readOnly />
                             )}
-                            {(animal.exit_date || {}).rawValue != null && (
+                            {(animal.exit_date || {}).rawValue !== null && (
                                 <Input
                                     type="date"
                                     value={animal.exit_date.input}
@@ -183,10 +183,10 @@ function AnimalDetailPage({ match, ...props }) {
                     <Row>
                         <Col xs={6}>
                             <Label>Date de décès</Label>
-                            {(animal.death_date || {}).rawValue == null && (
+                            {(animal.death_date || {}).rawValue === null && (
                                 <Input value="-" readOnly />
                             )}
-                            {(animal.death_date || {}).rawValue != null && (
+                            {(animal.death_date || {}).rawValue !== null && (
                                 <Input
                                     type="date"
                                     value={animal.death_date.input}

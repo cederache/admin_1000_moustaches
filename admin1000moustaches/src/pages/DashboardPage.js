@@ -1,38 +1,11 @@
-import { AnnouncementCard, TodosCard } from "components/Card";
-import HorizontalAvatarList from "components/HorizontalAvatarList";
+import { AnnouncementCard } from "components/Card";
 import MapWithBubbles from "components/MapWithBubbles";
 import Page from "components/Page";
-import ProductMedia from "components/ProductMedia";
-import SupportTicket from "components/SupportTicket";
-import UserProgressTable from "components/UserProgressTable";
 import { IconWidget, NumberWidget } from "components/Widget";
 import React from "react";
-import { Bar, Line } from "react-chartjs-2";
-import {
-    MdBubbleChart,
-    MdInsertChart,
-    MdPersonPin,
-    MdPieChart,
-    MdRateReview,
-    MdShare,
-    MdShowChart,
-    MdThumbUp,
-} from "react-icons/md";
+import { MdRateReview, MdShare, MdThumbUp } from "react-icons/md";
 import InfiniteCalendar from "react-infinite-calendar";
-import {
-    Badge,
-    Button,
-    Card,
-    CardBody,
-    CardDeck,
-    CardGroup,
-    CardHeader,
-    CardTitle,
-    Col,
-    ListGroup,
-    ListGroupItem,
-    Row,
-} from "reactstrap";
+import { Card, CardBody, CardGroup, CardHeader, Col, Row } from "reactstrap";
 import { getColor } from "utils/colors";
 
 const today = new Date();

@@ -104,9 +104,9 @@ function VeterinarianDetailPage({ match, ...props }) {
                             <Label>Gestion des urgences</Label>
                             <Input
                                 value={
-                                    veterinarian.emergencies == true
+                                    veterinarian.emergencies === true
                                         ? "Oui"
-                                        : veterinarian.emergencies == false
+                                        : veterinarian.emergencies === false
                                         ? "Non"
                                         : "NSP"
                                 }

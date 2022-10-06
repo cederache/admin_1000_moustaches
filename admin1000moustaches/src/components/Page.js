@@ -32,7 +32,7 @@ const Page = ({
                                 <BreadcrumbItem key={index} active={active}>
                                     <a
                                         href={
-                                            active == true || to == null
+                                            active === true || to === null
                                                 ? null
                                                 : to
                                         }

@@ -9,6 +9,7 @@ import {
     MdPages,
     MdPets,
     MdHealthAndSafety,
+    MdHomeFilled,
 } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import {
@@ -39,6 +40,12 @@ const navItems = [
         name: "Vétérinaires",
         exact: false,
         Icon: MdHealthAndSafety,
+    },
+    {
+        to: "/hostFamilies",
+        name: "Familles d'Accueil",
+        exact: false,
+        Icon: MdHomeFilled,
     },
 ];
 
