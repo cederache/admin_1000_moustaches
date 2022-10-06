@@ -19,7 +19,19 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Veterinarians with a id
-exports.findOne = (req, res) => {};
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  Veterinarians.findById(id, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while retrieving veterinarian with id ${id}.`,
+      });
+    else res.send(data);
+  });
+};
 
 // Update a Veterinarians identified by the id in the request
 exports.update = (req, res) => {};

@@ -11,6 +11,9 @@ const DashboardPage = React.lazy(() => import("pages/DashboardPage"));
 const AnimalsPage = React.lazy(() => import("pages/AnimalsPage"));
 const AnimalDetailPage = React.lazy(() => import("pages/AnimalDetailPage"));
 const VeterinariansPage = React.lazy(() => import("pages/VeterinariansPage"));
+const VeterinarianDetailPage = React.lazy(() =>
+    import("pages/VeterinarianDetailPage")
+);
 
 const getBasename = () => {
     return `/${process.env.PUBLIC_URL.split("/").pop()}`;
@@ -42,6 +45,11 @@ class App extends React.Component {
                                     exact
                                     path="/veterinarians"
                                     component={VeterinariansPage}
+                                />
+                                <Route
+                                    exact
+                                    path="/veterinarians/:id"
+                                    component={VeterinarianDetailPage}
                                 />
                             </React.Suspense>
                         </MainLayout>
