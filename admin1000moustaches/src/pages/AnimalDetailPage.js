@@ -16,20 +16,30 @@ import { MdRefresh } from "react-icons/md";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
-    const [animal, setAnimal] = useState([]);
+    const [animal, setAnimal] = useState({});
 
     const getAnimal = () => {
-        AnimalsManager.getById(animalId)
-            .then((animal) => {
-                console.log(animal);
-                return animal;
-            })
-            .then(setAnimal);
+        AnimalsManager.getById(animalId).then(setAnimal);
     };
 
     useEffect(() => {
         getAnimal();
     }, []);
+
+    if (animal === undefined) {
+        return (
+            <Page
+                className="AnimalPage"
+                title="Détail de l'animal"
+                breadcrumbs={[
+                    { name: "Animaux", to: "/animals" },
+                    { name: "Animal", active: true },
+                ]}
+            >
+                <div>Animal non trouvé</div>
+            </Page>
+        );
+    }
 
     return (
         <Page
@@ -100,6 +110,7 @@ function AnimalDetailPage({ match, ...props }) {
                         <Col xs={6}>
                             <Label>Signes distinctifs</Label>
                             <Input
+                                type="textarea"
                                 value={animal.distinctive_signs || "-"}
                                 readOnly
                             />
@@ -122,6 +133,7 @@ function AnimalDetailPage({ match, ...props }) {
                         <Col xs={6}>
                             <Label>Lieu de PEC</Label>
                             <Input
+                                type="textarea"
                                 value={animal.place_of_care || "-"}
                                 readOnly
                             />
@@ -131,13 +143,18 @@ function AnimalDetailPage({ match, ...props }) {
                         <Col xs={6}>
                             <Label>Raisons de PEC</Label>
                             <Input
+                                type="textarea"
                                 value={animal.reason_for_care || "-"}
                                 readOnly
                             />
                         </Col>
                         <Col xs={6}>
                             <Label>Informations de PEC</Label>
-                            <Input value={animal.care_infos || "-"} readOnly />
+                            <Input
+                                type="textarea"
+                                value={animal.care_infos || "-"}
+                                readOnly
+                            />
                         </Col>
                     </Row>
                     <Row>
@@ -156,7 +173,11 @@ function AnimalDetailPage({ match, ...props }) {
                         </Col>
                         <Col xs={6}>
                             <Label>Raison de sortie</Label>
-                            <Input value={animal.exit_reason || "-"} readOnly />
+                            <Input
+                                type="textarea"
+                                value={animal.exit_reason || "-"}
+                                readOnly
+                            />
                         </Col>
                     </Row>
                     <Row>
@@ -176,6 +197,7 @@ function AnimalDetailPage({ match, ...props }) {
                         <Col xs={6}>
                             <Label>Raison du décès</Label>
                             <Input
+                                type="textarea"
                                 value={animal.death_reason || "-"}
                                 readOnly
                             />

@@ -14,7 +14,7 @@ function AnimalsPage() {
     const getAllAnimals = () => {
         AnimalsManager.getAll()
             .then((animals) => {
-                return sortBy(animals, "id");
+                return sortBy(animals || [], "id");
             })
             .then((animals) => {
                 setAnimals(animals);

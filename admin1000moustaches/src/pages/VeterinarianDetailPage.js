@@ -17,7 +17,7 @@ import SourceLink from "../components/SourceLink";
 
 function VeterinarianDetailPage({ match, ...props }) {
     const vetId = match.params.id;
-    const [veterinarian, setVeterinarian] = useState([]);
+    const [veterinarian, setVeterinarian] = useState({});
 
     const getVeterinarian = () => {
         VeterinariansManager.getById(vetId).then(setVeterinarian);
@@ -26,6 +26,21 @@ function VeterinarianDetailPage({ match, ...props }) {
     useEffect(() => {
         getVeterinarian();
     }, []);
+
+    if (veterinarian === undefined) {
+        return (
+            <Page
+                className="VeterinarianPage"
+                title="Détail du vétérinaire"
+                breadcrumbs={[
+                    { name: "Vétérinaires", to: "/veterinarians" },
+                    { name: "Vétérinaire", active: true },
+                ]}
+            >
+                <div>Vétérinaire non trouvé</div>
+            </Page>
+        );
+    }
 
     return (
         <Page

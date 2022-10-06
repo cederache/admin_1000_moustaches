@@ -14,7 +14,7 @@ function VeterinariansPage() {
     const getAllVeterinarians = () => {
         VeterinariansManager.getAll()
             .then((veterinarians) => {
-                return sortBy(veterinarians, "id");
+                return sortBy(veterinarians || [], "id");
             })
             .then((veterinarians) => {
                 setVeterinarians(veterinarians);
