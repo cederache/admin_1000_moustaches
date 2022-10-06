@@ -1,176 +1,111 @@
-import React from 'react';
-
-import {
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  Badge,
-  Button,
-} from 'reactstrap';
-
 import Page from 'components/Page';
+import React, { useEffect } from 'react';
+import {
+    Button,
+    Col,
+    Input,
+    Row,
+    Table,
+} from 'reactstrap';
+import AnimalsManager from '../managers/animals.manager';
+import { useState } from 'react';
+import {
+    MdRefresh,
+    MdAssignment
+} from 'react-icons/md';
 
-const AnimalsPage = () => {
-  return (
-    <Page title="Animals" breadcrumbs={[{ name: 'animals', active: true }]}>
-      <Row>
-        <Col md={6}>
-          <Card>
-            <CardHeader>Scale to parent</CardHeader>
-            <CardBody>
-              <h1>
-                Heading <Badge color="secondary">New</Badge>
-              </h1>
-              <h2>
-                Heading <Badge color="secondary">New</Badge>
-              </h2>
-              <h3>
-                Heading <Badge color="secondary">New</Badge>
-              </h3>
-              <h4>
-                Heading <Badge color="secondary">New</Badge>
-              </h4>
-              <h5>
-                Heading <Badge color="secondary">New</Badge>
-              </h5>
-              <h6>
-                Heading <Badge color="secondary">New</Badge>
-              </h6>
-            </CardBody>
-          </Card>
-        </Col>
+function AnimalsPage() {
+    const [animals, setAnimals] = useState([]);
+    const [filteredAnimals, setFilteredAnimals] = useState([]);
+    const [searchText, setSearchText] = useState([]);
 
-        <Col md={6}>
-          <Card>
-            <CardHeader>with buttons</CardHeader>
-            <CardBody>
-              <Button color="primary" className="mr-1">
-                Notifications <Badge color="secondary">4</Badge>
-              </Button>
-              <Button color="info" className="mr-1">
-                Notifications <Badge color="danger">4</Badge>
-              </Button>
-              <Button color="secondary" className="mr-1">
-                Notifications <Badge color="secondary">4</Badge>
-              </Button>
-            </CardBody>
+    const getAllAnimals = () => {
+        AnimalsManager.getAll()
+        .then(animals => {
+            return animals
+            .sort((a, b) => {
+                if (a.id == b.id) return 0;
+                if (a.id > b.id) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            })
+        })
+        .then(animals => {
+            setAnimals(animals);
+            setFilteredAnimals(animals);
+        })
+    }
 
-            <CardBody>
-              <Button color="primary" outline className="mr-1">
-                Notifications <Badge color="primary">4</Badge>
-              </Button>
-              <Button color="info" outline className="mr-1">
-                Notifications <Badge color="info">4</Badge>
-              </Button>
-              <Button color="secondary" outline className="mr-1">
-                Notifications <Badge color="secondary">4</Badge>
-              </Button>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+    const showDetail = (animal) => {
+        console.log(`Should show animal details for : ${animal.name}`)
+        window.location.assign(`/animals/${animal.id}`);
+    }
 
-      <Row>
-        <Col md={4}>
-          <Card>
-            <CardHeader>Contextual variations</CardHeader>
-            <CardBody>
-              <Badge color="primary" className="mr-1">
-                Primary
-              </Badge>
-              <Badge color="secondary" className="mr-1">
-                Secondary
-              </Badge>
-              <Badge color="success" className="mr-1">
-                Success
-              </Badge>
-              <Badge color="danger" className="mr-1">
-                Danger
-              </Badge>
-              <Badge color="warning" className="mr-1">
-                Warning
-              </Badge>
-              <Badge color="info" className="mr-1">
-                Info
-              </Badge>
-              <Badge color="light" className="mr-1">
-                Light
-              </Badge>
-              <Badge color="dark" className="mr-1">
-                Dark
-              </Badge>
-            </CardBody>
-          </Card>
-        </Col>
+    useEffect(() => {
+        getAllAnimals();
+    }, []);
 
-        <Col md={4}>
-          <Card>
-            <CardHeader>Pills</CardHeader>
-            <CardBody>
-              <Badge color="primary" pill className="mr-1">
-                Primary
-              </Badge>
-              <Badge color="secondary" pill className="mr-1">
-                Secondary
-              </Badge>
-              <Badge color="success" pill className="mr-1">
-                Success
-              </Badge>
-              <Badge color="danger" pill className="mr-1">
-                Danger
-              </Badge>
-              <Badge color="warning" pill className="mr-1">
-                Warning
-              </Badge>
-              <Badge color="info" pill className="mr-1">
-                Info
-              </Badge>
-              <Badge color="light" pill className="mr-1">
-                Light
-              </Badge>
-              <Badge color="dark" pill className="mr-1">
-                Dark
-              </Badge>
-            </CardBody>
-          </Card>
-        </Col>
+    useEffect(() => {
+        setFilteredAnimals(animals.filter(animal => {
+            return animal.name.includes(searchText)
+        }))
+    }, [searchText]);
 
-        <Col md={4}>
-          <Card>
-            <CardHeader>Links</CardHeader>
-            <CardBody>
-              <Badge href="#" color="primary" className="mr-1">
-                Primary
-              </Badge>
-              <Badge href="#" color="secondary" className="mr-1">
-                Secondary
-              </Badge>
-              <Badge href="#" color="success" className="mr-1">
-                Success
-              </Badge>
-              <Badge href="#" color="danger" className="mr-1">
-                Danger
-              </Badge>
-              <Badge href="#" color="warning" className="mr-1">
-                Warning
-              </Badge>
-              <Badge href="#" color="info" className="mr-1">
-                Info
-              </Badge>
-              <Badge href="#" color="light" className="mr-1">
-                Light
-              </Badge>
-              <Badge href="#" color="dark" className="mr-1">
-                Dark
-              </Badge>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-    </Page>
-  );
-};
+    return (
+      <Page
+        className="AnimalsPage"
+        title="Animaux"
+        breadcrumbs={[{ name: 'Animals', active: true }]}
+      >
+        <Row>
+            <Col xs={10}>
+                <Input
+                    name="animal"
+                    placeholder="Rechercher un animal"
+                    value={searchText}
+                    onChange={(e) => {
+                        setSearchText(e.target.value)
+                    }}
+                />
+            </Col>
+            <Col xs={{span: 1, offset: 1}}>
+                <Button onClick={getAllAnimals}><MdRefresh/></Button>
+            </Col>
+        </Row>
 
+        <Row>
+          <Col xs={12}>
+            <Table { ...{ "striped": true } }>
+                <thead>
+                  <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Sexe</th>
+                    <th scope="col">ICAD</th>
+                    <th scope="col">Date de naissance</th>
+                    <th scope="col">Date de PEC</th>
+                    <th scope="col">Fiche animal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {
+                        filteredAnimals.map((animal, index) => 
+                            <tr>
+                                <th scope="row">{animal.name}</th>
+                                <td>{animal.sexe}</td>
+                                <td>{animal.icad}</td>
+                                <td>{animal.readable_birth_date}</td>
+                                <td>{animal.readable_entry_date}</td>
+                                <td><Button color="info" onClick={() => showDetail(animal)}><MdAssignment/></Button></td>
+                            </tr>
+                        )
+                    }
+                </tbody>
+              </Table>
+          </Col>
+        </Row>
+      </Page>
+    );
+}
 export default AnimalsPage;

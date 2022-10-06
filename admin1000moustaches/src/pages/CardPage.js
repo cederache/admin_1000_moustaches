@@ -5,8 +5,6 @@ import bg3Image from 'assets/img/bg/background_640-3.jpg';
 import user1Image from 'assets/img/users/100_1.jpg';
 import { UserCard } from 'components/Card';
 import Page from 'components/Page';
-import { bgCards, gradientCards, overlayCards } from 'demos/cardPage';
-import { getStackLineChart, stackLineChartOptions } from 'demos/chartjs';
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -128,27 +126,6 @@ const CardPage = () => {
       </Row>
 
       <Row>
-        {overlayCards.map(({ imgUrl }, index) => {
-          return (
-            <Col key={index} md={6} sm={6} xs={12}>
-              <Card inverse className="text-center">
-                <CardImg width="100%" src={imgUrl} alt="Card image cap" />
-                <CardImgOverlay>
-                  <CardTitle>Card Title</CardTitle>
-                  <CardText>inversed card</CardText>
-                  <CardText>
-                    <small className="text-muted">
-                      Last updated 3 mins ago
-                    </small>
-                  </CardText>
-                </CardImgOverlay>
-              </Card>
-            </Col>
-          );
-        })}
-      </Row>
-
-      <Row>
         <Col md={5}>
           <UserCard
             avatar={user1Image}
@@ -160,64 +137,6 @@ const CardPage = () => {
             }}
           />
         </Col>
-
-        <Col md={7}>
-          <Card>
-            <Line
-              data={getStackLineChart({
-                labels: [
-                  'January',
-                  'February',
-                  'March',
-                  'April',
-                  'May',
-                  'June',
-                  'July',
-                ],
-                data: [0, 13000, 5000, 24000, 16000, 25000, 10000],
-              })}
-              options={stackLineChartOptions}
-            />
-            <CardBody className="text-primary" style={{ position: 'absolute' }}>
-              <CardTitle>Chart Card</CardTitle>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row>
-        {bgCards.map(({ color }, index) => (
-          <Col key={index} lg={4} md={6} sm={6} xs={12} className="mb-3">
-            <Card inverse color={color}>
-              <CardBody>
-                <CardTitle className="text-capitalize">
-                  {color} card title
-                </CardTitle>
-                <CardText>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </CardText>
-              </CardBody>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-
-      <Row>
-        {gradientCards.map(({ color }, index) => (
-          <Col key={index} lg={4} md={6} sm={6} xs={12} className="mb-3">
-            <Card
-              inverse
-              className={`bg-gradient-${color} text-center`}
-              style={{ height: 200 }}
-            >
-              <CardBody className="d-flex flex-column flex-wrap justify-content-center align-items-center">
-                <CardTitle>Gradient {color} title</CardTitle>
-                <CardText>card text</CardText>
-              </CardBody>
-            </Card>
-          </Col>
-        ))}
       </Row>
     </Page>
   );
