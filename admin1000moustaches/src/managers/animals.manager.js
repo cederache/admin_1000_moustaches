@@ -17,6 +17,15 @@ class AnimalsManager {
             console.log(err)
         })
     }
+
+    static getById = (id) => {
+        return fetch(`${API_URL}/animals/${id}`, {"method": "GET"})
+        .then(response => response.json())
+        .then(AnimalsManager.formatAnimal)
+        .catch(err => {
+            console.log(err)
+        })
+    }
 }
 
 export default AnimalsManager;

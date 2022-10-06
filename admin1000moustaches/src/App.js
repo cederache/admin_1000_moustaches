@@ -25,6 +25,7 @@ const TablePage = React.lazy(() => import('pages/TablePage'));
 const TypographyPage = React.lazy(() => import('pages/TypographyPage'));
 const WidgetPage = React.lazy(() => import('pages/WidgetPage'));
 const AnimalsPage = React.lazy(() => import('pages/AnimalsPage'));
+const AnimalDetailPage = React.lazy(() => import('pages/AnimalDetailPage'));
 
 const getBasename = () => {
   return `/${process.env.PUBLIC_URL.split('/').pop()}`;
@@ -65,6 +66,7 @@ class App extends React.Component {
                 <Route exact path="/tables" component={TablePage} />
                 <Route exact path="/badges" component={BadgePage} />
                 <Route exact path="/animals" component={AnimalsPage} />
+                <Route path="/animals/:id" component={AnimalDetailPage} />
                 <Route
                   exact
                   path="/button-groups"
