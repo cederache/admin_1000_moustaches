@@ -4,6 +4,7 @@ import { Button, Col, Input, Row, Table } from "reactstrap";
 import AnimalsManager from "../managers/animals.manager";
 import { useState } from "react";
 import { MdRefresh, MdAssignment } from "react-icons/md";
+import { sortBy } from "../utils/sort";
 
 function AnimalsPage() {
     const [animals, setAnimals] = useState([]);
@@ -13,14 +14,7 @@ function AnimalsPage() {
     const getAllAnimals = () => {
         AnimalsManager.getAll()
             .then((animals) => {
-                return animals.sort((a, b) => {
-                    if (a.id == b.id) return 0;
-                    if (a.id > b.id) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                });
+                return sortBy(animals, "id");
             })
             .then((animals) => {
                 setAnimals(animals);
