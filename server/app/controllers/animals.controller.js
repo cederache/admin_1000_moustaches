@@ -21,7 +21,16 @@ exports.findAll = (req, res) => {
 
 // Find a single Animals with a id
 exports.findOne = (req, res) => {
-  
+  const id = req.params.id;
+
+  Animals.findById(id, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || `Some error occurred while retrieving animal with id ${id}.`
+      });
+    else res.send(data);
+  });
 };
 
 // Update a Animals identified by the id in the request
