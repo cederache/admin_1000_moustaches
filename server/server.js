@@ -2,13 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 
-var glob = require( 'glob' );
-var path = require( 'path' );
+var glob = require("glob");
+var path = require("path");
 
 const app = express();
 
 var corsOptions = {
-  origin: "*"
+  origin: "*",
 };
 
 app.use(cors(corsOptions));
@@ -28,8 +28,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to 1000 moustaches admin application." });
 });
 
-glob.sync( './app/routes/**/*.js' ).forEach( function( file ) {
-  require( path.resolve( file ) )(app);
+glob.sync("./app/routes/**/*.js").forEach(function (file) {
+  require(path.resolve(file))(app);
 });
 
 // set port, listen for requests

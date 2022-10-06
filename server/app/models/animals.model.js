@@ -3,24 +3,24 @@ const sql = require("./db.js");
 const tableName = "Animals";
 
 // constructor
-const Animals = function(animal) {
-    this.id = animal.id;
-    this.name = animal.name;
-    this.species_id = animal.species_id;
-    this.icad = animal.icad;
-    this.sexe = animal.sexe;
-    this.race = animal.race;
-    this.birthdate = animal.birthdate;
-    this.entry_date = animal.entry_date;
-    this.distinctive_signs = animal.distinctive_signs;
-    this.reason_for_care = animal.reason_for_care;
-    this.place_of_care = animal.place_of_care;
-    this.care_infos = animal.care_infos;
-    this.exit_date = animal.exit_date;
-    this.exit_reason = animal.exit_reason;
-    this.exit_infos = animal.exit_infos;
-    this.death_date = animal.death_date;
-    this.death_reason = animal.death_reason;
+const Animals = function (animal) {
+  this.id = animal.id;
+  this.name = animal.name;
+  this.species_id = animal.species_id;
+  this.icad = animal.icad;
+  this.sexe = animal.sexe;
+  this.race = animal.race;
+  this.birthdate = animal.birthdate;
+  this.entry_date = animal.entry_date;
+  this.distinctive_signs = animal.distinctive_signs;
+  this.reason_for_care = animal.reason_for_care;
+  this.place_of_care = animal.place_of_care;
+  this.care_infos = animal.care_infos;
+  this.exit_date = animal.exit_date;
+  this.exit_reason = animal.exit_reason;
+  this.exit_infos = animal.exit_infos;
+  this.death_date = animal.death_date;
+  this.death_reason = animal.death_reason;
 };
 
 Animals.create = (newEntity, result) => {
@@ -37,26 +37,29 @@ Animals.create = (newEntity, result) => {
 };
 
 Animals.findById = (id, result) => {
-  sql.query(`SELECT * FROM ${tableName} WHERE id = ${id}`, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
+  sql.query(
+    `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id WHERE a.id = ${id}`,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
 
-    if (res.length) {
-      console.log(`found ${tableName}: `, res[0]);
-      result(null, res[0]);
-      return;
-    }
+      if (res.length) {
+        console.log(`found ${tableName}: `, res[0]);
+        result(null, res[0]);
+        return;
+      }
 
-    // not found entity with the id
-    result({ kind: "not_found" }, null);
-  });
+      // not found entity with the id
+      result({ kind: "not_found" }, null);
+    }
+  );
 };
 
 Animals.getAll = (name, result) => {
-  let query = `SELECT * FROM ${tableName}`;
+  let query = `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id`;
 
   if (name) {
     query += ` WHERE name LIKE '%${name}%'`;
@@ -116,7 +119,7 @@ Animals.remove = (id, result) => {
   });
 };
 
-Animals.removeAll = result => {
+Animals.removeAll = (result) => {
   sql.query(`DELETE FROM ${tableName}`, (err, res) => {
     if (err) {
       console.log("error: ", err);

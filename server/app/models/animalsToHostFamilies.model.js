@@ -3,11 +3,11 @@ const sql = require("./db.js");
 const tableName = "AnimalsToHostFamilies";
 
 // constructor
-const AnimalsToHostFamilies = function(animalsToHostFamily) {
-    this.animal_id = animalsToHostFamily.animal_id;
-    this.host_family_id = animalsToHostFamily.host_family_id;
-    this.entry_date = animalsToHostFamily.entry_date;
-    this.exit_date = animalsToHostFamily.exit_date;
+const AnimalsToHostFamilies = function (animalsToHostFamily) {
+  this.animal_id = animalsToHostFamily.animal_id;
+  this.host_family_id = animalsToHostFamily.host_family_id;
+  this.entry_date = animalsToHostFamily.entry_date;
+  this.exit_date = animalsToHostFamily.exit_date;
 };
 
 AnimalsToHostFamilies.create = (newEntity, result) => {
@@ -103,7 +103,7 @@ AnimalsToHostFamilies.remove = (id, result) => {
   });
 };
 
-AnimalsToHostFamilies.removeAll = result => {
+AnimalsToHostFamilies.removeAll = (result) => {
   sql.query(`DELETE FROM ${tableName}`, (err, res) => {
     if (err) {
       console.log("error: ", err);

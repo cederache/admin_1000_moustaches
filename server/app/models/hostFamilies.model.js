@@ -3,24 +3,24 @@ const sql = require("./db.js");
 const tableName = "HostFamilies";
 
 // constructor
-const HostFamilies = function(hostFamily) {
-    this.id = hostFamily.id;
-    this.name = hostFamily.name;
-    this.firstname = hostFamily.firstname;
-    this.phone = hostFamily.phone;
-    this.mail = hostFamily.mail;
-    this.social_network_alias = hostFamily.social_network_alias;
-    this.driver_license = hostFamily.driver_license;
-    this.nb_children = hostFamily.nb_children;
-    this.children_info = hostFamily.children_info;
-    this.animals_info = hostFamily.animals_info;
-    this.can_provide_veterinary_care = hostFamily.can_provide_veterinary_care;
-    this.can_provide_sociabilisation = hostFamily.can_provide_sociabilisation;
-    this.can_host_disable_animal = hostFamily.can_host_disable_animal;
-    this.can_provide_night_care = hostFamily.can_provide_night_care;
-    this.observations = hostFamily.observations;
-    this.housing_informations = hostFamily.housing_informations;
-    this.can_isolate = hostFamily.can_isolate;
+const HostFamilies = function (hostFamily) {
+  this.id = hostFamily.id;
+  this.name = hostFamily.name;
+  this.firstname = hostFamily.firstname;
+  this.phone = hostFamily.phone;
+  this.mail = hostFamily.mail;
+  this.social_network_alias = hostFamily.social_network_alias;
+  this.driver_license = hostFamily.driver_license;
+  this.nb_children = hostFamily.nb_children;
+  this.children_info = hostFamily.children_info;
+  this.animals_info = hostFamily.animals_info;
+  this.can_provide_veterinary_care = hostFamily.can_provide_veterinary_care;
+  this.can_provide_sociabilisation = hostFamily.can_provide_sociabilisation;
+  this.can_host_disable_animal = hostFamily.can_host_disable_animal;
+  this.can_provide_night_care = hostFamily.can_provide_night_care;
+  this.observations = hostFamily.observations;
+  this.housing_informations = hostFamily.housing_informations;
+  this.can_isolate = hostFamily.can_isolate;
 };
 
 HostFamilies.create = (newEntity, result) => {
@@ -116,7 +116,7 @@ HostFamilies.remove = (id, result) => {
   });
 };
 
-HostFamilies.removeAll = result => {
+HostFamilies.removeAll = (result) => {
   sql.query(`DELETE FROM ${tableName}`, (err, res) => {
     if (err) {
       console.log("error: ", err);
