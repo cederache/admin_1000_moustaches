@@ -37,7 +37,9 @@ Animals.create = (newEntity, result) => {
 };
 
 Animals.findById = (id, result) => {
-  sql.query(`SELECT * FROM ${tableName} WHERE id = ${id}`, (err, res) => {
+  sql.query(
+    `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id WHERE a.id = ${id}`,
+    (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(err, null);
@@ -57,7 +59,7 @@ Animals.findById = (id, result) => {
 };
 
 Animals.getAll = (name, result) => {
-  let query = `SELECT * FROM ${tableName}`;
+  let query = `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id`;
 
   if (name) {
     query += ` WHERE name LIKE '%${name}%'`;
