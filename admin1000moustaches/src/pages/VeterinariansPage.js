@@ -73,19 +73,15 @@ function VeterinariansPage() {
                                 <th scope="col">Nom</th>
                                 <th scope="col">E-mail</th>
                                 <th scope="col">Téléphone</th>
-                                <th scope="col">Adresse</th>
                                 <th scope="col">Fiche vétérinaire</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredVeterinarians.map((vet, index) => (
                                 <tr>
-                                    <th scope="row">
-                                        {vet.firstname} {vet.name}
-                                    </th>
+                                    <th scope="row">{vet.name}</th>
                                     <td>{vet.mail}</td>
                                     <td>{vet.phone}</td>
-                                    <td>{vet.address}</td>
                                     <td>
                                         <Button
                                             color="info"
