@@ -40,7 +40,7 @@
     },
     "scripts": {
         "start": "NODE_PATH=./src react-scripts start",
-        "build": "NODE_PATH=./src react-scripts build",
+        "build": "NODE_PATH=./src react-scripts build && cp _headers build/_headers",
         "serve": "NODE_PATH=./src serve -s build",
         "deploy": "gh-pages -d build",
         "test": "NODE_PATH=./src react-scripts test --env=jsdom",
