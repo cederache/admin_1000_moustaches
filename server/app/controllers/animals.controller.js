@@ -1,11 +1,13 @@
 const Animals = require("../models/animals.model.js");
 
 // Create and Save a new Animals
-exports.create = (req, res) => {};
+exports.create = (req, res) => {
+  res.status(200).send({});
+};
 
 // Retrieve all Animals from the database (with condition).
 exports.findAll = (req, res) => {
-  const name = req.query.name;
+  const name = req.params.name;
 
   Animals.getAll(name, (err, data) => {
     if (err)
@@ -32,10 +34,16 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Animals identified by the id in the request
-exports.update = (req, res) => {};
+exports.update = (req, res) => {
+  res.status(200).send({});
+};
 
 // Delete a Animals with the specified id in the request
-exports.delete = (req, res) => {};
+exports.delete = (req, res) => {
+  res.status(200).send({});
+};
 
 // Delete all Animals from the database.
-exports.deleteAll = (req, res) => {};
+exports.deleteAll = (req, res) => {
+  res.status(200).send({});
+};

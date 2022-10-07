@@ -1,11 +1,13 @@
 const Veterinarians = require("../models/veterinarians.model.js");
 
 // Create and Save a new Veterinarians
-exports.create = (req, res) => {};
+exports.create = (req, res) => {
+  res.status(200).send({});
+};
 
 // Retrieve all Veterinarians from the database (with condition).
 exports.findAll = (req, res) => {
-  const name = req.query.name;
+  const name = req.params.name;
 
   Veterinarians.getAll(name, (err, data) => {
     if (err)
@@ -34,10 +36,16 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Veterinarians identified by the id in the request
-exports.update = (req, res) => {};
+exports.update = (req, res) => {
+  res.status(200).send({});
+};
 
 // Delete a Veterinarians with the specified id in the request
-exports.delete = (req, res) => {};
+exports.delete = (req, res) => {
+  res.status(200).send({});
+};
 
 // Delete all Veterinarians from the database.
-exports.deleteAll = (req, res) => {};
+exports.deleteAll = (req, res) => {
+  res.status(200).send({});
+};
