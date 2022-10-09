@@ -35,9 +35,21 @@ exports.findOne = (req, res) => {
   });
 };
 
-// Update a Veterinarians identified by the id in the request
+// Update a Veterinarian identified by the id in the request
 exports.update = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+  res.status(500).send({});
+  return;
+
+  Veterinarians.updateById(id, req.body, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while updating veterinarian with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete a Veterinarians with the specified id in the request

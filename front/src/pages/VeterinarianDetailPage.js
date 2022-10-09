@@ -12,12 +12,26 @@ import {
 } from "reactstrap";
 import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
-import { MdDirections, MdRefresh } from "react-icons/md";
+import {
+    MdDirections,
+    MdImportantDevices,
+    MdOutlineModeEdit,
+    MdRefresh,
+    MdSave,
+} from "react-icons/md";
 import SourceLink from "../components/SourceLink";
+
+import NotificationSystem from "react-notification-system";
+import { NOTIFICATION_SYSTEM_STYLE } from "utils/constants";
 
 function VeterinarianDetailPage({ match, ...props }) {
     const vetId = match.params.id;
     const [veterinarian, setVeterinarian] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
 
     const getVeterinarian = () => {
         setVeterinarian(null);
@@ -28,6 +42,29 @@ function VeterinarianDetailPage({ match, ...props }) {
         getVeterinarian();
     }, []);
 
+    const save = () => {
+        setIsEditing(false);
+
+        // Send new data to API
+        VeterinariansManager.update(veterinarian)
+            .then(() => {
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message: "Vétérinaire mis à jour",
+                    level: "success",
+                });
+            })
+            .catch((err) => {
+                console.log("TOTO");
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la mise à jour des données",
+                    level: "error",
+                });
+            });
+    };
+
     let content = <div>Chargement...</div>;
     if (veterinarian === undefined) {
         content = <div>Vétérinaire non trouvé</div>;
@@ -36,9 +73,22 @@ function VeterinarianDetailPage({ match, ...props }) {
     } else {
         content = (
             <div>
-                <Row>
-                    <Col xs={{ span: 1, offset: 11 }}>
-                        <Button onClick={getVeterinarian}>
+                <Row className={"justify-content-end"}>
+                    <Col xs={"auto"}>
+                        {!isEditing && (
+                            <Button
+                                color="primary"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                <MdOutlineModeEdit />
+                            </Button>
+                        )}
+                        {isEditing && (
+                            <Button color="success" onClick={() => save()}>
+                                <MdSave />
+                            </Button>
+                        )}
+                        <Button className="ml-2" onClick={getVeterinarian}>
                             <MdRefresh />
                         </Button>
                     </Col>
@@ -58,7 +108,13 @@ function VeterinarianDetailPage({ match, ...props }) {
                                         <Label>Téléphone</Label>
                                         <Input
                                             value={veterinarian.phone}
-                                            readOnly
+                                            readOnly={!isEditing}
+                                            onChange={(evt) =>
+                                                setVeterinarian({
+                                                    ...veterinarian,
+                                                    phone: evt.target.value,
+                                                })
+                                            }
                                         />
                                     </Col>
                                 </Row>
@@ -67,7 +123,13 @@ function VeterinarianDetailPage({ match, ...props }) {
                                         <Label>E-mail</Label>
                                         <Input
                                             value={veterinarian.mail}
-                                            readOnly
+                                            readOnly={!isEditing}
+                                            onChange={(evt) =>
+                                                setVeterinarian({
+                                                    ...veterinarian,
+                                                    mail: evt.target.value,
+                                                })
+                                            }
                                         />
                                     </Col>
                                 </Row>
@@ -85,7 +147,13 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.address}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            address: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -100,7 +168,10 @@ function VeterinarianDetailPage({ match, ...props }) {
                                             ? "Non"
                                             : "NSP"
                                     }
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        console.log(evt.target.value)
+                                    }
                                 />
                             </Col>
                             <Col xs={9}>
@@ -112,7 +183,14 @@ function VeterinarianDetailPage({ match, ...props }) {
                                     value={
                                         veterinarian.appointment_confirmation_procedure
                                     }
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            appointment_confirmation_procedure:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -122,7 +200,14 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.invoice_payment_date}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            invoice_payment_date:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={6}>
@@ -130,7 +215,13 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.payment_method}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            payment_method: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -150,6 +241,14 @@ function VeterinarianDetailPage({ match, ...props }) {
             ]}
         >
             {content}
+
+            <NotificationSystem
+                dismissible={false}
+                ref={(aNotificationSystem) =>
+                    setNotificationSystem(aNotificationSystem)
+                }
+                style={NOTIFICATION_SYSTEM_STYLE}
+            />
         </Page>
     );
 }

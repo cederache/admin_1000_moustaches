@@ -33,6 +33,18 @@ class VeterinariansManager {
                 console.log(err);
             });
     };
+
+    static update = (vet) => {
+        return fetch(`${API_URL}/veterinarians/${vet.id}`, {
+            method: "PUT",
+            body: JSON.stringify(vet),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then(VeterinariansManager.format);
+    };
 }
 
 export default VeterinariansManager;

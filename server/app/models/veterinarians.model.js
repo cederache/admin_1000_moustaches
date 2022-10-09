@@ -67,10 +67,21 @@ Veterinarians.getAll = (name, result) => {
   });
 };
 
-Veterinarians.updateById = (id, animal, result) => {
+Veterinarians.updateById = (id, vet, result) => {
+  console.log(vet);
   sql.query(
-    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
-    [animal.name, id],
+    `UPDATE ${tableName} SET name = ?, phone = ?, mail = ?, address = ?, emergencies = ?, appointment_confirmation_procedure = ?, invoice_payment_date = ?, payment_method = ?  WHERE id = ?`,
+    [
+      vet.name,
+      vet.phone,
+      vet.mail,
+      vet.address,
+      vet.emergencies,
+      vet.appointment_confirmation_procedure,
+      vet.invoice_payment_date,
+      vet.payment_method,
+      id,
+    ],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -84,8 +95,8 @@ Veterinarians.updateById = (id, animal, result) => {
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, { id: id, ...vet });
+      result(null, { id: id, ...vet });
     }
   );
 };
