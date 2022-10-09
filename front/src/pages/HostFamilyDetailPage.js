@@ -64,6 +64,8 @@ function HostFamilyDetailPage({ match, ...props }) {
                     </Col>
                 </Row>
 
+                <br />
+
                 <Card>
                     <CardHeader>
                         <h2>{hostFamily.display_name}</h2>

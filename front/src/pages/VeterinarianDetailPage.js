@@ -44,6 +44,8 @@ function VeterinarianDetailPage({ match, ...props }) {
                     </Col>
                 </Row>
 
+                <br />
+
                 <Card>
                     <CardHeader>
                         <h2>{veterinarian.name}</h2>

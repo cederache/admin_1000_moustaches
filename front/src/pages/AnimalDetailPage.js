@@ -67,6 +67,8 @@ function AnimalDetailPage({ match, ...props }) {
                     </Col>
                 </Row>
 
+                <br />
+
                 <Card>
                     <CardHeader>
                         <h2>{animal.name}</h2>

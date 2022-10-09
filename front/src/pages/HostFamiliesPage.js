@@ -63,6 +63,8 @@ function HostFamiliesPage() {
                 </Col>
             </Row>
 
+            <br />
+
             <Row>
                 <Col xs={12}>
                     <Table {...{ striped: true }}>
