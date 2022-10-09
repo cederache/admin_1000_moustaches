@@ -56,8 +56,8 @@ function HostFamilyDetailPage({ match, ...props }) {
     } else {
         content = (
             <div>
-                <Row>
-                    <Col xs={{ span: 1, offset: 11 }}>
+                <Row className={"justify-content-end"}>
+                    <Col xs={"auto"}>
                         <Button onClick={refresh}>
                             <MdRefresh />
                         </Button>

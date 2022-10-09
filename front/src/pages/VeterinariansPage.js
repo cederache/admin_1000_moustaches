@@ -48,7 +48,7 @@ function VeterinariansPage({ ...props }) {
             breadcrumbs={[{ name: "Vétérinaires", active: true }]}
         >
             <Row>
-                <Col xs={10}>
+                <Col>
                     <Input
                         name="name"
                         placeholder="Rechercher un vétérinaire"
@@ -58,7 +58,7 @@ function VeterinariansPage({ ...props }) {
                         }}
                     />
                 </Col>
-                <Col xs={{ span: 1, offset: 1 }}>
+                <Col xs={"auto"}>
                     <Button onClick={getAllVeterinarians}>
                         <MdRefresh />
                     </Button>

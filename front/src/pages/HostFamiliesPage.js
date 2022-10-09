@@ -45,7 +45,7 @@ function HostFamiliesPage({ ...props }) {
             breadcrumbs={[{ name: "Familles d'Accueil", active: true }]}
         >
             <Row>
-                <Col xs={10}>
+                <Col>
                     <Input
                         name="hostFamily"
                         placeholder="Rechercher une Famille d'Accueil"
@@ -55,7 +55,7 @@ function HostFamiliesPage({ ...props }) {
                         }}
                     />
                 </Col>
-                <Col xs={{ span: 1, offset: 1 }}>
+                <Col xs={"auto"}>
                     <Button onClick={getAllHostFamilies}>
                         <MdRefresh />
                     </Button>
