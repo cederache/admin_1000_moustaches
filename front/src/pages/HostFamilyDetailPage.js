@@ -43,8 +43,8 @@ function HostFamilyDetailPage({ match, ...props }) {
         refresh();
     }, []);
 
-    const showDetail = (animalId) => {
-        window.location.assign(`/animals/${animalId}`);
+    const showDetail = (animalToHostFamily) => {
+        props.history.push(`/animals/${animalToHostFamily.animal_id}`);
     };
 
     let content = <div>Chargement...</div>;

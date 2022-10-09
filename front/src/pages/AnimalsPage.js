@@ -6,7 +6,7 @@ import { useState } from "react";
 import { MdRefresh, MdAssignment } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
-function AnimalsPage() {
+function AnimalsPage({ ...props }) {
     const [animals, setAnimals] = useState([]);
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState([]);
@@ -23,8 +23,7 @@ function AnimalsPage() {
     };
 
     const showDetail = (animal) => {
-        console.log(`Should show animal details for : ${animal.name}`);
-        window.location.assign(`/animals/${animal.id}`);
+        props.history.push(`/animals/${animal.id}`);
     };
 
     useEffect(() => {

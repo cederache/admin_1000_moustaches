@@ -45,7 +45,7 @@ function AnimalDetailPage({ match, ...props }) {
     console.log(animalToHostFamilies);
 
     const showDetail = (animalToHostFamily) => {
-        window.location.assign(
+        props.history.push(
             `/hostFamilies/${animalToHostFamily.host_family_id}`
         );
     };
@@ -59,8 +59,8 @@ function AnimalDetailPage({ match, ...props }) {
     } else {
         content = (
             <div>
-                <Row>
-                    <Col xs={{ span: 1, offset: 11 }}>
+                <Row className={"justify-content-end"}>
+                    <Col xs={"auto"}>
                         <Button onClick={refresh}>
                             <MdRefresh />
                         </Button>

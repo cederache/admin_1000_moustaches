@@ -6,7 +6,7 @@ import { useState } from "react";
 import { MdRefresh, MdAssignment } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
-function HostFamiliesPage() {
+function HostFamiliesPage({ ...props }) {
     const [hostFamilies, setHostFamilies] = useState([]);
     const [filteredHostFamilies, setFilteredHostFamilies] = useState([]);
     const [searchText, setSearchText] = useState([]);
@@ -23,8 +23,7 @@ function HostFamiliesPage() {
     };
 
     const showDetail = (hostFamily) => {
-        console.log(`Should show host family details for : ${hostFamily.name}`);
-        window.location.assign(`/hostFamilies/${hostFamily.id}`);
+        props.history.push(`/hostFamilies/${hostFamily.id}`);
     };
 
     useEffect(() => {

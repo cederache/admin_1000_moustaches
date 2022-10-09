@@ -6,7 +6,7 @@ import { useState } from "react";
 import { MdRefresh, MdAssignment } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
-function VeterinariansPage() {
+function VeterinariansPage({ ...props }) {
     const [veterinarians, setVeterinarians] = useState([]);
     const [filteredVeterinarians, setFilteredVeterinarians] = useState([]);
     const [searchText, setSearchText] = useState([]);
@@ -26,7 +26,7 @@ function VeterinariansPage() {
         console.log(
             `Should show veterinarian details for : ${veterinarian.name}`
         );
-        window.location.assign(`/veterinarians/${veterinarian.id}`);
+        props.history.push(`/veterinarians/${veterinarian.id}`);
     };
 
     useEffect(() => {
