@@ -9,23 +9,46 @@ import {
     Input,
     Label,
     Row,
+    Table,
 } from "reactstrap";
 import AnimalsManager from "../managers/animals.manager";
+import HostFamiliesManager from "../managers/hostFamilies.manager";
 import { useState } from "react";
-import { MdRefresh } from "react-icons/md";
+import { MdRefresh, MdAssignment } from "react-icons/md";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
     const [animal, setAnimal] = useState(null);
+    const [animalToHostFamilies, setAnimalToHostFamilies] = useState([]);
 
     const getAnimal = () => {
         setAnimal(null);
         AnimalsManager.getById(animalId).then(setAnimal);
     };
 
-    useEffect(() => {
+    const getHostFamilies = () => {
+        setAnimalToHostFamilies([]);
+        HostFamiliesManager.getByAnimalId(animalId).then(
+            setAnimalToHostFamilies
+        );
+    };
+
+    const refresh = () => {
         getAnimal();
+        getHostFamilies();
+    };
+
+    useEffect(() => {
+        refresh();
     }, []);
+
+    console.log(animalToHostFamilies);
+
+    const showDetail = (animalToHostFamily) => {
+        window.location.assign(
+            `/hostFamilies/${animalToHostFamily.host_family_id}`
+        );
+    };
 
     let content = <div>Chargement...</div>;
 
@@ -38,7 +61,7 @@ function AnimalDetailPage({ match, ...props }) {
             <div>
                 <Row>
                     <Col xs={{ span: 1, offset: 11 }}>
-                        <Button onClick={getAnimal}>
+                        <Button onClick={refresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
@@ -189,6 +212,63 @@ function AnimalDetailPage({ match, ...props }) {
                                 />
                             </Col>
                         </Row>
+                    </CardBody>
+                </Card>
+
+                <br />
+
+                <Card>
+                    <CardHeader>
+                        <h3>Historique des Familles d'Accueil</h3>
+                    </CardHeader>
+                    <CardBody>
+                        <Table {...{ striped: true }}>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nom Prénom</th>
+                                    <th scope="col">Date d'entrée</th>
+                                    <th scope="col">Date de sortie</th>
+                                    <th scope="col">Fiche de la FA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {animalToHostFamilies.map(
+                                    (animalToHostFamily, index) => (
+                                        <tr>
+                                            <th scope="row">
+                                                {
+                                                    animalToHostFamily.display_name
+                                                }
+                                            </th>
+                                            <td>
+                                                {
+                                                    animalToHostFamily
+                                                        .entry_date.readable
+                                                }
+                                            </td>
+                                            <td>
+                                                {
+                                                    animalToHostFamily.exit_date
+                                                        .readable
+                                                }
+                                            </td>
+                                            <td>
+                                                <Button
+                                                    color="info"
+                                                    onClick={() =>
+                                                        showDetail(
+                                                            animalToHostFamily
+                                                        )
+                                                    }
+                                                >
+                                                    <MdAssignment />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    )
+                                )}
+                            </tbody>
+                        </Table>
                     </CardBody>
                 </Card>
             </div>

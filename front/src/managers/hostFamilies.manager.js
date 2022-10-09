@@ -4,7 +4,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 class HostFamiliesManager {
     static format = (hostFamily) => {
-        [].forEach((date) => {
+        ["entry_date", "exit_date"].forEach((date) => {
             const rawValue = hostFamily[date];
             hostFamily[date] = {};
             hostFamily[date]["rawValue"] = rawValue;
@@ -34,10 +34,19 @@ class HostFamiliesManager {
         return fetch(`${API_URL}/hostFamilies/${id}`, { method: "GET" })
             .then((response) => response.json())
             .then(HostFamiliesManager.format)
-            .then((debug) => {
-                console.log(debug);
-                return debug;
-            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    static getByAnimalId = (id) => {
+        return fetch(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((hostFamilies) =>
+                hostFamilies.map(HostFamiliesManager.format)
+            )
             .catch((err) => {
                 console.log(err);
             });

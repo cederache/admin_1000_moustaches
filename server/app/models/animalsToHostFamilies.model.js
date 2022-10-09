@@ -61,6 +61,36 @@ AnimalsToHostFamilies.getAll = (name, result) => {
   });
 };
 
+AnimalsToHostFamilies.getAllWithAnimalId = (animal_id, result) => {
+  let query = `SELECT athf.*, hf.id as host_family_id, hf.firstname, hf.name FROM ${tableName} athf JOIN HostFamilies hf ON athf.host_family_id = hf.id WHERE athf.animal_id = ${animal_id} ORDER BY athf.entry_date ASC`;
+
+  sql.query(query, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log(`${tableName}: `, res);
+    result(null, res);
+  });
+};
+
+AnimalsToHostFamilies.getAllWithHostFamilyId = (host_family_id, result) => {
+  let query = `SELECT athf.*, a.id as animal_id, a.name as animal_name, a.entry_date as host_entry_date, a.exit_date as host_exit_date FROM ${tableName} athf JOIN Animals a ON athf.animal_id = a.id WHERE athf.host_family_id = ${host_family_id} ORDER BY athf.entry_date ASC`;
+
+  sql.query(query, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log(`${tableName}: `, res);
+    result(null, res);
+  });
+};
+
 AnimalsToHostFamilies.updateById = (id, animal, result) => {
   sql.query(
     `UPDATE ${tableName} SET name = ? WHERE id = ?`,

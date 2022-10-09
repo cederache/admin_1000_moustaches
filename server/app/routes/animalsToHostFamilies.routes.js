@@ -9,6 +9,15 @@ module.exports = (app) => {
   // Retrieve all AnimalsToHostFamilies
   router.get("/", animalsToHostFamilies.findAll);
 
+  // Retrieve all HostFamilies with animal id
+  router.get("/withAnimalId/:id", animalsToHostFamilies.findAllWithAnimalId);
+
+  // Retrieve all HostFamilies with hostFamily id
+  router.get(
+    "/withHostFamilyId/:id",
+    animalsToHostFamilies.findAllWithHostFamilyId
+  );
+
   // Retrieve a single AnimalsToHostFamilies with id
   router.get("/:id", animalsToHostFamilies.findOne);
 

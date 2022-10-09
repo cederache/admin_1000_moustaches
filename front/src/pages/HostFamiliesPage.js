@@ -78,10 +78,7 @@ function HostFamiliesPage() {
                             {filteredHostFamilies.map((hostFamily, index) => (
                                 <tr>
                                     <th scope="row">
-                                        <span>
-                                            {hostFamily.firstname}{" "}
-                                            {hostFamily.name}
-                                        </span>
+                                        {hostFamily.display_name}
                                     </th>
                                     <td>{hostFamily.phone}</td>
                                     <td>{hostFamily.mail}</td>
