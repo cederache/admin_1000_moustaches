@@ -14,7 +14,6 @@ import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
 import {
     MdDirections,
-    MdImportantDevices,
     MdOutlineModeEdit,
     MdRefresh,
     MdSave,
@@ -55,7 +54,6 @@ function VeterinarianDetailPage({ match, ...props }) {
                 });
             })
             .catch((err) => {
-                console.log("TOTO");
                 getVeterinarian();
                 notificationSystem.addNotification({
                     message:

@@ -21,35 +21,41 @@ class HostFamiliesManager {
 
     static getAll = () => {
         return fetch(`${API_URL}/hostFamilies`, { method: "GET" })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
             .then((hostFamilies) =>
                 hostFamilies.map(HostFamiliesManager.format)
-            )
-            .catch((err) => {
-                console.log(err);
-            });
+            );
     };
 
     static getById = (id) => {
         return fetch(`${API_URL}/hostFamilies/${id}`, { method: "GET" })
-            .then((response) => response.json())
-            .then(HostFamiliesManager.format)
-            .catch((err) => {
-                console.log(err);
-            });
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
+            .then(HostFamiliesManager.format);
     };
 
     static getByAnimalId = (id) => {
         return fetch(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
             method: "GET",
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
             .then((hostFamilies) =>
                 hostFamilies.map(HostFamiliesManager.format)
-            )
-            .catch((err) => {
-                console.log(err);
-            });
+            );
     };
 }
 

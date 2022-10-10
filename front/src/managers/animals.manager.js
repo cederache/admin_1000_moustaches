@@ -25,20 +25,24 @@ class AnimalsManager {
 
     static getAll = () => {
         return fetch(`${API_URL}/animals`, { method: "GET" })
-            .then((response) => response.json())
-            .then((animals) => animals.map(AnimalsManager.format))
-            .catch((err) => {
-                console.log(err);
-            });
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
+            .then((animals) => animals.map(AnimalsManager.format));
     };
 
     static getById = (id) => {
         return fetch(`${API_URL}/animals/${id}`, { method: "GET" })
-            .then((response) => response.json())
-            .then(AnimalsManager.format)
-            .catch((err) => {
-                console.log(err);
-            });
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
+            .then(AnimalsManager.format);
     };
 
     static getByHostFamilyId = (hostFamilyId) => {
@@ -46,15 +50,13 @@ class AnimalsManager {
             `${API_URL}/animalsToHostFamilies/withHostFamilyId/${hostFamilyId}`,
             { method: "GET" }
         )
-            .then((response) => response.json())
-            .then((animals) => animals.map(AnimalsManager.format))
-            .then((debug) => {
-                console.log(debug);
-                return debug;
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
             })
-            .catch((err) => {
-                console.log(err);
-            });
+            .then((animals) => animals.map(AnimalsManager.format));
     };
 }
 
