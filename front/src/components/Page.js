@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "utils/propTypes";
 
 import bn from "utils/bemnames";
@@ -6,6 +6,9 @@ import bn from "utils/bemnames";
 import { Breadcrumb, BreadcrumbItem } from "reactstrap";
 
 import Typography from "./Typography";
+
+import NotificationSystem from "react-notification-system";
+import { NOTIFICATION_SYSTEM_STYLE } from "utils/constants";
 
 const bem = bn.create("page");
 
@@ -15,6 +18,7 @@ const Page = ({
     tag: Tag,
     className,
     children,
+    notificationSystemCallback,
     ...restProps
 }) => {
     const classes = bem.b("px-3", className);
@@ -54,6 +58,14 @@ const Page = ({
                 )}
             </div>
             {children}
+
+            <NotificationSystem
+                dismissible={false}
+                ref={(notificationSystem) => {
+                    notificationSystemCallback(notificationSystem);
+                }}
+                style={NOTIFICATION_SYSTEM_STYLE}
+            />
         </Tag>
     );
 };

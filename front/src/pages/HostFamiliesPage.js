@@ -19,6 +19,15 @@ function HostFamiliesPage({ ...props }) {
             .then((hostFamilies) => {
                 setHostFamilies(hostFamilies);
                 setFilteredHostFamilies(hostFamilies);
+            })
+            .catch((err) => {
+                console.log(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 

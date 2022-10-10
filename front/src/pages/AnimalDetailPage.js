@@ -21,16 +21,38 @@ function AnimalDetailPage({ match, ...props }) {
     const [animal, setAnimal] = useState(null);
     const [animalToHostFamilies, setAnimalToHostFamilies] = useState([]);
 
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
+
     const getAnimal = () => {
         setAnimal(null);
-        AnimalsManager.getById(animalId).then(setAnimal);
+        AnimalsManager.getById(animalId)
+            .then(setAnimal)
+            .catch((err) => {
+                console.log(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
     };
 
     const getHostFamilies = () => {
         setAnimalToHostFamilies([]);
-        HostFamiliesManager.getByAnimalId(animalId).then(
-            setAnimalToHostFamilies
-        );
+        HostFamiliesManager.getByAnimalId(animalId)
+            .then(setAnimalToHostFamilies)
+            .catch((err) => {
+                console.log(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
     };
 
     const refresh = () => {
@@ -41,8 +63,6 @@ function AnimalDetailPage({ match, ...props }) {
     useEffect(() => {
         refresh();
     }, []);
-
-    console.log(animalToHostFamilies);
 
     const showDetail = (animalToHostFamily) => {
         props.history.push(
@@ -285,6 +305,9 @@ function AnimalDetailPage({ match, ...props }) {
                 { name: "Animaux", to: "/animals" },
                 { name: "Animal", active: true },
             ]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             {content}
         </Page>

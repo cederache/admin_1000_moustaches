@@ -22,16 +22,38 @@ function HostFamilyDetailPage({ match, ...props }) {
     const [hostFamily, setHostFamily] = useState(null);
     const [animalsToHostFamily, setAnimalsToHostFamily] = useState([]);
 
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
+
     const getHostFamily = () => {
         setHostFamily(null);
-        HostFamiliesManager.getById(hostFamilyId).then(setHostFamily);
+        HostFamiliesManager.getById(hostFamilyId)
+            .then(setHostFamily)
+            .catch((err) => {
+                console.log(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
     };
 
     const getAnimalsToHostFamily = () => {
         setAnimalsToHostFamily([]);
-        AnimalsManager.getByHostFamilyId(hostFamilyId).then(
-            setAnimalsToHostFamily
-        );
+        AnimalsManager.getByHostFamilyId(hostFamilyId)
+            .then(setAnimalsToHostFamily)
+            .catch((err) => {
+                console.log(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
     };
 
     const refresh = () => {
@@ -298,6 +320,9 @@ function HostFamilyDetailPage({ match, ...props }) {
                 { name: "Familles d'Accueil", to: "/hostFamilies" },
                 { name: "Famille d'Accueil", active: true },
             ]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             {content}
         </Page>

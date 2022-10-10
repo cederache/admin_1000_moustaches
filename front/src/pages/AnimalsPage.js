@@ -19,6 +19,15 @@ function AnimalsPage({ ...props }) {
             .then((animals) => {
                 setAnimals(animals);
                 setFilteredAnimals(animals);
+            })
+            .catch((err) => {
+                console.log(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
