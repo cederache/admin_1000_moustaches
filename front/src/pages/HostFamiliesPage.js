@@ -1,4 +1,4 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
@@ -11,6 +11,10 @@ function HostFamiliesPage({ ...props }) {
     const [filteredHostFamilies, setFilteredHostFamilies] = useState([]);
     const [searchText, setSearchText] = useState([]);
 
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
+
     const getAllHostFamilies = () => {
         HostFamiliesManager.getAll()
             .then((hostFamily) => {
@@ -21,13 +25,12 @@ function HostFamiliesPage({ ...props }) {
                 setFilteredHostFamilies(hostFamilies);
             })
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -52,6 +55,9 @@ function HostFamiliesPage({ ...props }) {
             className="HostFamiliesPage"
             title="Liste des Familles d'Accueil"
             breadcrumbs={[{ name: "Familles d'Accueil", active: true }]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             <Row>
                 <Col>
@@ -86,7 +92,7 @@ function HostFamiliesPage({ ...props }) {
                         </thead>
                         <tbody>
                             {filteredHostFamilies.map((hostFamily, index) => (
-                                <tr>
+                                <tr key={index}>
                                     <th scope="row">
                                         {hostFamily.display_name}
                                     </th>

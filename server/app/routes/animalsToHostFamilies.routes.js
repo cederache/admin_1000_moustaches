@@ -30,5 +30,5 @@ module.exports = (app) => {
   // Delete all AnimalsToHostFamilies
   router.delete("/", animalsToHostFamilies.deleteAll);
 
-  app.use("/api/animalsToHostFamilies", router);
+  app.use("/animalsToHostFamilies", router);
 };

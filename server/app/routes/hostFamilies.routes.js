@@ -21,5 +21,5 @@ module.exports = (app) => {
   // Delete all HostFamilies
   router.delete("/", hostFamilies.deleteAll);
 
-  app.use("/api/hostFamilies", router);
+  app.use("/hostFamilies", router);
 };

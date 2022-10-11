@@ -1,9 +1,9 @@
 import React from "react";
-import PropTypes from "utils/propTypes";
+import PropTypes from "../utils/propTypes";
 
 import { Media } from "reactstrap";
 
-import Typography from "components/Typography";
+import Typography from "./components/Typography";
 
 const ProductMedia = ({ image, title, description, right, ...restProps }) => {
     return (

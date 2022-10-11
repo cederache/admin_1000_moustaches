@@ -1,4 +1,4 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import VeterinariansManager from "../managers/veterinarians.manager";
@@ -11,6 +11,10 @@ function VeterinariansPage({ ...props }) {
     const [filteredVeterinarians, setFilteredVeterinarians] = useState([]);
     const [searchText, setSearchText] = useState([]);
 
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
+
     const getAllVeterinarians = () => {
         VeterinariansManager.getAll()
             .then((veterinarians) => {
@@ -21,13 +25,12 @@ function VeterinariansPage({ ...props }) {
                 setFilteredVeterinarians(veterinarians);
             })
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -53,8 +56,11 @@ function VeterinariansPage({ ...props }) {
     return (
         <Page
             className="VeterinariansPage"
-            title="Liste des vétérinaires"
+            title="Liste des Vétérinaires"
             breadcrumbs={[{ name: "Vétérinaires", active: true }]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             <Row>
                 <Col>
@@ -89,7 +95,7 @@ function VeterinariansPage({ ...props }) {
                         </thead>
                         <tbody>
                             {filteredVeterinarians.map((vet, index) => (
-                                <tr>
+                                <tr key={index}>
                                     <th scope="row">{vet.name}</th>
                                     <td>{vet.mail}</td>
                                     <td>{vet.phone}</td>

@@ -79,8 +79,26 @@ Animals.getAll = (name, result) => {
 
 Animals.updateById = (id, animal, result) => {
   sql.query(
-    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
-    [animal.name, id],
+    `UPDATE ${tableName} SET name = ?, species_id = ?, icad = ?, birthdate = ?, entry_date = ?, distinctive_signs = ?, reason_for_care = ?, place_of_care = ?, care_infos = ?, exit_date = ?, exit_reason = ?, exit_infos = ?, death_date = ?, death_reason = ?, sexe = ?, race = ? WHERE id = ?`,
+    [
+      animal.name,
+      animal.species_id,
+      animal.icad,
+      animal.birthdate,
+      animal.entry_date,
+      animal.distinctive_signs,
+      animal.reason_for_care,
+      animal.place_of_care,
+      animal.care_infos,
+      animal.exit_date,
+      animal.exit_reason,
+      animal.exit_infos,
+      animal.death_date,
+      animal.death_reason,
+      animal.sexe,
+      animal.race,
+      id,
+    ],
     (err, res) => {
       if (err) {
         console.log("error: ", err);

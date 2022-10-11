@@ -1,6 +1,6 @@
-import logo200Image from "assets/img/logo/logo_200.png";
-import sidebarBgImage from "assets/img/sidebar/sidebar-4.jpg";
-import SourceLink from "components/SourceLink";
+import logo200Image from "../../assets/img/logo/logo_200.png";
+import sidebarBgImage from "../../assets/img/sidebar/sidebar-4.jpg";
+import SourceLink from "../SourceLink";
 import React from "react";
 import { FaGithub } from "react-icons/fa";
 import {
@@ -20,7 +20,7 @@ import {
     NavItem,
     NavLink as BSNavLink,
 } from "reactstrap";
-import bn from "utils/bemnames";
+import bn from "../../utils/bemnames";
 
 const sidebarBackground = {
     backgroundImage: `url("${sidebarBgImage}")`,

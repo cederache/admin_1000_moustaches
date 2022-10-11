@@ -1,12 +1,12 @@
-import { AnnouncementCard } from "components/Card";
-import MapWithBubbles from "components/MapWithBubbles";
-import Page from "components/Page";
-import { IconWidget, NumberWidget } from "components/Widget";
+import { AnnouncementCard } from "../components/Card";
+import MapWithBubbles from "../components/MapWithBubbles";
+import Page from "../components/Page";
+import { IconWidget, NumberWidget } from "../components/Widget";
 import React from "react";
 import { MdRateReview, MdShare, MdThumbUp } from "react-icons/md";
 import InfiniteCalendar from "react-infinite-calendar";
 import { Card, CardBody, CardGroup, CardHeader, Col, Row } from "reactstrap";
-import { getColor } from "utils/colors";
+import { getColor } from "../utils/colors";
 
 const today = new Date();
 const lastWeek = new Date(

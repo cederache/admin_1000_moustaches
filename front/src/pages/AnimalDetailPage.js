@@ -1,4 +1,4 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -14,12 +14,18 @@ import {
 import AnimalsManager from "../managers/animals.manager";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment } from "react-icons/md";
+import {
+    MdRefresh,
+    MdAssignment,
+    MdOutlineModeEdit,
+    MdSave,
+} from "react-icons/md";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
     const [animal, setAnimal] = useState(null);
     const [animalToHostFamilies, setAnimalToHostFamilies] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -30,13 +36,12 @@ function AnimalDetailPage({ match, ...props }) {
         AnimalsManager.getById(animalId)
             .then(setAnimal)
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -45,13 +50,12 @@ function AnimalDetailPage({ match, ...props }) {
         HostFamiliesManager.getByAnimalId(animalId)
             .then(setAnimalToHostFamilies)
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -70,6 +74,29 @@ function AnimalDetailPage({ match, ...props }) {
         );
     };
 
+    const save = () => {
+        setIsEditing(false);
+
+        // Send new data to API
+        AnimalsManager.update(animal)
+            .then(() => {
+                getAnimal();
+                // notificationSystem.addNotification({
+                //     message: "Animal mis à jour",
+                //     level: "success",
+                // });
+            })
+            .catch((err) => {
+                console.error(err);
+                getAnimal();
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la mise à jour des données",
+                //     level: "error",
+                // });
+            });
+    };
+
     let content = <div>Chargement...</div>;
 
     if (animal === undefined) {
@@ -81,7 +108,20 @@ function AnimalDetailPage({ match, ...props }) {
             <div>
                 <Row className={"justify-content-end"}>
                     <Col xs={"auto"}>
-                        <Button onClick={refresh}>
+                        {!isEditing && (
+                            <Button
+                                color="primary"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                <MdOutlineModeEdit />
+                            </Button>
+                        )}
+                        {isEditing && (
+                            <Button color="success" onClick={() => save()}>
+                                <MdSave />
+                            </Button>
+                        )}
+                        <Button className="ml-2" onClick={refresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
@@ -104,21 +144,21 @@ function AnimalDetailPage({ match, ...props }) {
                                         <Label>ICAD</Label>
                                         <Input
                                             value={animal.icad || "-"}
-                                            readOnly
+                                            readOnly={!isEditing}
                                         />
                                     </Col>
                                     <Col xs={12}>
                                         <Label>Espèce</Label>
                                         <Input
                                             value={animal.species || "-"}
-                                            readOnly
+                                            readOnly={!isEditing}
                                         />
                                     </Col>
                                     <Col xs={12}>
                                         <Label>Race</Label>
                                         <Input
                                             value={animal.race || "-"}
-                                            readOnly
+                                            readOnly={!isEditing}
                                         />
                                     </Col>
                                 </Row>
@@ -128,13 +168,13 @@ function AnimalDetailPage({ match, ...props }) {
                             <Col xs={6}>
                                 <Label>Date de naissance</Label>
                                 {(animal.birthdate || {}).input === null && (
-                                    <Input value="-" readOnly />
+                                    <Input value="-" readOnly={!isEditing} />
                                 )}
                                 {(animal.birthdate || {}).input !== null && (
                                     <Input
                                         type="date"
                                         value={animal.birthdate.input}
-                                        readOnly
+                                        readOnly={!isEditing}
                                     />
                                 )}
                             </Col>
@@ -143,7 +183,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={animal.distinctive_signs || "-"}
-                                    readOnly
+                                    readOnly={!isEditing}
                                 />
                             </Col>
                         </Row>
@@ -151,13 +191,13 @@ function AnimalDetailPage({ match, ...props }) {
                             <Col xs={6}>
                                 <Label>Date de PEC</Label>
                                 {(animal.entry_date || {}).input === null && (
-                                    <Input value="-" readOnly />
+                                    <Input value="-" readOnly={!isEditing} />
                                 )}
                                 {(animal.entry_date || {}).input !== null && (
                                     <Input
                                         type="date"
                                         value={animal.entry_date.input}
-                                        readOnly
+                                        readOnly={!isEditing}
                                     />
                                 )}
                             </Col>
@@ -166,7 +206,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={animal.place_of_care || "-"}
-                                    readOnly
+                                    readOnly={!isEditing}
                                 />
                             </Col>
                         </Row>
@@ -176,7 +216,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={animal.reason_for_care || "-"}
-                                    readOnly
+                                    readOnly={!isEditing}
                                 />
                             </Col>
                             <Col xs={6}>
@@ -184,7 +224,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={animal.care_infos || "-"}
-                                    readOnly
+                                    readOnly={!isEditing}
                                 />
                             </Col>
                         </Row>
@@ -192,13 +232,13 @@ function AnimalDetailPage({ match, ...props }) {
                             <Col xs={6}>
                                 <Label>Date de sortie</Label>
                                 {(animal.exit_date || {}).input === null && (
-                                    <Input value="-" readOnly />
+                                    <Input value="-" readOnly={!isEditing} />
                                 )}
                                 {(animal.exit_date || {}).input !== null && (
                                     <Input
                                         type="date"
                                         value={animal.exit_date.input}
-                                        readOnly
+                                        readOnly={!isEditing}
                                     />
                                 )}
                             </Col>
@@ -207,7 +247,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={animal.exit_reason || "-"}
-                                    readOnly
+                                    readOnly={!isEditing}
                                 />
                             </Col>
                         </Row>
@@ -215,13 +255,13 @@ function AnimalDetailPage({ match, ...props }) {
                             <Col xs={6}>
                                 <Label>Date de décès</Label>
                                 {(animal.death_date || {}).input === null && (
-                                    <Input value="-" readOnly />
+                                    <Input value="-" readOnly={!isEditing} />
                                 )}
                                 {(animal.death_date || {}).input !== null && (
                                     <Input
                                         type="date"
                                         value={animal.death_date.input}
-                                        readOnly
+                                        readOnly={!isEditing}
                                     />
                                 )}
                             </Col>
@@ -230,7 +270,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={animal.death_reason || "-"}
-                                    readOnly
+                                    readOnly={!isEditing}
                                 />
                             </Col>
                         </Row>

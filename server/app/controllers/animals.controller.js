@@ -35,7 +35,17 @@ exports.findOne = (req, res) => {
 
 // Update a Animals identified by the id in the request
 exports.update = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  Animals.updateById(id, req.body, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while updating animal with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete a Animals with the specified id in the request

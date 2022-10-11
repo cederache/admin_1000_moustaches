@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "utils/propTypes";
+import PropTypes from "../utils/propTypes";
 
 import { Media, Button } from "reactstrap";
 

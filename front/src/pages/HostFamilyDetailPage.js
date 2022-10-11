@@ -1,4 +1,4 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -13,7 +13,12 @@ import {
 } from "reactstrap";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment } from "react-icons/md";
+import {
+    MdRefresh,
+    MdAssignment,
+    MdOutlineModeEdit,
+    MdSave,
+} from "react-icons/md";
 import { nullableBoolToString } from "../utils/nullableBool";
 import AnimalsManager from "../managers/animals.manager";
 
@@ -21,6 +26,7 @@ function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
     const [hostFamily, setHostFamily] = useState(null);
     const [animalsToHostFamily, setAnimalsToHostFamily] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -31,13 +37,12 @@ function HostFamilyDetailPage({ match, ...props }) {
         HostFamiliesManager.getById(hostFamilyId)
             .then(setHostFamily)
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -46,13 +51,12 @@ function HostFamilyDetailPage({ match, ...props }) {
         AnimalsManager.getByHostFamilyId(hostFamilyId)
             .then(setAnimalsToHostFamily)
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -69,6 +73,27 @@ function HostFamilyDetailPage({ match, ...props }) {
         props.history.push(`/animals/${animalToHostFamily.animal_id}`);
     };
 
+    const save = () => {
+        // Send new data to API
+        HostFamiliesManager.update(hostFamily)
+            .then(() => {
+                getHostFamily();
+                // notificationSystem.addNotification({
+                //     message: "Famille d'Accueil mis à jour",
+                //     level: "success",
+                // });
+            })
+            .catch((err) => {
+                console.error(err);
+                getHostFamily();
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la mise à jour des données",
+                //     level: "error",
+                // });
+            });
+    };
+
     let content = <div>Chargement...</div>;
 
     if (hostFamily === undefined) {
@@ -80,7 +105,20 @@ function HostFamilyDetailPage({ match, ...props }) {
             <div>
                 <Row className={"justify-content-end"}>
                     <Col xs={"auto"}>
-                        <Button onClick={refresh}>
+                        {!isEditing && (
+                            <Button
+                                color="primary"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                <MdOutlineModeEdit />
+                            </Button>
+                        )}
+                        {isEditing && (
+                            <Button color="success" onClick={() => save()}>
+                                <MdSave />
+                            </Button>
+                        )}
+                        <Button className="ml-2" onClick={refresh}>
                             <MdRefresh />
                         </Button>
                     </Col>

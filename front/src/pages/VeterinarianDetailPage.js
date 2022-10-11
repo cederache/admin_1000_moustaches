@@ -1,4 +1,4 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -34,13 +34,12 @@ function VeterinarianDetailPage({ match, ...props }) {
         VeterinariansManager.getById(vetId)
             .then(setVeterinarian)
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -55,19 +54,19 @@ function VeterinarianDetailPage({ match, ...props }) {
         VeterinariansManager.update(veterinarian)
             .then(() => {
                 getVeterinarian();
-                notificationSystem.addNotification({
-                    message: "Vétérinaire mis à jour",
-                    level: "success",
-                });
+                // notificationSystem.addNotification({
+                //     message: "Vétérinaire mis à jour",
+                //     level: "success",
+                // });
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la mise à jour des données",
-                    level: "error",
-                });
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la mise à jour des données",
+                //     level: "error",
+                // });
             });
     };
 

@@ -1,4 +1,4 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import AnimalsManager from "../managers/animals.manager";
@@ -11,6 +11,10 @@ function AnimalsPage({ ...props }) {
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState([]);
 
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
+
     const getAllAnimals = () => {
         AnimalsManager.getAll()
             .then((animals) => {
@@ -21,13 +25,12 @@ function AnimalsPage({ ...props }) {
                 setFilteredAnimals(animals);
             })
             .catch((err) => {
-                console.log(err);
-                getVeterinarian();
-                notificationSystem.addNotification({
-                    message:
-                        "Une erreur s'est produite pendant la récupération des données",
-                    level: "error",
-                });
+                console.error(err);
+                // notificationSystem.addNotification({
+                //     message:
+                //         "Une erreur s'est produite pendant la récupération des données",
+                //     level: "error",
+                // });
             });
     };
 
@@ -50,8 +53,11 @@ function AnimalsPage({ ...props }) {
     return (
         <Page
             className="AnimalsPage"
-            title="Liste des animaux"
+            title="Liste des Animaux"
             breadcrumbs={[{ name: "Animaux", active: true }]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             <Row>
                 <Col>
@@ -88,7 +94,7 @@ function AnimalsPage({ ...props }) {
                         </thead>
                         <tbody>
                             {filteredAnimals.map((animal, index) => (
-                                <tr>
+                                <tr key={index}>
                                     <th scope="row">{animal.name}</th>
                                     <td>{animal.sexe}</td>
                                     <td>{animal.icad}</td>

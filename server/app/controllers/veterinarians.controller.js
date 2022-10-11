@@ -38,8 +38,6 @@ exports.findOne = (req, res) => {
 // Update a Veterinarian identified by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-  res.status(500).send({});
-  return;
 
   Veterinarians.updateById(id, req.body, (err, data) => {
     if (err)
