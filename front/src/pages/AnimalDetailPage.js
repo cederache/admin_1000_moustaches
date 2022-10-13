@@ -37,11 +37,11 @@ function AnimalDetailPage({ match, ...props }) {
             .then(setAnimal)
             .catch((err) => {
                 console.error(err);
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la récupération des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
@@ -51,11 +51,11 @@ function AnimalDetailPage({ match, ...props }) {
             .then(setAnimalToHostFamilies)
             .catch((err) => {
                 console.error(err);
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la récupération des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
@@ -81,19 +81,19 @@ function AnimalDetailPage({ match, ...props }) {
         AnimalsManager.update(animal)
             .then(() => {
                 getAnimal();
-                // notificationSystem.addNotification({
-                //     message: "Animal mis à jour",
-                //     level: "success",
-                // });
+                notificationSystem.addNotification({
+                    message: "Animal mis à jour",
+                    level: "success",
+                });
             })
             .catch((err) => {
                 console.error(err);
                 getAnimal();
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la mise à jour des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la mise à jour des données",
+                    level: "error",
+                });
             });
     };
 

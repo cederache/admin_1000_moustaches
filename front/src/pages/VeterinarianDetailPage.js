@@ -35,11 +35,11 @@ function VeterinarianDetailPage({ match, ...props }) {
             .then(setVeterinarian)
             .catch((err) => {
                 console.error(err);
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la récupération des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
@@ -54,19 +54,19 @@ function VeterinarianDetailPage({ match, ...props }) {
         VeterinariansManager.update(veterinarian)
             .then(() => {
                 getVeterinarian();
-                // notificationSystem.addNotification({
-                //     message: "Vétérinaire mis à jour",
-                //     level: "success",
-                // });
+                notificationSystem.addNotification({
+                    message: "Vétérinaire mis à jour",
+                    level: "success",
+                });
             })
             .catch((err) => {
                 console.error(err);
                 getVeterinarian();
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la mise à jour des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la mise à jour des données",
+                    level: "error",
+                });
             });
     };
 

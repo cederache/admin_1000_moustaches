@@ -38,11 +38,11 @@ function HostFamilyDetailPage({ match, ...props }) {
             .then(setHostFamily)
             .catch((err) => {
                 console.error(err);
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la récupération des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
@@ -52,11 +52,11 @@ function HostFamilyDetailPage({ match, ...props }) {
             .then(setAnimalsToHostFamily)
             .catch((err) => {
                 console.error(err);
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la récupération des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
@@ -78,19 +78,19 @@ function HostFamilyDetailPage({ match, ...props }) {
         HostFamiliesManager.update(hostFamily)
             .then(() => {
                 getHostFamily();
-                // notificationSystem.addNotification({
-                //     message: "Famille d'Accueil mis à jour",
-                //     level: "success",
-                // });
+                notificationSystem.addNotification({
+                    message: "Famille d'Accueil mis à jour",
+                    level: "success",
+                });
             })
             .catch((err) => {
                 console.error(err);
                 getHostFamily();
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la mise à jour des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la mise à jour des données",
+                    level: "error",
+                });
             });
     };
 

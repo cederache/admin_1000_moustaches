@@ -26,11 +26,11 @@ function AnimalsPage({ ...props }) {
             })
             .catch((err) => {
                 console.error(err);
-                // notificationSystem.addNotification({
-                //     message:
-                //         "Une erreur s'est produite pendant la récupération des données",
-                //     level: "error",
-                // });
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
