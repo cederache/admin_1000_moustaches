@@ -37,11 +37,5 @@ glob.sync("./app/routes/**/*.js").forEach(function (file) {
   require(path.resolve(file))(app);
 });
 
-// set port, listen for requests
-// const PORT = process.env.PORT || 3001;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}.`);
-// });
-
 // Expose the API as a function
 exports.api = functions.https.onRequest(app);
