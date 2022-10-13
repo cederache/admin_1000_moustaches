@@ -43,7 +43,7 @@ class VeterinariansManager {
     static update = (vet) => {
         this.dateFields.forEach((dateField) => {
             if (
-                vat[`${dateField}_object`]["input"] === undefined ||
+                vet[`${dateField}_object`]["input"] === undefined ||
                 vet[`${dateField}_object`]["input"] === null
             ) {
                 vet[dateField] = null;
