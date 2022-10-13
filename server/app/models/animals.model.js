@@ -112,8 +112,8 @@ Animals.updateById = (id, animal, result) => {
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, { id: id, ...animal });
+      result(null, { id: id, ...animal });
     }
   );
 };

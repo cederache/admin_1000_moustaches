@@ -3,8 +3,10 @@ import moment from "moment";
 const API_URL = process.env.REACT_APP_API_URL;
 
 class HostFamiliesManager {
+    static dateField = ["entry_date", "exit_date"];
+
     static format = (hostFamily) => {
-        ["entry_date", "exit_date"].forEach((date) => {
+        this.dateFields.forEach((date) => {
             const rawValue = hostFamily[date];
             hostFamily[date] = {};
             hostFamily[date]["rawValue"] = rawValue;

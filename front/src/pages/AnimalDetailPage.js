@@ -143,22 +143,40 @@ function AnimalDetailPage({ match, ...props }) {
                                     <Col xs={12}>
                                         <Label>ICAD</Label>
                                         <Input
-                                            value={animal.icad || "-"}
+                                            value={animal.icad}
                                             readOnly={!isEditing}
+                                            onChange={(evt) =>
+                                                setAnimal({
+                                                    ...animal,
+                                                    icad: evt.target.value,
+                                                })
+                                            }
                                         />
                                     </Col>
                                     <Col xs={12}>
                                         <Label>Espèce</Label>
                                         <Input
-                                            value={animal.species || "-"}
+                                            value={animal.species}
                                             readOnly={!isEditing}
+                                            onChange={(evt) =>
+                                                setAnimal({
+                                                    ...animal,
+                                                    species: evt.target.value,
+                                                })
+                                            }
                                         />
                                     </Col>
                                     <Col xs={12}>
                                         <Label>Race</Label>
                                         <Input
-                                            value={animal.race || "-"}
+                                            value={animal.race}
                                             readOnly={!isEditing}
+                                            onChange={(evt) =>
+                                                setAnimal({
+                                                    ...animal,
+                                                    race: evt.target.value,
+                                                })
+                                            }
                                         />
                                     </Col>
                                 </Row>
@@ -167,46 +185,66 @@ function AnimalDetailPage({ match, ...props }) {
                         <Row>
                             <Col xs={6}>
                                 <Label>Date de naissance</Label>
-                                {(animal.birthdate || {}).input === null && (
-                                    <Input value="-" readOnly={!isEditing} />
-                                )}
-                                {(animal.birthdate || {}).input !== null && (
-                                    <Input
-                                        type="date"
-                                        value={animal.birthdate.input}
-                                        readOnly={!isEditing}
-                                    />
-                                )}
+                                <Input
+                                    type="date"
+                                    value={animal.birthdate_object.input}
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            birthdate_object: {
+                                                ...animal.birthdate_object,
+                                                input: evt.target.value,
+                                            },
+                                        })
+                                    }
+                                />
                             </Col>
                             <Col xs={6}>
                                 <Label>Signes distinctifs</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.distinctive_signs || "-"}
+                                    value={animal.distinctive_signs}
                                     readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            distinctive_signs: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
                         <Row>
                             <Col xs={6}>
                                 <Label>Date de PEC</Label>
-                                {(animal.entry_date || {}).input === null && (
-                                    <Input value="-" readOnly={!isEditing} />
-                                )}
-                                {(animal.entry_date || {}).input !== null && (
-                                    <Input
-                                        type="date"
-                                        value={animal.entry_date.input}
-                                        readOnly={!isEditing}
-                                    />
-                                )}
+                                <Input
+                                    type="date"
+                                    value={animal.entry_date_object.input}
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            entry_date_object: {
+                                                ...animal.entry_date_object,
+                                                input: evt.target.value,
+                                            },
+                                        })
+                                    }
+                                />
                             </Col>
                             <Col xs={6}>
                                 <Label>Lieu de PEC</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.place_of_care || "-"}
+                                    value={animal.place_of_care}
                                     readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            place_of_care: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -215,62 +253,94 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Label>Raisons de PEC</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.reason_for_care || "-"}
+                                    value={animal.reason_for_care}
                                     readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            reason_for_care: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={6}>
                                 <Label>Informations de PEC</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.care_infos || "-"}
+                                    value={animal.care_infos}
                                     readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            care_infos: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
                         <Row>
                             <Col xs={6}>
                                 <Label>Date de sortie</Label>
-                                {(animal.exit_date || {}).input === null && (
-                                    <Input value="-" readOnly={!isEditing} />
-                                )}
-                                {(animal.exit_date || {}).input !== null && (
-                                    <Input
-                                        type="date"
-                                        value={animal.exit_date.input}
-                                        readOnly={!isEditing}
-                                    />
-                                )}
+                                <Input
+                                    type="date"
+                                    value={animal.exit_date_object.input}
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            exit_date_object: {
+                                                ...animal.exit_date_object,
+                                                input: evt.target.value,
+                                            },
+                                        })
+                                    }
+                                />
                             </Col>
                             <Col xs={6}>
                                 <Label>Raison de sortie</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.exit_reason || "-"}
+                                    value={animal.exit_reason}
                                     readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            exit_reason: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
                         <Row>
                             <Col xs={6}>
                                 <Label>Date de décès</Label>
-                                {(animal.death_date || {}).input === null && (
-                                    <Input value="-" readOnly={!isEditing} />
-                                )}
-                                {(animal.death_date || {}).input !== null && (
-                                    <Input
-                                        type="date"
-                                        value={animal.death_date.input}
-                                        readOnly={!isEditing}
-                                    />
-                                )}
+                                <Input
+                                    type="date"
+                                    value={animal.death_date_object.input}
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            death_date_object: {
+                                                ...animal.death_date_object,
+                                                input: evt.target.value,
+                                            },
+                                        })
+                                    }
+                                />
                             </Col>
                             <Col xs={6}>
                                 <Label>Raison du décès</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.death_reason || "-"}
+                                    value={animal.death_reason}
                                     readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setAnimal({
+                                            ...animal,
+                                            death_reason: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>

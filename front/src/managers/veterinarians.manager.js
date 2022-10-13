@@ -3,8 +3,10 @@ import moment from "moment";
 const API_URL = process.env.REACT_APP_API_URL;
 
 class VeterinariansManager {
+    static dateFields = [];
+
     static format = (vet) => {
-        [].forEach((date) => {
+        this.dateFields.forEach((date) => {
             const rawValue = vet[date];
             vet[date] = {};
             vet[date]["rawValue"] = rawValue;
@@ -39,6 +41,19 @@ class VeterinariansManager {
     };
 
     static update = (vet) => {
+        this.dateFields.forEach((dateField) => {
+            if (
+                vat[`${dateField}_object`]["input"] === undefined ||
+                vet[`${dateField}_object`]["input"] === null
+            ) {
+                vet[dateField] = null;
+            } else {
+                vet[dateField] = moment(
+                    vet[`${dateField}_object`]["input"]
+                ).format("YYYYMMDD");
+            }
+        });
+
         return fetch(`${API_URL}/veterinarians/${vet.id}`, {
             method: "PUT",
             body: JSON.stringify(vet),
