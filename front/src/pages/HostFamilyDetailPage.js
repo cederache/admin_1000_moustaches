@@ -317,14 +317,15 @@ function HostFamilyDetailPage({ match, ...props }) {
                                             <td>
                                                 {
                                                     animalToHostFamily
-                                                        .host_entry_date
+                                                        .host_entry_date_object
                                                         .readable
                                                 }
                                             </td>
                                             <td>
                                                 {
                                                     animalToHostFamily
-                                                        .host_exit_date.readable
+                                                        .host_exit_date_object
+                                                        .readable
                                                 }
                                             </td>
                                             <td>

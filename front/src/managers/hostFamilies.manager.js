@@ -3,16 +3,16 @@ import moment from "moment";
 const API_URL = process.env.REACT_APP_API_URL;
 
 class HostFamiliesManager {
-    static dateField = ["entry_date", "exit_date"];
+    static dateFields = ["entry_date", "exit_date"];
 
     static format = (hostFamily) => {
         this.dateFields.forEach((date) => {
             const rawValue = hostFamily[date];
-            hostFamily[date] = {};
-            hostFamily[date]["rawValue"] = rawValue;
-            hostFamily[date]["readable"] =
+            hostFamily[`${date}_object`] = {};
+            hostFamily[`${date}_object`]["rawValue"] = rawValue;
+            hostFamily[`${date}_object`]["readable"] =
                 rawValue != null ? moment(rawValue).format("DD/MM/YYYY") : null;
-            hostFamily[date]["input"] =
+            hostFamily[`${date}_object`]["input"] =
                 rawValue != null ? moment(rawValue).format("YYYY-MM-DD") : null;
         });
         hostFamily[
