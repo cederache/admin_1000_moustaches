@@ -19,6 +19,7 @@ import {
     MdSave,
 } from "react-icons/md";
 import SourceLink from "../components/SourceLink";
+import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
 
 function VeterinarianDetailPage({ match, ...props }) {
     const vetId = match.params.id;
@@ -165,18 +166,16 @@ function VeterinarianDetailPage({ match, ...props }) {
                         <Row>
                             <Col xs={3}>
                                 <Label>Gestion des urgences</Label>
-                                <Input
-                                    value={
-                                        veterinarian.emergencies === true
-                                            ? "Oui"
-                                            : veterinarian.emergencies === false
-                                            ? "Non"
-                                            : "NSP"
-                                    }
+                                <br />
+                                <BooleanNullableDropdown
+                                    value={veterinarian.emergencies}
                                     readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        console.log(evt.target.value)
-                                    }
+                                    onChange={(newValue) => {
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            emergencies: newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                             <Col xs={9}>

@@ -21,6 +21,8 @@ import {
 } from "react-icons/md";
 import { nullableBoolToString } from "../utils/nullableBool";
 import AnimalsManager from "../managers/animals.manager";
+import NullableDropdown from "../components/NullableDropdown";
+import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
@@ -138,7 +140,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Téléphone</Label>
                                 <Input
                                     type="phone"
-                                    value={hostFamily.phone}
+                                    value={hostFamily.phone || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
@@ -152,7 +154,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>E-mail</Label>
                                 <Input
                                     type="mail"
-                                    value={hostFamily.mail}
+                                    value={hostFamily.mail || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
@@ -167,7 +169,9 @@ function HostFamilyDetailPage({ match, ...props }) {
                             <Col xs={12}>
                                 <Label>Pseudo</Label>
                                 <Input
-                                    value={hostFamily.social_network_alias}
+                                    value={
+                                        hostFamily.social_network_alias || ""
+                                    }
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
@@ -183,7 +187,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                             <Col xs={4}>
                                 <Label>Nombre d'enfant</Label>
                                 <Input
-                                    value={hostFamily.nb_children}
+                                    value={hostFamily.nb_children || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
@@ -197,7 +201,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Informations enfant(s)</Label>
                                 <Input
                                     type="textarea"
-                                    value={hostFamily.children_infos}
+                                    value={hostFamily.children_infos || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
@@ -213,7 +217,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Informations animaux</Label>
                                 <Input
                                     type="textarea"
-                                    value={hostFamily.animals_info}
+                                    value={hostFamily.animals_info || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
@@ -227,58 +231,51 @@ function HostFamilyDetailPage({ match, ...props }) {
                         <Row>
                             <Col xs={4}>
                                 <Label>Permis de conduire</Label>
-                                <Input
-                                    value={nullableBoolToString(
-                                        hostFamily.driver_license,
-                                        "Oui",
-                                        "Non",
-                                        "NSP"
-                                    )}
+                                <br />
+                                <BooleanNullableDropdown
+                                    value={hostFamily.driver_license}
                                     readOnly={!isEditing}
-                                    onChange={(evt) =>
+                                    onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
-                                            driver_license: evt.target.value,
-                                        })
-                                    }
+                                            driver_license: newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                             <Col xs={4}>
                                 <Label>Peut donner soins véto</Label>
-                                <Input
-                                    value={nullableBoolToString(
-                                        hostFamily.can_provide_veterinary_care,
-                                        "Oui",
-                                        "Non",
-                                        "NSP"
-                                    )}
+                                <br />
+                                <BooleanNullableDropdown
+                                    value={
+                                        hostFamily.can_provide_veterinary_care
+                                    }
                                     readOnly={!isEditing}
-                                    onChange={(evt) =>
+                                    onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
                                             can_provide_veterinary_care:
-                                                evt.target.value,
-                                        })
-                                    }
+                                                newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                             <Col xs={4}>
                                 <Label>Peut sociabiliser</Label>
-                                <Input
-                                    value={nullableBoolToString(
-                                        hostFamily.can_provide_sociabilisation,
-                                        "Oui",
-                                        "Non",
-                                        "NSP"
-                                    )}
+                                <br />
+                                <BooleanNullableDropdown
+                                    class="form-control"
+                                    value={
+                                        hostFamily.can_provide_sociabilisation
+                                    }
                                     readOnly={!isEditing}
-                                    onChange={(evt) =>
+                                    onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
                                             can_provide_sociabilisation:
-                                                evt.target.value,
-                                        })
-                                    }
+                                                newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                         </Row>
@@ -287,58 +284,44 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>
                                     Peut accueillir des animaux handicapés
                                 </Label>
-                                <Input
-                                    value={nullableBoolToString(
-                                        hostFamily.can_host_disable_animal,
-                                        "Oui",
-                                        "Non",
-                                        "NSP"
-                                    )}
+                                <br />
+                                <BooleanNullableDropdown
+                                    value={hostFamily.can_host_disable_animal}
                                     readOnly={!isEditing}
-                                    onChange={(evt) =>
+                                    onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
-                                            can_host_disable_animal:
-                                                evt.target.value,
-                                        })
-                                    }
+                                            can_host_disable_animal: newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                             <Col xs={4}>
                                 <Label>Peut donner des soins de nuit</Label>
-                                <Input
-                                    value={nullableBoolToString(
-                                        hostFamily.can_provide_night_care,
-                                        "Oui",
-                                        "Non",
-                                        "NSP"
-                                    )}
+                                <br />
+                                <BooleanNullableDropdown
+                                    value={hostFamily.can_provide_night_care}
                                     readOnly={!isEditing}
-                                    onChange={(evt) =>
+                                    onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
-                                            can_provide_night_care:
-                                                evt.target.value,
-                                        })
-                                    }
+                                            can_provide_night_care: newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                             <Col xs={4}>
                                 <Label>Peut isoler</Label>
-                                <Input
-                                    value={nullableBoolToString(
-                                        hostFamily.can_isolate,
-                                        "Oui",
-                                        "Non",
-                                        "NSP"
-                                    )}
+                                <br />
+                                <BooleanNullableDropdown
+                                    value={hostFamily.can_isolate}
                                     readOnly={!isEditing}
-                                    onChange={(evt) =>
+                                    onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
-                                            can_isolate: evt.target.value,
-                                        })
-                                    }
+                                            can_isolate: newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                         </Row>
@@ -347,7 +330,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Observations</Label>
                                 <Input
                                     type="textarea"
-                                    value={hostFamily.observations}
+                                    value={hostFamily.observations || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
@@ -363,7 +346,9 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Informations sur le logement</Label>
                                 <Input
                                     type="textarea"
-                                    value={hostFamily.housing_informations}
+                                    value={
+                                        hostFamily.housing_informations || ""
+                                    }
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
