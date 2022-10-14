@@ -143,7 +143,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     <Col xs={12}>
                                         <Label>ICAD</Label>
                                         <Input
-                                            value={animal.icad}
+                                            value={animal.icad || ""}
                                             readOnly={!isEditing}
                                             onChange={(evt) =>
                                                 setAnimal({
@@ -169,7 +169,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     <Col xs={12}>
                                         <Label>Race</Label>
                                         <Input
-                                            value={animal.race}
+                                            value={animal.race || ""}
                                             readOnly={!isEditing}
                                             onChange={(evt) =>
                                                 setAnimal({
@@ -204,7 +204,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Label>Signes distinctifs</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.distinctive_signs}
+                                    value={animal.distinctive_signs || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setAnimal({
@@ -237,7 +237,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Label>Lieu de PEC</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.place_of_care}
+                                    value={animal.place_of_care || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setAnimal({
@@ -253,7 +253,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Label>Raisons de PEC</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.reason_for_care}
+                                    value={animal.reason_for_care || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setAnimal({
@@ -267,7 +267,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Label>Informations de PEC</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.care_infos}
+                                    value={animal.care_infos || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setAnimal({
@@ -300,7 +300,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Label>Raison de sortie</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.exit_reason}
+                                    value={animal.exit_reason || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setAnimal({
@@ -333,7 +333,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <Label>Raison du décès</Label>
                                 <Input
                                     type="textarea"
-                                    value={animal.death_reason}
+                                    value={animal.death_reason || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setAnimal({
@@ -375,12 +375,14 @@ function AnimalDetailPage({ match, ...props }) {
                                             <td>
                                                 {
                                                     animalToHostFamily
-                                                        .entry_date.readable
+                                                        .entry_date_object
+                                                        .readable
                                                 }
                                             </td>
                                             <td>
                                                 {
-                                                    animalToHostFamily.exit_date
+                                                    animalToHostFamily
+                                                        .exit_date_object
                                                         .readable
                                                 }
                                             </td>
