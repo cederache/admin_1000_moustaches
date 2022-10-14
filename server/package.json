@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server",
-    "deploy": "./deploy.sh"
+    "start": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions"
   },
   "keywords": [],
   "author": "",
