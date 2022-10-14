@@ -36,7 +36,17 @@ exports.findOne = (req, res) => {
 
 // Update a HostFamilies identified by the id in the request
 exports.update = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  HostFamilies.updateById(id, req.body, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while updating host family with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete a HostFamilies with the specified id in the request

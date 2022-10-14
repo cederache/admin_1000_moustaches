@@ -18,9 +18,6 @@ module.exports = (app) => {
     animalsToHostFamilies.findAllWithHostFamilyId
   );
 
-  // Retrieve a single AnimalsToHostFamilies with id
-  router.get("/:id", animalsToHostFamilies.findOne);
-
   // Update a AnimalsToHostFamilies with id
   router.put("/:id", animalsToHostFamilies.update);
 

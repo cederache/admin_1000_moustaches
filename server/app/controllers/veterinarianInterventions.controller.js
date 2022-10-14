@@ -37,7 +37,17 @@ exports.findOne = (req, res) => {
 
 // Update a VeterinarianInterventions identified by the id in the request
 exports.update = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  VeterinarianInterventions.updateById(id, req.body, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while updating veterinarian intervention with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete a VeterinarianInterventions with the specified id in the request

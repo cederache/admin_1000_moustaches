@@ -1,14 +1,13 @@
 const sql = require("./db.js");
 
 const tableName = "VeterinarianInterventions";
+const fields = ["id", "veterinarian_id", "date", "dsecription", "animal_id"];
 
 // constructor
 const VeterinarianInterventions = function (veterinarianIntervention) {
-  this.id = veterinarianIntervention.id;
-  this.veterinarian_id = veterinarianIntervention.veterinarian_id;
-  this.date = veterinarianIntervention.date;
-  this.dsecription = veterinarianIntervention.description;
-  this.animal_id = veterinarianIntervention.animal_id;
+  fields.forEach((field) => {
+    this[field] = veterinarianIntervention[field];
+  });
 };
 
 VeterinarianInterventions.create = (newEntity, result) => {
@@ -62,10 +61,29 @@ VeterinarianInterventions.getAll = (name, result) => {
   });
 };
 
-VeterinarianInterventions.updateById = (id, animal, result) => {
+VeterinarianInterventions.updateById = (
+  id,
+  veterinarianIntervention,
+  result
+) => {
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
+  });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field} = ?`;
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return veterinarianIntervention[field];
+  });
+  fieldsData.push(id);
+
   sql.query(
-    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
-    [animal.name, id],
+    `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
+    fieldsData,
     (err, res) => {
       if (err) {
         console.log("error: ", err);

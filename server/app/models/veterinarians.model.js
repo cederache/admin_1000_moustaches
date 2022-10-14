@@ -1,19 +1,23 @@
 const sql = require("./db.js");
 
 const tableName = "Veterinarians";
+const fields = [
+  "id",
+  "name",
+  "phone",
+  "mail",
+  "address",
+  "emergencies",
+  "appointment_confirmation_procedure",
+  "invoice_payment_date",
+  "payment_method",
+];
 
 // constructor
 const Veterinarians = function (veterinarian) {
-  this.id = veterinarian.id;
-  this.name = veterinarian.name;
-  this.phone = veterinarian.phone;
-  this.mail = veterinarian.mail;
-  this.address = veterinarian.address;
-  this.emergencies = veterinarian.emergencies;
-  this.appointment_confirmation_procedure =
-    veterinarian.appointment_confirmation_procedure;
-  this.invoice_payment_date = veterinarian.invoice_payment_date;
-  this.payment_method = veterinarian.payment_method;
+  fields.forEach((field) => {
+    this[field] = veterinarian[field];
+  });
 };
 
 Veterinarians.create = (newEntity, result) => {
@@ -68,20 +72,24 @@ Veterinarians.getAll = (name, result) => {
 };
 
 Veterinarians.updateById = (id, vet, result) => {
-  console.log(vet);
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
+  });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field} = ?`;
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return vet[field];
+  });
+  fieldsData.push(id);
+
   sql.query(
-    `UPDATE ${tableName} SET name = ?, phone = ?, mail = ?, address = ?, emergencies = ?, appointment_confirmation_procedure = ?, invoice_payment_date = ?, payment_method = ?  WHERE id = ?`,
-    [
-      vet.name,
-      vet.phone,
-      vet.mail,
-      vet.address,
-      vet.emergencies,
-      vet.appointment_confirmation_procedure,
-      vet.invoice_payment_date,
-      vet.payment_method,
-      id,
-    ],
+    `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
+    fieldsData,
     (err, res) => {
       if (err) {
         console.log("error: ", err);
