@@ -2,7 +2,14 @@ const HostFamilies = require("../models/hostFamilies.model.js");
 
 // Create and Save a new HostFamilies
 exports.create = (req, res) => {
-  res.status(200).send({});
+  HostFamilies.create(req.body, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating a host family.",
+      });
+    } else res.send(data);
+  });
 };
 
 // Retrieve all HostFamilies from the database (with condition).

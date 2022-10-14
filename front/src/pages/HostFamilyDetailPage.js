@@ -19,9 +19,7 @@ import {
     MdOutlineModeEdit,
     MdSave,
 } from "react-icons/md";
-import { nullableBoolToString } from "../utils/nullableBool";
 import AnimalsManager from "../managers/animals.manager";
-import NullableDropdown from "../components/NullableDropdown";
 import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
 
 function HostFamilyDetailPage({ match, ...props }) {
@@ -37,7 +35,7 @@ function HostFamilyDetailPage({ match, ...props }) {
     const getHostFamily = () => {
         setHostFamily(null);
         HostFamiliesManager.getById(hostFamilyId)
-            .then(setHostFamily)
+            .then((hostFamily) => setHostFamily(hostFamily))
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
@@ -63,8 +61,13 @@ function HostFamilyDetailPage({ match, ...props }) {
     };
 
     const refresh = () => {
-        getHostFamily();
-        getAnimalsToHostFamily();
+        if (hostFamilyId !== "new") {
+            getHostFamily();
+            getAnimalsToHostFamily();
+        } else {
+            setHostFamily(HostFamiliesManager.createHostFamily());
+            setIsEditing(true);
+        }
     };
 
     useEffect(() => {
@@ -77,6 +80,35 @@ function HostFamilyDetailPage({ match, ...props }) {
 
     const save = () => {
         setIsEditing(false);
+        if (hostFamilyId === "new") {
+            // Send new data to API
+            HostFamiliesManager.create(hostFamily)
+                .then((updatedHostFamily) => {
+                    notificationSystem.addNotification({
+                        message: "Famille d'Accueil mis à jour",
+                        level: "success",
+                    });
+                    if (hostFamilyId === "new") {
+                        props.history.push(
+                            `/hostFamilies/${updatedHostFamily.id}`
+                        );
+                    } else {
+                        getHostFamily();
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    if (hostFamilyId !== "new") {
+                        getHostFamily();
+                    }
+                    notificationSystem.addNotification({
+                        message:
+                            "Une erreur s'est produite pendant la mise à jour des données",
+                        level: "error",
+                    });
+                });
+            return;
+        }
 
         // Send new data to API
         HostFamiliesManager.update(hostFamily)
@@ -122,9 +154,11 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <MdSave />
                             </Button>
                         )}
-                        <Button className="ml-2" onClick={refresh}>
-                            <MdRefresh />
-                        </Button>
+                        {hostFamilyId !== "new" && (
+                            <Button className="ml-2" onClick={refresh}>
+                                <MdRefresh />
+                            </Button>
+                        )}
                     </Col>
                 </Row>
 
@@ -132,9 +166,44 @@ function HostFamilyDetailPage({ match, ...props }) {
 
                 <Card>
                     <CardHeader>
-                        <h2>{hostFamily.display_name}</h2>
+                        {hostFamilyId === "new" && (
+                            <h2>Nouvelle famille d'accueil</h2>
+                        )}
+                        {hostFamilyId !== "new" && (
+                            <h2>{hostFamily.display_name}</h2>
+                        )}
                     </CardHeader>
                     <CardBody>
+                        {hostFamilyId === "new" && (
+                            <Row>
+                                <Col xs={6}>
+                                    <Label>Prénom</Label>
+                                    <Input
+                                        value={hostFamily.firstname || ""}
+                                        readOnly={!isEditing}
+                                        onChange={(evt) =>
+                                            setHostFamily({
+                                                ...hostFamily,
+                                                firstname: evt.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
+                                <Col xs={6}>
+                                    <Label>Nom</Label>
+                                    <Input
+                                        value={hostFamily.name || ""}
+                                        readOnly={!isEditing}
+                                        onChange={(evt) =>
+                                            setHostFamily({
+                                                ...hostFamily,
+                                                name: evt.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
+                            </Row>
+                        )}
                         <Row>
                             <Col xs={6}>
                                 <Label>Téléphone</Label>
@@ -269,7 +338,6 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Peut sociabiliser</Label>
                                 <br />
                                 <BooleanNullableDropdown
-                                    class="form-control"
                                     value={
                                         hostFamily.can_provide_sociabilisation
                                     }
@@ -370,60 +438,64 @@ function HostFamilyDetailPage({ match, ...props }) {
 
                 <br />
 
-                <Card>
-                    <CardHeader>
-                        <h3>Historique des animaux</h3>
-                    </CardHeader>
-                    <CardBody>
-                        <Table {...{ striped: true }}>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Nom</th>
-                                    <th scope="col">Date d'entrée</th>
-                                    <th scope="col">Date de sortie</th>
-                                    <th scope="col">Fiche de l'animal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {animalsToHostFamily.map(
-                                    (animalToHostFamily, index) => (
-                                        <tr>
-                                            <th scope="row">
-                                                {animalToHostFamily.animal_name}
-                                            </th>
-                                            <td>
-                                                {
-                                                    animalToHostFamily
-                                                        .host_entry_date_object
-                                                        .readable
-                                                }
-                                            </td>
-                                            <td>
-                                                {
-                                                    animalToHostFamily
-                                                        .host_exit_date_object
-                                                        .readable
-                                                }
-                                            </td>
-                                            <td>
-                                                <Button
-                                                    color="info"
-                                                    onClick={() =>
-                                                        showDetail(
-                                                            animalToHostFamily
-                                                        )
+                {hostFamilyId !== "new" && (
+                    <Card>
+                        <CardHeader>
+                            <h3>Historique des animaux</h3>
+                        </CardHeader>
+                        <CardBody>
+                            <Table {...{ striped: true }}>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nom</th>
+                                        <th scope="col">Date d'entrée</th>
+                                        <th scope="col">Date de sortie</th>
+                                        <th scope="col">Fiche de l'animal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {animalsToHostFamily.map(
+                                        (animalToHostFamily, index) => (
+                                            <tr>
+                                                <th scope="row">
+                                                    {
+                                                        animalToHostFamily.animal_name
                                                     }
-                                                >
-                                                    <MdAssignment />
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    )
-                                )}
-                            </tbody>
-                        </Table>
-                    </CardBody>
-                </Card>
+                                                </th>
+                                                <td>
+                                                    {
+                                                        animalToHostFamily
+                                                            .host_entry_date_object
+                                                            .readable
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        animalToHostFamily
+                                                            .host_exit_date_object
+                                                            .readable
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <Button
+                                                        color="info"
+                                                        onClick={() =>
+                                                            showDetail(
+                                                                animalToHostFamily
+                                                            )
+                                                        }
+                                                    >
+                                                        <MdAssignment />
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
+                                </tbody>
+                            </Table>
+                        </CardBody>
+                    </Card>
+                )}
             </div>
         );
     }

@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
 function HostFamiliesPage({ ...props }) {
@@ -34,10 +34,6 @@ function HostFamiliesPage({ ...props }) {
             });
     };
 
-    const showDetail = (hostFamily) => {
-        props.history.push(`/hostFamilies/${hostFamily.id}`);
-    };
-
     useEffect(() => {
         getAllHostFamilies();
     }, []);
@@ -49,6 +45,14 @@ function HostFamiliesPage({ ...props }) {
             })
         );
     }, [searchText]);
+
+    const showDetail = (hostFamily) => {
+        props.history.push(`/hostFamilies/${hostFamily.id}`);
+    };
+
+    const createHostFamily = () => {
+        props.history.push(`/hostFamilies/new`);
+    };
 
     return (
         <Page
@@ -71,7 +75,10 @@ function HostFamiliesPage({ ...props }) {
                     />
                 </Col>
                 <Col xs={"auto"}>
-                    <Button onClick={getAllHostFamilies}>
+                    <Button onClick={createHostFamily} color={"success"}>
+                        <MdPlusOne />
+                    </Button>
+                    <Button className="ml-2" onClick={getAllHostFamilies}>
                         <MdRefresh />
                     </Button>
                 </Col>

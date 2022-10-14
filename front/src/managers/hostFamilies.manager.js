@@ -5,6 +5,18 @@ const API_URL = process.env.REACT_APP_API_URL;
 class HostFamiliesManager {
     static dateFields = ["entry_date", "exit_date"];
 
+    static createHostFamily = () => {
+        const hostFamily = {};
+        this.dateFields.forEach((dateField) => {
+            hostFamily[dateField] = null;
+            hostFamily[`${dateField}_object`] = {
+                readable: null,
+                input: null,
+            };
+        });
+        return hostFamily;
+    };
+
     static format = (hostFamily) => {
         this.dateFields.forEach((date) => {
             const rawValue = hostFamily[date];
@@ -18,6 +30,22 @@ class HostFamiliesManager {
         hostFamily[
             "display_name"
         ] = `${hostFamily.firstname} ${hostFamily.name}`;
+        return hostFamily;
+    };
+
+    static formatForServer = (hostFamily) => {
+        this.dateFields.forEach((dateField) => {
+            if (
+                hostFamily[`${dateField}_object`]["input"] === undefined ||
+                hostFamily[`${dateField}_object`]["input"] === null
+            ) {
+                hostFamily[dateField] = null;
+            } else {
+                hostFamily[dateField] = moment(
+                    hostFamily[`${dateField}_object`]["input"]
+                ).format("YYYYMMDD");
+            }
+        });
         return hostFamily;
     };
 
@@ -60,23 +88,31 @@ class HostFamiliesManager {
             );
     };
 
+    static create = (hostFamily) => {
+        const hostFamilyToUpload = this.formatForServer(hostFamily);
+
+        return fetch(`${API_URL}/hostFamilies`, {
+            method: "POST",
+            body: JSON.stringify(hostFamilyToUpload),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
+            .then(HostFamiliesManager.format);
+    };
+
     static update = (hostFamily) => {
-        this.dateFields.forEach((dateField) => {
-            if (
-                hostFamily[`${dateField}_object`]["input"] === undefined ||
-                hostFamily[`${dateField}_object`]["input"] === null
-            ) {
-                hostFamily[dateField] = null;
-            } else {
-                hostFamily[dateField] = moment(
-                    hostFamily[`${dateField}_object`]["input"]
-                ).format("YYYYMMDD");
-            }
-        });
+        const hostFamilyToUpload = this.formatForServer(hostFamily);
 
         return fetch(`${API_URL}/hostFamilies/${hostFamily.id}`, {
             method: "PUT",
-            body: JSON.stringify(hostFamily),
+            body: JSON.stringify(hostFamilyToUpload),
             headers: {
                 "Content-Type": "application/json",
             },
