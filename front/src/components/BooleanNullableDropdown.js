@@ -8,12 +8,18 @@ const BooleanNullableDropdown = ({ value, onChange, ...props }) => {
             {...{
                 ...props,
                 values: ["Oui", "Non"],
-                value: value === null ? null : value === true ? "Oui" : "Non",
+                value: value === null ? null : value === 1 ? "Oui" : "Non",
+                color:
+                    value === null
+                        ? "warning"
+                        : value == 1
+                        ? "success"
+                        : "danger",
                 onChange: (newValue) => {
                     if (newValue === "Oui") {
-                        onChange(true);
+                        onChange(1);
                     } else if (newValue === "Non") {
-                        onChange(false);
+                        onChange(0);
                     } else {
                         onChange(null);
                     }
