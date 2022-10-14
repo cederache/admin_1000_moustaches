@@ -59,6 +59,36 @@ class HostFamiliesManager {
                 hostFamilies.map(HostFamiliesManager.format)
             );
     };
+
+    static update = (hostFamily) => {
+        this.dateFields.forEach((dateField) => {
+            if (
+                hostFamily[`${dateField}_object`]["input"] === undefined ||
+                hostFamily[`${dateField}_object`]["input"] === null
+            ) {
+                hostFamily[dateField] = null;
+            } else {
+                hostFamily[dateField] = moment(
+                    hostFamily[`${dateField}_object`]["input"]
+                ).format("YYYYMMDD");
+            }
+        });
+
+        return fetch(`${API_URL}/hostFamilies/${hostFamily.id}`, {
+            method: "PUT",
+            body: JSON.stringify(hostFamily),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
+            .then(HostFamiliesManager.format);
+    };
 }
 
 export default HostFamiliesManager;

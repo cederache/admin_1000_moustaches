@@ -74,6 +74,8 @@ function HostFamilyDetailPage({ match, ...props }) {
     };
 
     const save = () => {
+        setIsEditing(false);
+
         // Send new data to API
         HostFamiliesManager.update(hostFamily)
             .then(() => {
@@ -137,7 +139,13 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="phone"
                                     value={hostFamily.phone}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            phone: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={6}>
@@ -145,7 +153,13 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="mail"
                                     value={hostFamily.mail}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            mail: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -154,7 +168,14 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Pseudo</Label>
                                 <Input
                                     value={hostFamily.social_network_alias}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            social_network_alias:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -162,13 +183,14 @@ function HostFamilyDetailPage({ match, ...props }) {
                             <Col xs={4}>
                                 <Label>Nombre d'enfant</Label>
                                 <Input
-                                    value={nullableBoolToString(
-                                        hostFamily.nb_children,
-                                        "Oui",
-                                        "Non",
-                                        "NSP"
-                                    )}
-                                    readOnly
+                                    value={hostFamily.nb_children}
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            nb_children: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={8}>
@@ -176,7 +198,13 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.children_infos}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            children_infos: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -186,7 +214,13 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.animals_info}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            animals_info: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -200,7 +234,13 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         "Non",
                                         "NSP"
                                     )}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            driver_license: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={4}>
@@ -212,7 +252,14 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         "Non",
                                         "NSP"
                                     )}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            can_provide_veterinary_care:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={4}>
@@ -224,7 +271,14 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         "Non",
                                         "NSP"
                                     )}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            can_provide_sociabilisation:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -240,7 +294,14 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         "Non",
                                         "NSP"
                                     )}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            can_host_disable_animal:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={4}>
@@ -252,7 +313,14 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         "Non",
                                         "NSP"
                                     )}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            can_provide_night_care:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={4}>
@@ -264,7 +332,13 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         "Non",
                                         "NSP"
                                     )}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            can_isolate: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -274,7 +348,13 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.observations}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            observations: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -284,7 +364,14 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.housing_informations}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            housing_informations:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
