@@ -187,12 +187,17 @@ function HostFamilyDetailPage({ match, ...props }) {
                             <Col xs={4}>
                                 <Label>Nombre d'enfant</Label>
                                 <Input
-                                    value={hostFamily.nb_children || ""}
+                                    value={
+                                        hostFamily.nb_children?.toString() || ""
+                                    }
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
-                                            nb_children: evt.target.value,
+                                            nb_children:
+                                                evt.target.value === ""
+                                                    ? null
+                                                    : evt.target.value,
                                         })
                                     }
                                 />
@@ -217,12 +222,12 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Informations animaux</Label>
                                 <Input
                                     type="textarea"
-                                    value={hostFamily.animals_info || ""}
+                                    value={hostFamily.animals_infos || ""}
                                     readOnly={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
-                                            animals_info: evt.target.value,
+                                            animals_infos: evt.target.value,
                                         })
                                     }
                                 />
