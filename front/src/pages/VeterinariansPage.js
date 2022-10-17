@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
 function VeterinariansPage({ ...props }) {
@@ -34,13 +34,6 @@ function VeterinariansPage({ ...props }) {
             });
     };
 
-    const showDetail = (veterinarian) => {
-        console.log(
-            `Should show veterinarian details for : ${veterinarian.name}`
-        );
-        props.history.push(`/veterinarians/${veterinarian.id}`);
-    };
-
     useEffect(() => {
         getAllVeterinarians();
     }, []);
@@ -52,6 +45,17 @@ function VeterinariansPage({ ...props }) {
             })
         );
     }, [searchText]);
+
+    const showDetail = (veterinarian) => {
+        console.log(
+            `Should show veterinarian details for : ${veterinarian.name}`
+        );
+        props.history.push(`/veterinarians/${veterinarian.id}`);
+    };
+
+    const createVeterinarian = () => {
+        props.history.push(`/veterinarians/new`);
+    };
 
     return (
         <Page
@@ -74,7 +78,10 @@ function VeterinariansPage({ ...props }) {
                     />
                 </Col>
                 <Col xs={"auto"}>
-                    <Button onClick={getAllVeterinarians}>
+                    <Button onClick={createVeterinarian} color={"success"}>
+                        <MdPlusOne />
+                    </Button>
+                    <Button className="ml-2" onClick={getAllVeterinarians}>
                         <MdRefresh />
                     </Button>
                 </Col>

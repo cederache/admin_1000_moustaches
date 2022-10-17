@@ -10,6 +10,10 @@ import {
     Label,
     Row,
     Table,
+    UncontrolledButtonDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
 } from "reactstrap";
 import AnimalsManager from "../managers/animals.manager";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
@@ -19,13 +23,18 @@ import {
     MdAssignment,
     MdOutlineModeEdit,
     MdSave,
+    MdDelete,
 } from "react-icons/md";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
     const [animal, setAnimal] = useState(null);
     const [animalToHostFamilies, setAnimalToHostFamilies] = useState([]);
+    const [species, setSpecies] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
+    const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+        useState(false);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -59,14 +68,49 @@ function AnimalDetailPage({ match, ...props }) {
             });
     };
 
+    const getSpecies = () => {
+        setSpecies([]);
+        AnimalsManager.getSpecies()
+            .then(setSpecies)
+            .catch((err) => {
+                console.log(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
+    };
+
     const refresh = () => {
-        getAnimal();
-        getHostFamilies();
+        if (animalId !== "new") {
+            getAnimal();
+            getHostFamilies();
+        } else {
+            setAnimal(AnimalsManager.createAnimal());
+            setIsEditing(true);
+        }
+        getSpecies();
     };
 
     useEffect(() => {
         refresh();
     }, []);
+
+    useEffect(() => {
+        if (
+            animalId === "new" &&
+            animal !== null &&
+            species.length > 0 &&
+            animal.species_id === undefined
+        ) {
+            setAnimal({
+                ...animal,
+                species: species[0].name,
+                species_id: species[0].id,
+            });
+        }
+    }, [animal, species]);
 
     const showDetail = (animalToHostFamily) => {
         props.history.push(
@@ -76,6 +120,27 @@ function AnimalDetailPage({ match, ...props }) {
 
     const save = () => {
         setIsEditing(false);
+        if (animalId === "new") {
+            // Send new data to API
+            AnimalsManager.create(animal)
+                .then((updatedAnimal) => {
+                    notificationSystem.addNotification({
+                        message: "Animal créée",
+                        level: "success",
+                    });
+                    props.history.push(`/animals/${updatedAnimal.id}`);
+                    setAnimal(updatedAnimal);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    notificationSystem.addNotification({
+                        message:
+                            "Une erreur s'est produite pendant la création des données",
+                        level: "error",
+                    });
+                });
+            return;
+        }
 
         // Send new data to API
         AnimalsManager.update(animal)
@@ -97,6 +162,26 @@ function AnimalDetailPage({ match, ...props }) {
             });
     };
 
+    const deleteA = () => {
+        AnimalsManager.delete(animal)
+            .then(() => {
+                notificationSystem.addNotification({
+                    message: "Animal supprimé",
+                    level: "success",
+                });
+                props.history.push("/animals");
+            })
+            .catch((err) => {
+                console.error(err);
+                getAnimal();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la suppression des données",
+                    level: "error",
+                });
+            });
+    };
+
     let content = <div>Chargement...</div>;
 
     if (animal === undefined) {
@@ -108,8 +193,19 @@ function AnimalDetailPage({ match, ...props }) {
             <div>
                 <Row className={"justify-content-end"}>
                     <Col xs={"auto"}>
+                        {animalId !== "new" && isEditing && (
+                            <Button
+                                color="danger"
+                                onClick={() =>
+                                    setShowDeleteConfirmationModal(true)
+                                }
+                            >
+                                <MdDelete />
+                            </Button>
+                        )}
                         {!isEditing && (
                             <Button
+                                className="ml-2"
                                 color="primary"
                                 onClick={() => setIsEditing(true)}
                             >
@@ -117,7 +213,11 @@ function AnimalDetailPage({ match, ...props }) {
                             </Button>
                         )}
                         {isEditing && (
-                            <Button color="success" onClick={() => save()}>
+                            <Button
+                                className="ml-2"
+                                color="success"
+                                onClick={() => save()}
+                            >
                                 <MdSave />
                             </Button>
                         )}
@@ -131,9 +231,27 @@ function AnimalDetailPage({ match, ...props }) {
 
                 <Card>
                     <CardHeader>
-                        <h2>{animal.name}</h2>
+                        {animalId === "new" && <h2>Nouvel Animal</h2>}
+                        {animalId !== "new" && <h2>{animal.name}</h2>}
                     </CardHeader>
                     <CardBody>
+                        {animalId === "new" && (
+                            <Row>
+                                <Col xs={12}>
+                                    <Label>Nom</Label>
+                                    <Input
+                                        value={animal.name || ""}
+                                        readOnly={!isEditing}
+                                        onChange={(evt) =>
+                                            setAnimal({
+                                                ...animal,
+                                                name: evt.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
+                            </Row>
+                        )}
                         <Row>
                             <Col xs={6}>
                                 <Label>Photo</Label>
@@ -155,16 +273,42 @@ function AnimalDetailPage({ match, ...props }) {
                                     </Col>
                                     <Col xs={12}>
                                         <Label>Espèce</Label>
-                                        <Input
-                                            value={animal.species}
-                                            readOnly={!isEditing}
-                                            onChange={(evt) =>
-                                                setAnimal({
-                                                    ...animal,
-                                                    species: evt.target.value,
-                                                })
-                                            }
-                                        />
+                                        <br />
+                                        <UncontrolledButtonDropdown
+                                            key={"species"}
+                                        >
+                                            <DropdownToggle
+                                                caret
+                                                color={"primary"}
+                                                className="text-capitalize m-1"
+                                                disabled={!isEditing}
+                                            >
+                                                {animal.species}
+                                            </DropdownToggle>
+                                            <DropdownMenu>
+                                                {species.map((aSpecies) => {
+                                                    return (
+                                                        <DropdownItem
+                                                            active={
+                                                                animal.species_id ===
+                                                                aSpecies.id
+                                                            }
+                                                            onClick={() =>
+                                                                setAnimal({
+                                                                    ...animal,
+                                                                    species:
+                                                                        aSpecies.name,
+                                                                    species_id:
+                                                                        aSpecies.id,
+                                                                })
+                                                            }
+                                                        >
+                                                            {aSpecies.name}
+                                                        </DropdownItem>
+                                                    );
+                                                })}
+                                            </DropdownMenu>
+                                        </UncontrolledButtonDropdown>
                                     </Col>
                                     <Col xs={12}>
                                         <Label>Race</Label>
@@ -347,64 +491,68 @@ function AnimalDetailPage({ match, ...props }) {
                     </CardBody>
                 </Card>
 
-                <br />
+                {animalId !== "new" && (
+                    <>
+                        <br />
 
-                <Card>
-                    <CardHeader>
-                        <h3>Historique des Familles d'Accueil</h3>
-                    </CardHeader>
-                    <CardBody>
-                        <Table {...{ striped: true }}>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Nom Prénom</th>
-                                    <th scope="col">Date d'entrée</th>
-                                    <th scope="col">Date de sortie</th>
-                                    <th scope="col">Fiche de la FA</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {animalToHostFamilies.map(
-                                    (animalToHostFamily, index) => (
+                        <Card>
+                            <CardHeader>
+                                <h3>Historique des Familles d'Accueil</h3>
+                            </CardHeader>
+                            <CardBody>
+                                <Table {...{ striped: true }}>
+                                    <thead>
                                         <tr>
-                                            <th scope="row">
-                                                {
-                                                    animalToHostFamily.display_name
-                                                }
-                                            </th>
-                                            <td>
-                                                {
-                                                    animalToHostFamily
-                                                        .entry_date_object
-                                                        .readable
-                                                }
-                                            </td>
-                                            <td>
-                                                {
-                                                    animalToHostFamily
-                                                        .exit_date_object
-                                                        .readable
-                                                }
-                                            </td>
-                                            <td>
-                                                <Button
-                                                    color="info"
-                                                    onClick={() =>
-                                                        showDetail(
-                                                            animalToHostFamily
-                                                        )
-                                                    }
-                                                >
-                                                    <MdAssignment />
-                                                </Button>
-                                            </td>
+                                            <th scope="col">Nom Prénom</th>
+                                            <th scope="col">Date d'entrée</th>
+                                            <th scope="col">Date de sortie</th>
+                                            <th scope="col">Fiche de la FA</th>
                                         </tr>
-                                    )
-                                )}
-                            </tbody>
-                        </Table>
-                    </CardBody>
-                </Card>
+                                    </thead>
+                                    <tbody>
+                                        {animalToHostFamilies.map(
+                                            (animalToHostFamily, index) => (
+                                                <tr>
+                                                    <th scope="row">
+                                                        {
+                                                            animalToHostFamily.display_name
+                                                        }
+                                                    </th>
+                                                    <td>
+                                                        {
+                                                            animalToHostFamily
+                                                                .entry_date_object
+                                                                .readable
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        {
+                                                            animalToHostFamily
+                                                                .exit_date_object
+                                                                .readable
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <Button
+                                                            color="info"
+                                                            onClick={() =>
+                                                                showDetail(
+                                                                    animalToHostFamily
+                                                                )
+                                                            }
+                                                        >
+                                                            <MdAssignment />
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </CardBody>
+                        </Card>
+                    </>
+                )}
             </div>
         );
     }
@@ -422,6 +570,17 @@ function AnimalDetailPage({ match, ...props }) {
             }}
         >
             {content}
+
+            <DeleteConfirmationModal
+                show={showDeleteConfirmationModal}
+                handleClose={(confirmed) => {
+                    setShowDeleteConfirmationModal(false);
+                    if (confirmed) {
+                        deleteA();
+                    }
+                }}
+                bodyEntityName={"un Animal"}
+            />
         </Page>
     );
 }

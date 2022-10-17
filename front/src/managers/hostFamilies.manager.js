@@ -21,7 +21,6 @@ class HostFamiliesManager {
         this.dateFields.forEach((date) => {
             const rawValue = hostFamily[date];
             hostFamily[`${date}_object`] = {};
-            hostFamily[`${date}_object`]["rawValue"] = rawValue;
             hostFamily[`${date}_object`]["readable"] =
                 rawValue != null ? moment(rawValue).format("DD/MM/YYYY") : null;
             hostFamily[`${date}_object`]["input"] =
@@ -124,6 +123,20 @@ class HostFamiliesManager {
                 throw new Error("Server error");
             })
             .then(HostFamiliesManager.format);
+    };
+
+    static delete = (hostFamily) => {
+        return fetch(`${API_URL}/hostFamilies/${hostFamily.id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+            throw new Error("Server error");
+        });
     };
 }
 

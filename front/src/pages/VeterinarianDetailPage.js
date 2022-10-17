@@ -13,6 +13,7 @@ import {
 import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
 import {
+    MdDelete,
     MdDirections,
     MdOutlineModeEdit,
     MdRefresh,
@@ -20,11 +21,14 @@ import {
 } from "react-icons/md";
 import SourceLink from "../components/SourceLink";
 import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 
 function VeterinarianDetailPage({ match, ...props }) {
     const vetId = match.params.id;
     const [veterinarian, setVeterinarian] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+        useState(false);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -44,12 +48,44 @@ function VeterinarianDetailPage({ match, ...props }) {
             });
     };
 
+    const refresh = () => {
+        if (vetId !== "new") {
+            getVeterinarian();
+        } else {
+            setVeterinarian(VeterinariansManager.createVeterinarian());
+            setIsEditing(true);
+        }
+    };
+
     useEffect(() => {
-        getVeterinarian();
+        refresh();
     }, []);
 
     const save = () => {
         setIsEditing(false);
+        if (vetId === "new") {
+            // Send new data to API
+            VeterinariansManager.create(veterinarian)
+                .then((updatedVeterinarian) => {
+                    notificationSystem.addNotification({
+                        message: "Vétérinaire créé",
+                        level: "success",
+                    });
+                    props.history.push(
+                        `/veterinarians/${updatedVeterinarian.id}`
+                    );
+                    setVeterinarian(updatedVeterinarian);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    notificationSystem.addNotification({
+                        message:
+                            "Une erreur s'est produite pendant la création des données",
+                        level: "error",
+                    });
+                });
+            return;
+        }
 
         // Send new data to API
         VeterinariansManager.update(veterinarian)
@@ -71,6 +107,26 @@ function VeterinarianDetailPage({ match, ...props }) {
             });
     };
 
+    const deleteV = () => {
+        VeterinariansManager.delete(veterinarian)
+            .then(() => {
+                notificationSystem.addNotification({
+                    message: "Vétérinaire supprimé",
+                    level: "success",
+                });
+                props.history.push("/veterinarians");
+            })
+            .catch((err) => {
+                console.error(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la suppression des données",
+                    level: "error",
+                });
+            });
+    };
+
     let content = <div>Chargement...</div>;
     if (veterinarian === undefined) {
         content = <div>Vétérinaire non trouvé</div>;
@@ -81,8 +137,19 @@ function VeterinarianDetailPage({ match, ...props }) {
             <div>
                 <Row className={"justify-content-end"}>
                     <Col xs={"auto"}>
+                        {vetId !== "new" && isEditing && (
+                            <Button
+                                color="danger"
+                                onClick={() =>
+                                    setShowDeleteConfirmationModal(true)
+                                }
+                            >
+                                <MdDelete />
+                            </Button>
+                        )}
                         {!isEditing && (
                             <Button
+                                className="ml-2"
                                 color="primary"
                                 onClick={() => setIsEditing(true)}
                             >
@@ -90,11 +157,15 @@ function VeterinarianDetailPage({ match, ...props }) {
                             </Button>
                         )}
                         {isEditing && (
-                            <Button color="success" onClick={() => save()}>
+                            <Button
+                                className="ml-2"
+                                color="success"
+                                onClick={save}
+                            >
                                 <MdSave />
                             </Button>
                         )}
-                        <Button className="ml-2" onClick={getVeterinarian}>
+                        <Button className="ml-2" onClick={refresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
@@ -104,9 +175,27 @@ function VeterinarianDetailPage({ match, ...props }) {
 
                 <Card>
                     <CardHeader>
-                        <h2>{veterinarian.name}</h2>
+                        {vetId === "new" && <h2>Nouveau vétérinaire</h2>}
+                        {vetId !== "new" && <h2>{veterinarian.name}</h2>}
                     </CardHeader>
                     <CardBody>
+                        {vetId === "new" && (
+                            <Row>
+                                <Col xs={12}>
+                                    <Label>Nom</Label>
+                                    <Input
+                                        value={veterinarian.name || ""}
+                                        readOnly={!isEditing}
+                                        onChange={(evt) =>
+                                            setVeterinarian({
+                                                ...veterinarian,
+                                                name: evt.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
+                            </Row>
+                        )}
                         <Row>
                             <Col xs={6}>
                                 <Row>
@@ -248,6 +337,17 @@ function VeterinarianDetailPage({ match, ...props }) {
             }}
         >
             {content}
+
+            <DeleteConfirmationModal
+                show={showDeleteConfirmationModal}
+                handleClose={(confirmed) => {
+                    setShowDeleteConfirmationModal(false);
+                    if (confirmed) {
+                        deleteV();
+                    }
+                }}
+                bodyEntityName={"un Vétérinaire"}
+            />
         </Page>
     );
 }

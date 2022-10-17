@@ -58,10 +58,20 @@ exports.update = (req, res) => {
 
 // Delete a HostFamilies with the specified id in the request
 exports.delete = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  HostFamilies.remove(id, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while deleting host family with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete all HostFamilies from the database.
 exports.deleteAll = (req, res) => {
-  res.status(200).send({});
+  res.status(404).send({});
 };

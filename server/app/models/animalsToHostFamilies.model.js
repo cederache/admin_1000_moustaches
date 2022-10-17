@@ -12,16 +12,42 @@ const AnimalsToHostFamilies = function (animalsToHostFamily) {
 };
 
 AnimalsToHostFamilies.create = (newEntity, result) => {
-  sql.query(`INSERT INTO ${tableName} SET ?`, newEntity, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-
-    console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
-    result(null, { id: res.insertId, ...newEntity });
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
   });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field}`;
+    })
+    .join(", ");
+
+  var fieldsDataRequest = fieldsToUpdate
+    .map((field) => {
+      return "?";
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return newEntity[field];
+  });
+
+  console.log(fieldsRequest);
+  console.log(fieldsData);
+  sql.query(
+    `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
+    fieldsData,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
+      result(null, { id: res.insertId, ...newEntity });
+    }
+  );
 };
 
 AnimalsToHostFamilies.getAll = (name, result) => {

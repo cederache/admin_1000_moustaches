@@ -18,15 +18,19 @@ import {
     MdAssignment,
     MdOutlineModeEdit,
     MdSave,
+    MdDelete,
 } from "react-icons/md";
 import AnimalsManager from "../managers/animals.manager";
 import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
     const [hostFamily, setHostFamily] = useState(null);
     const [animalsToHostFamily, setAnimalsToHostFamily] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
+    const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+        useState(false);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -85,25 +89,17 @@ function HostFamilyDetailPage({ match, ...props }) {
             HostFamiliesManager.create(hostFamily)
                 .then((updatedHostFamily) => {
                     notificationSystem.addNotification({
-                        message: "Famille d'Accueil mis à jour",
+                        message: "Famille d'Accueil créée",
                         level: "success",
                     });
-                    if (hostFamilyId === "new") {
-                        props.history.push(
-                            `/hostFamilies/${updatedHostFamily.id}`
-                        );
-                    } else {
-                        getHostFamily();
-                    }
+                    props.history.push(`/hostFamilies/${updatedHostFamily.id}`);
+                    setHostFamily(updatedHostFamily);
                 })
                 .catch((err) => {
                     console.error(err);
-                    if (hostFamilyId !== "new") {
-                        getHostFamily();
-                    }
                     notificationSystem.addNotification({
                         message:
-                            "Une erreur s'est produite pendant la mise à jour des données",
+                            "Une erreur s'est produite pendant la création des données",
                         level: "error",
                     });
                 });
@@ -130,6 +126,26 @@ function HostFamilyDetailPage({ match, ...props }) {
             });
     };
 
+    const deleteHF = () => {
+        HostFamiliesManager.delete(hostFamily)
+            .then(() => {
+                notificationSystem.addNotification({
+                    message: "Famille d'Accueil supprimée",
+                    level: "success",
+                });
+                props.history.push("/hostFamilies");
+            })
+            .catch((err) => {
+                console.error(err);
+                getHostFamily();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la suppression des données",
+                    level: "error",
+                });
+            });
+    };
+
     let content = <div>Chargement...</div>;
 
     if (hostFamily === undefined) {
@@ -141,8 +157,19 @@ function HostFamilyDetailPage({ match, ...props }) {
             <div>
                 <Row className={"justify-content-end"}>
                     <Col xs={"auto"}>
+                        {hostFamilyId !== "new" && isEditing && (
+                            <Button
+                                color="danger"
+                                onClick={() =>
+                                    setShowDeleteConfirmationModal(true)
+                                }
+                            >
+                                <MdDelete />
+                            </Button>
+                        )}
                         {!isEditing && (
                             <Button
+                                className="ml-2"
                                 color="primary"
                                 onClick={() => setIsEditing(true)}
                             >
@@ -150,7 +177,11 @@ function HostFamilyDetailPage({ match, ...props }) {
                             </Button>
                         )}
                         {isEditing && (
-                            <Button color="success" onClick={() => save()}>
+                            <Button
+                                className="ml-2"
+                                color="success"
+                                onClick={() => save()}
+                            >
                                 <MdSave />
                             </Button>
                         )}
@@ -501,19 +532,32 @@ function HostFamilyDetailPage({ match, ...props }) {
     }
 
     return (
-        <Page
-            className="HostFamilyPage"
-            title="Détail de la Famille d'Accueil"
-            breadcrumbs={[
-                { name: "Familles d'Accueil", to: "/hostFamilies" },
-                { name: "Famille d'Accueil", active: true },
-            ]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
-        >
-            {content}
-        </Page>
+        <>
+            <Page
+                className="HostFamilyPage"
+                title="Détail de la Famille d'Accueil"
+                breadcrumbs={[
+                    { name: "Familles d'Accueil", to: "/hostFamilies" },
+                    { name: "Famille d'Accueil", active: true },
+                ]}
+                notificationSystemCallback={(notifSystem) => {
+                    setNotificationSystem(notifSystem);
+                }}
+            >
+                {content}
+
+                <DeleteConfirmationModal
+                    show={showDeleteConfirmationModal}
+                    handleClose={(confirmed) => {
+                        setShowDeleteConfirmationModal(false);
+                        if (confirmed) {
+                            deleteHF();
+                        }
+                    }}
+                    bodyEntityName={"une Famille d'Accueil"}
+                />
+            </Page>
+        </>
     );
 }
 export default HostFamilyDetailPage;
