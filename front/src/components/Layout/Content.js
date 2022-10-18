@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import bn from 'utils/bemnames';
+import bn from "../../utils/bemnames";
 
-import { Container } from 'reactstrap';
+import { Container } from "reactstrap";
 
-const bem = bn.create('content');
+const bem = bn.create("content");
 
 const Content = ({ tag: Tag, className, ...restProps }) => {
-  const classes = bem.b(className);
+    const classes = bem.b(className);
 
-  return <Tag className={classes} {...restProps} />;
+    return <Tag className={classes} {...restProps} />;
 };
 
 Content.defaultProps = {
-  tag: Container,
+    tag: Container,
 };
 
 export default Content;

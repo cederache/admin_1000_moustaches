@@ -2,7 +2,13 @@ const Animals = require("../models/animals.model.js");
 
 // Create and Save a new Animals
 exports.create = (req, res) => {
-  res.status(200).send({});
+  Animals.create(req.body, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating an animal.",
+      });
+    } else res.send(data);
+  });
 };
 
 // Retrieve all Animals from the database (with condition).
@@ -35,12 +41,32 @@ exports.findOne = (req, res) => {
 
 // Update a Animals identified by the id in the request
 exports.update = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  Animals.updateById(id, req.body, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while updating animal with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete a Animals with the specified id in the request
 exports.delete = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  Animals.remove(id, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while deleting animal with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete all Animals from the database.

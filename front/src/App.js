@@ -1,21 +1,21 @@
-import GAListener from "components/GAListener";
-import { MainLayout } from "components/Layout";
-import PageSpinner from "components/PageSpinner";
+import GAListener from "./components/GAListener";
+import { MainLayout } from "./components/Layout";
+import PageSpinner from "./components/PageSpinner";
 import React from "react";
 import componentQueries from "react-component-queries";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import "styles/reduction.scss";
+import "./styles/reduction.scss";
 
-const DashboardPage = React.lazy(() => import("pages/DashboardPage"));
-const AnimalsPage = React.lazy(() => import("pages/AnimalsPage"));
-const AnimalDetailPage = React.lazy(() => import("pages/AnimalDetailPage"));
-const VeterinariansPage = React.lazy(() => import("pages/VeterinariansPage"));
+const DashboardPage = React.lazy(() => import("./pages/DashboardPage"));
+const AnimalsPage = React.lazy(() => import("./pages/AnimalsPage"));
+const AnimalDetailPage = React.lazy(() => import("./pages/AnimalDetailPage"));
+const VeterinariansPage = React.lazy(() => import("./pages/VeterinariansPage"));
 const VeterinarianDetailPage = React.lazy(() =>
-    import("pages/VeterinarianDetailPage")
+    import("./pages/VeterinarianDetailPage")
 );
-const HostFamiliesPage = React.lazy(() => import("pages/HostFamiliesPage"));
+const HostFamiliesPage = React.lazy(() => import("./pages/HostFamiliesPage"));
 const HostFamilyDetailPage = React.lazy(() =>
-    import("pages/HostFamilyDetailPage")
+    import("./pages/HostFamilyDetailPage")
 );
 
 const getBasename = () => {

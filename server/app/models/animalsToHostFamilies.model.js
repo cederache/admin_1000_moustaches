@@ -1,6 +1,7 @@
 const sql = require("./db.js");
 
 const tableName = "AnimalsToHostFamilies";
+const fields = ["animal_id", "host_family_id", "entry_date", "exit_date"];
 
 // constructor
 const AnimalsToHostFamilies = function (animalsToHostFamily) {
@@ -11,35 +12,42 @@ const AnimalsToHostFamilies = function (animalsToHostFamily) {
 };
 
 AnimalsToHostFamilies.create = (newEntity, result) => {
-  sql.query(`INSERT INTO ${tableName} SET ?`, newEntity, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-
-    console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
-    result(null, { id: res.insertId, ...newEntity });
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
   });
-};
 
-AnimalsToHostFamilies.findById = (id, result) => {
-  sql.query(`SELECT * FROM ${tableName} WHERE id = ${id}`, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field}`;
+    })
+    .join(", ");
 
-    if (res.length) {
-      console.log(`found ${tableName}: `, res[0]);
-      result(null, res[0]);
-      return;
-    }
+  var fieldsDataRequest = fieldsToUpdate
+    .map((field) => {
+      return "?";
+    })
+    .join(", ");
 
-    // not found entity with the id
-    result({ kind: "not_found" }, null);
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return newEntity[field];
   });
+
+  console.log(fieldsRequest);
+  console.log(fieldsData);
+  sql.query(
+    `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
+    fieldsData,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
+      result(null, { id: res.insertId, ...newEntity });
+    }
+  );
 };
 
 AnimalsToHostFamilies.getAll = (name, result) => {
@@ -61,10 +69,55 @@ AnimalsToHostFamilies.getAll = (name, result) => {
   });
 };
 
-AnimalsToHostFamilies.updateById = (id, animal, result) => {
+AnimalsToHostFamilies.getAllWithAnimalId = (animal_id, result) => {
+  let query = `SELECT athf.*, hf.id as host_family_id, hf.firstname, hf.name FROM ${tableName} athf JOIN HostFamilies hf ON athf.host_family_id = hf.id WHERE athf.animal_id = ${animal_id} ORDER BY athf.entry_date ASC`;
+
+  sql.query(query, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log(`${tableName}: `, res);
+    result(null, res);
+  });
+};
+
+AnimalsToHostFamilies.getAllWithHostFamilyId = (host_family_id, result) => {
+  let query = `SELECT athf.*, a.id as animal_id, a.name as animal_name, a.entry_date as host_entry_date, a.exit_date as host_exit_date FROM ${tableName} athf JOIN Animals a ON athf.animal_id = a.id WHERE athf.host_family_id = ${host_family_id} ORDER BY athf.entry_date ASC`;
+
+  sql.query(query, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log(`${tableName}: `, res);
+    result(null, res);
+  });
+};
+
+AnimalsToHostFamilies.updateById = (id, animalToHostFamily, result) => {
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
+  });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field} = ?`;
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return animalToHostFamily[field];
+  });
+  fieldsData.push(id);
+
   sql.query(
-    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
-    [animal.name, id],
+    `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
+    fieldsData,
     (err, res) => {
       if (err) {
         console.log("error: ", err);

@@ -1,15 +1,19 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
-function VeterinariansPage() {
+function VeterinariansPage({ ...props }) {
     const [veterinarians, setVeterinarians] = useState([]);
     const [filteredVeterinarians, setFilteredVeterinarians] = useState([]);
     const [searchText, setSearchText] = useState([]);
+
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
 
     const getAllVeterinarians = () => {
         VeterinariansManager.getAll()
@@ -19,14 +23,15 @@ function VeterinariansPage() {
             .then((veterinarians) => {
                 setVeterinarians(veterinarians);
                 setFilteredVeterinarians(veterinarians);
+            })
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
-    };
-
-    const showDetail = (veterinarian) => {
-        console.log(
-            `Should show veterinarian details for : ${veterinarian.name}`
-        );
-        window.location.assign(`/veterinarians/${veterinarian.id}`);
     };
 
     useEffect(() => {
@@ -41,14 +46,28 @@ function VeterinariansPage() {
         );
     }, [searchText]);
 
+    const showDetail = (veterinarian) => {
+        console.log(
+            `Should show veterinarian details for : ${veterinarian.name}`
+        );
+        props.history.push(`/veterinarians/${veterinarian.id}`);
+    };
+
+    const createVeterinarian = () => {
+        props.history.push(`/veterinarians/new`);
+    };
+
     return (
         <Page
             className="VeterinariansPage"
-            title="Liste des vétérinaires"
+            title="Liste des Vétérinaires"
             breadcrumbs={[{ name: "Vétérinaires", active: true }]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             <Row>
-                <Col xs={10}>
+                <Col>
                     <Input
                         name="name"
                         placeholder="Rechercher un vétérinaire"
@@ -58,12 +77,17 @@ function VeterinariansPage() {
                         }}
                     />
                 </Col>
-                <Col xs={{ span: 1, offset: 1 }}>
-                    <Button onClick={getAllVeterinarians}>
+                <Col xs={"auto"}>
+                    <Button onClick={createVeterinarian} color={"success"}>
+                        <MdPlusOne />
+                    </Button>
+                    <Button className="ml-2" onClick={getAllVeterinarians}>
                         <MdRefresh />
                     </Button>
                 </Col>
             </Row>
+
+            <br />
 
             <Row>
                 <Col xs={12}>
@@ -78,7 +102,7 @@ function VeterinariansPage() {
                         </thead>
                         <tbody>
                             {filteredVeterinarians.map((vet, index) => (
-                                <tr>
+                                <tr key={index}>
                                     <th scope="row">{vet.name}</th>
                                     <td>{vet.mail}</td>
                                     <td>{vet.phone}</td>

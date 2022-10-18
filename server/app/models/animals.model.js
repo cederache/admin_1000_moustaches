@@ -1,39 +1,70 @@
 const sql = require("./db.js");
 
 const tableName = "Animals";
+const fields = [
+  "id",
+  "name",
+  "species_id",
+  "icad",
+  "sexe",
+  "race",
+  "birthdate",
+  "entry_date",
+  "distinctive_signs",
+  "reason_for_care",
+  "place_of_care",
+  "care_infos",
+  "exit_date",
+  "exit_reason",
+  "exit_infos",
+  "death_date",
+  "death_reason",
+];
 
 // constructor
 const Animals = function (animal) {
-  this.id = animal.id;
-  this.name = animal.name;
-  this.species_id = animal.species_id;
-  this.icad = animal.icad;
-  this.sexe = animal.sexe;
-  this.race = animal.race;
-  this.birthdate = animal.birthdate;
-  this.entry_date = animal.entry_date;
-  this.distinctive_signs = animal.distinctive_signs;
-  this.reason_for_care = animal.reason_for_care;
-  this.place_of_care = animal.place_of_care;
-  this.care_infos = animal.care_infos;
-  this.exit_date = animal.exit_date;
-  this.exit_reason = animal.exit_reason;
-  this.exit_infos = animal.exit_infos;
-  this.death_date = animal.death_date;
-  this.death_reason = animal.death_reason;
+  fields.forEach((field) => {
+    this[field] = animal[field];
+  });
 };
 
 Animals.create = (newEntity, result) => {
-  sql.query(`INSERT INTO ${tableName} SET ?`, newEntity, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-
-    console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
-    result(null, { id: res.insertId, ...newEntity });
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
   });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field}`;
+    })
+    .join(", ");
+
+  var fieldsDataRequest = fieldsToUpdate
+    .map((field) => {
+      return "?";
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return newEntity[field];
+  });
+
+  console.log(fieldsRequest);
+  console.log(fieldsData);
+  sql.query(
+    `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
+    fieldsData,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
+      result(null, { id: res.insertId, ...newEntity });
+    }
+  );
 };
 
 Animals.findById = (id, result) => {
@@ -78,9 +109,24 @@ Animals.getAll = (name, result) => {
 };
 
 Animals.updateById = (id, animal, result) => {
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
+  });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field} = ?`;
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return animal[field];
+  });
+  fieldsData.push(id);
+
   sql.query(
-    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
-    [animal.name, id],
+    `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
+    fieldsData,
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -94,8 +140,8 @@ Animals.updateById = (id, animal, result) => {
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, { id: id, ...animal });
+      result(null, { id: id, ...animal });
     }
   );
 };

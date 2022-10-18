@@ -1,39 +1,70 @@
 const sql = require("./db.js");
 
 const tableName = "HostFamilies";
+const fields = [
+  "id",
+  "name",
+  "firstname",
+  "phone",
+  "mail",
+  "social_network_alias",
+  "driver_license",
+  "nb_children",
+  "children_infos",
+  "animals_infos",
+  "can_provide_veterinary_care",
+  "can_provide_sociabilisation",
+  "can_host_disable_animal",
+  "can_provide_night_care",
+  "observations",
+  "housing_informations",
+  "can_isolate",
+];
 
 // constructor
 const HostFamilies = function (hostFamily) {
-  this.id = hostFamily.id;
-  this.name = hostFamily.name;
-  this.firstname = hostFamily.firstname;
-  this.phone = hostFamily.phone;
-  this.mail = hostFamily.mail;
-  this.social_network_alias = hostFamily.social_network_alias;
-  this.driver_license = hostFamily.driver_license;
-  this.nb_children = hostFamily.nb_children;
-  this.children_info = hostFamily.children_info;
-  this.animals_info = hostFamily.animals_info;
-  this.can_provide_veterinary_care = hostFamily.can_provide_veterinary_care;
-  this.can_provide_sociabilisation = hostFamily.can_provide_sociabilisation;
-  this.can_host_disable_animal = hostFamily.can_host_disable_animal;
-  this.can_provide_night_care = hostFamily.can_provide_night_care;
-  this.observations = hostFamily.observations;
-  this.housing_informations = hostFamily.housing_informations;
-  this.can_isolate = hostFamily.can_isolate;
+  fields.forEach((field) => {
+    this[field] = hostFamily[field];
+  });
 };
 
 HostFamilies.create = (newEntity, result) => {
-  sql.query(`INSERT INTO ${tableName} SET ?`, newEntity, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-
-    console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
-    result(null, { id: res.insertId, ...newEntity });
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
   });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field}`;
+    })
+    .join(", ");
+
+  var fieldsDataRequest = fieldsToUpdate
+    .map((field) => {
+      return "?";
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return newEntity[field];
+  });
+
+  console.log(fieldsRequest);
+  console.log(fieldsData);
+  sql.query(
+    `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
+    fieldsData,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
+      result(null, { id: res.insertId, ...newEntity });
+    }
+  );
 };
 
 HostFamilies.findById = (id, result) => {
@@ -74,10 +105,25 @@ HostFamilies.getAll = (name, result) => {
   });
 };
 
-HostFamilies.updateById = (id, animal, result) => {
+HostFamilies.updateById = (id, hostFamily, result) => {
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
+  });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field} = ?`;
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return hostFamily[field];
+  });
+  fieldsData.push(id);
+
   sql.query(
-    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
-    [animal.name, id],
+    `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
+    fieldsData,
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -91,8 +137,8 @@ HostFamilies.updateById = (id, animal, result) => {
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, { id: id, ...hostFamily });
+      result(null, { id: id, ...hostFamily });
     }
   );
 };

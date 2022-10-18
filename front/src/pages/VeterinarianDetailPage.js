@@ -1,4 +1,4 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -12,21 +12,120 @@ import {
 } from "reactstrap";
 import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
-import { MdDirections, MdRefresh } from "react-icons/md";
+import {
+    MdDelete,
+    MdDirections,
+    MdOutlineModeEdit,
+    MdRefresh,
+    MdSave,
+} from "react-icons/md";
 import SourceLink from "../components/SourceLink";
+import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 
 function VeterinarianDetailPage({ match, ...props }) {
     const vetId = match.params.id;
     const [veterinarian, setVeterinarian] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+        useState(false);
+
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
 
     const getVeterinarian = () => {
         setVeterinarian(null);
-        VeterinariansManager.getById(vetId).then(setVeterinarian);
+        VeterinariansManager.getById(vetId)
+            .then(setVeterinarian)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
+    };
+
+    const refresh = () => {
+        if (vetId !== "new") {
+            getVeterinarian();
+        } else {
+            setVeterinarian(VeterinariansManager.createVeterinarian());
+            setIsEditing(true);
+        }
     };
 
     useEffect(() => {
-        getVeterinarian();
+        refresh();
     }, []);
+
+    const save = () => {
+        setIsEditing(false);
+        if (vetId === "new") {
+            // Send new data to API
+            VeterinariansManager.create(veterinarian)
+                .then((updatedVeterinarian) => {
+                    notificationSystem.addNotification({
+                        message: "Vétérinaire créé",
+                        level: "success",
+                    });
+                    props.history.push(
+                        `/veterinarians/${updatedVeterinarian.id}`
+                    );
+                    setVeterinarian(updatedVeterinarian);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    notificationSystem.addNotification({
+                        message:
+                            "Une erreur s'est produite pendant la création des données",
+                        level: "error",
+                    });
+                });
+            return;
+        }
+
+        // Send new data to API
+        VeterinariansManager.update(veterinarian)
+            .then(() => {
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message: "Vétérinaire mis à jour",
+                    level: "success",
+                });
+            })
+            .catch((err) => {
+                console.error(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la mise à jour des données",
+                    level: "error",
+                });
+            });
+    };
+
+    const deleteV = () => {
+        VeterinariansManager.delete(veterinarian)
+            .then(() => {
+                notificationSystem.addNotification({
+                    message: "Vétérinaire supprimé",
+                    level: "success",
+                });
+                props.history.push("/veterinarians");
+            })
+            .catch((err) => {
+                console.error(err);
+                getVeterinarian();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la suppression des données",
+                    level: "error",
+                });
+            });
+    };
 
     let content = <div>Chargement...</div>;
     if (veterinarian === undefined) {
@@ -36,19 +135,67 @@ function VeterinarianDetailPage({ match, ...props }) {
     } else {
         content = (
             <div>
-                <Row>
-                    <Col xs={{ span: 1, offset: 11 }}>
-                        <Button onClick={getVeterinarian}>
+                <Row className={"justify-content-end"}>
+                    <Col xs={"auto"}>
+                        {vetId !== "new" && isEditing && (
+                            <Button
+                                color="danger"
+                                onClick={() =>
+                                    setShowDeleteConfirmationModal(true)
+                                }
+                            >
+                                <MdDelete />
+                            </Button>
+                        )}
+                        {!isEditing && (
+                            <Button
+                                className="ml-2"
+                                color="primary"
+                                onClick={() => setIsEditing(true)}
+                            >
+                                <MdOutlineModeEdit />
+                            </Button>
+                        )}
+                        {isEditing && (
+                            <Button
+                                className="ml-2"
+                                color="success"
+                                onClick={save}
+                            >
+                                <MdSave />
+                            </Button>
+                        )}
+                        <Button className="ml-2" onClick={refresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
                 </Row>
 
+                <br />
+
                 <Card>
                     <CardHeader>
-                        <h2>{veterinarian.name}</h2>
+                        {vetId === "new" && <h2>Nouveau vétérinaire</h2>}
+                        {vetId !== "new" && <h2>{veterinarian.name}</h2>}
                     </CardHeader>
                     <CardBody>
+                        {vetId === "new" && (
+                            <Row>
+                                <Col xs={12}>
+                                    <Label>Nom</Label>
+                                    <Input
+                                        value={veterinarian.name || ""}
+                                        readOnly={!isEditing}
+                                        onChange={(evt) =>
+                                            setVeterinarian({
+                                                ...veterinarian,
+                                                name: evt.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
+                            </Row>
+                        )}
                         <Row>
                             <Col xs={6}>
                                 <Row>
@@ -56,7 +203,13 @@ function VeterinarianDetailPage({ match, ...props }) {
                                         <Label>Téléphone</Label>
                                         <Input
                                             value={veterinarian.phone}
-                                            readOnly
+                                            readOnly={!isEditing}
+                                            onChange={(evt) =>
+                                                setVeterinarian({
+                                                    ...veterinarian,
+                                                    phone: evt.target.value,
+                                                })
+                                            }
                                         />
                                     </Col>
                                 </Row>
@@ -65,7 +218,13 @@ function VeterinarianDetailPage({ match, ...props }) {
                                         <Label>E-mail</Label>
                                         <Input
                                             value={veterinarian.mail}
-                                            readOnly
+                                            readOnly={!isEditing}
+                                            onChange={(evt) =>
+                                                setVeterinarian({
+                                                    ...veterinarian,
+                                                    mail: evt.target.value,
+                                                })
+                                            }
                                         />
                                     </Col>
                                 </Row>
@@ -83,22 +242,29 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.address}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            address: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
                         <Row>
                             <Col xs={3}>
                                 <Label>Gestion des urgences</Label>
-                                <Input
-                                    value={
-                                        veterinarian.emergencies === true
-                                            ? "Oui"
-                                            : veterinarian.emergencies === false
-                                            ? "Non"
-                                            : "NSP"
-                                    }
-                                    readOnly
+                                <br />
+                                <BooleanNullableDropdown
+                                    value={veterinarian.emergencies}
+                                    readOnly={!isEditing}
+                                    onChange={(newValue) => {
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            emergencies: newValue,
+                                        });
+                                    }}
                                 />
                             </Col>
                             <Col xs={9}>
@@ -110,7 +276,14 @@ function VeterinarianDetailPage({ match, ...props }) {
                                     value={
                                         veterinarian.appointment_confirmation_procedure
                                     }
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            appointment_confirmation_procedure:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -120,7 +293,14 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.invoice_payment_date}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            invoice_payment_date:
+                                                evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                             <Col xs={6}>
@@ -128,7 +308,13 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.payment_method}
-                                    readOnly
+                                    readOnly={!isEditing}
+                                    onChange={(evt) =>
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            payment_method: evt.target.value,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -146,8 +332,22 @@ function VeterinarianDetailPage({ match, ...props }) {
                 { name: "Vétérinaires", to: "/veterinarians" },
                 { name: "Vétérinaire", active: true },
             ]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             {content}
+
+            <DeleteConfirmationModal
+                show={showDeleteConfirmationModal}
+                handleClose={(confirmed) => {
+                    setShowDeleteConfirmationModal(false);
+                    if (confirmed) {
+                        deleteV();
+                    }
+                }}
+                bodyEntityName={"un Vétérinaire"}
+            />
         </Page>
     );
 }

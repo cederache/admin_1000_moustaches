@@ -1,1 +1,4 @@
 */.env
+.firebase
+*/.env.production
+*.log

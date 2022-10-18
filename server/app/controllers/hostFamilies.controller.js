@@ -2,7 +2,14 @@ const HostFamilies = require("../models/hostFamilies.model.js");
 
 // Create and Save a new HostFamilies
 exports.create = (req, res) => {
-  res.status(200).send({});
+  HostFamilies.create(req.body, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating a host family.",
+      });
+    } else res.send(data);
+  });
 };
 
 // Retrieve all HostFamilies from the database (with condition).
@@ -36,15 +43,35 @@ exports.findOne = (req, res) => {
 
 // Update a HostFamilies identified by the id in the request
 exports.update = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  HostFamilies.updateById(id, req.body, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while updating host family with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete a HostFamilies with the specified id in the request
 exports.delete = (req, res) => {
-  res.status(200).send({});
+  const id = req.params.id;
+
+  HostFamilies.remove(id, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          `Some error occurred while deleting host family with id ${id}.`,
+      });
+    else res.send(data);
+  });
 };
 
 // Delete all HostFamilies from the database.
 exports.deleteAll = (req, res) => {
-  res.status(200).send({});
+  res.status(404).send({});
 };

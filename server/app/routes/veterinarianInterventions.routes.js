@@ -21,5 +21,5 @@ module.exports = (app) => {
   // Delete all VeterinarianInterventions
   router.delete("/", veterinarianInterventions.deleteAll);
 
-  app.use("/api/veterinarianInterventions", router);
+  app.use("/veterinarianInterventions", router);
 };

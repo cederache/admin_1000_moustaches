@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import PropTypes from "utils/propTypes";
+import PropTypes from "../utils/propTypes";
 
 const tagMap = {
     h1: "h1",

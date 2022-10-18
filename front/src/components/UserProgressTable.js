@@ -1,11 +1,11 @@
 import React from "react";
-import PropTypes from "utils/propTypes";
+import PropTypes from "../utils/propTypes";
 
 import { Table, Progress } from "reactstrap";
 
-import Avatar from "components/Avatar";
+import Avatar from "./components/Avatar";
 
-import withBadge from "hocs/withBadge";
+import withBadge from "../hocs/withBadge";
 
 const AvatarWithBadge = withBadge({
     position: "bottom-right",

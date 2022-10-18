@@ -79,7 +79,7 @@ CREATE TABLE `HostFamilies` (
   `driver_license` tinyint(1) DEFAULT NULL,
   `nb_children` int DEFAULT NULL,
   `children_infos` varchar(255) DEFAULT NULL,
-  `animals_info` varchar(255) DEFAULT NULL,
+  `animals_infos` varchar(255) DEFAULT NULL,
   `can_provide_veterinary_care` tinyint(1) DEFAULT NULL,
   `can_provide_sociabilisation` tinyint(1) DEFAULT NULL,
   `can_host_disable_animal` tinyint(1) DEFAULT NULL,

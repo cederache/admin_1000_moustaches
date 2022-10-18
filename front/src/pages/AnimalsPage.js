@@ -1,15 +1,19 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
-import { Button, Col, Input, Row, Table } from "reactstrap";
+import { Button, Col, Input, Modal, Row, Table } from "reactstrap";
 import AnimalsManager from "../managers/animals.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
-function AnimalsPage() {
+function AnimalsPage({ ...props }) {
     const [animals, setAnimals] = useState([]);
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState([]);
+
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
 
     const getAllAnimals = () => {
         AnimalsManager.getAll()
@@ -19,12 +23,19 @@ function AnimalsPage() {
             .then((animals) => {
                 setAnimals(animals);
                 setFilteredAnimals(animals);
+            })
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
     };
 
     const showDetail = (animal) => {
-        console.log(`Should show animal details for : ${animal.name}`);
-        window.location.assign(`/animals/${animal.id}`);
+        props.history.push(`/animals/${animal.id}`);
     };
 
     useEffect(() => {
@@ -39,14 +50,21 @@ function AnimalsPage() {
         );
     }, [searchText]);
 
+    const createAnimal = () => {
+        props.history.push("animals/new");
+    };
+
     return (
         <Page
             className="AnimalsPage"
-            title="Liste des animaux"
+            title="Liste des Animaux"
             breadcrumbs={[{ name: "Animaux", active: true }]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             <Row>
-                <Col xs={10}>
+                <Col>
                     <Input
                         name="animal"
                         placeholder="Rechercher un animal"
@@ -56,12 +74,17 @@ function AnimalsPage() {
                         }}
                     />
                 </Col>
-                <Col xs={{ span: 1, offset: 1 }}>
-                    <Button onClick={getAllAnimals}>
+                <Col xs={"auto"}>
+                    <Button onClick={createAnimal} color={"success"}>
+                        <MdPlusOne />
+                    </Button>
+                    <Button className="ml-2" onClick={getAllAnimals}>
                         <MdRefresh />
                     </Button>
                 </Col>
             </Row>
+
+            <br />
 
             <Row>
                 <Col xs={12}>
@@ -78,7 +101,7 @@ function AnimalsPage() {
                         </thead>
                         <tbody>
                             {filteredAnimals.map((animal, index) => (
-                                <tr>
+                                <tr key={index}>
                                     <th scope="row">{animal.name}</th>
                                     <td>{animal.sexe}</td>
                                     <td>{animal.icad}</td>

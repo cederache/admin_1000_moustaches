@@ -9,8 +9,14 @@ module.exports = (app) => {
   // Retrieve all AnimalsToHostFamilies
   router.get("/", animalsToHostFamilies.findAll);
 
-  // Retrieve a single AnimalsToHostFamilies with id
-  router.get("/:id", animalsToHostFamilies.findOne);
+  // Retrieve all HostFamilies with animal id
+  router.get("/withAnimalId/:id", animalsToHostFamilies.findAllWithAnimalId);
+
+  // Retrieve all HostFamilies with hostFamily id
+  router.get(
+    "/withHostFamilyId/:id",
+    animalsToHostFamilies.findAllWithHostFamilyId
+  );
 
   // Update a AnimalsToHostFamilies with id
   router.put("/:id", animalsToHostFamilies.update);
@@ -21,5 +27,5 @@ module.exports = (app) => {
   // Delete all AnimalsToHostFamilies
   router.delete("/", animalsToHostFamilies.deleteAll);
 
-  app.use("/api/animalsToHostFamilies", router);
+  app.use("/animalsToHostFamilies", router);
 };

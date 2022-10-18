@@ -1,32 +1,62 @@
 const sql = require("./db.js");
 
 const tableName = "Veterinarians";
+const fields = [
+  "id",
+  "name",
+  "phone",
+  "mail",
+  "address",
+  "emergencies",
+  "appointment_confirmation_procedure",
+  "invoice_payment_date",
+  "payment_method",
+];
 
 // constructor
 const Veterinarians = function (veterinarian) {
-  this.id = veterinarian.id;
-  this.name = veterinarian.name;
-  this.phone = veterinarian.phone;
-  this.mail = veterinarian.mail;
-  this.address = veterinarian.address;
-  this.emergencies = veterinarian.emergencies;
-  this.appointment_confirmation_procedure =
-    veterinarian.appointment_confirmation_procedure;
-  this.invoice_payment_date = veterinarian.invoice_payment_date;
-  this.payment_method = veterinarian.payment_method;
+  fields.forEach((field) => {
+    this[field] = veterinarian[field];
+  });
 };
 
 Veterinarians.create = (newEntity, result) => {
-  sql.query(`INSERT INTO ${tableName} SET ?`, newEntity, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-
-    console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
-    result(null, { id: res.insertId, ...newEntity });
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
   });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field}`;
+    })
+    .join(", ");
+
+  var fieldsDataRequest = fieldsToUpdate
+    .map((field) => {
+      return "?";
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return newEntity[field];
+  });
+
+  console.log(fieldsRequest);
+  console.log(fieldsData);
+  sql.query(
+    `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
+    fieldsData,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(`created ${tableName}: `, { id: res.insertId, ...newEntity });
+      result(null, { id: res.insertId, ...newEntity });
+    }
+  );
 };
 
 Veterinarians.findById = (id, result) => {
@@ -67,10 +97,25 @@ Veterinarians.getAll = (name, result) => {
   });
 };
 
-Veterinarians.updateById = (id, animal, result) => {
+Veterinarians.updateById = (id, vet, result) => {
+  const fieldsToUpdate = fields.filter((field) => {
+    return field !== "id";
+  });
+
+  var fieldsRequest = fieldsToUpdate
+    .map((field) => {
+      return `${field} = ?`;
+    })
+    .join(", ");
+
+  var fieldsData = fieldsToUpdate.map((field) => {
+    return vet[field];
+  });
+  fieldsData.push(id);
+
   sql.query(
-    `UPDATE ${tableName} SET name = ? WHERE id = ?`,
-    [animal.name, id],
+    `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
+    fieldsData,
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -84,8 +129,8 @@ Veterinarians.updateById = (id, animal, result) => {
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, { id: id, ...vet });
+      result(null, { id: id, ...vet });
     }
   );
 };

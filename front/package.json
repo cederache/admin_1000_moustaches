@@ -25,12 +25,12 @@
         "react-simple-maps": "^0.12.1",
         "react-sizeme": "^2.5.2",
         "reactstrap": "^7.1.0",
+        "sass": "^1.55.0",
+        "sass-loader": "^7.1.0",
         "victory": "^32.0.0"
     },
     "devDependencies": {
-        "gh-pages": "^1.2.0",
-        "node-sass": "^4.11.0",
-        "react-scripts": "2.1.8",
+        "react-scripts": "^4.0.0",
         "serve": "^10.1.2",
         "stylelint": "^9.3.0",
         "stylelint-config-recommended-scss": "^3.2.0",
@@ -42,7 +42,7 @@
         "start": "NODE_PATH=./src react-scripts start",
         "build": "NODE_PATH=./src react-scripts build && cp _headers build/_headers",
         "serve": "NODE_PATH=./src serve -s build",
-        "deploy": "gh-pages -d build",
+        "deploy": "npm run build && firebase deploy --only hosting",
         "test": "NODE_PATH=./src react-scripts test --env=jsdom",
         "eject": "react-scripts eject"
     },

@@ -1,5 +1,5 @@
-import world50m from "assets/geo-data/world-50m.json";
-import cities from "assets/geo-data/world-most-populous-cities.json";
+import world50m from "../assets/geo-data/world-50m.json";
+import cities from "../assets/geo-data/world-most-populous-cities.json";
 import { scaleLinear } from "d3-scale";
 import React, { Component } from "react";
 import {
@@ -10,7 +10,7 @@ import {
     Markers,
     ZoomableGroup,
 } from "react-simple-maps";
-import { getColor } from "utils/colors";
+import { getColor } from "../utils/colors";
 
 const cityScale = scaleLinear().domain([0, 37843000]).range([1, 25]);
 

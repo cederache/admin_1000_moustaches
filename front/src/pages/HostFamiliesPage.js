@@ -1,15 +1,19 @@
-import Page from "components/Page";
+import Page from "../components/Page";
 import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
-function HostFamiliesPage() {
+function HostFamiliesPage({ ...props }) {
     const [hostFamilies, setHostFamilies] = useState([]);
     const [filteredHostFamilies, setFilteredHostFamilies] = useState([]);
     const [searchText, setSearchText] = useState([]);
+
+    const [notificationSystem, setNotificationSystem] = useState(
+        React.createRef()
+    );
 
     const getAllHostFamilies = () => {
         HostFamiliesManager.getAll()
@@ -19,12 +23,15 @@ function HostFamiliesPage() {
             .then((hostFamilies) => {
                 setHostFamilies(hostFamilies);
                 setFilteredHostFamilies(hostFamilies);
+            })
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
             });
-    };
-
-    const showDetail = (hostFamily) => {
-        console.log(`Should show host family details for : ${hostFamily.name}`);
-        window.location.assign(`/hostFamilies/${hostFamily.id}`);
     };
 
     useEffect(() => {
@@ -39,14 +46,25 @@ function HostFamiliesPage() {
         );
     }, [searchText]);
 
+    const showDetail = (hostFamily) => {
+        props.history.push(`/hostFamilies/${hostFamily.id}`);
+    };
+
+    const createHostFamily = () => {
+        props.history.push(`/hostFamilies/new`);
+    };
+
     return (
         <Page
             className="HostFamiliesPage"
             title="Liste des Familles d'Accueil"
             breadcrumbs={[{ name: "Familles d'Accueil", active: true }]}
+            notificationSystemCallback={(notifSystem) => {
+                setNotificationSystem(notifSystem);
+            }}
         >
             <Row>
-                <Col xs={10}>
+                <Col>
                     <Input
                         name="hostFamily"
                         placeholder="Rechercher une Famille d'Accueil"
@@ -56,12 +74,17 @@ function HostFamiliesPage() {
                         }}
                     />
                 </Col>
-                <Col xs={{ span: 1, offset: 1 }}>
-                    <Button onClick={getAllHostFamilies}>
+                <Col xs={"auto"}>
+                    <Button onClick={createHostFamily} color={"success"}>
+                        <MdPlusOne />
+                    </Button>
+                    <Button className="ml-2" onClick={getAllHostFamilies}>
                         <MdRefresh />
                     </Button>
                 </Col>
             </Row>
+
+            <br />
 
             <Row>
                 <Col xs={12}>
@@ -76,12 +99,9 @@ function HostFamiliesPage() {
                         </thead>
                         <tbody>
                             {filteredHostFamilies.map((hostFamily, index) => (
-                                <tr>
+                                <tr key={index}>
                                     <th scope="row">
-                                        <span>
-                                            {hostFamily.firstname}{" "}
-                                            {hostFamily.name}
-                                        </span>
+                                        {hostFamily.display_name}
                                     </th>
                                     <td>{hostFamily.phone}</td>
                                     <td>{hostFamily.mail}</td>
