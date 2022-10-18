@@ -1,8 +1,6 @@
-import logo200Image from "../../assets/img/logo/logo_200.png";
-import sidebarBgImage from "../../assets/img/sidebar/sidebar-4.jpg";
+import Logo1000Moustaches from "../../assets/img/logo/Logo1000Moustaches.png";
 import SourceLink from "../SourceLink";
 import React from "react";
-import { FaGithub } from "react-icons/fa";
 import {
     MdDashboard,
     MdKeyboardArrowDown,
@@ -21,12 +19,6 @@ import {
     NavLink as BSNavLink,
 } from "reactstrap";
 import bn from "../../utils/bemnames";
-
-const sidebarBackground = {
-    backgroundImage: `url("${sidebarBgImage}")`,
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-};
 
 const pageContents = [
     // { to: '/login', name: 'login / signup', exact: false, Icon: MdExtension },
@@ -70,24 +62,17 @@ class Sidebar extends React.Component {
 
     render() {
         return (
-            <aside className={bem.b()} data-image={sidebarBgImage}>
-                <div
-                    className={bem.e("background")}
-                    style={sidebarBackground}
-                />
+            <aside className={bem.b()}>
+                <div className={bem.e("background")} />
                 <div className={bem.e("content")}>
                     <Navbar>
                         <SourceLink className="navbar-brand d-flex">
                             <img
-                                src={logo200Image}
-                                width="40"
-                                height="30"
-                                className="pr-2"
-                                alt=""
+                                src={Logo1000Moustaches}
+                                width="100%"
+                                height="100"
+                                alt="1000 Moustaches"
                             />
-                            <span className="text-white">
-                                Reduction <FaGithub />
-                            </span>
                         </SourceLink>
                     </Navbar>
                     <Nav vertical>

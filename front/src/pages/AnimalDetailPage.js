@@ -125,7 +125,7 @@ function AnimalDetailPage({ match, ...props }) {
             AnimalsManager.create(animal)
                 .then((updatedAnimal) => {
                     notificationSystem.addNotification({
-                        message: "Animal créée",
+                        message: "Animal créé",
                         level: "success",
                     });
                     props.history.push(`/animals/${updatedAnimal.id}`);
