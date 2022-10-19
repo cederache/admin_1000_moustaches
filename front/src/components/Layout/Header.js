@@ -1,21 +1,10 @@
-import Avatar from "../Avatar";
 import { UserCard } from "../Card";
-import SearchInput from "../SearchInput";
 import React from "react";
-import {
-    MdClearAll,
-    MdExitToApp,
-    MdHelp,
-    MdInsertChart,
-    MdMessage,
-    MdPersonPin,
-    MdSettingsApplications,
-} from "react-icons/md";
+import { MdClearAll, MdExitToApp, MdPersonPin } from "react-icons/md";
 import {
     Button,
     ListGroup,
     ListGroupItem,
-    // NavbarToggler,
     Nav,
     Navbar,
     NavItem,
@@ -26,6 +15,12 @@ import {
 import bn from "../../utils/bemnames";
 
 const bem = bn.create("header");
+
+const loggedUser = {
+    firstname: "John",
+    name: "Doe",
+    email: "john.doe@mail.com",
+};
 
 class Header extends React.Component {
     state = {
@@ -55,17 +50,13 @@ class Header extends React.Component {
                         <MdClearAll size={25} />
                     </Button>
                 </Nav>
-                <Nav navbar>
-                    <SearchInput />
-                </Nav>
 
                 <Nav navbar className={bem.e("nav-right")}>
                     <NavItem>
                         <NavLink id="Popover2">
-                            <Avatar
-                                onClick={this.toggleUserCardPopover}
-                                className="can-click"
-                            />
+                            <Button onClick={this.toggleUserCardPopover}>
+                                {loggedUser.firstname} {loggedUser.name}
+                            </Button>
                         </NavLink>
                         <Popover
                             placement="bottom-end"
@@ -77,9 +68,8 @@ class Header extends React.Component {
                         >
                             <PopoverBody className="p-0 border-light">
                                 <UserCard
-                                    title="Jane"
-                                    subtitle="jane@jane.com"
-                                    text="Last updated 3 mins ago"
+                                    title={`${loggedUser.firstname} ${loggedUser.name}`}
+                                    subtitle={loggedUser.email}
                                     className="border-light"
                                 >
                                     <ListGroup flush>
@@ -88,42 +78,14 @@ class Header extends React.Component {
                                             action
                                             className="border-light"
                                         >
-                                            <MdPersonPin /> Profile
+                                            <MdPersonPin /> Profil
                                         </ListGroupItem>
                                         <ListGroupItem
                                             tag="button"
                                             action
                                             className="border-light"
                                         >
-                                            <MdInsertChart /> Stats
-                                        </ListGroupItem>
-                                        <ListGroupItem
-                                            tag="button"
-                                            action
-                                            className="border-light"
-                                        >
-                                            <MdMessage /> Messages
-                                        </ListGroupItem>
-                                        <ListGroupItem
-                                            tag="button"
-                                            action
-                                            className="border-light"
-                                        >
-                                            <MdSettingsApplications /> Settings
-                                        </ListGroupItem>
-                                        <ListGroupItem
-                                            tag="button"
-                                            action
-                                            className="border-light"
-                                        >
-                                            <MdHelp /> Help
-                                        </ListGroupItem>
-                                        <ListGroupItem
-                                            tag="button"
-                                            action
-                                            className="border-light"
-                                        >
-                                            <MdExitToApp /> Signout
+                                            <MdExitToApp /> Déconnexion
                                         </ListGroupItem>
                                     </ListGroup>
                                 </UserCard>

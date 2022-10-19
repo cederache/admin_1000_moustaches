@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
 function VeterinariansPage({ ...props }) {
@@ -79,7 +79,7 @@ function VeterinariansPage({ ...props }) {
                 </Col>
                 <Col xs={"auto"}>
                     <Button onClick={createVeterinarian} color={"success"}>
-                        <MdPlusOne />
+                        <MdAddBox />
                     </Button>
                     <Button className="ml-2" onClick={getAllVeterinarians}>
                         <MdRefresh />

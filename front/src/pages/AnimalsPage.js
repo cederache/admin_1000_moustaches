@@ -1,9 +1,9 @@
 import Page from "../components/Page";
 import React, { useEffect } from "react";
-import { Button, Col, Input, Modal, Row, Table } from "reactstrap";
+import { Button, Col, Input, Row, Table } from "reactstrap";
 import AnimalsManager from "../managers/animals.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
 function AnimalsPage({ ...props }) {
@@ -76,7 +76,7 @@ function AnimalsPage({ ...props }) {
                 </Col>
                 <Col xs={"auto"}>
                     <Button onClick={createAnimal} color={"success"}>
-                        <MdPlusOne />
+                        <MdAddBox />
                     </Button>
                     <Button className="ml-2" onClick={getAllAnimals}>
                         <MdRefresh />

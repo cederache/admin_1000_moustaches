@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment, MdPlusOne } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 
 function HostFamiliesPage({ ...props }) {
@@ -76,7 +76,7 @@ function HostFamiliesPage({ ...props }) {
                 </Col>
                 <Col xs={"auto"}>
                     <Button onClick={createHostFamily} color={"success"}>
-                        <MdPlusOne />
+                        <MdAddBox />
                     </Button>
                     <Button className="ml-2" onClick={getAllHostFamilies}>
                         <MdRefresh />
@@ -94,7 +94,7 @@ function HostFamiliesPage({ ...props }) {
                                 <th scope="col">Nom Prénom</th>
                                 <th scope="col">Téléphone</th>
                                 <th scope="col">E-mail</th>
-                                <th scope="col">Fiche de la FA</th>
+                                <th scope="col">Fiche FA</th>
                             </tr>
                         </thead>
                         <tbody>
