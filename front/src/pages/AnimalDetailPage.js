@@ -599,7 +599,7 @@ function AnimalDetailPage({ match, ...props }) {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} md={4}>
+                                        <Col xs={12} md={6}>
                                             <Label>Date de stérilisation</Label>
                                             <Input
                                                 type="date"
@@ -626,7 +626,7 @@ function AnimalDetailPage({ match, ...props }) {
                                         {animal.species_id ===
                                             SPECIES_ID.CAT && (
                                             <>
-                                                <Col xs={6} md={4}>
+                                                <Col xs={6} md={3}>
                                                     <Label>Négatif FIV</Label>
                                                     <BooleanNullableDropdown
                                                         value={
@@ -644,7 +644,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         }}
                                                     />
                                                 </Col>
-                                                <Col xs={6} md={4}>
+                                                <Col xs={6} md={3}>
                                                     <Label>Négatif FELV</Label>
                                                     <BooleanNullableDropdown
                                                         value={
