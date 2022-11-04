@@ -13,6 +13,7 @@ const fields = [
   "appointment_confirmation_procedure",
   "invoice_payment_date",
   "payment_method",
+  "price_level",
 ];
 
 // constructor

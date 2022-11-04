@@ -21,6 +21,7 @@ import {
 } from "react-icons/md";
 import SourceLink from "../components/SourceLink";
 import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
+import PriceLevelDropdown from "../components/PriceLevelDropdown";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import Geocode from "../utils/geocode";
 
@@ -111,11 +112,16 @@ function VeterinarianDetailPage({ match, ...props }) {
         }
     }, [veterinarian]);
 
+    useEffect(() => {
+        if (!isGeocoding && shouldSave) {
+            saveIfNeeded();
+        }
+    }, [shouldSave, isGeocoding]);
+
     const save = () => {
         if (!isGeocoding) {
             setIsEditing(false);
             setShouldSave(true);
-            saveIfNeeded();
         } else {
             setShouldSave(true);
         }
@@ -346,7 +352,21 @@ function VeterinarianDetailPage({ match, ...props }) {
                                     }}
                                 />
                             </Col>
-                            <Col xs={9}>
+                            <Col xs={3}>
+                                <Label>Niveau de prix</Label>
+                                <br />
+                                <PriceLevelDropdown
+                                    value={veterinarian.price_level}
+                                    readOnly={!isEditing}
+                                    onChange={(newValue) => {
+                                        setVeterinarian({
+                                            ...veterinarian,
+                                            price_level: newValue,
+                                        });
+                                    }}
+                                />
+                            </Col>
+                            <Col xs={6}>
                                 <Label>
                                     Méthode de confirmation de rendez-vous
                                 </Label>
