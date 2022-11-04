@@ -56,7 +56,7 @@ function VeterinariansPage({ ...props }) {
     const [veterinarians, setVeterinarians] = useState([]);
     const [filteredVeterinarians, setFilteredVeterinarians] = useState([]);
     const [searchText, setSearchText] = useState([]);
-    const [showMap, setShowMap] = useState(true);
+    const [showMap, setShowMap] = useState(false);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
