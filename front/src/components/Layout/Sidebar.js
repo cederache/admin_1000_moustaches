@@ -66,10 +66,9 @@ class Sidebar extends React.Component {
                 <div className={bem.e("background")} />
                 <div className={bem.e("content")}>
                     <Navbar>
-                        <SourceLink className="navbar-brand d-flex">
+                        <SourceLink className="navbar-brand justify-content-center">
                             <img
                                 src={Logo1000Moustaches}
-                                width="100%"
                                 height="100"
                                 alt="1000 Moustaches"
                             />
