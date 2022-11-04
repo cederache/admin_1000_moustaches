@@ -19,12 +19,19 @@ import { sortBy } from "../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import userIcon from "../assets/img/markers/user-marker-icon.svg";
 import blueIcon from "../assets/img/markers/marker-icon-blue.png";
 import redIcon from "../assets/img/markers/marker-icon-red.png";
 import yellowIcon from "../assets/img/markers/marker-icon-yellow.png";
 import greenIcon from "../assets/img/markers/marker-icon-green.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
+let UserIcon = L.icon({
+    iconUrl: userIcon,
+    shadowUrl: null,
+    iconSize: [100, 100],
+    iconAnchor: [50, 50],
+});
 let BlueIcon = L.icon({
     iconUrl: blueIcon,
     shadowUrl: iconShadow,
@@ -57,6 +64,7 @@ function VeterinariansPage({ ...props }) {
     const [filteredVeterinarians, setFilteredVeterinarians] = useState([]);
     const [searchText, setSearchText] = useState([]);
     const [showMap, setShowMap] = useState(false);
+    const [userPosition, setUserPosition] = useState(null);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -99,7 +107,10 @@ function VeterinariansPage({ ...props }) {
     useEffect(() => {
         if (mapRef !== null && mapRef.current !== null) {
             mapRef.invalidateSize();
-            mapRef.locate();
+            mapRef.locate().on("locationfound", function (e) {
+                console.log(e.latlng);
+                setUserPosition(e.latlng);
+            });
         }
     }, [showMap]);
 
@@ -111,16 +122,17 @@ function VeterinariansPage({ ...props }) {
                 );
 
             if (filteredVeterinariansWithCoordinates.length > 0) {
-                var bounds = new L.LatLngBounds(
-                    filteredVeterinariansWithCoordinates.map((vet) => [
-                        vet.latitude,
-                        vet.longitude,
-                    ])
+                let latLngs = filteredVeterinariansWithCoordinates.map(
+                    (vet) => [vet.latitude, vet.longitude]
                 );
+                if (userPosition !== null) {
+                    latLngs.push(userPosition);
+                }
+                var bounds = new L.LatLngBounds(latLngs);
                 mapRef.fitBounds(bounds);
             }
         }
-    }, [filteredVeterinarians, mapRef]);
+    }, [filteredVeterinarians, mapRef, userPosition]);
 
     const showDetail = (veterinarian) => {
         props.history.push(`/veterinarians/${veterinarian.id}`);
@@ -320,6 +332,18 @@ function VeterinariansPage({ ...props }) {
                                                     </Marker>
                                                 );
                                             })}
+                                        {userPosition !== null && (
+                                            <Marker
+                                                title={"Ma position"}
+                                                key={"user_position"}
+                                                position={[
+                                                    userPosition.lat,
+                                                    userPosition.lng,
+                                                ]}
+                                                icon={UserIcon}
+                                                interactive={false}
+                                            ></Marker>
+                                        )}
                                     </MapContainer>
                                 </Col>
                             </Row>
