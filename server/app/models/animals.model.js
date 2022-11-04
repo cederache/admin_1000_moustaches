@@ -26,6 +26,9 @@ const fields = [
   "felv_negative",
   "health_issues",
   "behaviour",
+  "adopted",
+  "broadcastable",
+  "bookable",
 ];
 
 // constructor

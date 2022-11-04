@@ -31,6 +31,7 @@ import {
 } from "react-icons/md";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
+import BooleanDropdown from "../components/BooleanDropdown";
 import { SPECIES_ID } from "../utils/constants";
 
 function AnimalDetailPage({ match, ...props }) {
@@ -309,6 +310,47 @@ function AnimalDetailPage({ match, ...props }) {
                                 </Col>
                             </Row>
                         )}
+                        <Row className="text-center">
+                            <Col xs={4}>
+                                <Label>Diffusable</Label>
+                                <BooleanDropdown
+                                    value={animal.broadcastable}
+                                    disabled={!isEditing}
+                                    onChange={(newValue) =>
+                                        setAnimal({
+                                            ...animal,
+                                            broadcastable: newValue,
+                                        })
+                                    }
+                                />
+                            </Col>
+                            <Col xs={4}>
+                                <Label>Réservable</Label>
+                                <BooleanDropdown
+                                    value={animal.bookable}
+                                    disabled={!isEditing}
+                                    onChange={(newValue) =>
+                                        setAnimal({
+                                            ...animal,
+                                            bookable: newValue,
+                                        })
+                                    }
+                                />
+                            </Col>
+                            <Col xs={4}>
+                                <Label>Adoptée</Label>
+                                <BooleanDropdown
+                                    value={animal.adopted}
+                                    disabled={!isEditing}
+                                    onChange={(newValue) =>
+                                        setAnimal({
+                                            ...animal,
+                                            adopted: newValue,
+                                        })
+                                    }
+                                />
+                            </Col>
+                        </Row>
                         <Accordion
                             className="pb-3"
                             open={openInfo}
