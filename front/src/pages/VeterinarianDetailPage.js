@@ -339,7 +339,6 @@ function VeterinarianDetailPage({ match, ...props }) {
                         <Row>
                             <Col xs={3}>
                                 <Label>Gestion des urgences</Label>
-                                <br />
                                 <BooleanNullableDropdown
                                     value={veterinarian.emergencies}
                                     readOnly={!isEditing}
