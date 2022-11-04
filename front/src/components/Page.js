@@ -29,7 +29,9 @@ const Page = ({
                 {breadcrumbs && (
                     <Breadcrumb className={bem.e("breadcrumb")}>
                         <BreadcrumbItem>
-                            <a href="/">Accueil</a>
+                            <a className="text-primary" href="/">
+                                Accueil
+                            </a>
                         </BreadcrumbItem>
                         {breadcrumbs.length &&
                             breadcrumbs.map(({ name, active, to }, index) => (

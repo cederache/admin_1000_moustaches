@@ -169,7 +169,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                         )}
                         {!isEditing && (
                             <Button
-                                className="ml-2"
+                                className="ms-2"
                                 color="primary"
                                 onClick={() => setIsEditing(true)}
                             >
@@ -178,7 +178,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                         )}
                         {isEditing && (
                             <Button
-                                className="ml-2"
+                                className="ms-2"
                                 color="success"
                                 onClick={() => save()}
                             >
@@ -186,7 +186,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                             </Button>
                         )}
                         {hostFamilyId !== "new" && (
-                            <Button className="ml-2" onClick={refresh}>
+                            <Button className="ms-2" onClick={refresh}>
                                 <MdRefresh />
                             </Button>
                         )}

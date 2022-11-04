@@ -78,7 +78,7 @@ function AnimalsPage({ ...props }) {
                     <Button onClick={createAnimal} color={"success"}>
                         <MdAddBox />
                     </Button>
-                    <Button className="ml-2" onClick={getAllAnimals}>
+                    <Button className="ms-2" onClick={getAllAnimals}>
                         <MdRefresh />
                     </Button>
                 </Col>

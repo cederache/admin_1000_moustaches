@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "bootstrap": "4.3.1",
+        "bootstrap": "5.0.0",
         "chart.js": "2.7.2",
         "classnames": "^2.2.6",
         "cross-env": "^7.0.3",
@@ -26,7 +26,7 @@
         "react-router-dom": "^4.3.1",
         "react-simple-maps": "^0.12.1",
         "react-sizeme": "^2.5.2",
-        "reactstrap": "^7.1.0",
+        "reactstrap": "^9.1.0",
         "sass": "^1.55.0",
         "sass-loader": "^7.1.0",
         "victory": "^32.0.0"

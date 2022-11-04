@@ -182,7 +182,7 @@ function VeterinariansPage({ ...props }) {
                 <Col xs={"auto"}>
                     <Button
                         title="Créer un vétérinaire"
-                        className="ml-2"
+                        className="ms-2"
                         onClick={createVeterinarian}
                         color={"success"}
                     >
@@ -190,7 +190,7 @@ function VeterinariansPage({ ...props }) {
                     </Button>
                     <Button
                         title="Rafraîchir les données"
-                        className="ml-2"
+                        className="ms-2"
                         onClick={getAllVeterinarians}
                     >
                         <MdRefresh />

@@ -78,7 +78,7 @@ function HostFamiliesPage({ ...props }) {
                     <Button onClick={createHostFamily} color={"success"}>
                         <MdAddBox />
                     </Button>
-                    <Button className="ml-2" onClick={getAllHostFamilies}>
+                    <Button className="ms-2" onClick={getAllHostFamilies}>
                         <MdRefresh />
                     </Button>
                 </Col>

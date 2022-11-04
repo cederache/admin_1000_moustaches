@@ -205,7 +205,7 @@ function AnimalDetailPage({ match, ...props }) {
                         )}
                         {!isEditing && (
                             <Button
-                                className="ml-2"
+                                className="ms-2"
                                 color="primary"
                                 onClick={() => setIsEditing(true)}
                             >
@@ -214,14 +214,14 @@ function AnimalDetailPage({ match, ...props }) {
                         )}
                         {isEditing && (
                             <Button
-                                className="ml-2"
+                                className="ms-2"
                                 color="success"
                                 onClick={() => save()}
                             >
                                 <MdSave />
                             </Button>
                         )}
-                        <Button className="ml-2" onClick={refresh}>
+                        <Button className="ms-2" onClick={refresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
