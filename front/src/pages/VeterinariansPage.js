@@ -17,19 +17,40 @@ import { useState } from "react";
 import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
 import { sortBy } from "../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import L, { Icon } from "leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import icon from "leaflet/dist/images/marker-icon.png";
+import blueIcon from "../assets/img/markers/marker-icon-blue.png";
+import redIcon from "../assets/img/markers/marker-icon-red.png";
+import yellowIcon from "../assets/img/markers/marker-icon-yellow.png";
+import greenIcon from "../assets/img/markers/marker-icon-green.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
-let DefaultIcon = L.icon({
-    iconUrl: icon,
+let BlueIcon = L.icon({
+    iconUrl: blueIcon,
+    shadowUrl: iconShadow,
+    iconSize: [30, 46],
+    iconAnchor: [15, 46],
+});
+let RedIcon = L.icon({
+    iconUrl: redIcon,
+    shadowUrl: iconShadow,
+    iconSize: [30, 46],
+    iconAnchor: [15, 46],
+});
+let YellowIcon = L.icon({
+    iconUrl: yellowIcon,
+    shadowUrl: iconShadow,
+    iconSize: [30, 46],
+    iconAnchor: [15, 46],
+});
+let GreenIcon = L.icon({
+    iconUrl: greenIcon,
     shadowUrl: iconShadow,
     iconSize: [30, 46],
     iconAnchor: [15, 46],
 });
 
-L.Marker.prototype.options.icon = DefaultIcon;
+L.Marker.prototype.options.icon = BlueIcon;
 
 function VeterinariansPage({ ...props }) {
     const [veterinarians, setVeterinarians] = useState([]);
@@ -45,7 +66,7 @@ function VeterinariansPage({ ...props }) {
     const getAllVeterinarians = () => {
         VeterinariansManager.getAll()
             .then((veterinarians) => {
-                return sortBy(veterinarians || [], "id");
+                return sortBy(veterinarians || [], "name");
             })
             .then((veterinarians) => {
                 setVeterinarians(veterinarians);
@@ -68,7 +89,9 @@ function VeterinariansPage({ ...props }) {
     useEffect(() => {
         setFilteredVeterinarians(
             veterinarians.filter((veterinarian) => {
-                return veterinarian.name.includes(searchText);
+                return veterinarian.name
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase());
             })
         );
     }, [searchText]);
@@ -93,6 +116,19 @@ function VeterinariansPage({ ...props }) {
 
     const toggleMap = () => {
         setShowMap(!showMap);
+    };
+
+    const priceMarkerIcon = (veterinarian) => {
+        switch (veterinarian.price_level) {
+            case 0:
+                return GreenIcon;
+            case 1:
+                return YellowIcon;
+            case 2:
+                return RedIcon;
+            default:
+                return BlueIcon;
+        }
     };
 
     return (
@@ -230,6 +266,9 @@ function VeterinariansPage({ ...props }) {
                                                             veterinarian.latitude,
                                                             veterinarian.longitude,
                                                         ]}
+                                                        icon={priceMarkerIcon(
+                                                            veterinarian
+                                                        )}
                                                     >
                                                         <Popup>
                                                             <div className="text-center">
