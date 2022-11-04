@@ -97,16 +97,32 @@ function VeterinariansPage({ ...props }) {
     }, [searchText]);
 
     useEffect(() => {
-        if (mapRef.current !== null) {
+        if (mapRef !== null && mapRef.current !== null) {
             mapRef.invalidateSize();
             mapRef.locate();
         }
     }, [showMap]);
 
+    useEffect(() => {
+        if (mapRef !== null && mapRef.current !== null) {
+            let filteredVeterinariansWithCoordinates =
+                filteredVeterinarians.filter(
+                    (vet) => vet.latitude !== null && vet.longitude !== null
+                );
+
+            if (filteredVeterinariansWithCoordinates.length > 0) {
+                var bounds = new L.LatLngBounds(
+                    filteredVeterinariansWithCoordinates.map((vet) => [
+                        vet.latitude,
+                        vet.longitude,
+                    ])
+                );
+                mapRef.fitBounds(bounds);
+            }
+        }
+    }, [filteredVeterinarians, mapRef]);
+
     const showDetail = (veterinarian) => {
-        console.log(
-            `Should show veterinarian details for : ${veterinarian.name}`
-        );
         props.history.push(`/veterinarians/${veterinarian.id}`);
     };
 
