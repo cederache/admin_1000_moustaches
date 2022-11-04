@@ -211,7 +211,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     <Label>Prénom</Label>
                                     <Input
                                         value={hostFamily.firstname || ""}
-                                        readOnly={!isEditing}
+                                        disabled={!isEditing}
                                         onChange={(evt) =>
                                             setHostFamily({
                                                 ...hostFamily,
@@ -224,7 +224,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     <Label>Nom</Label>
                                     <Input
                                         value={hostFamily.name || ""}
-                                        readOnly={!isEditing}
+                                        disabled={!isEditing}
                                         onChange={(evt) =>
                                             setHostFamily({
                                                 ...hostFamily,
@@ -241,7 +241,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="phone"
                                     value={hostFamily.phone || ""}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -255,7 +255,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="mail"
                                     value={hostFamily.mail || ""}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -272,7 +272,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     value={
                                         hostFamily.social_network_alias || ""
                                     }
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -290,7 +290,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     value={
                                         hostFamily.nb_children?.toString() || ""
                                     }
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -307,7 +307,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.children_infos || ""}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -323,7 +323,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.animals_infos || ""}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -338,7 +338,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Permis de conduire</Label>
                                 <BooleanNullableDropdown
                                     value={hostFamily.driver_license}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -353,7 +353,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     value={
                                         hostFamily.can_provide_veterinary_care
                                     }
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -369,7 +369,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     value={
                                         hostFamily.can_provide_sociabilisation
                                     }
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -387,7 +387,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 </Label>
                                 <BooleanNullableDropdown
                                     value={hostFamily.can_host_disable_animal}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -400,7 +400,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Peut donner des soins de nuit</Label>
                                 <BooleanNullableDropdown
                                     value={hostFamily.can_provide_night_care}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -413,7 +413,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Label>Peut isoler</Label>
                                 <BooleanNullableDropdown
                                     value={hostFamily.can_isolate}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -429,7 +429,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.observations || ""}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -447,7 +447,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     value={
                                         hostFamily.housing_informations || ""
                                     }
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,

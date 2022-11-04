@@ -298,7 +298,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     <Label>Nom</Label>
                                     <Input
                                         value={animal.name || ""}
-                                        readOnly={!isEditing}
+                                        disabled={!isEditing}
                                         onChange={(evt) =>
                                             setAnimal({
                                                 ...animal,
@@ -331,7 +331,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         value={
                                                             animal.icad || ""
                                                         }
-                                                        readOnly={!isEditing}
+                                                        disabled={!isEditing}
                                                         onChange={(evt) =>
                                                             setAnimal({
                                                                 ...animal,
@@ -394,7 +394,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         value={
                                                             animal.race || ""
                                                         }
-                                                        readOnly={!isEditing}
+                                                        disabled={!isEditing}
                                                         onChange={(evt) =>
                                                             setAnimal({
                                                                 ...animal,
@@ -416,7 +416,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                     animal.birthdate_object
                                                         .input
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -437,7 +437,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                     animal.distinctive_signs ||
                                                     ""
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -470,7 +470,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                     animal.entry_date_object
                                                         .input
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -490,7 +490,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 value={
                                                     animal.place_of_care || ""
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -509,7 +509,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 value={
                                                     animal.reason_for_care || ""
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -524,7 +524,7 @@ function AnimalDetailPage({ match, ...props }) {
                                             <Input
                                                 type="textarea"
                                                 value={animal.care_infos || ""}
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -558,7 +558,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         .first_vaccination_date_object
                                                         .input
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -582,7 +582,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         .second_vaccination_date_object
                                                         .input
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -608,7 +608,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         .sterilisation_date_object
                                                         .input
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -632,7 +632,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         value={
                                                             animal.fiv_negative
                                                         }
-                                                        readOnly={!isEditing}
+                                                        disabled={!isEditing}
                                                         onChange={(
                                                             newValue
                                                         ) => {
@@ -650,7 +650,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                         value={
                                                             animal.felv_negative
                                                         }
-                                                        readOnly={!isEditing}
+                                                        disabled={!isEditing}
                                                         onChange={(
                                                             newValue
                                                         ) => {
@@ -675,7 +675,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 value={
                                                     animal.health_issues || ""
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -692,7 +692,7 @@ function AnimalDetailPage({ match, ...props }) {
                                             <Input
                                                 type="textarea"
                                                 value={animal.behaviour || ""}
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -725,7 +725,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                     animal.exit_date_object
                                                         .input
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -743,7 +743,7 @@ function AnimalDetailPage({ match, ...props }) {
                                             <Input
                                                 type="textarea"
                                                 value={animal.exit_reason || ""}
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -776,7 +776,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                     animal.death_date_object
                                                         .input
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,
@@ -796,7 +796,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 value={
                                                     animal.death_reason || ""
                                                 }
-                                                readOnly={!isEditing}
+                                                disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({
                                                         ...animal,

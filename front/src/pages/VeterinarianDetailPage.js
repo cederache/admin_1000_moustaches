@@ -254,7 +254,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                     <Label>Nom</Label>
                                     <Input
                                         value={veterinarian.name || ""}
-                                        readOnly={!isEditing}
+                                        disabled={!isEditing}
                                         onChange={(evt) =>
                                             setVeterinarian({
                                                 ...veterinarian,
@@ -272,7 +272,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                         <Label>Téléphone</Label>
                                         <Input
                                             value={veterinarian.phone}
-                                            readOnly={!isEditing}
+                                            disabled={!isEditing}
                                             onChange={(evt) =>
                                                 setVeterinarian({
                                                     ...veterinarian,
@@ -287,7 +287,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                         <Label>E-mail</Label>
                                         <Input
                                             value={veterinarian.mail}
-                                            readOnly={!isEditing}
+                                            disabled={!isEditing}
                                             onChange={(evt) =>
                                                 setVeterinarian({
                                                     ...veterinarian,
@@ -311,7 +311,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.address}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setVeterinarian({
                                             ...veterinarian,
@@ -341,7 +341,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Label>Gestion des urgences</Label>
                                 <BooleanNullableDropdown
                                     value={veterinarian.emergencies}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setVeterinarian({
                                             ...veterinarian,
@@ -360,7 +360,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                             : veterinarian.price_level_tooltip
                                     }
                                     value={veterinarian.price_level}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setVeterinarian({
                                             ...veterinarian,
@@ -378,7 +378,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                     value={
                                         veterinarian.appointment_confirmation_procedure
                                     }
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setVeterinarian({
                                             ...veterinarian,
@@ -395,7 +395,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.invoice_payment_date}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setVeterinarian({
                                             ...veterinarian,
@@ -410,7 +410,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Input
                                     type="textarea"
                                     value={veterinarian.payment_method}
-                                    readOnly={!isEditing}
+                                    disabled={!isEditing}
                                     onChange={(evt) =>
                                         setVeterinarian({
                                             ...veterinarian,
