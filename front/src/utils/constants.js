@@ -1,3 +1,8 @@
+export const SPECIES_ID = {
+    CAT: 1,
+    DOG: 2,
+};
+
 export const NOTIFICATION_SYSTEM_STYLE = {
     NotificationItem: {
         DefaultStyle: {

@@ -1,6 +1,8 @@
 import Page from "../components/Page";
 import React, { useEffect } from "react";
 import {
+    Accordion,
+    AccordionItem,
     Button,
     Card,
     CardBody,
@@ -14,6 +16,8 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
+    AccordionHeader,
+    AccordionBody,
 } from "reactstrap";
 import AnimalsManager from "../managers/animals.manager";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
@@ -26,6 +30,8 @@ import {
     MdDelete,
 } from "react-icons/md";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
+import { SPECIES_ID } from "../utils/constants";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
@@ -39,6 +45,57 @@ function AnimalDetailPage({ match, ...props }) {
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
     );
+
+    // Accordions
+    const [openInfo, setOpenInfo] = useState("");
+
+    const toggleInfo = (id) => {
+        if (openInfo === id) {
+            setOpenInfo();
+        } else {
+            setOpenInfo(id);
+        }
+    };
+
+    const [openPEC, setOpenPEC] = useState("");
+
+    const togglePEC = (id) => {
+        if (openPEC === id) {
+            setOpenPEC();
+        } else {
+            setOpenPEC(id);
+        }
+    };
+
+    const [openHealth, setOpenHealth] = useState("");
+
+    const toggleHealth = (id) => {
+        if (openHealth === id) {
+            setOpenHealth();
+        } else {
+            setOpenHealth(id);
+        }
+    };
+
+    const [openExit, setOpenExit] = useState("");
+
+    const toggleExit = (id) => {
+        if (openExit === id) {
+            setOpenExit();
+        } else {
+            setOpenExit(id);
+        }
+    };
+
+    const [openDeath, setOpenDeath] = useState("");
+
+    const toggleDeath = (id) => {
+        if (openDeath === id) {
+            setOpenDeath();
+        } else {
+            setOpenDeath(id);
+        }
+    };
 
     const getAnimal = () => {
         setAnimal(null);
@@ -235,7 +292,7 @@ function AnimalDetailPage({ match, ...props }) {
                         {animalId !== "new" && <h2>{animal.name}</h2>}
                     </CardHeader>
                     <CardBody>
-                        {animalId === "new" && (
+                        {(animalId === "new" || isEditing === true) && (
                             <Row>
                                 <Col xs={12}>
                                     <Label>Nom</Label>
@@ -252,242 +309,507 @@ function AnimalDetailPage({ match, ...props }) {
                                 </Col>
                             </Row>
                         )}
-                        <Row>
-                            <Col xs={6}>
-                                <Label>Photo</Label>
-                            </Col>
-                            <Col xs={6}>
-                                <Row>
-                                    <Col xs={12}>
-                                        <Label>ICAD</Label>
-                                        <Input
-                                            value={animal.icad || ""}
-                                            readOnly={!isEditing}
-                                            onChange={(evt) =>
-                                                setAnimal({
-                                                    ...animal,
-                                                    icad: evt.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Col>
-                                    <Col xs={12}>
-                                        <Label>Espèce</Label>
-                                        <br />
-                                        <UncontrolledButtonDropdown
-                                            key={"species"}
-                                        >
-                                            <DropdownToggle
-                                                caret
-                                                color={"primary"}
-                                                className="text-capitalize m-1"
-                                                disabled={!isEditing}
-                                            >
-                                                {animal.species}
-                                            </DropdownToggle>
-                                            <DropdownMenu>
-                                                {species.map((aSpecies) => {
-                                                    return (
-                                                        <DropdownItem
-                                                            active={
-                                                                animal.species_id ===
-                                                                aSpecies.id
-                                                            }
-                                                            onClick={() =>
-                                                                setAnimal({
-                                                                    ...animal,
-                                                                    species:
-                                                                        aSpecies.name,
-                                                                    species_id:
-                                                                        aSpecies.id,
-                                                                })
+                        <Accordion
+                            className="pb-3"
+                            open={openInfo}
+                            toggle={toggleInfo}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Informations
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Photo</Label>
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Row>
+                                                <Col xs={12}>
+                                                    <Label>ICAD</Label>
+                                                    <Input
+                                                        value={
+                                                            animal.icad || ""
+                                                        }
+                                                        readOnly={!isEditing}
+                                                        onChange={(evt) =>
+                                                            setAnimal({
+                                                                ...animal,
+                                                                icad: evt.target
+                                                                    .value,
+                                                            })
+                                                        }
+                                                    />
+                                                </Col>
+                                                <Col xs={12}>
+                                                    <Label>Espèce</Label>
+                                                    <br />
+                                                    <UncontrolledButtonDropdown
+                                                        key={"species"}
+                                                    >
+                                                        <DropdownToggle
+                                                            caret
+                                                            color={"primary"}
+                                                            className="text-capitalize m-1"
+                                                            disabled={
+                                                                !isEditing
                                                             }
                                                         >
-                                                            {aSpecies.name}
-                                                        </DropdownItem>
-                                                    );
-                                                })}
-                                            </DropdownMenu>
-                                        </UncontrolledButtonDropdown>
-                                    </Col>
-                                    <Col xs={12}>
-                                        <Label>Race</Label>
-                                        <Input
-                                            value={animal.race || ""}
-                                            readOnly={!isEditing}
-                                            onChange={(evt) =>
-                                                setAnimal({
-                                                    ...animal,
-                                                    race: evt.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={6}>
-                                <Label>Date de naissance</Label>
-                                <Input
-                                    type="date"
-                                    value={animal.birthdate_object.input}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            birthdate_object: {
-                                                ...animal.birthdate_object,
-                                                input: evt.target.value,
-                                            },
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <Label>Signes distinctifs</Label>
-                                <Input
-                                    type="textarea"
-                                    value={animal.distinctive_signs || ""}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            distinctive_signs: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={6}>
-                                <Label>Date de PEC</Label>
-                                <Input
-                                    type="date"
-                                    value={animal.entry_date_object.input}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            entry_date_object: {
-                                                ...animal.entry_date_object,
-                                                input: evt.target.value,
-                                            },
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <Label>Lieu de PEC</Label>
-                                <Input
-                                    type="textarea"
-                                    value={animal.place_of_care || ""}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            place_of_care: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={6}>
-                                <Label>Raisons de PEC</Label>
-                                <Input
-                                    type="textarea"
-                                    value={animal.reason_for_care || ""}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            reason_for_care: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <Label>Informations de PEC</Label>
-                                <Input
-                                    type="textarea"
-                                    value={animal.care_infos || ""}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            care_infos: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={6}>
-                                <Label>Date de sortie</Label>
-                                <Input
-                                    type="date"
-                                    value={animal.exit_date_object.input}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            exit_date_object: {
-                                                ...animal.exit_date_object,
-                                                input: evt.target.value,
-                                            },
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <Label>Raison de sortie</Label>
-                                <Input
-                                    type="textarea"
-                                    value={animal.exit_reason || ""}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            exit_reason: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={6}>
-                                <Label>Date de décès</Label>
-                                <Input
-                                    type="date"
-                                    value={animal.death_date_object.input}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            death_date_object: {
-                                                ...animal.death_date_object,
-                                                input: evt.target.value,
-                                            },
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <Label>Raison du décès</Label>
-                                <Input
-                                    type="textarea"
-                                    value={animal.death_reason || ""}
-                                    readOnly={!isEditing}
-                                    onChange={(evt) =>
-                                        setAnimal({
-                                            ...animal,
-                                            death_reason: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
+                                                            {animal.species}
+                                                        </DropdownToggle>
+                                                        <DropdownMenu>
+                                                            {species.map(
+                                                                (aSpecies) => {
+                                                                    return (
+                                                                        <DropdownItem
+                                                                            active={
+                                                                                animal.species_id ===
+                                                                                aSpecies.id
+                                                                            }
+                                                                            onClick={() =>
+                                                                                setAnimal(
+                                                                                    {
+                                                                                        ...animal,
+                                                                                        species:
+                                                                                            aSpecies.name,
+                                                                                        species_id:
+                                                                                            aSpecies.id,
+                                                                                    }
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                aSpecies.name
+                                                                            }
+                                                                        </DropdownItem>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </DropdownMenu>
+                                                    </UncontrolledButtonDropdown>
+                                                </Col>
+                                                <Col xs={12}>
+                                                    <Label>Race</Label>
+                                                    <Input
+                                                        value={
+                                                            animal.race || ""
+                                                        }
+                                                        readOnly={!isEditing}
+                                                        onChange={(evt) =>
+                                                            setAnimal({
+                                                                ...animal,
+                                                                race: evt.target
+                                                                    .value,
+                                                            })
+                                                        }
+                                                    />
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Date de naissance</Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal.birthdate_object
+                                                        .input
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        birthdate_object: {
+                                                            ...animal.birthdate_object,
+                                                            input: evt.target
+                                                                .value,
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>Signes distinctifs</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    animal.distinctive_signs ||
+                                                    ""
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        distinctive_signs:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion
+                            className="pb-3"
+                            open={openPEC}
+                            toggle={togglePEC}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Prise en charge
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Date de PEC</Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal.entry_date_object
+                                                        .input
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        entry_date_object: {
+                                                            ...animal.entry_date_object,
+                                                            input: evt.target
+                                                                .value,
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>Lieu de PEC</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    animal.place_of_care || ""
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        place_of_care:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Raisons de PEC</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    animal.reason_for_care || ""
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        reason_for_care:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>Informations de PEC</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={animal.care_infos || ""}
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        care_infos:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion
+                            className="pb-3"
+                            open={openHealth}
+                            toggle={toggleHealth}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Santé / Comportement
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Primo vaccination</Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal
+                                                        .first_vaccination_date_object
+                                                        .input
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        first_vaccination_date_object:
+                                                            {
+                                                                ...animal.first_vaccination_date_object,
+                                                                input: evt
+                                                                    .target
+                                                                    .value,
+                                                            },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>Rappel de vaccin</Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal
+                                                        .second_vaccination_date_object
+                                                        .input
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        second_vaccination_date_object:
+                                                            {
+                                                                ...animal.second_vaccination_date_object,
+                                                                input: evt
+                                                                    .target
+                                                                    .value,
+                                                            },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} md={4}>
+                                            <Label>Date de stérilisation</Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal
+                                                        .sterilisation_date_object
+                                                        .input
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        sterilisation_date_object:
+                                                            {
+                                                                ...animal.sterilisation_date_object,
+                                                                input: evt
+                                                                    .target
+                                                                    .value,
+                                                            },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        {animal.species_id ===
+                                            SPECIES_ID.CAT && (
+                                            <>
+                                                <Col xs={6} md={4}>
+                                                    <Label>Négatif FIV</Label>
+                                                    <BooleanNullableDropdown
+                                                        value={
+                                                            animal.fiv_negative
+                                                        }
+                                                        readOnly={!isEditing}
+                                                        onChange={(
+                                                            newValue
+                                                        ) => {
+                                                            setAnimal({
+                                                                ...animal,
+                                                                fiv_negative:
+                                                                    newValue,
+                                                            });
+                                                        }}
+                                                    />
+                                                </Col>
+                                                <Col xs={6} md={4}>
+                                                    <Label>Négatif FELV</Label>
+                                                    <BooleanNullableDropdown
+                                                        value={
+                                                            animal.felv_negative
+                                                        }
+                                                        readOnly={!isEditing}
+                                                        onChange={(
+                                                            newValue
+                                                        ) => {
+                                                            setAnimal({
+                                                                ...animal,
+                                                                felv_negative:
+                                                                    newValue,
+                                                            });
+                                                        }}
+                                                    />
+                                                </Col>
+                                            </>
+                                        )}
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>
+                                                Particularité de santé
+                                            </Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    animal.health_issues || ""
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        health_issues:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>Comportement</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={animal.behaviour || ""}
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        behaviour:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion
+                            className="pb-3"
+                            open={openExit}
+                            toggle={toggleExit}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Sortie
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Date de sortie</Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal.exit_date_object
+                                                        .input
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        exit_date_object: {
+                                                            ...animal.exit_date_object,
+                                                            input: evt.target
+                                                                .value,
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>Raison de sortie</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={animal.exit_reason || ""}
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        exit_reason:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion
+                            className="pb-3"
+                            open={openDeath}
+                            toggle={toggleDeath}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Décès
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Date de décès</Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal.death_date_object
+                                                        .input
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        death_date_object: {
+                                                            ...animal.death_date_object,
+                                                            input: evt.target
+                                                                .value,
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>Raison du décès</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    animal.death_reason || ""
+                                                }
+                                                readOnly={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        death_reason:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
                     </CardBody>
                 </Card>
 

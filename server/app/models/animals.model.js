@@ -19,6 +19,13 @@ const fields = [
   "exit_infos",
   "death_date",
   "death_reason",
+  "sterilisation_date",
+  "first_vaccination_date",
+  "second_vaccination_date",
+  "fiv_negative",
+  "felv_negative",
+  "health_issues",
+  "behaviour",
 ];
 
 // constructor
