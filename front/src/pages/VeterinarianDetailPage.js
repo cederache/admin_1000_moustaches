@@ -34,15 +34,21 @@ function VeterinarianDetailPage({ match, ...props }) {
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
     );
-
-    let previousAddress = null;
-    let isGeocoding = false;
-    let shouldSave = false;
+    const [geocodeFound, setGeocodeFound] = useState(null);
+    const [previousAddress, setPreviousAddress] = useState(null);
+    const [isGeocoding, setIsGeocoding] = useState(false);
+    const [shouldSave, setShouldSave] = useState(false);
 
     const getVeterinarian = () => {
-        setVeterinarian(null);
+        if (veterinarian !== null) {
+            setVeterinarian(null);
+        }
         VeterinariansManager.getById(vetId)
-            .then(setVeterinarian)
+            .then((vet) => {
+                console.log(vet.address);
+                setPreviousAddress(vet.address);
+                setVeterinarian(vet);
+            })
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
@@ -68,7 +74,8 @@ function VeterinarianDetailPage({ match, ...props }) {
 
     useEffect(() => {
         if (veterinarian !== null && previousAddress !== veterinarian.address) {
-            previousAddress = veterinarian.address;
+            console.log(previousAddress, veterinarian.address);
+            setPreviousAddress(veterinarian.address);
 
             if (
                 veterinarian.address !== null &&
@@ -76,7 +83,8 @@ function VeterinarianDetailPage({ match, ...props }) {
                 veterinarian.address.length > 10
             ) {
                 // Geocode address
-                isGeocoding = true;
+                setIsGeocoding(true);
+                setGeocodeFound(null);
                 Geocode.getCoordinatesFromAddress(veterinarian.address)
                     .then((coordinates) => {
                         if (coordinates !== null && coordinates.length > 1) {
@@ -87,13 +95,15 @@ function VeterinarianDetailPage({ match, ...props }) {
                             veterinarian.latitude = null;
                             veterinarian.longitude = null;
                         }
-                        isGeocoding = false;
+                        setIsGeocoding(false);
+                        setGeocodeFound(true);
 
                         saveIfNeeded();
                     })
                     .catch((err) => {
                         console.error(err);
-                        isGeocoding = false;
+                        setIsGeocoding(false);
+                        setGeocodeFound(false);
 
                         saveIfNeeded();
                     });
@@ -104,10 +114,10 @@ function VeterinarianDetailPage({ match, ...props }) {
     const save = () => {
         if (!isGeocoding) {
             setIsEditing(false);
-            shouldSave = true;
+            setShouldSave(true);
             saveIfNeeded();
         } else {
-            shouldSave = true;
+            setShouldSave(true);
         }
     };
 
@@ -116,7 +126,7 @@ function VeterinarianDetailPage({ match, ...props }) {
             return;
         }
 
-        shouldSave = false;
+        setShouldSave(false);
         if (vetId === "new") {
             // Send new data to API
             VeterinariansManager.create(veterinarian)
@@ -304,6 +314,21 @@ function VeterinarianDetailPage({ match, ...props }) {
                                         })
                                     }
                                 />
+                                {geocodeFound !== null && (
+                                    <p
+                                        className={
+                                            geocodeFound === true
+                                                ? "text-success"
+                                                : "text-danger"
+                                        }
+                                    >
+                                        <small>
+                                            {geocodeFound === true
+                                                ? "Adresse valide"
+                                                : "Adresse non trouvée"}
+                                        </small>
+                                    </p>
+                                )}
                             </Col>
                         </Row>
                         <Row>
