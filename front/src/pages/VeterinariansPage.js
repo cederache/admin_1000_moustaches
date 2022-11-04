@@ -16,8 +16,8 @@ import VeterinariansManager from "../managers/veterinarians.manager";
 import { useState } from "react";
 import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
 import { sortBy } from "../utils/sort";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import L from "leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import L, { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
@@ -117,13 +117,18 @@ function VeterinariansPage({ ...props }) {
                 </Col>
                 <Col xs={"auto"}>
                     <Button
+                        title="Créer un vétérinaire"
                         className="ml-2"
                         onClick={createVeterinarian}
                         color={"success"}
                     >
                         <MdAddBox />
                     </Button>
-                    <Button className="ml-2" onClick={getAllVeterinarians}>
+                    <Button
+                        title="Rafraîchir les données"
+                        className="ml-2"
+                        onClick={getAllVeterinarians}
+                    >
                         <MdRefresh />
                     </Button>
                 </Col>
@@ -171,6 +176,7 @@ function VeterinariansPage({ ...props }) {
                                                         <td>{vet.phone}</td>
                                                         <td>
                                                             <Button
+                                                                title="Voir le détail"
                                                                 color="info"
                                                                 onClick={() =>
                                                                     showDetail(
@@ -221,17 +227,33 @@ function VeterinariansPage({ ...props }) {
                                                 );
                                                 return (
                                                     <Marker
+                                                        title={
+                                                            veterinarian.name
+                                                        }
                                                         key={veterinarian.id}
                                                         position={[
                                                             veterinarian.latitude,
                                                             veterinarian.longitude,
                                                         ]}
-                                                        onClick={() => {
-                                                            showDetail(
-                                                                veterinarian
-                                                            );
-                                                        }}
-                                                    />
+                                                    >
+                                                        <Popup>
+                                                            {veterinarian.name}
+                                                            <br />
+                                                            <div className="pt-2 d-flex justify-content-center">
+                                                                <Button
+                                                                    title="Voir le détail"
+                                                                    color="primary"
+                                                                    onClick={() => {
+                                                                        showDetail(
+                                                                            veterinarian
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <MdAssignment />
+                                                                </Button>
+                                                            </div>
+                                                        </Popup>
+                                                    </Marker>
                                                 );
                                             })}
                                     </MapContainer>
