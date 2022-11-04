@@ -74,7 +74,6 @@ function VeterinarianDetailPage({ match, ...props }) {
 
     useEffect(() => {
         if (veterinarian !== null && previousAddress !== veterinarian.address) {
-            console.log(previousAddress, veterinarian.address);
             setPreviousAddress(veterinarian.address);
 
             if (

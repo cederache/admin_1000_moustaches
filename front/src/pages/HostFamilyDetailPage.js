@@ -19,10 +19,13 @@ import {
     MdOutlineModeEdit,
     MdSave,
     MdDelete,
+    MdDirections,
 } from "react-icons/md";
 import AnimalsManager from "../managers/animals.manager";
 import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import Geocode from "../utils/geocode";
+import SourceLink from "../components/SourceLink";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
@@ -35,6 +38,10 @@ function HostFamilyDetailPage({ match, ...props }) {
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
     );
+    const [geocodeFound, setGeocodeFound] = useState(null);
+    const [previousAddress, setPreviousAddress] = useState(null);
+    const [isGeocoding, setIsGeocoding] = useState(false);
+    const [shouldSave, setShouldSave] = useState(false);
 
     const getHostFamily = () => {
         setHostFamily(null);
@@ -78,11 +85,68 @@ function HostFamilyDetailPage({ match, ...props }) {
         refresh();
     }, []);
 
+    useEffect(() => {
+        if (hostFamily !== null && previousAddress !== hostFamily.address) {
+            setPreviousAddress(hostFamily.address);
+
+            if (
+                hostFamily.address !== null &&
+                hostFamily.address !== undefined &&
+                hostFamily.address.length > 10
+            ) {
+                // Geocode address
+                setIsGeocoding(true);
+                setGeocodeFound(null);
+                Geocode.getCoordinatesFromAddress(hostFamily.address)
+                    .then((coordinates) => {
+                        if (coordinates !== null && coordinates.length > 1) {
+                            hostFamily.latitude = coordinates[1];
+                            hostFamily.longitude = coordinates[0];
+                        } else {
+                            console.warn("Can't get coordinates for address");
+                            hostFamily.latitude = null;
+                            hostFamily.longitude = null;
+                        }
+                        setIsGeocoding(false);
+                        setGeocodeFound(true);
+
+                        saveIfNeeded();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        setIsGeocoding(false);
+                        setGeocodeFound(false);
+
+                        saveIfNeeded();
+                    });
+            }
+        }
+    }, [hostFamily]);
+
+    useEffect(() => {
+        if (!isGeocoding && shouldSave) {
+            saveIfNeeded();
+        }
+    }, [shouldSave, isGeocoding]);
+
     const showDetail = (animalToHostFamily) => {
         props.history.push(`/animals/${animalToHostFamily.animal_id}`);
     };
 
     const save = () => {
+        if (!isGeocoding) {
+            setIsEditing(false);
+            setShouldSave(true);
+        } else {
+            setShouldSave(true);
+        }
+    };
+
+    const saveIfNeeded = () => {
+        if (shouldSave === false) {
+            return;
+        }
+
         setIsEditing(false);
         if (hostFamilyId === "new") {
             // Send new data to API
@@ -205,36 +269,37 @@ function HostFamilyDetailPage({ match, ...props }) {
                         )}
                     </CardHeader>
                     <CardBody>
-                        {hostFamilyId === "new" && (
-                            <Row>
-                                <Col xs={6}>
-                                    <Label>Prénom</Label>
-                                    <Input
-                                        value={hostFamily.firstname || ""}
-                                        disabled={!isEditing}
-                                        onChange={(evt) =>
-                                            setHostFamily({
-                                                ...hostFamily,
-                                                firstname: evt.target.value,
-                                            })
-                                        }
-                                    />
-                                </Col>
-                                <Col xs={6}>
-                                    <Label>Nom</Label>
-                                    <Input
-                                        value={hostFamily.name || ""}
-                                        disabled={!isEditing}
-                                        onChange={(evt) =>
-                                            setHostFamily({
-                                                ...hostFamily,
-                                                name: evt.target.value,
-                                            })
-                                        }
-                                    />
-                                </Col>
-                            </Row>
-                        )}
+                        {hostFamilyId === "new" ||
+                            (isEditing && (
+                                <Row>
+                                    <Col xs={6}>
+                                        <Label>Prénom</Label>
+                                        <Input
+                                            value={hostFamily.firstname || ""}
+                                            disabled={!isEditing}
+                                            onChange={(evt) =>
+                                                setHostFamily({
+                                                    ...hostFamily,
+                                                    firstname: evt.target.value,
+                                                })
+                                            }
+                                        />
+                                    </Col>
+                                    <Col xs={6}>
+                                        <Label>Nom</Label>
+                                        <Input
+                                            value={hostFamily.name || ""}
+                                            disabled={!isEditing}
+                                            onChange={(evt) =>
+                                                setHostFamily({
+                                                    ...hostFamily,
+                                                    name: evt.target.value,
+                                                })
+                                            }
+                                        />
+                                    </Col>
+                                </Row>
+                            ))}
                         <Row>
                             <Col xs={6}>
                                 <Label>Téléphone</Label>
@@ -266,7 +331,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={12}>
+                            <Col xs={6}>
                                 <Label>Pseudo</Label>
                                 <Input
                                     value={
@@ -281,6 +346,43 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         })
                                     }
                                 />
+                            </Col>
+                            <Col xs={6}>
+                                <Label>
+                                    <SourceLink
+                                        link={`https://www.google.com/maps/place/${hostFamily.address}`}
+                                    >
+                                        <span>
+                                            Adresse <MdDirections />
+                                        </span>
+                                    </SourceLink>
+                                </Label>
+                                <Input
+                                    type="textarea"
+                                    value={hostFamily.address}
+                                    disabled={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            address: evt.target.value,
+                                        })
+                                    }
+                                />
+                                {geocodeFound !== null && (
+                                    <p
+                                        className={
+                                            geocodeFound === true
+                                                ? "text-success"
+                                                : "text-danger"
+                                        }
+                                    >
+                                        <small>
+                                            {geocodeFound === true
+                                                ? "Adresse valide"
+                                                : "Adresse non trouvée"}
+                                        </small>
+                                    </p>
+                                )}
                             </Col>
                         </Row>
                         <Row>
@@ -333,7 +435,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 />
                             </Col>
                         </Row>
-                        <Row>
+                        <Row className="text-center">
                             <Col xs={4}>
                                 <Label>Permis de conduire</Label>
                                 <BooleanNullableDropdown
@@ -380,7 +482,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 />
                             </Col>
                         </Row>
-                        <Row>
+                        <Row className="text-center">
                             <Col xs={4}>
                                 <Label>
                                     Peut accueillir des animaux handicapés
