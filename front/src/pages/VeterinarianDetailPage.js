@@ -22,6 +22,7 @@ import {
 import SourceLink from "../components/SourceLink";
 import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import Geocode from "../utils/geocode";
 
 function VeterinarianDetailPage({ match, ...props }) {
     const vetId = match.params.id;
@@ -33,6 +34,10 @@ function VeterinarianDetailPage({ match, ...props }) {
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
     );
+
+    let previousAddress = null;
+    let isGeocoding = false;
+    let shouldSave = false;
 
     const getVeterinarian = () => {
         setVeterinarian(null);
@@ -61,8 +66,57 @@ function VeterinarianDetailPage({ match, ...props }) {
         refresh();
     }, []);
 
+    useEffect(() => {
+        if (veterinarian !== null && previousAddress !== veterinarian.address) {
+            previousAddress = veterinarian.address;
+
+            if (
+                veterinarian.address !== null &&
+                veterinarian.address !== undefined &&
+                veterinarian.address.length > 10
+            ) {
+                // Geocode address
+                isGeocoding = true;
+                Geocode.getCoordinatesFromAddress(veterinarian.address)
+                    .then((coordinates) => {
+                        if (coordinates !== null && coordinates.length > 1) {
+                            veterinarian.latitude = coordinates[1];
+                            veterinarian.longitude = coordinates[0];
+                        } else {
+                            console.warn("Can't get coordinates for address");
+                            veterinarian.latitude = null;
+                            veterinarian.longitude = null;
+                        }
+                        isGeocoding = false;
+
+                        saveIfNeeded();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        isGeocoding = false;
+
+                        saveIfNeeded();
+                    });
+            }
+        }
+    }, [veterinarian]);
+
     const save = () => {
-        setIsEditing(false);
+        if (!isGeocoding) {
+            setIsEditing(false);
+            shouldSave = true;
+            saveIfNeeded();
+        } else {
+            shouldSave = true;
+        }
+    };
+
+    const saveIfNeeded = () => {
+        if (shouldSave === false) {
+            return;
+        }
+
+        shouldSave = false;
         if (vetId === "new") {
             // Send new data to API
             VeterinariansManager.create(veterinarian)

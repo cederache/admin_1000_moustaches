@@ -7,6 +7,8 @@ const fields = [
   "phone",
   "mail",
   "address",
+  "latitude",
+  "longitude",
   "emergencies",
   "appointment_confirmation_procedure",
   "invoice_payment_date",
