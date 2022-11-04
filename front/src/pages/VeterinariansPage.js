@@ -220,11 +220,6 @@ function VeterinariansPage({ ...props }) {
                                                 );
                                             })
                                             .map((veterinarian) => {
-                                                console.log(
-                                                    veterinarian.name,
-                                                    veterinarian.latitude,
-                                                    veterinarian.longitude
-                                                );
                                                 return (
                                                     <Marker
                                                         title={
@@ -237,20 +232,34 @@ function VeterinariansPage({ ...props }) {
                                                         ]}
                                                     >
                                                         <Popup>
-                                                            {veterinarian.name}
-                                                            <br />
-                                                            <div className="pt-2 d-flex justify-content-center">
-                                                                <Button
-                                                                    title="Voir le détail"
-                                                                    color="primary"
-                                                                    onClick={() => {
-                                                                        showDetail(
-                                                                            veterinarian
-                                                                        );
-                                                                    }}
+                                                            <div className="text-center">
+                                                                {
+                                                                    veterinarian.name
+                                                                }
+                                                                <br />
+                                                                <span
+                                                                    title={
+                                                                        veterinarian.price_level_tooltip
+                                                                    }
                                                                 >
-                                                                    <MdAssignment />
-                                                                </Button>
+                                                                    {
+                                                                        veterinarian.price_level_text
+                                                                    }
+                                                                </span>
+                                                                <br />
+                                                                <div className="pt-2">
+                                                                    <Button
+                                                                        title="Voir le détail"
+                                                                        color="primary"
+                                                                        onClick={() => {
+                                                                            showDetail(
+                                                                                veterinarian
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <MdAssignment />
+                                                                    </Button>
+                                                                </div>
                                                             </div>
                                                         </Popup>
                                                     </Marker>

@@ -26,6 +26,24 @@ class VeterinariansManager {
             vet[date]["input"] =
                 rawValue != null ? moment(rawValue).format("YYYY-MM-DD") : null;
         });
+        switch (vet.price_level) {
+            case 0:
+                vet.price_level_text = "€";
+                vet.price_level_tooltip = "Pas cher";
+                break;
+            case 1:
+                vet.price_level_text = "€€";
+                vet.price_level_tooltip = "Cher";
+                break;
+            case 2:
+                vet.price_level_text = "€€€";
+                vet.price_level_tooltip = "Cher sa mère";
+                break;
+            default:
+                vet.price_level_text = null;
+                vet.price_level_tooltip = "Ne sait pas";
+                break;
+        }
         return vet;
     };
 

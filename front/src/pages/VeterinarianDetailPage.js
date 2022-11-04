@@ -46,7 +46,6 @@ function VeterinarianDetailPage({ match, ...props }) {
         }
         VeterinariansManager.getById(vetId)
             .then((vet) => {
-                console.log(vet.address);
                 setPreviousAddress(vet.address);
                 setVeterinarian(vet);
             })
@@ -356,6 +355,11 @@ function VeterinarianDetailPage({ match, ...props }) {
                                 <Label>Niveau de prix</Label>
                                 <br />
                                 <PriceLevelDropdown
+                                    title={
+                                        isEditing
+                                            ? ""
+                                            : veterinarian.price_level_tooltip
+                                    }
                                     value={veterinarian.price_level}
                                     readOnly={!isEditing}
                                     onChange={(newValue) => {
