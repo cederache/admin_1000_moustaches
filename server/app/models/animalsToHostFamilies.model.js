@@ -32,8 +32,6 @@ AnimalsToHostFamilies.create = (newEntity, result) => {
     return newEntity[field];
   });
 
-  console.log(fieldsRequest);
-  console.log(fieldsData);
   sql.query(
     `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
     fieldsData,
