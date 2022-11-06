@@ -85,7 +85,7 @@ Species.getAll = (name, result) => {
   });
 };
 
-Species.updateById = (id, animal, result) => {
+Species.updateById = (id, species, result) => {
   const fieldsToUpdate = fields.filter((field) => {
     return field !== "id";
   });
@@ -97,7 +97,7 @@ Species.updateById = (id, animal, result) => {
     .join(", ");
 
   var fieldsData = fieldsToUpdate.map((field) => {
-    return animalToHostFamily[field];
+    return species[field];
   });
   fieldsData.push(id);
 
@@ -117,8 +117,8 @@ Species.updateById = (id, animal, result) => {
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, { id: id, ...species });
+      result(null, { id: id, ...species });
     }
   );
 };

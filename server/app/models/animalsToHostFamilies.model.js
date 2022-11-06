@@ -129,8 +129,8 @@ AnimalsToHostFamilies.updateById = (id, animalToHostFamily, result) => {
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, { id: id, ...animalToHostFamily });
+      result(null, { id: id, ...animalToHostFamily });
     }
   );
 };

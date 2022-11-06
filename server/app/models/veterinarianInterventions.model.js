@@ -116,13 +116,16 @@ VeterinarianInterventions.updateById = (
       }
 
       if (res.affectedRows == 0) {
-        // not found Animal with the id
+        // not found with the id
         result({ kind: "not_found" }, null);
         return;
       }
 
-      console.log(`updated ${tableName}: `, { id: id, ...animals });
-      result(null, { id: id, ...animals });
+      console.log(`updated ${tableName}: `, {
+        id: id,
+        ...veterinarianIntervention,
+      });
+      result(null, { id: id, ...veterinarianIntervention });
     }
   );
 };
