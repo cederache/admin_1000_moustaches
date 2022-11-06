@@ -6,6 +6,7 @@ import {
     CardBody,
     CardHeader,
     Col,
+    FormGroup,
     Input,
     Label,
     Row,
@@ -26,11 +27,15 @@ import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import Geocode from "../utils/geocode";
 import SourceLink from "../components/SourceLink";
+import HostFamilyKindsManager from "../managers/hostFamilyKinds.manager";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
     const [hostFamily, setHostFamily] = useState(null);
     const [animalsToHostFamily, setAnimalsToHostFamily] = useState([]);
+    const [hostFamilyKinds, setHostFamilyKinds] = useState([]);
+    const [hostFamilyToHostFamilyKind, setHostFamilyToHostFamilyKinds] =
+        useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
         useState(false);
@@ -45,7 +50,7 @@ function HostFamilyDetailPage({ match, ...props }) {
 
     const getHostFamily = () => {
         setHostFamily(null);
-        HostFamiliesManager.getById(hostFamilyId)
+        return HostFamiliesManager.getById(hostFamilyId)
             .then((hostFamily) => setHostFamily(hostFamily))
             .catch((err) => {
                 console.error(err);
@@ -59,8 +64,45 @@ function HostFamilyDetailPage({ match, ...props }) {
 
     const getAnimalsToHostFamily = () => {
         setAnimalsToHostFamily([]);
-        AnimalsManager.getByHostFamilyId(hostFamilyId)
+        return AnimalsManager.getByHostFamilyId(hostFamilyId)
             .then(setAnimalsToHostFamily)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
+    };
+
+    const getHostFamilyToHostFamilyKinds = () => {
+        setHostFamilyToHostFamilyKinds([]);
+        return HostFamilyKindsManager.getByHostFamilyId(hostFamilyId)
+            .then((data) => {
+                console.log(data);
+                return data;
+            })
+            .then(setHostFamilyToHostFamilyKinds)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            })
+            .then(getHostFamilyKinds);
+    };
+
+    const getHostFamilyKinds = () => {
+        setHostFamilyKinds([]);
+        return HostFamilyKindsManager.getAll()
+            .then((data) => {
+                console.log(data);
+                return data;
+            })
+            .then(setHostFamilyKinds)
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
@@ -73,8 +115,9 @@ function HostFamilyDetailPage({ match, ...props }) {
 
     const refresh = () => {
         if (hostFamilyId !== "new") {
-            getHostFamily();
-            getAnimalsToHostFamily();
+            getHostFamily()
+                .then(getAnimalsToHostFamily)
+                .then(getHostFamilyToHostFamilyKinds);
         } else {
             setHostFamily(HostFamiliesManager.createHostFamily());
             setIsEditing(true);
@@ -205,6 +248,46 @@ function HostFamilyDetailPage({ match, ...props }) {
                 notificationSystem.addNotification({
                     message:
                         "Une erreur s'est produite pendant la suppression des données",
+                    level: "error",
+                });
+            });
+    };
+
+    const createHostFamilyKindLink = (hfk) => {
+        HostFamilyKindsManager.createHostFamilyLink(hfk.id, hostFamilyId)
+            .then(() => {
+                getHostFamilyToHostFamilyKinds();
+                notificationSystem.addNotification({
+                    message: "Famille d'Accueil mis à jour",
+                    level: "success",
+                });
+            })
+            .catch((err) => {
+                console.error(err);
+                getHostFamilyToHostFamilyKinds();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la mise à jour des données",
+                    level: "error",
+                });
+            });
+    };
+
+    const deleteHostFamilyKindLink = (hfk) => {
+        HostFamilyKindsManager.deleteHostFamilyLink(hfk.id, hostFamilyId)
+            .then(() => {
+                getHostFamilyToHostFamilyKinds();
+                notificationSystem.addNotification({
+                    message: "Famille d'Accueil mis à jour",
+                    level: "success",
+                });
+            })
+            .catch((err) => {
+                console.error(err);
+                getHostFamilyToHostFamilyKinds();
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la mise à jour des données",
                     level: "error",
                 });
             });
@@ -558,6 +641,64 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         })
                                     }
                                 />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col xs={12}>
+                                <Label>Type de Famille d'Accueil</Label>
+                                <FormGroup check>
+                                    {hostFamilyKinds.map((hfk) => {
+                                        return (
+                                            <Row>
+                                                <Col>
+                                                    <Label check>
+                                                        <Input
+                                                            type="checkbox"
+                                                            id={hfk.id}
+                                                            defaultChecked={
+                                                                hostFamilyToHostFamilyKind.filter(
+                                                                    (hfthfk) =>
+                                                                        hfthfk.id ===
+                                                                        hfk.id
+                                                                ).length > 0
+                                                            }
+                                                            onChange={(evt) => {
+                                                                console.log(
+                                                                    `Should ${
+                                                                        evt
+                                                                            .target
+                                                                            .checked ===
+                                                                        true
+                                                                            ? "Create"
+                                                                            : "Delete"
+                                                                    } link between host family and host family kind ${
+                                                                        hfk.name
+                                                                    }`
+                                                                );
+                                                                if (
+                                                                    evt.target
+                                                                        .checked ===
+                                                                    true
+                                                                ) {
+                                                                    // Create link
+                                                                    createHostFamilyKindLink(
+                                                                        hfk
+                                                                    );
+                                                                } else {
+                                                                    // Delete link
+                                                                    deleteHostFamilyKindLink(
+                                                                        hfk
+                                                                    );
+                                                                }
+                                                            }}
+                                                        />
+                                                        {hfk.name}
+                                                    </Label>
+                                                </Col>
+                                            </Row>
+                                        );
+                                    })}
+                                </FormGroup>
                             </Col>
                         </Row>
                     </CardBody>
