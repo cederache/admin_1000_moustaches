@@ -13,6 +13,7 @@ import {
     TabPane,
 } from "reactstrap";
 import HostFamiliesManager from "../managers/hostFamilies.manager";
+import HostFamilyKindsManager from "../managers/hostFamilyKinds.manager";
 import { useState } from "react";
 import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
 import { sortBy } from "../utils/sort";
@@ -35,6 +36,7 @@ L.Marker.prototype.options.icon = BlueIcon;
 
 function HostFamiliesPage({ ...props }) {
     const [hostFamilies, setHostFamilies] = useState([]);
+    const [hostFamilyKinds, setHostFamilyKinds] = useState([]);
     const [filteredHostFamilies, setFilteredHostFamilies] = useState([]);
     const [searchText, setSearchText] = useState([]);
     const [showMap, setShowMap] = useState(false);
@@ -64,8 +66,26 @@ function HostFamiliesPage({ ...props }) {
             });
     };
 
+    const getHostFamilyKinds = () => {
+        setHostFamilyKinds([]);
+        return HostFamilyKindsManager.getAll()
+            .then((data) => {
+                console.log(data);
+                return data;
+            })
+            .then(setHostFamilyKinds)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
+    };
+
     useEffect(() => {
-        getAllHostFamilies();
+        getHostFamilyKinds().then(getAllHostFamilies);
     }, []);
 
     useEffect(() => {
@@ -96,6 +116,10 @@ function HostFamiliesPage({ ...props }) {
 
     const toggleMap = () => {
         setShowMap(!showMap);
+    };
+
+    const hostFamilyKindNameForId = (id) => {
+        return hostFamilyKinds.find((hfk) => hfk.id == id)?.name;
     };
 
     const iconForHostFamilyKind = (host_family_kind_id) => {
@@ -256,6 +280,18 @@ function HostFamiliesPage({ ...props }) {
                                                                 {
                                                                     hostFamily.display_name
                                                                 }
+                                                                {hostFamilyKindNameForId(
+                                                                    hostFamily.main_host_family_kind_id
+                                                                ) !==
+                                                                    undefined && (
+                                                                    <>
+                                                                        <br />
+                                                                        FA{" "}
+                                                                        {hostFamilyKindNameForId(
+                                                                            hostFamily.main_host_family_kind_id
+                                                                        )}
+                                                                    </>
+                                                                )}
                                                                 <br />
                                                                 <div className="pt-2">
                                                                     <Button
