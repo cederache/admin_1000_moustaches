@@ -3,6 +3,15 @@ export const SPECIES_ID = {
     DOG: 2,
 };
 
+export const HOST_FAMILY_KIND_ID = {
+    CAT: 1,
+    KITTEN: 2,
+    DOG: 3,
+    KITTEN_FEEDING: 4,
+    PUPPY: 5,
+    RABBIT: 6,
+};
+
 export const NOTIFICATION_SYSTEM_STYLE = {
     NotificationItem: {
         DefaultStyle: {

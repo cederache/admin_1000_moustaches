@@ -19,43 +19,13 @@ import { sortBy } from "../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import userIcon from "../assets/img/markers/user-marker-icon.svg";
-import blueIcon from "../assets/img/markers/marker-icon-blue.png";
-import redIcon from "../assets/img/markers/marker-icon-red.png";
-import yellowIcon from "../assets/img/markers/marker-icon-yellow.png";
-import greenIcon from "../assets/img/markers/marker-icon-green.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
-let UserIcon = L.icon({
-    iconUrl: userIcon,
-    shadowUrl: null,
-    iconSize: [100, 100],
-    iconAnchor: [50, 50],
-});
-let BlueIcon = L.icon({
-    iconUrl: blueIcon,
-    shadowUrl: iconShadow,
-    iconSize: [30, 46],
-    iconAnchor: [15, 46],
-});
-let RedIcon = L.icon({
-    iconUrl: redIcon,
-    shadowUrl: iconShadow,
-    iconSize: [30, 46],
-    iconAnchor: [15, 46],
-});
-let YellowIcon = L.icon({
-    iconUrl: yellowIcon,
-    shadowUrl: iconShadow,
-    iconSize: [30, 46],
-    iconAnchor: [15, 46],
-});
-let GreenIcon = L.icon({
-    iconUrl: greenIcon,
-    shadowUrl: iconShadow,
-    iconSize: [30, 46],
-    iconAnchor: [15, 46],
-});
+import {
+    BlueIcon,
+    GreenIcon,
+    RedIcon,
+    UserIcon,
+    YellowIcon,
+} from "../utils/mapIcons";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -297,6 +267,7 @@ function VeterinariansPage({ ...props }) {
                                                         icon={priceMarkerIcon(
                                                             veterinarian
                                                         )}
+                                                        pane="markerPane"
                                                     >
                                                         <Popup>
                                                             <div className="text-center">
@@ -342,6 +313,7 @@ function VeterinariansPage({ ...props }) {
                                                 ]}
                                                 icon={UserIcon}
                                                 interactive={false}
+                                                pane="overlayPane"
                                             ></Marker>
                                         )}
                                     </MapContainer>

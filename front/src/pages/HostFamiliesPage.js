@@ -19,22 +19,17 @@ import { sortBy } from "../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import userIcon from "../assets/img/markers/user-marker-icon.svg";
-import blueIcon from "../assets/img/markers/marker-icon-blue.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
-let UserIcon = L.icon({
-    iconUrl: userIcon,
-    shadowUrl: null,
-    iconSize: [100, 100],
-    iconAnchor: [50, 50],
-});
-let BlueIcon = L.icon({
-    iconUrl: blueIcon,
-    shadowUrl: iconShadow,
-    iconSize: [30, 46],
-    iconAnchor: [15, 46],
-});
+import { HOST_FAMILY_KIND_ID } from "../utils/constants";
+import {
+    BlueIcon,
+    CatIcon,
+    DogIcon,
+    KittenFeedingIcon,
+    KittenIcon,
+    PuppyIcon,
+    RabbitIcon,
+    UserIcon,
+} from "../utils/mapIcons";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -101,6 +96,25 @@ function HostFamiliesPage({ ...props }) {
 
     const toggleMap = () => {
         setShowMap(!showMap);
+    };
+
+    const iconForHostFamilyKind = (host_family_kind_id) => {
+        console.log("Icon for id", host_family_kind_id);
+        switch (host_family_kind_id) {
+            case HOST_FAMILY_KIND_ID.CAT:
+                return CatIcon;
+            case HOST_FAMILY_KIND_ID.KITTEN:
+                return KittenIcon;
+            case HOST_FAMILY_KIND_ID.KITTEN_FEEDING:
+                return KittenFeedingIcon;
+            case HOST_FAMILY_KIND_ID.DOG:
+                return DogIcon;
+            case HOST_FAMILY_KIND_ID.PUPPY:
+                return PuppyIcon;
+            case HOST_FAMILY_KIND_ID.RABBIT:
+                return RabbitIcon;
+        }
+        return BlueIcon;
     };
 
     return (
@@ -232,6 +246,10 @@ function HostFamiliesPage({ ...props }) {
                                                             hostFamily.latitude,
                                                             hostFamily.longitude,
                                                         ]}
+                                                        icon={iconForHostFamilyKind(
+                                                            hostFamily.main_host_family_kind_id
+                                                        )}
+                                                        pane="markerPane"
                                                     >
                                                         <Popup>
                                                             <div className="text-center">
@@ -267,6 +285,7 @@ function HostFamiliesPage({ ...props }) {
                                                 ]}
                                                 icon={UserIcon}
                                                 interactive={false}
+                                                pane="overlayPane"
                                             ></Marker>
                                         )}
                                     </MapContainer>
