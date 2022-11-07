@@ -20,6 +20,8 @@ const HostFamiliesPage = React.lazy(() => import("./pages/HostFamiliesPage"));
 const HostFamilyDetailPage = React.lazy(() =>
     import("./pages/HostFamilyDetailPage")
 );
+const UsersPage = React.lazy(() => import("./pages/UsersPage"));
+const UserDetailPage = React.lazy(() => import("./pages/UserDetailPage"));
 
 const getBasename = () => {
     return `/${process.env.PUBLIC_URL.split("/").pop()}`;
@@ -41,6 +43,17 @@ class App extends React.Component {
                                     <AuthPage
                                         {...props}
                                         authState={STATE_LOGIN}
+                                    />
+                                )}
+                            />
+                            <LayoutRoute
+                                exact
+                                path="/signup"
+                                layout={EmptyLayout}
+                                component={(props) => (
+                                    <AuthPage
+                                        {...props}
+                                        authState={STATE_SIGNUP}
                                     />
                                 )}
                             />
@@ -90,7 +103,20 @@ class App extends React.Component {
                                 layout={MainLayout}
                                 component={HostFamilyDetailPage}
                             />
-                            <Redirect to="/" />
+                            <LayoutRoute
+                                isPrivate={true}
+                                exact
+                                path="/users"
+                                layout={MainLayout}
+                                component={UsersPage}
+                            />
+                            <LayoutRoute
+                                isPrivate={true}
+                                path="/users/:id"
+                                layout={MainLayout}
+                                component={UserDetailPage}
+                            />
+                            {/* <Redirect to="/" /> */}
                         </React.Suspense>
                     </Switch>
                 </GAListener>
