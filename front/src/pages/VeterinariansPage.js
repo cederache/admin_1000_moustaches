@@ -32,7 +32,7 @@ L.Marker.prototype.options.icon = BlueIcon;
 function VeterinariansPage({ ...props }) {
     const [veterinarians, setVeterinarians] = useState([]);
     const [filteredVeterinarians, setFilteredVeterinarians] = useState([]);
-    const [searchText, setSearchText] = useState([]);
+    const [searchText, setSearchText] = useState("");
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState(null);
 
