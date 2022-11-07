@@ -42,6 +42,11 @@ class Header extends React.Component {
             .classList.toggle("cr-sidebar--open");
     };
 
+    logout = () => {
+        sessionStorage.removeItem("Auth Token");
+        window.location = "/login";
+    };
+
     render() {
         return (
             <Navbar light expand className={bem.b("bg-white")}>
@@ -84,6 +89,7 @@ class Header extends React.Component {
                                             tag="button"
                                             action
                                             className="border-light"
+                                            onClick={this.logout}
                                         >
                                             <MdExitToApp /> Déconnexion
                                         </ListGroupItem>
