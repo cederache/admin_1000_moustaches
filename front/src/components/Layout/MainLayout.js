@@ -2,6 +2,7 @@ import { Content, Footer, Header, Sidebar } from "../Layout";
 import React from "react";
 import NotificationSystem from "react-notification-system";
 import { NOTIFICATION_SYSTEM_STYLE } from "../../utils/constants";
+import { getDeviceConfig } from "../../utils/breakpoint";
 
 class MainLayout extends React.Component {
     static isSidebarOpen() {
@@ -10,24 +11,17 @@ class MainLayout extends React.Component {
             .classList.contains("cr-sidebar--open");
     }
 
-    componentWillReceiveProps({ breakpoint }) {
-        if (breakpoint !== this.props.breakpoint) {
-            this.checkBreakpoint(breakpoint);
-        }
-    }
-
     componentDidMount() {
-        this.checkBreakpoint(this.props.breakpoint);
+        this.checkBreakpoint(getDeviceConfig(window.innerWidth));
     }
 
     // close sidebar when
     handleContentClick = (event) => {
         // close sidebar if sidebar is open and screen size is less than `md`
+        let breakpoint = getDeviceConfig(window.innerWidth);
         if (
             MainLayout.isSidebarOpen() &&
-            (this.props.breakpoint === "xs" ||
-                this.props.breakpoint === "sm" ||
-                this.props.breakpoint === "md")
+            (breakpoint === "xs" || breakpoint === "sm" || breakpoint === "md")
         ) {
             this.openSidebar("close");
         }
