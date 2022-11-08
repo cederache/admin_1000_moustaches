@@ -137,16 +137,30 @@ class UsersManager {
             const auth = getAuth();
             const firebaseUser = auth.currentUser;
             if (firebaseUser !== null) {
-                this.getAll().then((users) => {
-                    resolve(
-                        users.find((usr) => usr.email === firebaseUser.email)
-                    );
-                });
+                this.getAll()
+                    .then((users) => {
+                        resolve(
+                            users.find(
+                                (usr) => usr.email === firebaseUser.email
+                            )
+                        );
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        resolve(null);
+                    });
             } else {
                 onAuthStateChanged(auth, (user) => {
-                    this.getAll().then((users) => {
-                        resolve(users.find((usr) => usr.email === user.email));
-                    });
+                    this.getAll()
+                        .then((users) => {
+                            resolve(
+                                users.find((usr) => usr.email === user.email)
+                            );
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            resolve(null);
+                        });
                 });
             }
         });

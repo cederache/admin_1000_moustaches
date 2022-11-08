@@ -18,10 +18,10 @@ class AnimalsManager {
     static createAnimal = () => {
         const animal = {};
         this.dateFields.forEach((dateField) => {
-            animal[dateField] = null;
+            animal[dateField] = undefined;
             animal[`${dateField}_object`] = {
-                readable: null,
-                input: null,
+                readable: undefined,
+                input: undefined,
             };
         });
         return animal;
@@ -32,9 +32,13 @@ class AnimalsManager {
             const rawValue = animal[date];
             animal[`${date}_object`] = {};
             animal[`${date}_object`]["readable"] =
-                rawValue != null ? moment(rawValue).format("DD/MM/YYYY") : null;
+                rawValue != null
+                    ? moment(rawValue).format("DD/MM/YYYY")
+                    : undefined;
             animal[`${date}_object`]["input"] =
-                rawValue != null ? moment(rawValue).format("YYYY-MM-DD") : null;
+                rawValue != null
+                    ? moment(rawValue).format("YYYY-MM-DD")
+                    : undefined;
         });
         return animal;
     };

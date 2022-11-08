@@ -8,10 +8,10 @@ class HostFamiliesManager {
     static createHostFamily = () => {
         const hostFamily = {};
         this.dateFields.forEach((dateField) => {
-            hostFamily[dateField] = null;
+            hostFamily[dateField] = undefined;
             hostFamily[`${dateField}_object`] = {
-                readable: null,
-                input: null,
+                readable: undefined,
+                input: undefined,
             };
         });
         return hostFamily;
@@ -22,9 +22,13 @@ class HostFamiliesManager {
             const rawValue = hostFamily[date];
             hostFamily[`${date}_object`] = {};
             hostFamily[`${date}_object`]["readable"] =
-                rawValue != null ? moment(rawValue).format("DD/MM/YYYY") : null;
+                rawValue != null
+                    ? moment(rawValue).format("DD/MM/YYYY")
+                    : undefined;
             hostFamily[`${date}_object`]["input"] =
-                rawValue != null ? moment(rawValue).format("YYYY-MM-DD") : null;
+                rawValue != null
+                    ? moment(rawValue).format("YYYY-MM-DD")
+                    : undefined;
         });
         hostFamily[
             "display_name"
