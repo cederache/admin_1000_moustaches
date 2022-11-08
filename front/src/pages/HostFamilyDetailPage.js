@@ -419,6 +419,24 @@ function HostFamilyDetailPage({ match, ...props }) {
                         </Row>
                     </CardHeader>
                     <CardBody>
+                        <Row>
+                            <Col>
+                                <Label>A jour des cotisations</Label>
+                            </Col>
+                            <Col xs={"auto"}>
+                                <Switch
+                                    isOn={hostFamily.membership_up_to_date}
+                                    disabled={!isEditing}
+                                    handleToggle={() => {
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            membership_up_to_date:
+                                                !hostFamily.membership_up_to_date,
+                                        });
+                                    }}
+                                />
+                            </Col>
+                        </Row>
                         <Accordion
                             className="pb-3"
                             open={openContactInfo}

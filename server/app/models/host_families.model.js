@@ -24,6 +24,7 @@ const fields = [
   "can_isolate",
   "host_conditions",
   "on_break",
+  "membership_up_to_date",
 ];
 
 // constructor
