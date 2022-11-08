@@ -22,6 +22,8 @@ const fields = [
   "observations",
   "housing_informations",
   "can_isolate",
+  "host_conditions",
+  "on_break",
 ];
 
 // constructor

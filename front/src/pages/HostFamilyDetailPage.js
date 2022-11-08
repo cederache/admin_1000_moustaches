@@ -1,6 +1,10 @@
 import Page from "../components/Page";
 import React, { useEffect } from "react";
 import {
+    Accordion,
+    AccordionBody,
+    AccordionHeader,
+    AccordionItem,
     Button,
     Card,
     CardBody,
@@ -28,6 +32,7 @@ import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import Geocode from "../utils/geocode";
 import SourceLink from "../components/SourceLink";
 import HostFamilyKindsManager from "../managers/hostFamilyKinds.manager";
+import Switch from "../components/Switch";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
@@ -47,6 +52,10 @@ function HostFamilyDetailPage({ match, ...props }) {
     const [previousAddress, setPreviousAddress] = useState(null);
     const [isGeocoding, setIsGeocoding] = useState(false);
     const [shouldSave, setShouldSave] = useState(false);
+
+    const [openContactInfo, setOpenContactInfo] = useState("");
+    const [openHomeInfo, setOpenHomeInfo] = useState("");
+    const [openHostInfo, setOpenHostInfo] = useState("");
 
     const getHostFamily = () => {
         setHostFamily(null);
@@ -293,6 +302,43 @@ function HostFamilyDetailPage({ match, ...props }) {
             });
     };
 
+    const toggleContactInfo = (id) => {
+        if (openContactInfo === id) {
+            setOpenContactInfo();
+        } else {
+            setOpenContactInfo(id);
+        }
+    };
+
+    const toggleHomeInfo = (id) => {
+        if (openHomeInfo === id) {
+            setOpenHomeInfo();
+        } else {
+            setOpenHomeInfo(id);
+        }
+    };
+
+    const toggleHostInfo = (id) => {
+        if (openHostInfo === id) {
+            setOpenHostInfo();
+        } else {
+            setOpenHostInfo(id);
+        }
+    };
+
+    const formattedPhone = () => {
+        let cleaned = ("" + hostFamily.phone).replace(/\D/g, "");
+
+        //Check if the input is of correct length
+        let match = cleaned.match(/^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/);
+
+        if (match) {
+            match.shift();
+            return match.join(".");
+        }
+        return hostFamily.phone;
+    };
+
     let content = <div>Chargement...</div>;
 
     if (hostFamily === undefined) {
@@ -344,363 +390,514 @@ function HostFamilyDetailPage({ match, ...props }) {
 
                 <Card>
                     <CardHeader>
-                        {hostFamilyId === "new" && (
-                            <h2>Nouvelle famille d'accueil</h2>
-                        )}
-                        {hostFamilyId !== "new" && (
-                            <h2>{hostFamily.display_name}</h2>
-                        )}
-                    </CardHeader>
-                    <CardBody>
-                        {hostFamilyId === "new" ||
-                            (isEditing && (
-                                <Row>
-                                    <Col xs={6}>
-                                        <Label>Prénom</Label>
-                                        <Input
-                                            value={hostFamily.firstname || ""}
-                                            disabled={!isEditing}
-                                            onChange={(evt) =>
-                                                setHostFamily({
-                                                    ...hostFamily,
-                                                    firstname: evt.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Col>
-                                    <Col xs={6}>
-                                        <Label>Nom</Label>
-                                        <Input
-                                            value={hostFamily.name || ""}
-                                            disabled={!isEditing}
-                                            onChange={(evt) =>
-                                                setHostFamily({
-                                                    ...hostFamily,
-                                                    name: evt.target.value,
-                                                })
-                                            }
-                                        />
-                                    </Col>
-                                </Row>
-                            ))}
                         <Row>
-                            <Col xs={6}>
-                                <Label>Téléphone</Label>
-                                <Input
-                                    type="phone"
-                                    value={hostFamily.phone || ""}
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            phone: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <Label>E-mail</Label>
-                                <Input
-                                    type="mail"
-                                    value={hostFamily.mail || ""}
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            mail: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={6}>
-                                <Label>Pseudo</Label>
-                                <Input
-                                    value={
-                                        hostFamily.social_network_alias || ""
-                                    }
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            social_network_alias:
-                                                evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <Label>
-                                    <SourceLink
-                                        link={`https://www.google.com/maps/place/${hostFamily.address}`}
-                                    >
-                                        <span>
-                                            Adresse <MdDirections />
-                                        </span>
-                                    </SourceLink>
-                                </Label>
-                                <Input
-                                    type="textarea"
-                                    value={hostFamily.address}
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            address: evt.target.value,
-                                        })
-                                    }
-                                />
-                                {geocodeFound !== null && (
-                                    <p
-                                        className={
-                                            geocodeFound === true
-                                                ? "text-success"
-                                                : "text-danger"
-                                        }
-                                    >
-                                        <small>
-                                            {geocodeFound === true
-                                                ? "Adresse valide"
-                                                : "Adresse non trouvée"}
-                                        </small>
-                                    </p>
+                            <Col>
+                                {hostFamilyId === "new" && (
+                                    <h2>Nouvelle famille d'accueil</h2>
+                                )}
+                                {hostFamilyId !== "new" && (
+                                    <h2>{hostFamily.display_name}</h2>
                                 )}
                             </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={4}>
-                                <Label>Nombre d'enfant</Label>
-                                <Input
-                                    value={
-                                        hostFamily.nb_children?.toString() || ""
-                                    }
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            nb_children:
-                                                evt.target.value === ""
-                                                    ? null
-                                                    : evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col xs={8}>
-                                <Label>Informations enfant(s)</Label>
-                                <Input
-                                    type="textarea"
-                                    value={hostFamily.children_infos || ""}
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            children_infos: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12}>
-                                <Label>Informations animaux</Label>
-                                <Input
-                                    type="textarea"
-                                    value={hostFamily.animals_infos || ""}
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            animals_infos: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row className="text-center">
-                            <Col xs={4}>
-                                <Label>Permis de conduire</Label>
-                                <BooleanNullableDropdown
-                                    value={hostFamily.driver_license}
-                                    disabled={!isEditing}
-                                    onChange={(newValue) => {
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            driver_license: newValue,
-                                        });
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={4}>
-                                <Label>Peut donner soins véto</Label>
-                                <BooleanNullableDropdown
-                                    value={
-                                        hostFamily.can_provide_veterinary_care
-                                    }
-                                    disabled={!isEditing}
-                                    onChange={(newValue) => {
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            can_provide_veterinary_care:
-                                                newValue,
-                                        });
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={4}>
-                                <Label>Peut sociabiliser</Label>
-                                <BooleanNullableDropdown
-                                    value={
-                                        hostFamily.can_provide_sociabilisation
-                                    }
-                                    disabled={!isEditing}
-                                    onChange={(newValue) => {
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            can_provide_sociabilisation:
-                                                newValue,
-                                        });
-                                    }}
-                                />
-                            </Col>
-                        </Row>
-                        <Row className="text-center">
-                            <Col xs={4}>
+                            <Col xs={"auto"} className="justify-content-end">
                                 <Label>
-                                    Peut accueillir des animaux handicapés
+                                    {hostFamily.on_break
+                                        ? "En pause"
+                                        : "Active"}
                                 </Label>
-                                <BooleanNullableDropdown
-                                    value={hostFamily.can_host_disable_animal}
+                                <Switch
+                                    isOn={!hostFamily.on_break}
                                     disabled={!isEditing}
-                                    onChange={(newValue) => {
+                                    handleToggle={() => {
                                         setHostFamily({
                                             ...hostFamily,
-                                            can_host_disable_animal: newValue,
-                                        });
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={4}>
-                                <Label>Peut donner des soins de nuit</Label>
-                                <BooleanNullableDropdown
-                                    value={hostFamily.can_provide_night_care}
-                                    disabled={!isEditing}
-                                    onChange={(newValue) => {
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            can_provide_night_care: newValue,
-                                        });
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={4}>
-                                <Label>Peut isoler</Label>
-                                <BooleanNullableDropdown
-                                    value={hostFamily.can_isolate}
-                                    disabled={!isEditing}
-                                    onChange={(newValue) => {
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            can_isolate: newValue,
+                                            on_break: !hostFamily.on_break,
                                         });
                                     }}
                                 />
                             </Col>
                         </Row>
-                        <Row>
-                            <Col xs={12}>
-                                <Label>Observations</Label>
-                                <Input
-                                    type="textarea"
-                                    value={hostFamily.observations || ""}
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            observations: evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12}>
-                                <Label>Informations sur le logement</Label>
-                                <Input
-                                    type="textarea"
-                                    value={
-                                        hostFamily.housing_informations || ""
-                                    }
-                                    disabled={!isEditing}
-                                    onChange={(evt) =>
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            housing_informations:
-                                                evt.target.value,
-                                        })
-                                    }
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12}>
-                                <Label>Type de Famille d'Accueil</Label>
-                                <FormGroup check>
-                                    {hostFamilyKinds.map((hfk) => {
-                                        return (
+                    </CardHeader>
+                    <CardBody>
+                        <Accordion
+                            className="pb-3"
+                            open={openContactInfo}
+                            toggle={toggleContactInfo}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Information de contact
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    {hostFamilyId === "new" ||
+                                        (isEditing && (
                                             <Row>
-                                                <Col>
-                                                    <Label check>
-                                                        <Input
-                                                            type="checkbox"
-                                                            id={hfk.id}
-                                                            defaultChecked={
-                                                                hostFamilyToHostFamilyKind.filter(
-                                                                    (hfthfk) =>
-                                                                        hfthfk.id ===
-                                                                        hfk.id
-                                                                ).length > 0
-                                                            }
-                                                            onChange={(evt) => {
-                                                                console.log(
-                                                                    `Should ${
-                                                                        evt
-                                                                            .target
-                                                                            .checked ===
-                                                                        true
-                                                                            ? "Create"
-                                                                            : "Delete"
-                                                                    } link between host family and host family kind ${
-                                                                        hfk.name
-                                                                    }`
-                                                                );
-                                                                if (
+                                                <Col xs={6}>
+                                                    <Label>Prénom</Label>
+                                                    <Input
+                                                        value={
+                                                            hostFamily.firstname ||
+                                                            ""
+                                                        }
+                                                        disabled={!isEditing}
+                                                        onChange={(evt) =>
+                                                            setHostFamily({
+                                                                ...hostFamily,
+                                                                firstname:
                                                                     evt.target
-                                                                        .checked ===
-                                                                    true
-                                                                ) {
-                                                                    // Create link
-                                                                    createHostFamilyKindLink(
-                                                                        hfk
-                                                                    );
-                                                                } else {
-                                                                    // Delete link
-                                                                    deleteHostFamilyKindLink(
-                                                                        hfk
-                                                                    );
-                                                                }
-                                                            }}
-                                                        />
-                                                        {hfk.name}
-                                                    </Label>
+                                                                        .value,
+                                                            })
+                                                        }
+                                                    />
+                                                </Col>
+                                                <Col xs={6}>
+                                                    <Label>Nom</Label>
+                                                    <Input
+                                                        value={
+                                                            hostFamily.name ||
+                                                            ""
+                                                        }
+                                                        disabled={!isEditing}
+                                                        onChange={(evt) =>
+                                                            setHostFamily({
+                                                                ...hostFamily,
+                                                                name: evt.target
+                                                                    .value,
+                                                            })
+                                                        }
+                                                    />
                                                 </Col>
                                             </Row>
-                                        );
-                                    })}
-                                </FormGroup>
-                            </Col>
-                        </Row>
+                                        ))}
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Téléphone</Label>
+                                            {isEditing && (
+                                                <Input
+                                                    type="phone"
+                                                    value={
+                                                        hostFamily.phone || ""
+                                                    }
+                                                    disabled={false}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            phone: evt.target
+                                                                .value,
+                                                        })
+                                                    }
+                                                />
+                                            )}
+                                            {!isEditing && (
+                                                <Input
+                                                    type="phone"
+                                                    value={formattedPhone()}
+                                                    disabled={true}
+                                                />
+                                            )}
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>E-mail</Label>
+                                            <Input
+                                                type="mail"
+                                                value={hostFamily.mail || ""}
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        mail: evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={6}>
+                                            <Label>Pseudo</Label>
+                                            <Input
+                                                value={
+                                                    hostFamily.social_network_alias ||
+                                                    ""
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        social_network_alias:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <Label>
+                                                <SourceLink
+                                                    link={`https://www.google.com/maps/place/${hostFamily.address}`}
+                                                >
+                                                    <span>
+                                                        Adresse <MdDirections />
+                                                    </span>
+                                                </SourceLink>
+                                            </Label>
+                                            <Input
+                                                type="textarea"
+                                                value={hostFamily.address}
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        address:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                            {geocodeFound !== null && (
+                                                <p
+                                                    className={
+                                                        geocodeFound === true
+                                                            ? "text-success"
+                                                            : "text-danger"
+                                                    }
+                                                >
+                                                    <small>
+                                                        {geocodeFound === true
+                                                            ? "Adresse valide"
+                                                            : "Adresse non trouvée"}
+                                                    </small>
+                                                </p>
+                                            )}
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion
+                            className="pb-3"
+                            open={openHomeInfo}
+                            toggle={toggleHomeInfo}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Information sur le foyer
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    <Row>
+                                        <Col xs={4}>
+                                            <Label>Nombre d'enfant</Label>
+                                            <Input
+                                                value={
+                                                    hostFamily.nb_children?.toString() ||
+                                                    ""
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        nb_children:
+                                                            evt.target.value ===
+                                                            ""
+                                                                ? null
+                                                                : evt.target
+                                                                      .value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                        <Col xs={8}>
+                                            <Label>
+                                                Informations enfant(s)
+                                            </Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    hostFamily.children_infos ||
+                                                    ""
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        children_infos:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>Informations animaux</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    hostFamily.animals_infos ||
+                                                    ""
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        animals_infos:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row className="text-center">
+                                        <Col xs={4}>
+                                            <Label>Permis de conduire</Label>
+                                            <BooleanNullableDropdown
+                                                value={
+                                                    hostFamily.driver_license
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        driver_license:
+                                                            newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>Observations</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    hostFamily.observations ||
+                                                    ""
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        observations:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>
+                                                Informations sur le logement
+                                            </Label>
+                                            <Input
+                                                type="textarea"
+                                                value={
+                                                    hostFamily.housing_informations ||
+                                                    ""
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        housing_informations:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion
+                            className="pb-3"
+                            open={openHostInfo}
+                            toggle={toggleHostInfo}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Information sur l'accueil
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>
+                                                Type de Famille d'Accueil
+                                            </Label>
+                                            <FormGroup check>
+                                                {hostFamilyKinds.map((hfk) => {
+                                                    return (
+                                                        <Row>
+                                                            <Col>
+                                                                <Label check>
+                                                                    <Input
+                                                                        type="checkbox"
+                                                                        id={
+                                                                            hfk.id
+                                                                        }
+                                                                        defaultChecked={
+                                                                            hostFamilyToHostFamilyKind.filter(
+                                                                                (
+                                                                                    hfthfk
+                                                                                ) =>
+                                                                                    hfthfk.id ===
+                                                                                    hfk.id
+                                                                            )
+                                                                                .length >
+                                                                            0
+                                                                        }
+                                                                        onChange={(
+                                                                            evt
+                                                                        ) => {
+                                                                            console.log(
+                                                                                `Should ${
+                                                                                    evt
+                                                                                        .target
+                                                                                        .checked ===
+                                                                                    true
+                                                                                        ? "Create"
+                                                                                        : "Delete"
+                                                                                } link between host family and host family kind ${
+                                                                                    hfk.name
+                                                                                }`
+                                                                            );
+                                                                            if (
+                                                                                evt
+                                                                                    .target
+                                                                                    .checked ===
+                                                                                true
+                                                                            ) {
+                                                                                // Create link
+                                                                                createHostFamilyKindLink(
+                                                                                    hfk
+                                                                                );
+                                                                            } else {
+                                                                                // Delete link
+                                                                                deleteHostFamilyKindLink(
+                                                                                    hfk
+                                                                                );
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    {hfk.name}
+                                                                </Label>
+                                                            </Col>
+                                                        </Row>
+                                                    );
+                                                })}
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={4} lg={3}>
+                                            <Label>
+                                                Peut donner soins véto
+                                            </Label>
+                                            <BooleanNullableDropdown
+                                                value={
+                                                    hostFamily.can_provide_veterinary_care
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        can_provide_veterinary_care:
+                                                            newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={4} lg={3}>
+                                            <Label>Peut sociabiliser</Label>
+                                            <BooleanNullableDropdown
+                                                value={
+                                                    hostFamily.can_provide_sociabilisation
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        can_provide_sociabilisation:
+                                                            newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={4} lg={3}>
+                                            <Label>
+                                                Peut accueillir des animaux
+                                                handicapés
+                                            </Label>
+                                            <BooleanNullableDropdown
+                                                value={
+                                                    hostFamily.can_host_disable_animal
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        can_host_disable_animal:
+                                                            newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={4} lg={3}>
+                                            <Label>
+                                                Peut donner des soins de nuit
+                                            </Label>
+                                            <BooleanNullableDropdown
+                                                value={
+                                                    hostFamily.can_provide_night_care
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        can_provide_night_care:
+                                                            newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={4} lg={3}>
+                                            <Label>Peut isoler</Label>
+                                            <BooleanNullableDropdown
+                                                value={hostFamily.can_isolate}
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        can_isolate: newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>
+                                                Conditions d'accueil (nb
+                                                animaux, ...)
+                                            </Label>
+                                            <Input
+                                                type="textarea"
+                                                disabled={!isEditing}
+                                                value={
+                                                    hostFamily.host_conditions ||
+                                                    ""
+                                                }
+                                                onChange={(newValue) => {
+                                                    setHostFamily({
+                                                        ...hostFamily,
+                                                        host_conditions:
+                                                            newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                    </Row>
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
                     </CardBody>
                 </Card>
 

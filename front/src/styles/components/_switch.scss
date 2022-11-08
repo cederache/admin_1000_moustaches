@@ -1,0 +1,45 @@
+/* The switch - the box around the slider */
+.react-switch-checkbox {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+$width: 50px;
+
+.react-switch-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    width: $width;
+    height: calc($width / 2);
+    background: grey;
+    border-radius: $width;
+    position: relative;
+    transition: background-color 0.2s;
+    top: 7px;
+    margin-left: 5px;
+}
+
+.react-switch-label .react-switch-button {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc($width / 2 - 2px * 2);
+    height: calc($width / 2 - 2px * 2);
+    border-radius: calc($width / 2 - 2px * 2);
+    transition: 0.2s;
+    background: #fff;
+    box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+}
+
+.react-switch-checkbox:checked + .react-switch-label .react-switch-button {
+    left: calc(100% - 2px);
+    transform: translateX(-100%);
+}
+
+.react-switch-label:active .react-switch-button {
+    width: 60px;
+}
