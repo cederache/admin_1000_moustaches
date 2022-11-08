@@ -29,7 +29,6 @@ const getBasename = () => {
 
 class App extends React.Component {
     render() {
-        console.log(this.props);
         return (
             <BrowserRouter basename={getBasename()}>
                 <GAListener>

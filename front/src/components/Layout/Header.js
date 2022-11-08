@@ -1,6 +1,5 @@
-import { UserCard } from "../Card";
 import React, { useEffect, useState } from "react";
-import { MdClearAll, MdExitToApp, MdPersonPin } from "react-icons/md";
+import { MdClearAll, MdExitToApp } from "react-icons/md";
 import {
     Button,
     ListGroup,
@@ -12,8 +11,9 @@ import {
     Popover,
     PopoverBody,
 } from "reactstrap";
+import UsersManager from "../../managers/users.manager";
 import bn from "../../utils/bemnames";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { UserCard } from "../Card";
 
 const bem = bn.create("header");
 
@@ -22,12 +22,7 @@ const Header = ({ ...props }) => {
     let [isOpenUserCardPopover, setIsOpenUserCardPopover] = useState(false);
 
     useEffect(() => {
-        const auth = getAuth();
-        setLoggedUser(auth.currentUser || {});
-
-        onAuthStateChanged(auth, (user) => {
-            setLoggedUser(user || {});
-        });
+        UsersManager.getLoggedUser().then(setLoggedUser);
     }, []);
 
     let logout = () => {
@@ -60,7 +55,7 @@ const Header = ({ ...props }) => {
                 <NavItem>
                     <NavLink id="Popover2">
                         <Button onClick={toggleUserCardPopover}>
-                            {loggedUser.email}
+                            {loggedUser?.firstname} {loggedUser?.name}
                         </Button>
                     </NavLink>
                     <Popover
@@ -73,17 +68,10 @@ const Header = ({ ...props }) => {
                     >
                         <PopoverBody className="p-0 border-light">
                             <UserCard
-                                title={loggedUser.email}
-                                className="border-light"
+                                title={loggedUser?.email}
+                                className="border-light bg-gradient-theme-top"
                             >
                                 <ListGroup flush>
-                                    <ListGroupItem
-                                        tag="button"
-                                        action
-                                        className="border-light"
-                                    >
-                                        <MdPersonPin /> Profil
-                                    </ListGroupItem>
                                     <ListGroupItem
                                         tag="button"
                                         action

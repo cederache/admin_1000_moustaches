@@ -1,4 +1,5 @@
 import moment from "moment";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -128,6 +129,26 @@ class UsersManager {
                 return response.json();
             }
             throw new Error("Server error");
+        });
+    };
+
+    static getLoggedUser = () => {
+        return new Promise((resolve, reject) => {
+            const auth = getAuth();
+            const firebaseUser = auth.currentUser;
+            if (firebaseUser !== null) {
+                this.getAll().then((users) => {
+                    resolve(
+                        users.find((usr) => usr.email === firebaseUser.email)
+                    );
+                });
+            } else {
+                onAuthStateChanged(auth, (user) => {
+                    this.getAll().then((users) => {
+                        resolve(users.find((usr) => usr.email === user.email));
+                    });
+                });
+            }
         });
     };
 }
