@@ -80,7 +80,9 @@ function AuthForm({
             if (confirmPassword === password) {
                 // Check if user is prepared in database
                 UsersManager.getAll().then((users) => {
-                    if (users.find((usr) => usr.email !== username)) {
+                    if (
+                        users.find((usr) => usr.email === username).length === 0
+                    ) {
                         notificationSystem?.addNotification({
                             message:
                                 "Le compte doit être préparé avec cet e-mail. Merci de contacter un administrateur.",
