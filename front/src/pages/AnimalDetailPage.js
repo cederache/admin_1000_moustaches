@@ -863,7 +863,7 @@ function AnimalDetailPage({ match, ...props }) {
                             <CardHeader>
                                 <h3>Historique des Familles d'Accueil</h3>
                             </CardHeader>
-                            <CardBody>
+                            <CardBody className="table-responsive">
                                 <Table {...{ striped: true }}>
                                     <thead>
                                         <tr>

@@ -926,7 +926,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                         <CardHeader>
                             <h3>Historique des animaux</h3>
                         </CardHeader>
-                        <CardBody>
+                        <CardBody className="table-responsive">
                             <Table {...{ striped: true }}>
                                 <thead>
                                     <tr>

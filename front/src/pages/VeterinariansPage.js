@@ -187,7 +187,7 @@ function VeterinariansPage({ ...props }) {
                     <TabContent activeTab={showMap ? "2" : "1"}>
                         <TabPane tabId="1">
                             <Row>
-                                <Col xs={12}>
+                                <Col xs={12} className="table-responsive">
                                     <Table {...{ striped: true }}>
                                         <thead>
                                             <tr>

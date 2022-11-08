@@ -108,7 +108,7 @@ function UsersPage({ ...props }) {
             <Row>
                 <Col xs={12}>
                     <Row>
-                        <Col xs={12}>
+                        <Col xs={12} className="table-responsive">
                             <Table {...{ striped: true }}>
                                 <thead>
                                     <tr>
