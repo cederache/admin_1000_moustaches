@@ -1,4 +1,4 @@
-const HostFamilies = require("../models/hostFamilies.model.js");
+const HostFamilies = require("../models/host_families.model.js");
 
 // Create and Save a new HostFamilies
 exports.create = (req, res) => {

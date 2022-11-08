@@ -1,4 +1,4 @@
-const AnimalsToHostFamilies = require("../models/animalsToHostFamilies.model.js");
+const AnimalsToHostFamilies = require("../models/animals_ho_host_families.model.js");
 
 // Create and Save a new AnimalsToHostFamilies
 exports.create = (req, res) => {

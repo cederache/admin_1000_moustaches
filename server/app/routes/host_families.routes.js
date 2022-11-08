@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const hostFamilies = require("../controllers/hostFamilies.controller.js");
+  const hostFamilies = require("../controllers/host_families.controller.js");
 
   var router = require("express").Router();
 

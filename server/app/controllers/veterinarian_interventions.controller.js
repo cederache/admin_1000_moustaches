@@ -1,4 +1,4 @@
-const VeterinarianInterventions = require("../models/veterinarianInterventions.model.js");
+const VeterinarianInterventions = require("../models/veterinarian_interventions.model.js");
 
 // Create and Save a new VeterinarianInterventions
 exports.create = (req, res) => {

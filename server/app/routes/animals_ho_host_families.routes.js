@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const animalsToHostFamilies = require("../controllers/animalsToHostFamilies.controller.js");
+  const animalsToHostFamilies = require("../controllers/animals_ho_host_families.controller.js");
 
   var router = require("express").Router();
 
