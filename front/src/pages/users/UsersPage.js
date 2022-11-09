@@ -1,12 +1,13 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
-import UsersManager from "../managers/users.manager";
+import UsersManager from "../../managers/users.manager";
 import { useState } from "react";
 import { MdRefresh, MdAddBox, MdAssignment } from "react-icons/md";
 import { FaUserAlt } from "react-icons/fa";
-import { sortBy } from "../utils/sort";
+import { sortBy } from "../../utils/sort";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase-config";
 
 function UsersPage({ ...props }) {
     const [users, setUsers] = useState([]);
@@ -38,7 +39,6 @@ function UsersPage({ ...props }) {
     };
 
     useEffect(() => {
-        const auth = getAuth();
         onAuthStateChanged(auth, (firebaseUser) => {
             setLoggedUser(firebaseUser);
         });

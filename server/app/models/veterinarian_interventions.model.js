@@ -1,7 +1,7 @@
 const sql = require("./db.js");
 
 const tableName = "VeterinarianInterventions";
-const fields = ["id", "veterinarian_id", "date", "dsecription", "animal_id"];
+const fields = ["id", "veterinarian_id", "date", "description", "animal_id"];
 
 // constructor
 const VeterinarianInterventions = function (veterinarianIntervention) {
@@ -56,7 +56,7 @@ VeterinarianInterventions.findById = (id, result) => {
     }
 
     if (res.length) {
-      console.log(`found ${tableName}: `, res[0]);
+      console.log(`findById(${id}) : ${tableName}: `, res[0]);
       result(null, res[0]);
       return;
     }
@@ -80,7 +80,43 @@ VeterinarianInterventions.getAll = (name, result) => {
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(`getAll : ${tableName}: `, res);
+    result(null, res);
+  });
+};
+
+VeterinarianInterventions.getAllWithAnimalId = (animalId, result) => {
+  let query = `SELECT * FROM ${tableName} WHERE animal_id = ?`;
+
+  sql.query(query, [animalId], (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log(`getAllWithAnimalId(${animalId}) : ${tableName}: `, res);
+    result(null, res);
+  });
+};
+
+VeterinarianInterventions.getAllWithVeterinarianId = (
+  veterinarianId,
+  result
+) => {
+  let query = `SELECT * FROM ${tableName} WHERE veterinarian_id = ?`;
+
+  sql.query(query, [veterinarianId], (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log(
+      `getAllWithVeterinarianId(${veterinarianId}) : ${tableName}: `,
+      res
+    );
     result(null, res);
   });
 };

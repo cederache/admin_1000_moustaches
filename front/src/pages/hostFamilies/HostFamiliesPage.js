@@ -1,4 +1,4 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -12,15 +12,15 @@ import {
     TabContent,
     TabPane,
 } from "reactstrap";
-import HostFamiliesManager from "../managers/hostFamilies.manager";
-import HostFamilyKindsManager from "../managers/hostFamilyKinds.manager";
+import HostFamiliesManager from "../../managers/hostFamilies.manager";
+import HostFamilyKindsManager from "../../managers/hostFamilyKinds.manager";
 import { useState } from "react";
 import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
-import { sortBy } from "../utils/sort";
+import { sortBy } from "../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { HOST_FAMILY_KIND_ID } from "../utils/constants";
+import { HOST_FAMILY_KIND_ID } from "../../utils/constants";
 import {
     BlueIcon,
     CatIcon,
@@ -30,7 +30,7 @@ import {
     PuppyIcon,
     RabbitIcon,
     UserIcon,
-} from "../utils/mapIcons";
+} from "../../utils/mapIcons";
 
 L.Marker.prototype.options.icon = BlueIcon;
 

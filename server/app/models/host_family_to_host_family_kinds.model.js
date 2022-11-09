@@ -60,7 +60,7 @@ HostFamilyToHostFamilyKinds.getAll = (name, result) => {
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(`getAll : ${tableName}: `, res);
     result(null, res);
   });
 };
@@ -78,7 +78,10 @@ HostFamilyToHostFamilyKinds.getAllWithHostFamilyId = (
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(
+      `getAllWithHostFamilyId(${host_family_id}) : ${tableName}: `,
+      res
+    );
     result(null, res);
   });
 };
@@ -96,7 +99,10 @@ HostFamilyToHostFamilyKinds.getAllWithHostFamilyKindId = (
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(
+      `getAllWithHostFamilyKindId(${host_family_kind_id}) : ${tableName}: `,
+      res
+    );
     result(null, res);
   });
 };

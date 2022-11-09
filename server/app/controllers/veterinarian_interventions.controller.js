@@ -20,6 +20,39 @@ exports.findAll = (req, res) => {
   });
 };
 
+// Retrieve all VeterinarianInterventions from the database (with condition).
+exports.findAllWithAnimalId = (req, res) => {
+  const animalId = req.params.id;
+
+  VeterinarianInterventions.getAllWithAnimalId(animalId, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while retrieving host veterinarian interventions with animalId.",
+      });
+    else res.send(data);
+  });
+};
+
+// Retrieve all VeterinarianInterventions from the database (with condition).
+exports.findAllWithVeterinarianId = (req, res) => {
+  const veterinarianId = req.params.id;
+
+  VeterinarianInterventions.getAllWithVeterinarianId(
+    veterinarianId,
+    (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving host veterinarian interventions with veterinarianId.",
+        });
+      else res.send(data);
+    }
+  );
+};
+
 // Find a single VeterinarianInterventions with a id
 exports.findOne = (req, res) => {
   const id = req.params.id;

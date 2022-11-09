@@ -9,6 +9,18 @@ module.exports = (app) => {
   // Retrieve all VeterinarianInterventions
   router.get("/", veterinarianInterventions.findAll);
 
+  // Retrieve all VeterinarianInterventions with animal_id
+  router.get(
+    "/withAnimalId/:id",
+    veterinarianInterventions.findAllWithAnimalId
+  );
+
+  // Retrieve all VeterinarianInterventions with veterinarian_id
+  router.get(
+    "/withVeterinarianId/:id",
+    veterinarianInterventions.findAllWithVeterinarianId
+  );
+
   // Retrieve a single VeterinarianInterventions with id
   router.get("/:id", veterinarianInterventions.findOne);
 

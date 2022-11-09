@@ -62,7 +62,7 @@ AnimalsToHostFamilies.getAll = (name, result) => {
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(`getAll : ${tableName}: `, res);
     result(null, res);
   });
 };
@@ -77,7 +77,7 @@ AnimalsToHostFamilies.getAllWithAnimalId = (animal_id, result) => {
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(`getAllWithAnimalId(${animal_id}) : ${tableName}: `, res);
     result(null, res);
   });
 };
@@ -92,7 +92,10 @@ AnimalsToHostFamilies.getAllWithHostFamilyId = (host_family_id, result) => {
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(
+      `getAllWithHostFamilyId(${host_family_id}) : ${tableName}: `,
+      res
+    );
     result(null, res);
   });
 };

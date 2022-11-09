@@ -1,10 +1,10 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import { Button, Col, Input, Row, Table } from "reactstrap";
-import AnimalsManager from "../managers/animals.manager";
+import AnimalsManager from "../../managers/animals.manager";
 import { useState } from "react";
 import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
-import { sortBy } from "../utils/sort";
+import { sortBy } from "../../utils/sort";
 
 function AnimalsPage({ ...props }) {
     const [animals, setAnimals] = useState([]);

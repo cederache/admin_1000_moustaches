@@ -1,27 +1,32 @@
+import React from "react";
+import componentQueries from "react-component-queries";
+import { BrowserRouter, Switch } from "react-router-dom";
 import { STATE_LOGIN, STATE_SIGNUP } from "./components/AuthForm";
 import GAListener from "./components/GAListener";
 import { EmptyLayout, LayoutRoute, MainLayout } from "./components/Layout";
 import PageSpinner from "./components/PageSpinner";
-import React from "react";
-import componentQueries from "react-component-queries";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import "./styles/reduction.scss";
-import { app } from "./firebase-config";
 
 const AuthPage = React.lazy(() => import("./pages/AuthPage"));
 const DashboardPage = React.lazy(() => import("./pages/DashboardPage"));
-const AnimalsPage = React.lazy(() => import("./pages/AnimalsPage"));
-const AnimalDetailPage = React.lazy(() => import("./pages/AnimalDetailPage"));
-const VeterinariansPage = React.lazy(() => import("./pages/VeterinariansPage"));
+const AnimalsPage = React.lazy(() => import("./pages/animals/AnimalsPage"));
+const AnimalDetailPage = React.lazy(() =>
+    import("./pages/animals/AnimalDetailPage")
+);
+const VeterinariansPage = React.lazy(() =>
+    import("./pages/veterinarians/VeterinariansPage")
+);
 const VeterinarianDetailPage = React.lazy(() =>
-    import("./pages/VeterinarianDetailPage")
+    import("./pages/veterinarians/VeterinarianDetailPage")
 );
-const HostFamiliesPage = React.lazy(() => import("./pages/HostFamiliesPage"));
+const HostFamiliesPage = React.lazy(() =>
+    import("./pages/hostFamilies/HostFamiliesPage")
+);
 const HostFamilyDetailPage = React.lazy(() =>
-    import("./pages/HostFamilyDetailPage")
+    import("./pages/hostFamilies/HostFamilyDetailPage")
 );
-const UsersPage = React.lazy(() => import("./pages/UsersPage"));
-const UserDetailPage = React.lazy(() => import("./pages/UserDetailPage"));
+const UsersPage = React.lazy(() => import("./pages/users/UsersPage"));
+const UserDetailPage = React.lazy(() => import("./pages/users/UserDetailPage"));
 
 const getBasename = () => {
     return `/${process.env.PUBLIC_URL.split("/").pop()}`;

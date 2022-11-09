@@ -1,4 +1,4 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -10,7 +10,7 @@ import {
     Label,
     Row,
 } from "reactstrap";
-import VeterinariansManager from "../managers/veterinarians.manager";
+import VeterinariansManager from "../../managers/veterinarians.manager";
 import { useState } from "react";
 import {
     MdDelete,
@@ -19,11 +19,11 @@ import {
     MdRefresh,
     MdSave,
 } from "react-icons/md";
-import SourceLink from "../components/SourceLink";
-import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
-import PriceLevelDropdown from "../components/PriceLevelDropdown";
-import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
-import Geocode from "../utils/geocode";
+import SourceLink from "../../components/SourceLink";
+import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
+import PriceLevelDropdown from "../../components/PriceLevelDropdown";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
+import Geocode from "../../utils/geocode";
 
 function VeterinarianDetailPage({ match, ...props }) {
     const vetId = match.params.id;

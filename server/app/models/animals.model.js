@@ -86,7 +86,7 @@ Animals.findById = (id, result) => {
       }
 
       if (res.length) {
-        console.log(`found ${tableName}: `, res[0]);
+        console.log(`findById(${id}) : ${tableName}: `, res[0]);
         result(null, res[0]);
         return;
       }
@@ -111,7 +111,7 @@ Animals.getAll = (name, result) => {
       return;
     }
 
-    console.log(`${tableName}: `, res);
+    console.log(`getAll : ${tableName}: `, res);
     result(null, res);
   });
 };

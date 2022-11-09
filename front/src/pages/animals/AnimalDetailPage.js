@@ -1,4 +1,4 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import {
     Accordion,
@@ -11,7 +11,6 @@ import {
     Input,
     Label,
     Row,
-    Table,
     UncontrolledButtonDropdown,
     DropdownToggle,
     DropdownMenu,
@@ -19,26 +18,26 @@ import {
     AccordionHeader,
     AccordionBody,
 } from "reactstrap";
-import AnimalsManager from "../managers/animals.manager";
-import HostFamiliesManager from "../managers/hostFamilies.manager";
+import AnimalsManager from "../../managers/animals.manager";
+import HostFamiliesManager from "../../managers/hostFamilies.manager";
 import { useState } from "react";
-import {
-    MdRefresh,
-    MdAssignment,
-    MdOutlineModeEdit,
-    MdSave,
-    MdDelete,
-} from "react-icons/md";
-import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
-import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
-import BooleanDropdown from "../components/BooleanDropdown";
-import { SPECIES_ID } from "../utils/constants";
+import { MdRefresh, MdOutlineModeEdit, MdSave, MdDelete } from "react-icons/md";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
+import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
+import BooleanDropdown from "../../components/BooleanDropdown";
+import { SPECIES_ID } from "../../utils/constants";
+import HostFamiliesHistory from "./HostFamiliesHistory";
+import VeterinarianInterventionsHistory from "./VeterinarianInterventionsHistory";
+import VeterinarianInterventionsManager from "../../managers/veterinarianInterventions.manager";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
     const [animal, setAnimal] = useState(null);
     const [animalToHostFamilies, setAnimalToHostFamilies] = useState([]);
     const [species, setSpecies] = useState([]);
+    const [veterinarianInterventions, setVeterinarianInterventions] = useState(
+        []
+    );
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
         useState(false);
@@ -140,9 +139,26 @@ function AnimalDetailPage({ match, ...props }) {
             });
     };
 
+    const getVeterinarianInterventions = () => {
+        setVeterinarianInterventions([]);
+        return VeterinarianInterventionsManager.getByAnimalId(animalId)
+            .then(setVeterinarianInterventions)
+            .catch((err) => {
+                console.log(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
+    };
+
     const refresh = () => {
         if (animalId !== "new") {
-            getSpecies().then(getAnimal).then(getHostFamilies);
+            getSpecies()
+                .then(getAnimal)
+                .then(getHostFamilies)
+                .then(getVeterinarianInterventions);
         } else {
             setAnimal(AnimalsManager.createAnimal());
             setIsEditing(true);
@@ -856,63 +872,17 @@ function AnimalDetailPage({ match, ...props }) {
                 {animalId !== "new" && (
                     <>
                         <br />
-
-                        <Card>
-                            <CardHeader>
-                                <h3>Historique des Familles d'Accueil</h3>
-                            </CardHeader>
-                            <CardBody className="table-responsive">
-                                <Table {...{ striped: true }}>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Nom Prénom</th>
-                                            <th scope="col">Date d'entrée</th>
-                                            <th scope="col">Date de sortie</th>
-                                            <th scope="col">Fiche de la FA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {animalToHostFamilies.map(
-                                            (animalToHostFamily, index) => (
-                                                <tr>
-                                                    <th scope="row">
-                                                        {
-                                                            animalToHostFamily.display_name
-                                                        }
-                                                    </th>
-                                                    <td>
-                                                        {
-                                                            animalToHostFamily
-                                                                .entry_date_object
-                                                                .readable
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        {
-                                                            animalToHostFamily
-                                                                .exit_date_object
-                                                                .readable
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        <Button
-                                                            color="info"
-                                                            onClick={() =>
-                                                                showDetail(
-                                                                    animalToHostFamily
-                                                                )
-                                                            }
-                                                        >
-                                                            <MdAssignment />
-                                                        </Button>
-                                                    </td>
-                                                </tr>
-                                            )
-                                        )}
-                                    </tbody>
-                                </Table>
-                            </CardBody>
-                        </Card>
+                        <VeterinarianInterventionsHistory
+                            veterinarianInterventions={
+                                veterinarianInterventions
+                            }
+                            {...props}
+                        />
+                        <br />
+                        <HostFamiliesHistory
+                            animalToHostFamilies={animalToHostFamilies}
+                            {...props}
+                        />
                     </>
                 )}
             </div>

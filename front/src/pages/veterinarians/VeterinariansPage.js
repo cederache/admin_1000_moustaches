@@ -1,4 +1,4 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -12,10 +12,10 @@ import {
     Table,
     TabPane,
 } from "reactstrap";
-import VeterinariansManager from "../managers/veterinarians.manager";
+import VeterinariansManager from "../../managers/veterinarians.manager";
 import { useState } from "react";
 import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
-import { sortBy } from "../utils/sort";
+import { sortBy } from "../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -25,7 +25,7 @@ import {
     RedIcon,
     UserIcon,
     YellowIcon,
-} from "../utils/mapIcons";
+} from "../../utils/mapIcons";
 
 L.Marker.prototype.options.icon = BlueIcon;
 

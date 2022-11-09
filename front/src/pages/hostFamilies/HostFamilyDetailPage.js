@@ -1,4 +1,4 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import {
     Accordion,
@@ -16,7 +16,7 @@ import {
     Row,
     Table,
 } from "reactstrap";
-import HostFamiliesManager from "../managers/hostFamilies.manager";
+import HostFamiliesManager from "../../managers/hostFamilies.manager";
 import { useState } from "react";
 import {
     MdRefresh,
@@ -26,13 +26,13 @@ import {
     MdDelete,
     MdDirections,
 } from "react-icons/md";
-import AnimalsManager from "../managers/animals.manager";
-import BooleanNullableDropdown from "../components/BooleanNullableDropdown";
-import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
-import Geocode from "../utils/geocode";
-import SourceLink from "../components/SourceLink";
-import HostFamilyKindsManager from "../managers/hostFamilyKinds.manager";
-import Switch from "../components/Switch";
+import AnimalsManager from "../../managers/animals.manager";
+import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
+import Geocode from "../../utils/geocode";
+import SourceLink from "../../components/SourceLink";
+import HostFamilyKindsManager from "../../managers/hostFamilyKinds.manager";
+import Switch from "../../components/Switch";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
@@ -88,10 +88,6 @@ function HostFamilyDetailPage({ match, ...props }) {
     const getHostFamilyToHostFamilyKinds = () => {
         setHostFamilyToHostFamilyKinds([]);
         return HostFamilyKindsManager.getByHostFamilyId(hostFamilyId)
-            .then((data) => {
-                console.log(data);
-                return data;
-            })
             .then(setHostFamilyToHostFamilyKinds)
             .catch((err) => {
                 console.error(err);
@@ -107,10 +103,6 @@ function HostFamilyDetailPage({ match, ...props }) {
     const getHostFamilyKinds = () => {
         setHostFamilyKinds([]);
         return HostFamilyKindsManager.getAll()
-            .then((data) => {
-                console.log(data);
-                return data;
-            })
             .then(setHostFamilyKinds)
             .catch((err) => {
                 console.error(err);
@@ -765,18 +757,6 @@ function HostFamilyDetailPage({ match, ...props }) {
                                                                         onChange={(
                                                                             evt
                                                                         ) => {
-                                                                            console.log(
-                                                                                `Should ${
-                                                                                    evt
-                                                                                        .target
-                                                                                        .checked ===
-                                                                                    true
-                                                                                        ? "Create"
-                                                                                        : "Delete"
-                                                                                } link between host family and host family kind ${
-                                                                                    hfk.name
-                                                                                }`
-                                                                            );
                                                                             if (
                                                                                 evt
                                                                                     .target

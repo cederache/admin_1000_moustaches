@@ -1,4 +1,4 @@
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
@@ -10,10 +10,10 @@ import {
     Label,
     Row,
 } from "reactstrap";
-import UsersManager from "../managers/users.manager";
+import UsersManager from "../../managers/users.manager";
 import { useState } from "react";
 import { MdDelete, MdOutlineModeEdit, MdRefresh, MdSave } from "react-icons/md";
-import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 
 function UserDetailPage({ match, ...props }) {
     const userId = match.params.id;
