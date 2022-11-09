@@ -1,16 +1,16 @@
-import logo from "../assets/img/logo/Logo1000Moustaches.png";
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+} from "firebase/auth";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
-import SourceLink from "./SourceLink";
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-} from "firebase/auth";
+import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import logo from "../assets/img/logo/Logo1000Moustaches.png";
 import UsersManager from "../managers/users.manager";
+import SourceLink from "./SourceLink";
 
 import NotificationSystem from "react-notification-system";
+import { auth } from "../firebase-config";
 import { NOTIFICATION_SYSTEM_STYLE } from "../utils/constants";
 
 function AuthForm({
@@ -52,10 +52,8 @@ function AuthForm({
     };
 
     let handleSubmit = (event) => {
-        const authentication = getAuth();
-
         if (isLogin()) {
-            signInWithEmailAndPassword(authentication, username, password)
+            signInWithEmailAndPassword(auth, username, password)
                 .then((response) => {
                     notificationSystem?.addNotification({
                         message: "Connexion réussie.\nBienvenue",
@@ -90,11 +88,7 @@ function AuthForm({
                         });
                         return;
                     } else {
-                        createUserWithEmailAndPassword(
-                            authentication,
-                            username,
-                            password
-                        )
+                        createUserWithEmailAndPassword(auth, username, password)
                             .then((response) => {
                                 sessionStorage.setItem(
                                     "Auth Token",

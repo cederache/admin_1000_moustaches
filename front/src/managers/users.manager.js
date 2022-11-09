@@ -1,5 +1,6 @@
 import moment from "moment";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase-config";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -134,7 +135,6 @@ class UsersManager {
 
     static getLoggedUser = () => {
         return new Promise((resolve, reject) => {
-            const auth = getAuth();
             const firebaseUser = auth.currentUser;
             if (firebaseUser !== null) {
                 this.getAll()
