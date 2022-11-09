@@ -69,10 +69,6 @@ function HostFamiliesPage({ ...props }) {
     const getHostFamilyKinds = () => {
         setHostFamilyKinds([]);
         return HostFamilyKindsManager.getAll()
-            .then((data) => {
-                console.log(data);
-                return data;
-            })
             .then(setHostFamilyKinds)
             .catch((err) => {
                 console.error(err);
@@ -100,7 +96,6 @@ function HostFamiliesPage({ ...props }) {
         if (mapRef !== null && mapRef.current !== null) {
             mapRef.invalidateSize();
             mapRef.locate().on("locationfound", function (e) {
-                console.log(e.latlng);
                 setUserPosition(e.latlng);
             });
         }
@@ -123,7 +118,6 @@ function HostFamiliesPage({ ...props }) {
     };
 
     const iconForHostFamilyKind = (host_family_kind_id) => {
-        console.log("Icon for id", host_family_kind_id);
         switch (host_family_kind_id) {
             case HOST_FAMILY_KIND_ID.CAT:
                 return CatIcon;
