@@ -100,7 +100,7 @@ function AnimalDetailPage({ match, ...props }) {
 
     const getAnimal = () => {
         setAnimal(null);
-        AnimalsManager.getById(animalId)
+        return AnimalsManager.getById(animalId)
             .then(setAnimal)
             .catch((err) => {
                 console.error(err);
@@ -114,7 +114,7 @@ function AnimalDetailPage({ match, ...props }) {
 
     const getHostFamilies = () => {
         setAnimalToHostFamilies([]);
-        HostFamiliesManager.getByAnimalId(animalId)
+        return HostFamiliesManager.getByAnimalId(animalId)
             .then(setAnimalToHostFamilies)
             .catch((err) => {
                 console.error(err);
@@ -128,7 +128,7 @@ function AnimalDetailPage({ match, ...props }) {
 
     const getSpecies = () => {
         setSpecies([]);
-        AnimalsManager.getSpecies()
+        return AnimalsManager.getSpecies()
             .then(setSpecies)
             .catch((err) => {
                 console.log(err);
@@ -142,13 +142,11 @@ function AnimalDetailPage({ match, ...props }) {
 
     const refresh = () => {
         if (animalId !== "new") {
-            getAnimal();
-            getHostFamilies();
+            getSpecies().then(getAnimal).then(getHostFamilies);
         } else {
             setAnimal(AnimalsManager.createAnimal());
             setIsEditing(true);
         }
-        getSpecies();
     };
 
     useEffect(() => {
