@@ -856,9 +856,12 @@ function AnimalDetailPage({ match, ...props }) {
                     <>
                         <br />
                         <VeterinarianInterventionsHistory
+                            animalId={animalId}
                             veterinarianInterventions={
                                 veterinarianInterventions
                             }
+                            notificationSystem={notificationSystem}
+                            shouldRefresh={() => getVeterinarianInterventions()}
                             {...props}
                         />
                         <br />
