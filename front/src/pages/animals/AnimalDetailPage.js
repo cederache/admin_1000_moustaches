@@ -11,10 +11,6 @@ import {
     Input,
     Label,
     Row,
-    UncontrolledButtonDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
     AccordionHeader,
     AccordionBody,
 } from "reactstrap";
@@ -29,6 +25,7 @@ import { SPECIES_ID } from "../../utils/constants";
 import HostFamiliesHistory from "./HostFamiliesHistory";
 import VeterinarianInterventionsHistory from "./VeterinarianInterventionsHistory";
 import VeterinarianInterventionsManager from "../../managers/veterinarianInterventions.manager";
+import Dropdown from "../../components/Dropdown";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
@@ -399,50 +396,36 @@ function AnimalDetailPage({ match, ...props }) {
                                                 </Col>
                                                 <Col xs={12}>
                                                     <Label>Espèce</Label>
-                                                    <br />
-                                                    <UncontrolledButtonDropdown
+                                                    <Dropdown
+                                                        color={"primary"}
+                                                        disabled={!isEditing}
+                                                        value={{
+                                                            id: animal.species_id,
+                                                            name: animal.species,
+                                                        }}
+                                                        values={species}
+                                                        valueDisplayName={(
+                                                            aSpecies
+                                                        ) => aSpecies.name}
+                                                        valueActiveCheck={(
+                                                            aSpecies
+                                                        ) =>
+                                                            aSpecies.id ===
+                                                            animal.species_id
+                                                        }
                                                         key={"species"}
-                                                    >
-                                                        <DropdownToggle
-                                                            caret
-                                                            color={"primary"}
-                                                            className="text-capitalize m-1"
-                                                            disabled={
-                                                                !isEditing
-                                                            }
-                                                        >
-                                                            {animal.species}
-                                                        </DropdownToggle>
-                                                        <DropdownMenu>
-                                                            {species.map(
-                                                                (aSpecies) => {
-                                                                    return (
-                                                                        <DropdownItem
-                                                                            active={
-                                                                                animal.species_id ===
-                                                                                aSpecies.id
-                                                                            }
-                                                                            onClick={() =>
-                                                                                setAnimal(
-                                                                                    {
-                                                                                        ...animal,
-                                                                                        species:
-                                                                                            aSpecies.name,
-                                                                                        species_id:
-                                                                                            aSpecies.id,
-                                                                                    }
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                aSpecies.name
-                                                                            }
-                                                                        </DropdownItem>
-                                                                    );
-                                                                }
-                                                            )}
-                                                        </DropdownMenu>
-                                                    </UncontrolledButtonDropdown>
+                                                        onChange={(
+                                                            newSpecies
+                                                        ) =>
+                                                            setAnimal({
+                                                                ...animal,
+                                                                species:
+                                                                    newSpecies.name,
+                                                                species_id:
+                                                                    newSpecies.id,
+                                                            })
+                                                        }
+                                                    />
                                                 </Col>
                                                 <Col xs={12}>
                                                     <Label>Race</Label>
