@@ -1,15 +1,43 @@
 import Page from "../../components/Page";
 import React, { useEffect } from "react";
-import { Button, Col, Input, Row, Table } from "reactstrap";
+import {
+    Button,
+    Card,
+    CardBody,
+    Col,
+    Input,
+    Label,
+    Row,
+    Table,
+} from "reactstrap";
 import AnimalsManager from "../../managers/animals.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
 import { sortBy } from "../../utils/sort";
+import Switch from "../../components/Switch";
+
+/*eslint no-unused-expressions: "off"*/
 
 function AnimalsPage({ ...props }) {
     const [animals, setAnimals] = useState([]);
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState([]);
+    const [filters, setFilters] = useState([
+        {
+            activated: false,
+            name: "Adopté.e.s",
+            check: function (animal) {
+                return animal.adopted === 1;
+            },
+        },
+        {
+            activated: false,
+            name: "ICAD manquant",
+            check: function (animal) {
+                return animal.icad === null || animal.icad === "";
+            },
+        },
+    ]);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -44,11 +72,14 @@ function AnimalsPage({ ...props }) {
 
     useEffect(() => {
         setFilteredAnimals(
-            animals.filter((animal) => {
-                return animal.name.includes(searchText);
-            })
+            animals.filter(
+                (animal) =>
+                    filters.every((f) =>
+                        f.activated == true ? f.check(animal) === true : true
+                    ) && animal.name.includes(searchText)
+            )
         );
-    }, [searchText]);
+    }, [searchText, filters]);
 
     const createAnimal = () => {
         props.history.push("animals/new");
@@ -83,6 +114,39 @@ function AnimalsPage({ ...props }) {
                     </Button>
                 </Col>
             </Row>
+            <Card>
+                <CardBody>
+                    <Row>
+                        <Col xs={"auto"} className="mb-0 border-end">
+                            <MdFilterAlt />
+                        </Col>
+                        {filters.map((filter) => {
+                            return (
+                                <Col className="mb-0">
+                                    <Label>{filter.name}</Label>
+                                    <Switch
+                                        id={filter.name}
+                                        isOn={filter.activated}
+                                        handleToggle={() => {
+                                            setFilters((previous) =>
+                                                previous.map((f) =>
+                                                    f.name === filter.name
+                                                        ? {
+                                                              ...f,
+                                                              activated:
+                                                                  !f.activated,
+                                                          }
+                                                        : f
+                                                )
+                                            );
+                                        }}
+                                    />
+                                </Col>
+                            );
+                        })}
+                    </Row>
+                </CardBody>
+            </Card>
 
             <br />
 

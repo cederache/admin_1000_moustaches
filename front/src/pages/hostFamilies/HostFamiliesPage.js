@@ -11,11 +11,14 @@ import {
     NavLink,
     TabContent,
     TabPane,
+    Label,
+    Card,
+    CardBody,
 } from "reactstrap";
 import HostFamiliesManager from "../../managers/hostFamilies.manager";
 import HostFamilyKindsManager from "../../managers/hostFamilyKinds.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
 import { sortBy } from "../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
@@ -31,6 +34,7 @@ import {
     RabbitIcon,
     UserIcon,
 } from "../../utils/mapIcons";
+import Switch from "../../components/Switch";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -41,6 +45,15 @@ function HostFamiliesPage({ ...props }) {
     const [searchText, setSearchText] = useState([]);
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState(null);
+    const [filters, setFilters] = useState([
+        {
+            activated: false,
+            name: "En retard de cotisation",
+            check: function (hostFamily) {
+                return hostFamily.membership_updated === 0;
+            },
+        },
+    ]);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -87,10 +100,16 @@ function HostFamiliesPage({ ...props }) {
     useEffect(() => {
         setFilteredHostFamilies(
             hostFamilies.filter((hostFamily) => {
-                return hostFamily.name.includes(searchText);
+                return (
+                    filters.every((f) =>
+                        f.activated == true
+                            ? f.check(hostFamily) === true
+                            : true
+                    ) && hostFamily.name.includes(searchText)
+                );
             })
         );
-    }, [searchText]);
+    }, [searchText, filters]);
 
     useEffect(() => {
         if (mapRef !== null && mapRef.current !== null) {
@@ -164,6 +183,39 @@ function HostFamiliesPage({ ...props }) {
                     </Button>
                 </Col>
             </Row>
+            <Card>
+                <CardBody>
+                    <Row>
+                        <Col xs={"auto"} className="mb-0 border-end">
+                            <MdFilterAlt />
+                        </Col>
+                        {filters.map((filter) => {
+                            return (
+                                <Col className="mb-0">
+                                    <Label>{filter.name}</Label>
+                                    <Switch
+                                        id={filter.name}
+                                        isOn={filter.activated}
+                                        handleToggle={() => {
+                                            setFilters((previous) =>
+                                                previous.map((f) =>
+                                                    f.name === filter.name
+                                                        ? {
+                                                              ...f,
+                                                              activated:
+                                                                  !f.activated,
+                                                          }
+                                                        : f
+                                                )
+                                            );
+                                        }}
+                                    />
+                                </Col>
+                            );
+                        })}
+                    </Row>
+                </CardBody>
+            </Card>
 
             <br />
 

@@ -2,8 +2,11 @@ import Page from "../../components/Page";
 import React, { useEffect } from "react";
 import {
     Button,
+    Card,
+    CardBody,
     Col,
     Input,
+    Label,
     Nav,
     NavItem,
     NavLink,
@@ -14,7 +17,7 @@ import {
 } from "reactstrap";
 import VeterinariansManager from "../../managers/veterinarians.manager";
 import { useState } from "react";
-import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
+import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
 import { sortBy } from "../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
@@ -26,6 +29,7 @@ import {
     UserIcon,
     YellowIcon,
 } from "../../utils/mapIcons";
+import Switch from "../../components/Switch";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -35,6 +39,16 @@ function VeterinariansPage({ ...props }) {
     const [searchText, setSearchText] = useState("");
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState(null);
+    const [filters, setFilters] = useState([
+        {
+            activated: false,
+            name: "Gère les urgences",
+            check: function (vet) {
+                console.log(vet);
+                return vet.emergencies === 1;
+            },
+        },
+    ]);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -66,13 +80,19 @@ function VeterinariansPage({ ...props }) {
 
     useEffect(() => {
         setFilteredVeterinarians(
-            veterinarians.filter((veterinarian) => {
-                return veterinarian.name
-                    .toLowerCase()
-                    .includes(searchText.toLowerCase());
-            })
+            veterinarians.filter(
+                (veterinarian) =>
+                    filters.every((f) =>
+                        f.activated == true
+                            ? f.check(veterinarian) === true
+                            : true
+                    ) &&
+                    veterinarian.name
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase())
+            )
         );
-    }, [searchText]);
+    }, [searchText, filters]);
 
     useEffect(() => {
         if (mapRef !== null && mapRef.current !== null) {
@@ -167,6 +187,39 @@ function VeterinariansPage({ ...props }) {
                     </Button>
                 </Col>
             </Row>
+            <Card>
+                <CardBody>
+                    <Row>
+                        <Col xs={"auto"} className="mb-0 border-end">
+                            <MdFilterAlt />
+                        </Col>
+                        {filters.map((filter) => {
+                            return (
+                                <Col className="mb-0">
+                                    <Label>{filter.name}</Label>
+                                    <Switch
+                                        id={filter.name}
+                                        isOn={filter.activated}
+                                        handleToggle={() => {
+                                            setFilters((previous) =>
+                                                previous.map((f) =>
+                                                    f.name === filter.name
+                                                        ? {
+                                                              ...f,
+                                                              activated:
+                                                                  !f.activated,
+                                                          }
+                                                        : f
+                                                )
+                                            );
+                                        }}
+                                    />
+                                </Col>
+                            );
+                        })}
+                    </Row>
+                </CardBody>
+            </Card>
 
             <br />
 
