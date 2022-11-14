@@ -6,7 +6,7 @@ class HostFamiliesManager {
     static dateFields = ["entry_date", "exit_date"];
 
     static createHostFamily = () => {
-        const hostFamily = {};
+        const hostFamily = { on_break: false, membership_up_to_date: true };
         this.dateFields.forEach((dateField) => {
             hostFamily[dateField] = undefined;
             hostFamily[`${dateField}_object`] = {
