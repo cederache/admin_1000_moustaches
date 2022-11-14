@@ -53,6 +53,13 @@ function HostFamiliesPage({ ...props }) {
                 return hostFamily.membership_up_to_date === 0;
             },
         },
+        {
+            activated: false,
+            name: "En pause",
+            check: function (hostFamily) {
+                return hostFamily.on_break === 1;
+            },
+        },
     ]);
 
     const [notificationSystem, setNotificationSystem] = useState(
