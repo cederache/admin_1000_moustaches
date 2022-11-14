@@ -157,6 +157,7 @@ function AnimalDetailPage({ match, ...props }) {
                 .then(getHostFamilies)
                 .then(getVeterinarianInterventions);
         } else {
+            getSpecies();
             setAnimal(AnimalsManager.createAnimal());
             setIsEditing(true);
         }
