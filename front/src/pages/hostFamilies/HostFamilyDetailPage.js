@@ -439,46 +439,44 @@ function HostFamilyDetailPage({ match, ...props }) {
                                     Information de contact
                                 </AccordionHeader>
                                 <AccordionBody accordionId="1">
-                                    {hostFamilyId === "new" ||
-                                        (isEditing && (
-                                            <Row>
-                                                <Col xs={6}>
-                                                    <Label>Prénom</Label>
-                                                    <Input
-                                                        value={
-                                                            hostFamily.firstname ||
-                                                            ""
-                                                        }
-                                                        disabled={!isEditing}
-                                                        onChange={(evt) =>
-                                                            setHostFamily({
-                                                                ...hostFamily,
-                                                                firstname:
-                                                                    evt.target
-                                                                        .value,
-                                                            })
-                                                        }
-                                                    />
-                                                </Col>
-                                                <Col xs={6}>
-                                                    <Label>Nom</Label>
-                                                    <Input
-                                                        value={
-                                                            hostFamily.name ||
-                                                            ""
-                                                        }
-                                                        disabled={!isEditing}
-                                                        onChange={(evt) =>
-                                                            setHostFamily({
-                                                                ...hostFamily,
-                                                                name: evt.target
+                                    {hostFamilyId === "new" && isEditing && (
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Prénom</Label>
+                                                <Input
+                                                    value={
+                                                        hostFamily.firstname ||
+                                                        ""
+                                                    }
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            firstname:
+                                                                evt.target
                                                                     .value,
-                                                            })
-                                                        }
-                                                    />
-                                                </Col>
-                                            </Row>
-                                        ))}
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Label>Nom</Label>
+                                                <Input
+                                                    value={
+                                                        hostFamily.name || ""
+                                                    }
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            name: evt.target
+                                                                .value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    )}
                                     <Row>
                                         <Col xs={6}>
                                             <Label>Téléphone</Label>
