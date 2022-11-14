@@ -50,7 +50,7 @@ function HostFamiliesPage({ ...props }) {
             activated: false,
             name: "En retard de cotisation",
             check: function (hostFamily) {
-                return hostFamily.membership_updated === 0;
+                return hostFamily.membership_up_to_date === 0;
             },
         },
     ]);
