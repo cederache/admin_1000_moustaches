@@ -11,6 +11,7 @@ import {
 import { NavLink } from "react-router-dom";
 import { Nav, Navbar, NavItem, NavLink as BSNavLink } from "reactstrap";
 import bn from "../../utils/bemnames";
+import { WebsiteCarbonBadge } from "react-websitecarbon-badge";
 
 const navItems = [
     { to: "/", name: "Dashboard", exact: true, Icon: MdDashboard },
@@ -69,6 +70,10 @@ class Sidebar extends React.Component {
                             </NavItem>
                         ))}
                     </Nav>
+                    <WebsiteCarbonBadge
+                        lang="fr"
+                        url="https://admin-1000-moustaches.web.app/hostFamilies"
+                    />
                 </div>
             </aside>
         );

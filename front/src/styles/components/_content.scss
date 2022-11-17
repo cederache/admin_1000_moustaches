@@ -38,3 +38,13 @@
     width: 100%;
     height: 400px;
 }
+
+.carbonbadge {
+    position: absolute;
+    bottom: 0;
+    padding: 0px 10px 0px 10px;
+}
+
+.carbonbadge > div {
+    display: flex;
+}
