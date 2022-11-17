@@ -187,7 +187,7 @@ function UserDetailPage({ match, ...props }) {
                         {userId === "new" && <h2>Nouvel utilisateur</h2>}
                         {userId !== "new" && (
                             <h2>
-                                {user.name} {user.firstname}
+                                {user.firstname} {user.name}
                             </h2>
                         )}
                     </CardHeader>

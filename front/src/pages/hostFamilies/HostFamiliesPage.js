@@ -293,7 +293,7 @@ function HostFamiliesPage({ ...props }) {
                                     <Table {...{ striped: true }}>
                                         <thead>
                                             <tr>
-                                                <th scope="col">Nom Prénom</th>
+                                                <th scope="col">Prénom Nom</th>
                                                 <th scope="col">Téléphone</th>
                                                 <th scope="col">E-mail</th>
                                                 <th scope="col">Fiche FA</th>

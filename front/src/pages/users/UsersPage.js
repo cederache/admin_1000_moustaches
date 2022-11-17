@@ -113,8 +113,7 @@ function UsersPage({ ...props }) {
                                 <thead>
                                     <tr>
                                         <th scope="col"></th>
-                                        <th scope="col">Prénom</th>
-                                        <th scope="col">Nom</th>
+                                        <th scope="col">Prénom Nom</th>
                                         <th scope="col">E-mail</th>
                                         <th scope="col">Fiche utilisateur</th>
                                     </tr>
@@ -127,9 +126,8 @@ function UsersPage({ ...props }) {
                                                     user.email && <FaUserAlt />}
                                             </td>
                                             <th scope="row">
-                                                {user.firstname}
+                                                {user.firstname} {user.name}
                                             </th>
-                                            <th scope="row">{user.name}</th>
                                             <td>{user.email}</td>
                                             <td>
                                                 <Button
