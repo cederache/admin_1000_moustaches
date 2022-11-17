@@ -398,6 +398,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 <Col xs={12}>
                                                     <Label>Espèce</Label>
                                                     <Dropdown
+                                                        withNewLine={true}
                                                         color={"primary"}
                                                         disabled={!isEditing}
                                                         value={{

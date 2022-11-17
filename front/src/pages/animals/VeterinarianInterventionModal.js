@@ -169,6 +169,7 @@ const VeterinarianInterventionModal = ({
                     <Col xs={6}>
                         <Label>Vétérinaire</Label>
                         <Dropdown
+                            withNewLine={true}
                             withSearch={true}
                             withSort={true}
                             color={"primary"}

@@ -9,6 +9,7 @@ import {
 import PropTypes from "../utils/propTypes";
 
 const Dropdown = ({
+    withNewLine,
     value,
     values,
     key,
@@ -63,7 +64,7 @@ const Dropdown = ({
 
     return (
         <>
-            <br />
+            {withNewLine && <br />}
             <UncontrolledButtonDropdown key={key} {...props}>
                 <DropdownToggle
                     caret
