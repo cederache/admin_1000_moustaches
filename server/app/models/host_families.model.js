@@ -25,6 +25,7 @@ const fields = [
   "host_conditions",
   "on_break",
   "membership_up_to_date",
+  "referent_id",
 ];
 
 // constructor

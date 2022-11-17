@@ -58,6 +58,21 @@ class UsersManager {
             .then((users) => users.map(UsersManager.format));
     };
 
+    static getAllReferents = () => {
+        return fetch(`${API_URL}/users`, { method: "GET" })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                throw new Error("Server error");
+            })
+            .then((users) =>
+                users
+                    .filter((usr) => usr.is_referent === 1)
+                    .map(UsersManager.format)
+            );
+    };
+
     static getById = (id) => {
         return fetch(`${API_URL}/users/${id}`, { method: "GET" })
             .then((response) => {

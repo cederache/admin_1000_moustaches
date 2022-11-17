@@ -35,6 +35,8 @@ import {
     UserIcon,
 } from "../../utils/mapIcons";
 import Switch from "../../components/Switch";
+import UsersManager from "../../managers/users.manager";
+import Dropdown from "../../components/Dropdown";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -42,10 +44,11 @@ function HostFamiliesPage({ ...props }) {
     const [hostFamilies, setHostFamilies] = useState([]);
     const [hostFamilyKinds, setHostFamilyKinds] = useState([]);
     const [filteredHostFamilies, setFilteredHostFamilies] = useState([]);
+    const [referents, setReferents] = useState([]);
     const [searchText, setSearchText] = useState([]);
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState(null);
-    const [filters, setFilters] = useState([
+    const [switchFilters, setSwitchFilters] = useState([
         {
             activated: false,
             name: "En retard de cotisation",
@@ -61,6 +64,7 @@ function HostFamiliesPage({ ...props }) {
             },
         },
     ]);
+    const [filterReferent, setFilterReferent] = useState();
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -100,23 +104,41 @@ function HostFamiliesPage({ ...props }) {
             });
     };
 
+    const getReferents = () => {
+        setReferents([]);
+        return UsersManager.getAllReferents()
+            .then(setReferents)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
+    };
+
     useEffect(() => {
-        getHostFamilyKinds().then(getAllHostFamilies);
+        getHostFamilyKinds().then(getAllHostFamilies).then(getReferents);
     }, []);
 
     useEffect(() => {
         setFilteredHostFamilies(
             hostFamilies.filter((hostFamily) => {
                 return (
-                    filters.every((f) =>
+                    switchFilters.every((f) =>
                         f.activated == true
                             ? f.check(hostFamily) === true
                             : true
-                    ) && hostFamily.name.includes(searchText)
+                    ) &&
+                    hostFamily.name.includes(searchText) &&
+                    (filterReferent === undefined
+                        ? true
+                        : hostFamily.referent_id === filterReferent?.id)
                 );
             })
         );
-    }, [searchText, filters]);
+    }, [searchText, switchFilters, filterReferent]);
 
     useEffect(() => {
         if (mapRef !== null && mapRef.current !== null) {
@@ -196,15 +218,16 @@ function HostFamiliesPage({ ...props }) {
                         <Col xs={"auto"} className="mb-0 border-end">
                             <MdFilterAlt />
                         </Col>
-                        {filters.map((filter) => {
+                        {switchFilters.map((filter) => {
                             return (
                                 <Col className="mb-0">
                                     <Label>{filter.name}</Label>
+                                    <br />
                                     <Switch
                                         id={filter.name}
                                         isOn={filter.activated}
                                         handleToggle={() => {
-                                            setFilters((previous) =>
+                                            setSwitchFilters((previous) =>
                                                 previous.map((f) =>
                                                     f.name === filter.name
                                                         ? {
@@ -220,6 +243,29 @@ function HostFamiliesPage({ ...props }) {
                                 </Col>
                             );
                         })}
+                        <Col className="mb-0">
+                            <Label>Référent·e</Label>
+                            <Dropdown
+                                withNewLine={true}
+                                color={"primary"}
+                                value={referents.find(
+                                    (usr) => usr.id === filterReferent?.id
+                                )}
+                                values={[...referents, undefined]}
+                                valueDisplayName={(usr) =>
+                                    usr === undefined
+                                        ? "-"
+                                        : `${usr?.firstname} ${usr?.name}`
+                                }
+                                valueActiveCheck={(usr) =>
+                                    usr?.id === filterReferent?.id
+                                }
+                                key={"referents"}
+                                onChange={(newUser) =>
+                                    setFilterReferent(newUser)
+                                }
+                            />
+                        </Col>
                     </Row>
                 </CardBody>
             </Card>

@@ -14,6 +14,7 @@ import UsersManager from "../../managers/users.manager";
 import { useState } from "react";
 import { MdDelete, MdOutlineModeEdit, MdRefresh, MdSave } from "react-icons/md";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
+import Switch from "../../components/Switch";
 
 function UserDetailPage({ match, ...props }) {
     const userId = match.params.id;
@@ -233,6 +234,23 @@ function UserDetailPage({ match, ...props }) {
                                             email: evt.target.value,
                                         })
                                     }
+                                />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Label>Est référent·e</Label>
+                            </Col>
+                            <Col xs={"auto"}>
+                                <Switch
+                                    isOn={user.is_referent}
+                                    disabled={!isEditing}
+                                    handleToggle={() => {
+                                        setUser({
+                                            ...user,
+                                            is_referent: !user.is_referent,
+                                        });
+                                    }}
                                 />
                             </Col>
                         </Row>

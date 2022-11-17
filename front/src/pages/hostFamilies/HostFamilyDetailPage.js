@@ -27,12 +27,14 @@ import {
     MdDirections,
 } from "react-icons/md";
 import AnimalsManager from "../../managers/animals.manager";
+import UsersManager from "../../managers/users.manager";
 import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import Geocode from "../../utils/geocode";
 import SourceLink from "../../components/SourceLink";
 import HostFamilyKindsManager from "../../managers/hostFamilyKinds.manager";
 import Switch from "../../components/Switch";
+import Dropdown from "../../components/Dropdown";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
@@ -41,6 +43,7 @@ function HostFamilyDetailPage({ match, ...props }) {
     const [hostFamilyKinds, setHostFamilyKinds] = useState([]);
     const [hostFamilyToHostFamilyKind, setHostFamilyToHostFamilyKinds] =
         useState([]);
+    const [referents, setReferents] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
         useState(false);
@@ -114,11 +117,26 @@ function HostFamilyDetailPage({ match, ...props }) {
             });
     };
 
+    const getReferents = () => {
+        setReferents([]);
+        return UsersManager.getAllReferents()
+            .then(setReferents)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message:
+                        "Une erreur s'est produite pendant la récupération des données",
+                    level: "error",
+                });
+            });
+    };
+
     const refresh = () => {
         if (hostFamilyId !== "new") {
             getHostFamily()
                 .then(getAnimalsToHostFamily)
-                .then(getHostFamilyToHostFamilyKinds);
+                .then(getHostFamilyToHostFamilyKinds)
+                .then(getReferents);
         } else {
             setHostFamily(HostFamiliesManager.createHostFamily());
             setIsEditing(true);
@@ -426,6 +444,37 @@ function HostFamilyDetailPage({ match, ...props }) {
                                                 !hostFamily.membership_up_to_date,
                                         });
                                     }}
+                                />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Label>Référent·e</Label>
+                            </Col>
+                            <Col xs={"auto"}>
+                                <Dropdown
+                                    color={"primary"}
+                                    disabled={!isEditing}
+                                    value={referents.find(
+                                        (usr) =>
+                                            usr.id === hostFamily.referent_id
+                                    )}
+                                    values={referents}
+                                    valueDisplayName={(usr) =>
+                                        usr === undefined
+                                            ? ""
+                                            : `${usr?.firstname} ${usr?.name}`
+                                    }
+                                    valueActiveCheck={(usr) =>
+                                        usr.id === hostFamily.referent_id
+                                    }
+                                    key={"referents"}
+                                    onChange={(newUser) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            referent_id: newUser.id,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>

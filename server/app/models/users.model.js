@@ -1,7 +1,7 @@
 const sql = require("./db.js");
 
 const tableName = "Users";
-const fields = ["id", "name", "firstname", "email"];
+const fields = ["id", "name", "firstname", "email", "is_referent"];
 
 // constructor
 const Users = function (user) {
