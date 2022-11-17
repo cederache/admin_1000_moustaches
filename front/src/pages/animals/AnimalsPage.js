@@ -25,7 +25,7 @@ function AnimalsPage({ ...props }) {
     const [filters, setFilters] = useState([
         {
             activated: false,
-            name: "Adopté.e.s",
+            name: "Adopté·e·s",
             check: function (animal) {
                 return animal.adopted === 1;
             },

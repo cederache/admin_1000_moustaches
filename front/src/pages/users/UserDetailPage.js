@@ -79,7 +79,7 @@ function UserDetailPage({ match, ...props }) {
             UsersManager.create(user)
                 .then((updatedUser) => {
                     notificationSystem.addNotification({
-                        message: "Utilisateur créé",
+                        message: "Utilisateur·ice créé",
                         level: "success",
                     });
                     props.history.push(`/users/${updatedUser.id}`);
@@ -101,7 +101,7 @@ function UserDetailPage({ match, ...props }) {
             .then(() => {
                 getUser();
                 notificationSystem.addNotification({
-                    message: "Utilisateur mis à jour",
+                    message: "Utilisateur·ice mis à jour",
                     level: "success",
                 });
             })
@@ -120,7 +120,7 @@ function UserDetailPage({ match, ...props }) {
         UsersManager.delete(user)
             .then(() => {
                 notificationSystem.addNotification({
-                    message: "Utilisateur supprimé",
+                    message: "Utilisateur·ice supprimé",
                     level: "success",
                 });
                 props.history.push("/users");
@@ -138,7 +138,7 @@ function UserDetailPage({ match, ...props }) {
 
     let content = <div>Chargement...</div>;
     if (user === undefined) {
-        content = <div>Utilisateur non trouvé</div>;
+        content = <div>Utilisateur·ice non trouvé</div>;
     } else if (user === null) {
         content = <div>Chargement...</div>;
     } else {
@@ -263,10 +263,10 @@ function UserDetailPage({ match, ...props }) {
     return (
         <Page
             className="UserPage"
-            title="Détail de l'utilisateur"
+            title="Détail de l'utilisateur·ice"
             breadcrumbs={[
-                { name: "Utilisateurs", to: "/users" },
-                { name: "Utilisateur", active: true },
+                { name: "Utilisateur·ice·s", to: "/users" },
+                { name: "Utilisateur·ice", active: true },
             ]}
             notificationSystemCallback={(notifSystem) => {
                 setNotificationSystem(notifSystem);
@@ -282,7 +282,7 @@ function UserDetailPage({ match, ...props }) {
                         deleteV();
                     }
                 }}
-                bodyEntityName={"un Utilisateur"}
+                bodyEntityName={"un·e Utilisateur·ice"}
             />
         </Page>
     );

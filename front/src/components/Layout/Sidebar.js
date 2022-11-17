@@ -30,7 +30,7 @@ const navItems = [
     },
     {
         to: "/users",
-        name: "Utilisateurs",
+        name: "Utilisateur·ice·s",
         exact: false,
         Icon: MdPeople,
     },

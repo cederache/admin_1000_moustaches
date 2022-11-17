@@ -101,7 +101,7 @@ function AuthForm({
                                 console.error(error);
                                 notificationSystem?.addNotification({
                                     message:
-                                        "Une erreur s'est produite pendant la création de l'utilisateur. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.",
+                                        "Une erreur s'est produite pendant la création de l'utilisateur·ice. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.",
                                     level: "error",
                                 });
                             });

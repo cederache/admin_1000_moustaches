@@ -67,8 +67,8 @@ function UsersPage({ ...props }) {
     return (
         <Page
             className="UsersPage"
-            title="Liste des Utilisateurs"
-            breadcrumbs={[{ name: "Utilisateurs", active: true }]}
+            title="Liste des Utilisateur·ice·s"
+            breadcrumbs={[{ name: "Utilisateur·ice·s", active: true }]}
             notificationSystemCallback={(notifSystem) => {
                 setNotificationSystem(notifSystem);
             }}
@@ -77,7 +77,7 @@ function UsersPage({ ...props }) {
                 <Col>
                     <Input
                         name="name"
-                        placeholder="Rechercher un utilisateur"
+                        placeholder="Rechercher un·e utilisateur·ice"
                         value={searchText}
                         onChange={(e) => {
                             setSearchText(e.target.value);
@@ -86,7 +86,7 @@ function UsersPage({ ...props }) {
                 </Col>
                 <Col xs={"auto"}>
                     <Button
-                        title="Créer un utilisateur"
+                        title="Créer un·e utilisateur·ice"
                         className="ms-2"
                         onClick={createUser}
                         color={"success"}
@@ -115,7 +115,9 @@ function UsersPage({ ...props }) {
                                         <th scope="col"></th>
                                         <th scope="col">Prénom Nom</th>
                                         <th scope="col">E-mail</th>
-                                        <th scope="col">Fiche utilisateur</th>
+                                        <th scope="col">
+                                            Fiche utilisateur·ice
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>

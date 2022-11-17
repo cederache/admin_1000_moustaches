@@ -350,7 +350,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 />
                             </Col>
                             <Col xs={4}>
-                                <Label>Adopté.e</Label>
+                                <Label>Adopté·e</Label>
                                 <BooleanDropdown
                                     value={animal.adopted}
                                     disabled={!isEditing}
