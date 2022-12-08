@@ -1,10 +1,21 @@
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    sendPasswordResetEmail,
 } from "firebase/auth";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import {
+    Button,
+    Form,
+    FormGroup,
+    Input,
+    Label,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+} from "reactstrap";
 import logo from "../assets/img/logo/Logo1000Moustaches.png";
 import UsersManager from "../managers/users.manager";
 import SourceLink from "./SourceLink";
@@ -28,6 +39,8 @@ function AuthForm({
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showForgotPasswordModal, setShowForgotPasswordModal] =
+        useState(false);
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -49,6 +62,27 @@ function AuthForm({
         } else {
             return "Inscription";
         }
+    };
+
+    let handleForgotPassword = () => {
+        sendPasswordResetEmail(auth, username)
+            .then((response) => {
+                console.log(response);
+                notificationSystem?.addNotification({
+                    message: `Un mail a été envoyé l'adresse ${username} pour réinitialiser le mot de passe`,
+                    level: "success",
+                });
+                setShowForgotPasswordModal(false);
+            })
+            .catch((error) => {
+                console.error(error);
+                notificationSystem?.addNotification({
+                    message:
+                        "Une erreur s'est produite lors de la réinitialisation du mot de passe. Veillez réessayer. Si l'erreur persiste, merci de contacter le service informatique.",
+                    level: "error",
+                });
+                setShowForgotPasswordModal(false);
+            });
     };
 
     let handleSubmit = (event) => {
@@ -163,6 +197,14 @@ function AuthForm({
                     </FormGroup>
                 )}
                 <hr />
+                {isLogin() && (
+                    <Label
+                        className="can-click"
+                        onClick={() => setShowForgotPasswordModal(true)}
+                    >
+                        Mot de passe oublié ?
+                    </Label>
+                )}
                 <Button
                     size="lg"
                     className="bg-gradient-theme-left border-0"
@@ -192,6 +234,34 @@ function AuthForm({
                 }}
                 style={NOTIFICATION_SYSTEM_STYLE}
             />
+
+            <Modal isOpen={showForgotPasswordModal} {...props}>
+                <ModalHeader>
+                    <h1>Mot de passe oublié ?</h1>
+                </ModalHeader>
+                <ModalBody>
+                    Merci d'entrer le mail du compte pour recevoir un lien de
+                    modification de mot passe.
+                    <Input
+                        value={username}
+                        onChange={(evt) => setUsername(evt.target.value)}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <Button
+                        color="danger"
+                        onClick={() => setShowForgotPasswordModal(false)}
+                    >
+                        Annuler
+                    </Button>
+                    <Button
+                        color="success"
+                        onClick={() => handleForgotPassword()}
+                    >
+                        Confirmer
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </>
     );
 }
