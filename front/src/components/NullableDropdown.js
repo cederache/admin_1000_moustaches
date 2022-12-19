@@ -12,7 +12,7 @@ const NullableDropdown = ({
     values,
     key,
     color,
-    readOnly,
+    disabled,
     onChange,
     ...props
 }) => {
@@ -22,7 +22,7 @@ const NullableDropdown = ({
                 caret
                 color={color || "primary"}
                 className="text-capitalize m-1"
-                disabled={readOnly || false}
+                disabled={disabled || false}
             >
                 {value || "NSP"}
             </DropdownToggle>
@@ -63,7 +63,7 @@ NullableDropdown.propTypes = {
         "light",
         "dark",
     ]),
-    readOnly: PropTypes.bool,
+    disabled: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
 };
 

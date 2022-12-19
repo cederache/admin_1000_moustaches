@@ -3,28 +3,33 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "bootstrap": "4.3.1",
+        "bootstrap": "^5.1.0",
         "chart.js": "2.7.2",
         "classnames": "^2.2.6",
         "cross-env": "^7.0.3",
         "d3-geo": "^1.11.3",
         "faker": "^4.1.0",
+        "firebase": "^9.13.0",
+        "leaflet": "^1.9.2",
+        "lodash": "^4.17.21",
         "moment": "^2.29.4",
         "prop-types": "^15.7.2",
-        "react": "^16.8.4",
+        "react": "^18.0.0",
         "react-chartjs-2": "^2.7.4",
         "react-component-queries": "^2.3.0",
         "react-d3-map": "^0.8.3",
-        "react-dom": "^16.8.4",
+        "react-dom": "^18.0.0",
         "react-ga": "^2.5.7",
         "react-icons": "^4.4.0",
         "react-infinite-calendar": "^2.3.1",
+        "react-leaflet": "^4.0.0",
         "react-notification-system": "^0.2.17",
-        "react-router": "^5.1.0",
-        "react-router-dom": "^4.3.1",
+        "react-router": "^6.0.0",
+        "react-router-dom": "^5.0.0",
         "react-simple-maps": "^0.12.1",
         "react-sizeme": "^2.5.2",
-        "reactstrap": "^7.1.0",
+        "react-websitecarbon-badge": "^1.0.4",
+        "reactstrap": "^9.1.0",
         "sass": "^1.55.0",
         "sass-loader": "^7.1.0",
         "victory": "^32.0.0"
@@ -52,16 +57,9 @@
             "react-app/jest"
         ]
     },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    }
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not op_mini all"
+    ]
 }

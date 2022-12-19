@@ -27,7 +27,7 @@ const Todos = ({ todos, ...restProps }) => {
                 <ListGroupItem key={id} className="border-0">
                     <FormGroup check>
                         <Label check>
-                            <Input type="checkbox" checked={done} readOnly />
+                            <Input type="checkbox" checked={done} disabled />
                             {done ? (
                                 <strike>{title}</strike>
                             ) : (

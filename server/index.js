@@ -4,18 +4,13 @@ const helmet = require("helmet");
 const functions = require("firebase-functions");
 const { glob } = require("glob");
 const path = require("path");
-require("firebase-functions/lib/logger/compat");
+require("firebase-functions/logger/compat");
 const IP = require("ip");
 
 const app = express();
 
-const whitelist = ["localhost:3000", "admin-1000-moustaches.web.app/"];
-var corsOptions = {
-  origin: "*",
-  credentials: false,
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
+app.options("*", cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());

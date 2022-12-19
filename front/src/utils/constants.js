@@ -1,3 +1,17 @@
+export const SPECIES_ID = {
+    CAT: 1,
+    DOG: 2,
+};
+
+export const HOST_FAMILY_KIND_ID = {
+    CAT: 1,
+    KITTEN: 2,
+    DOG: 3,
+    KITTEN_FEEDING: 4,
+    PUPPY: 5,
+    RABBIT: 6,
+};
+
 export const NOTIFICATION_SYSTEM_STYLE = {
     NotificationItem: {
         DefaultStyle: {
@@ -55,6 +69,10 @@ export const NOTIFICATION_SYSTEM_STYLE = {
             // position: 'absolute',
             // top: '50%',
         },
+
+        warning: {
+            color: "#000",
+        },
     },
 
     MessageWrapper: {
@@ -62,6 +80,10 @@ export const NOTIFICATION_SYSTEM_STYLE = {
             display: "block",
             color: "#fff",
             width: "100%",
+        },
+
+        warning: {
+            color: "#000",
         },
     },
 
@@ -87,6 +109,10 @@ export const NOTIFICATION_SYSTEM_STYLE = {
             right: "unset",
             lineHeight: "inherit",
         },
+
+        warning: {
+            color: "#000",
+        },
     },
 
     Action: {
@@ -111,7 +137,7 @@ export const NOTIFICATION_SYSTEM_STYLE = {
 
         warning: {
             backgroundColor: "#ffd700",
-            color: "#fff",
+            color: "#000",
         },
 
         info: {

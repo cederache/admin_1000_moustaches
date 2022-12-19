@@ -8,10 +8,10 @@ class VeterinariansManager {
     static createVeterinarian = () => {
         const veterinarian = {};
         this.dateFields.forEach((dateField) => {
-            veterinarian[dateField] = null;
+            veterinarian[dateField] = undefined;
             veterinarian[`${dateField}_object`] = {
-                readable: null,
-                input: null,
+                readable: undefined,
+                input: undefined,
             };
         });
         return veterinarian;
@@ -22,10 +22,32 @@ class VeterinariansManager {
             const rawValue = vet[date];
             vet[date] = {};
             vet[date]["readable"] =
-                rawValue != null ? moment(rawValue).format("DD/MM/YYYY") : null;
+                rawValue != null
+                    ? moment(rawValue).format("DD/MM/YYYY")
+                    : undefined;
             vet[date]["input"] =
-                rawValue != null ? moment(rawValue).format("YYYY-MM-DD") : null;
+                rawValue != null
+                    ? moment(rawValue).format("YYYY-MM-DD")
+                    : undefined;
         });
+        switch (vet.price_level) {
+            case 0:
+                vet.price_level_text = "€";
+                vet.price_level_tooltip = "Pas cher";
+                break;
+            case 1:
+                vet.price_level_text = "€€";
+                vet.price_level_tooltip = "Cher";
+                break;
+            case 2:
+                vet.price_level_text = "€€€";
+                vet.price_level_tooltip = "Cher sa mère";
+                break;
+            default:
+                vet.price_level_text = null;
+                vet.price_level_tooltip = "Ne sait pas";
+                break;
+        }
         return vet;
     };
 
