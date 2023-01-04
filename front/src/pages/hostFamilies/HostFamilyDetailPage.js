@@ -587,13 +587,21 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         </Col>
                                         <Col xs={6}>
                                             <Label>
-                                                <SourceLink
-                                                    link={`https://www.google.com/maps/place/${hostFamily.address}`}
-                                                >
-                                                    <span>
-                                                        Adresse <MdDirections />
-                                                    </span>
-                                                </SourceLink>
+                                                {hostFamily.address !==
+                                                    undefined && (
+                                                    <SourceLink
+                                                        link={`https://www.google.com/maps/place/${hostFamily.address}`}
+                                                    >
+                                                        <span>
+                                                            Adresse{" "}
+                                                            <MdDirections />
+                                                        </span>
+                                                    </SourceLink>
+                                                )}
+                                                {hostFamily.address ===
+                                                    undefined && (
+                                                    <span>Adresse</span>
+                                                )}
                                             </Label>
                                             <Input
                                                 type="textarea"

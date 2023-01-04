@@ -299,13 +299,18 @@ function VeterinarianDetailPage({ match, ...props }) {
                             </Col>
                             <Col xs={6}>
                                 <Label>
-                                    <SourceLink
-                                        link={`https://www.google.com/maps/place/${veterinarian.address}`}
-                                    >
-                                        <span>
-                                            Adresse <MdDirections />
-                                        </span>
-                                    </SourceLink>
+                                    {veterinarian.address !== undefined && (
+                                        <SourceLink
+                                            link={`https://www.google.com/maps/place/${veterinarian.address}`}
+                                        >
+                                            <span>
+                                                Adresse <MdDirections />
+                                            </span>
+                                        </SourceLink>
+                                    )}
+                                    {veterinarian.address === undefined && (
+                                        <span>Adresse</span>
+                                    )}
                                 </Label>
                                 <Input
                                     type="textarea"
