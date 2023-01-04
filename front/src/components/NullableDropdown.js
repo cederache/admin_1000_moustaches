@@ -48,7 +48,7 @@ const NullableDropdown = ({
                             >
                                 {valueDisplayName !== undefined
                                     ? valueDisplayName(aValue)
-                                    : value}
+                                    : aValue}
                             </DropdownItem>
                         );
                     })}
