@@ -140,6 +140,13 @@ function HostFamilyDetailPage({ match, ...props }) {
         } else {
             setHostFamily(HostFamiliesManager.createHostFamily());
             setIsEditing(true);
+
+            getReferents()
+                .then(getHostFamilyKinds)
+                .then(() => {
+                    setHostFamily(HostFamiliesManager.createHostFamily());
+                    setIsEditing(true);
+                });
         }
     };
 
@@ -227,6 +234,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                         message: `Une erreur s'est produite pendant la création des données\n${err}`,
                         level: "error",
                     });
+                    setIsEditing(true);
                 });
             return;
         }
