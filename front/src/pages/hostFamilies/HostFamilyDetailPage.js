@@ -138,8 +138,9 @@ function HostFamilyDetailPage({ match, ...props }) {
                 .then(getHostFamilyToHostFamilyKinds)
                 .then(getReferents);
         } else {
-            setHostFamily(HostFamiliesManager.createHostFamily());
-            setIsEditing(true);
+            setOpenContactInfo("1");
+            setOpenHomeInfo("1");
+            setOpenHostInfo("1");
 
             getReferents()
                 .then(getHostFamilyKinds)

@@ -169,6 +169,10 @@ function AnimalDetailPage({ match, ...props }) {
                 .then(getHostFamilies)
                 .then(getVeterinarianInterventions);
         } else {
+            setOpenInfo("1");
+            setOpenPEC("1");
+            setOpenHealth("1");
+
             getSpecies().then(getSexes);
             setAnimal(AnimalsManager.createAnimal());
             setIsEditing(true);
