@@ -708,7 +708,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                             />
                                         </Col>
                                     </Row>
-                                    <Row className="text-center">
+                                    <Row>
                                         <Col xs={4}>
                                             <Label>Permis de conduire</Label>
                                             <BooleanNullableDropdown
@@ -943,11 +943,11 @@ function HostFamilyDetailPage({ match, ...props }) {
                                                     hostFamily.host_conditions ||
                                                     ""
                                                 }
-                                                onChange={(newValue) => {
+                                                onChange={(evt) => {
                                                     setHostFamily({
                                                         ...hostFamily,
                                                         host_conditions:
-                                                            newValue,
+                                                            evt.target.value,
                                                     });
                                                 }}
                                             />
