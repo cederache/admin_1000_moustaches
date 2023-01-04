@@ -67,8 +67,7 @@ function HostFamilyDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -81,8 +80,7 @@ function HostFamilyDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -95,8 +93,7 @@ function HostFamilyDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             })
@@ -110,8 +107,7 @@ function HostFamilyDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -124,8 +120,7 @@ function HostFamilyDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -253,8 +248,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                 console.error(err);
                 getHostFamily();
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
                     level: "error",
                 });
             });
@@ -273,14 +267,20 @@ function HostFamilyDetailPage({ match, ...props }) {
                 console.error(err);
                 getHostFamily();
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la suppression des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
                     level: "error",
                 });
             });
     };
 
     const createHostFamilyKindLink = (hfk) => {
+        if (hostFamilyId === "new") {
+            notificationSystem.addNotification({
+                message: `La famille d'accueil doit d'abord être créée pour modifier son type`,
+                level: "error",
+            });
+            return;
+        }
         HostFamilyKindsManager.createHostFamilyLink(hfk.id, hostFamilyId)
             .then(() => {
                 getHostFamilyToHostFamilyKinds();
@@ -293,14 +293,20 @@ function HostFamilyDetailPage({ match, ...props }) {
                 console.error(err);
                 getHostFamilyToHostFamilyKinds();
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
                     level: "error",
                 });
             });
     };
 
     const deleteHostFamilyKindLink = (hfk) => {
+        if (hostFamilyId === "new") {
+            notificationSystem.addNotification({
+                message: `La famille d'accueil doit d'abord être créée pour modifier son type`,
+                level: "error",
+            });
+            return;
+        }
         HostFamilyKindsManager.deleteHostFamilyLink(hfk.id, hostFamilyId)
             .then(() => {
                 getHostFamilyToHostFamilyKinds();
@@ -313,8 +319,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                 console.error(err);
                 getHostFamilyToHostFamilyKinds();
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
                     level: "error",
                 });
             });
@@ -796,56 +801,83 @@ function HostFamilyDetailPage({ match, ...props }) {
                                             <Label>
                                                 Type de Famille d'Accueil
                                             </Label>
-                                            <FormGroup check>
-                                                {hostFamilyKinds.map((hfk) => {
-                                                    return (
-                                                        <Row>
-                                                            <Col>
-                                                                <Label check>
-                                                                    <Input
-                                                                        type="checkbox"
-                                                                        id={
-                                                                            hfk.id
-                                                                        }
-                                                                        defaultChecked={
-                                                                            hostFamilyToHostFamilyKind.filter(
-                                                                                (
-                                                                                    hfthfk
-                                                                                ) =>
-                                                                                    hfthfk.id ===
+                                            {hostFamilyId === "new" && (
+                                                <>
+                                                    <br />
+                                                    <span className="p italic">
+                                                        Pour pouvoir modifier le
+                                                        type de famille
+                                                        d'accueil, il faut
+                                                        d'abord la créer puis la
+                                                        modifier
+                                                    </span>
+                                                    <br />
+                                                    <br />
+                                                </>
+                                            )}
+                                            {hostFamilyId !== "new" && (
+                                                <FormGroup check>
+                                                    {hostFamilyKinds.map(
+                                                        (hfk) => {
+                                                            return (
+                                                                <Row>
+                                                                    <Col>
+                                                                        <Label
+                                                                            check
+                                                                        >
+                                                                            <Input
+                                                                                type="checkbox"
+                                                                                id={
                                                                                     hfk.id
-                                                                            )
-                                                                                .length >
-                                                                            0
-                                                                        }
-                                                                        onChange={(
-                                                                            evt
-                                                                        ) => {
-                                                                            if (
-                                                                                evt
-                                                                                    .target
-                                                                                    .checked ===
-                                                                                true
-                                                                            ) {
-                                                                                // Create link
-                                                                                createHostFamilyKindLink(
-                                                                                    hfk
-                                                                                );
-                                                                            } else {
-                                                                                // Delete link
-                                                                                deleteHostFamilyKindLink(
-                                                                                    hfk
-                                                                                );
+                                                                                }
+                                                                                defaultChecked={
+                                                                                    hostFamilyToHostFamilyKind.filter(
+                                                                                        (
+                                                                                            hfthfk
+                                                                                        ) =>
+                                                                                            hfthfk.id ===
+                                                                                            hfk.id
+                                                                                    )
+                                                                                        .length >
+                                                                                    0
+                                                                                }
+                                                                                onChange={(
+                                                                                    evt
+                                                                                ) => {
+                                                                                    if (
+                                                                                        evt
+                                                                                            .target
+                                                                                            .checked ===
+                                                                                        true
+                                                                                    ) {
+                                                                                        // Create link
+                                                                                        createHostFamilyKindLink(
+                                                                                            hfk
+                                                                                        );
+                                                                                    } else {
+                                                                                        // Delete link
+                                                                                        deleteHostFamilyKindLink(
+                                                                                            hfk
+                                                                                        );
+                                                                                    }
+                                                                                }}
+                                                                                disabled={
+                                                                                    !isEditing ||
+                                                                                    hostFamilyId ===
+                                                                                        "new"
+                                                                                }
+                                                                            />
+                                                                            {
+                                                                                hfk.name
                                                                             }
-                                                                        }}
-                                                                    />
-                                                                    {hfk.name}
-                                                                </Label>
-                                                            </Col>
-                                                        </Row>
-                                                    );
-                                                })}
-                                            </FormGroup>
+                                                                        </Label>
+                                                                    </Col>
+                                                                </Row>
+                                                            );
+                                                        }
+                                                    )}
+                                                </FormGroup>
+                                            )}
                                         </Col>
                                     </Row>
                                     <Row>
