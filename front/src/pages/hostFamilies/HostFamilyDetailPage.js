@@ -704,6 +704,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         <Col xs={4}>
                                             <Label>Permis de conduire</Label>
                                             <BooleanNullableDropdown
+                                                withNewLine={true}
                                                 value={
                                                     hostFamily.driver_license
                                                 }
@@ -836,6 +837,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                                 Peut donner soins véto
                                             </Label>
                                             <BooleanNullableDropdown
+                                                withNewLine={true}
                                                 value={
                                                     hostFamily.can_provide_veterinary_care
                                                 }
@@ -852,6 +854,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         <Col xs={4} lg={3}>
                                             <Label>Peut sociabiliser</Label>
                                             <BooleanNullableDropdown
+                                                withNewLine={true}
                                                 value={
                                                     hostFamily.can_provide_sociabilisation
                                                 }
@@ -871,6 +874,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                                 handicapés
                                             </Label>
                                             <BooleanNullableDropdown
+                                                withNewLine={true}
                                                 value={
                                                     hostFamily.can_host_disable_animal
                                                 }
@@ -889,6 +893,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                                 Peut donner des soins de nuit
                                             </Label>
                                             <BooleanNullableDropdown
+                                                withNewLine={true}
                                                 value={
                                                     hostFamily.can_provide_night_care
                                                 }
@@ -905,6 +910,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         <Col xs={4} lg={3}>
                                             <Label>Peut isoler</Label>
                                             <BooleanNullableDropdown
+                                                withNewLine={true}
                                                 value={hostFamily.can_isolate}
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {

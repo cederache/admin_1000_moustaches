@@ -339,6 +339,7 @@ function VeterinarianDetailPage({ match, ...props }) {
                             <Col xs={3}>
                                 <Label>Gestion des urgences</Label>
                                 <BooleanNullableDropdown
+                                    withNewLine={true}
                                     value={veterinarian.emergencies}
                                     disabled={!isEditing}
                                     onChange={(newValue) => {

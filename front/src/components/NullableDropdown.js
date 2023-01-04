@@ -14,9 +14,12 @@ const NullableDropdown = ({
     color,
     disabled,
     onChange,
+    withNewLine,
     ...props
 }) => {
     return (
+        <>
+        {withNewLine && <br />}
         <UncontrolledButtonDropdown key={key} {...props}>
             <DropdownToggle
                 caret
@@ -46,6 +49,7 @@ const NullableDropdown = ({
                 </DropdownItem>
             </DropdownMenu>
         </UncontrolledButtonDropdown>
+        </>
     );
 };
 
@@ -65,6 +69,7 @@ NullableDropdown.propTypes = {
     ]),
     disabled: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
+    withNewLine: PropTypes.bool
 };
 
 export default NullableDropdown;

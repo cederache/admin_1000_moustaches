@@ -326,6 +326,7 @@ function AnimalDetailPage({ match, ...props }) {
                             <Col xs={4}>
                                 <Label>Diffusable</Label>
                                 <BooleanDropdown
+                                    withNewLine={true}
                                     value={animal.broadcastable}
                                     disabled={!isEditing}
                                     onChange={(newValue) =>
@@ -339,6 +340,7 @@ function AnimalDetailPage({ match, ...props }) {
                             <Col xs={4}>
                                 <Label>Réservable</Label>
                                 <BooleanDropdown
+                                    withNewLine={true}
                                     value={animal.bookable}
                                     disabled={!isEditing}
                                     onChange={(newValue) =>
@@ -352,6 +354,7 @@ function AnimalDetailPage({ match, ...props }) {
                             <Col xs={4}>
                                 <Label>Adopté·e</Label>
                                 <BooleanDropdown
+                                    withNewLine={true}
                                     value={animal.adopted}
                                     disabled={!isEditing}
                                     onChange={(newValue) =>
@@ -670,6 +673,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 <Col xs={6} md={3}>
                                                     <Label>Négatif FIV</Label>
                                                     <BooleanNullableDropdown
+                                                        withNewLine={true}
                                                         value={
                                                             animal.fiv_negative
                                                         }
@@ -688,6 +692,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 <Col xs={6} md={3}>
                                                     <Label>Négatif FELV</Label>
                                                     <BooleanNullableDropdown
+                                                        withNewLine={true}
                                                         value={
                                                             animal.felv_negative
                                                         }

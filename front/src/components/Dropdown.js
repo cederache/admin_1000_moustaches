@@ -42,10 +42,10 @@ const Dropdown = ({
         }
         setSortedValues(sortedValues);
         setFilteredValues(sortedValues);
-    }, [values]);
+    }, [withSort, values, valueDisplayName]);
 
     useEffect(() => {
-        if (search === "") {
+        if (withSearch === false || search === undefined || search === "") {
             setFilteredValues(sortedValues);
             return;
         }
@@ -60,7 +60,7 @@ const Dropdown = ({
                     .includes(search.toLowerCase());
             })
         );
-    }, [search]);
+    }, [withSearch, search, sortedValues, valueDisplayName]);
 
     return (
         <>

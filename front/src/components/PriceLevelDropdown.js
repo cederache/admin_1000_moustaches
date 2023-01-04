@@ -30,6 +30,7 @@ const PriceLevelDropdown = ({ value, onChange, ...props }) => {
 
     return (
         <NullableDropdown
+            withNewLine={true}
             {...{
                 ...props,
                 // 0, 1, 2

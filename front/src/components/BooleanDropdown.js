@@ -13,6 +13,7 @@ const BooleanDropdown = ({ value, key, disabled, onChange, ...props }) => {
                 disabled={disabled || false}
                 valueDisplayName={(aValue) => (aValue === 1 ? "Oui" : "Non")}
                 onChange={onChange}
+                {...props}
             />
         </>
     );
