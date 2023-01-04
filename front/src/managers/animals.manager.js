@@ -16,7 +16,7 @@ class AnimalsManager {
     ];
 
     static createAnimal = () => {
-        const animal = { sexe: "male" };
+        const animal = { };
         this.dateFields.forEach((dateField) => {
             animal[dateField] = undefined;
             animal[`${dateField}_object`] = {

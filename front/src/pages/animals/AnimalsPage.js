@@ -20,6 +20,7 @@ import Switch from "../../components/Switch";
 
 function AnimalsPage({ ...props }) {
     const [animals, setAnimals] = useState([]);
+    const [sexes, setSexes] = useState([]);
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState([]);
     const [filters, setFilters] = useState([
@@ -43,6 +44,18 @@ function AnimalsPage({ ...props }) {
         React.createRef()
     );
 
+    const getSexes = () => {
+        return AnimalsManager.getSexes()
+            .then(setSexes)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    level: "error",
+                });
+            });
+    };
+
     const getAllAnimals = () => {
         AnimalsManager.getAll()
             .then((animals) => {
@@ -55,8 +68,7 @@ function AnimalsPage({ ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -67,7 +79,7 @@ function AnimalsPage({ ...props }) {
     };
 
     useEffect(() => {
-        getAllAnimals();
+        getSexes().then(getAllAnimals);
     }, []);
 
     useEffect(() => {
@@ -167,7 +179,11 @@ function AnimalsPage({ ...props }) {
                             {filteredAnimals.map((animal, index) => (
                                 <tr key={index}>
                                     <th scope="row">{animal.name}</th>
-                                    <td>{animal.sexe}</td>
+                                    <td>
+                                        {sexes.find(
+                                            (aSexe) => aSexe.key === animal.sexe
+                                        )?.value || ""}
+                                    </td>
                                     <td>{animal.icad}</td>
                                     <td>{animal.readable_birth_date}</td>
                                     <td>{animal.readable_entry_date}</td>
