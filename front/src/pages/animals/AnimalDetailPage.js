@@ -26,12 +26,14 @@ import HostFamiliesHistory from "./HostFamiliesHistory";
 import VeterinarianInterventionsHistory from "./VeterinarianInterventionsHistory";
 import VeterinarianInterventionsManager from "../../managers/veterinarianInterventions.manager";
 import Dropdown from "../../components/Dropdown";
+import NullableDropdown from "../../components/NullableDropdown";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
     const [animal, setAnimal] = useState(null);
     const [animalToHostFamilies, setAnimalToHostFamilies] = useState([]);
     const [species, setSpecies] = useState([]);
+    const [sexes, setSexes] = useState([]);
     const [veterinarianInterventions, setVeterinarianInterventions] = useState(
         []
     );
@@ -101,8 +103,7 @@ function AnimalDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -115,8 +116,7 @@ function AnimalDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -129,8 +129,20 @@ function AnimalDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.log(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    level: "error",
+                });
+            });
+    };
+
+    const getSexes = () => {
+        setSexes([]);
+        return AnimalsManager.getSexes()
+            .then(setSexes)
+            .catch((err) => {
+                console.log(err);
+                notificationSystem.addNotification({
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -143,8 +155,7 @@ function AnimalDetailPage({ match, ...props }) {
             .catch((err) => {
                 console.log(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -153,11 +164,12 @@ function AnimalDetailPage({ match, ...props }) {
     const refresh = () => {
         if (animalId !== "new") {
             getSpecies()
+                .then(getSexes)
                 .then(getAnimal)
                 .then(getHostFamilies)
                 .then(getVeterinarianInterventions);
         } else {
-            getSpecies();
+            getSpecies().then(getSexes);
             setAnimal(AnimalsManager.createAnimal());
             setIsEditing(true);
         }
@@ -204,8 +216,7 @@ function AnimalDetailPage({ match, ...props }) {
                 .catch((err) => {
                     console.error(err);
                     notificationSystem.addNotification({
-                        message:
-                            `Une erreur s'est produite pendant la création des données\n${err}`,
+                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
                         level: "error",
                     });
                 });
@@ -225,8 +236,7 @@ function AnimalDetailPage({ match, ...props }) {
                 console.error(err);
                 getAnimal();
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
                     level: "error",
                 });
             });
@@ -245,8 +255,7 @@ function AnimalDetailPage({ match, ...props }) {
                 console.error(err);
                 getAnimal();
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la suppression des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
                     level: "error",
                 });
             });
@@ -398,7 +407,9 @@ function AnimalDetailPage({ match, ...props }) {
                                                         }
                                                     />
                                                 </Col>
-                                                <Col xs={12}>
+                                            </Row>
+                                            <Row>
+                                                <Col xs={6}>
                                                     <Label>Espèce</Label>
                                                     <Dropdown
                                                         withNewLine={true}
@@ -432,7 +443,45 @@ function AnimalDetailPage({ match, ...props }) {
                                                         }
                                                     />
                                                 </Col>
-                                                <Col xs={12}>
+                                                <Col xs={6}>
+                                                    <Label>Sexe</Label>
+                                                    <NullableDropdown
+                                                        withNewLine={true}
+                                                        color={"primary"}
+                                                        disabled={!isEditing}
+                                                        value={
+                                                            animal.sexe ===
+                                                                undefined ||
+                                                            animal.sexe === null
+                                                                ? null
+                                                                : sexes.find(
+                                                                      (aSexe) =>
+                                                                          aSexe.key ===
+                                                                          animal.sexe
+                                                                  )
+                                                        }
+                                                        values={sexes}
+                                                        valueDisplayName={(
+                                                            aSexe
+                                                        ) => aSexe.value}
+                                                        valueActiveCheck={(
+                                                            aSexe
+                                                        ) =>
+                                                            aSexe.key ===
+                                                            animal.sexe
+                                                        }
+                                                        key={"sexes"}
+                                                        onChange={(newSexe) =>
+                                                            setAnimal({
+                                                                ...animal,
+                                                                sexe: newSexe.key,
+                                                            })
+                                                        }
+                                                    />
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col xs={6}>
                                                     <Label>Race</Label>
                                                     <Input
                                                         value={

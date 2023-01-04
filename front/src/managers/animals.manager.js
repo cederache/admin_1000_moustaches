@@ -16,7 +16,7 @@ class AnimalsManager {
     ];
 
     static createAnimal = () => {
-        const animal = {};
+        const animal = { sexe: "male" };
         this.dateFields.forEach((dateField) => {
             animal[dateField] = undefined;
             animal[`${dateField}_object`] = {
@@ -112,6 +112,13 @@ class AnimalsManager {
                 });
             }
         );
+    };
+
+    static getSexes = () => {
+        return Promise.resolve([
+            { key: "male", value: "Male" },
+            { key: "female", value: "Femelle" },
+        ]);
     };
 
     static create = (animal) => {
