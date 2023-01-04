@@ -65,7 +65,9 @@ class AnimalsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((animals) => animals.map(AnimalsManager.format));
     };
@@ -76,7 +78,9 @@ class AnimalsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(AnimalsManager.format);
     };
@@ -90,7 +94,9 @@ class AnimalsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((animals) => animals.map(AnimalsManager.format));
     };
@@ -101,7 +107,9 @@ class AnimalsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             }
         );
     };
@@ -120,7 +128,9 @@ class AnimalsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(AnimalsManager.format);
     };
@@ -150,7 +160,9 @@ class AnimalsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(AnimalsManager.format);
     };
@@ -165,7 +177,9 @@ class AnimalsManager {
             if (response.status === 200) {
                 return response.json();
             }
-            throw new Error("Server error");
+            return response.json().then((json) => {
+                throw new Error(`Server error - ${json.message}`);
+            });
         });
     };
 }

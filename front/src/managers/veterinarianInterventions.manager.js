@@ -55,7 +55,9 @@ class VeterinarianInterventionsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((vetInters) =>
                 vetInters.map(VeterinarianInterventionsManager.format)
@@ -70,7 +72,9 @@ class VeterinarianInterventionsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(VeterinarianInterventionsManager.format);
     };
@@ -84,7 +88,9 @@ class VeterinarianInterventionsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((vetInters) =>
                 vetInters.map(VeterinarianInterventionsManager.format)
@@ -100,7 +106,9 @@ class VeterinarianInterventionsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((vetInters) =>
                 vetInters.map(VeterinarianInterventionsManager.format)
@@ -121,7 +129,9 @@ class VeterinarianInterventionsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(VeterinarianInterventionsManager.format);
     };
@@ -151,7 +161,9 @@ class VeterinarianInterventionsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(VeterinarianInterventionsManager.format);
     };
@@ -166,7 +178,9 @@ class VeterinarianInterventionsManager {
             if (response.status === 200) {
                 return response.json();
             }
-            throw new Error("Server error");
+            return response.json().then((json) => {
+                throw new Error(`Server error - ${json.message}`);
+            });
         });
     };
 }

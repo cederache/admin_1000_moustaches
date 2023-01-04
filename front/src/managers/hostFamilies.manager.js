@@ -58,7 +58,9 @@ class HostFamiliesManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((hostFamilies) =>
                 hostFamilies.map(HostFamiliesManager.format)
@@ -71,7 +73,9 @@ class HostFamiliesManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(HostFamiliesManager.format);
     };
@@ -84,7 +88,9 @@ class HostFamiliesManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((hostFamilies) =>
                 hostFamilies.map(HostFamiliesManager.format)
@@ -105,7 +111,9 @@ class HostFamiliesManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(HostFamiliesManager.format);
     };
@@ -124,7 +132,9 @@ class HostFamiliesManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(HostFamiliesManager.format);
     };
@@ -139,7 +149,9 @@ class HostFamiliesManager {
             if (response.status === 200) {
                 return response.json();
             }
-            throw new Error("Server error");
+            return response.json().then((json) => {
+                throw new Error(`Server error - ${json.message}`);
+            });
         });
     };
 }

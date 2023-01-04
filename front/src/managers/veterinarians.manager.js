@@ -73,7 +73,9 @@ class VeterinariansManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((vets) => vets.map(VeterinariansManager.format));
     };
@@ -84,15 +86,15 @@ class VeterinariansManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(VeterinariansManager.format);
     };
 
     static create = (veterinarian) => {
         const veterinarianToUpload = this.formatForServer(veterinarian);
-
-        console.log("Will call post on veterinarians");
         return fetch(`${API_URL}/veterinarians`, {
             method: "POST",
             body: JSON.stringify(veterinarianToUpload),
@@ -104,7 +106,9 @@ class VeterinariansManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(VeterinariansManager.format);
     };
@@ -134,7 +138,9 @@ class VeterinariansManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(VeterinariansManager.format);
     };
@@ -149,7 +155,9 @@ class VeterinariansManager {
             if (response.status === 200) {
                 return response.json();
             }
-            throw new Error("Server error");
+            return response.json().then((json) => {
+                throw new Error(`Server error - ${json.message}`);
+            });
         });
     };
 }

@@ -78,7 +78,7 @@ function AuthForm({
                 console.error(error);
                 notificationSystem?.addNotification({
                     message:
-                        "Une erreur s'est produite lors de la réinitialisation du mot de passe. Veillez réessayer. Si l'erreur persiste, merci de contacter le service informatique.",
+                        `Une erreur s'est produite pendant la réinitialisation du mot de passe. Veillez réessayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`,
                     level: "error",
                 });
                 setShowForgotPasswordModal(false);
@@ -135,7 +135,7 @@ function AuthForm({
                                 console.error(error);
                                 notificationSystem?.addNotification({
                                     message:
-                                        "Une erreur s'est produite pendant la création de l'utilisateur·ice. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.",
+                                        `Une erreur s'est produite pendant la création de l'utilisateur·ice. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`,
                                     level: "error",
                                 });
                             });

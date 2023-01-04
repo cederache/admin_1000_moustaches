@@ -8,7 +8,9 @@ class Geocode {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((resp) => {
                 if (resp.features.length > 0) {

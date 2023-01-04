@@ -84,7 +84,7 @@ function HostFamiliesPage({ ...props }) {
                 console.error(err);
                 notificationSystem.addNotification({
                     message:
-                        "Une erreur s'est produite pendant la récupération des données",
+                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -98,7 +98,7 @@ function HostFamiliesPage({ ...props }) {
                 console.error(err);
                 notificationSystem.addNotification({
                     message:
-                        "Une erreur s'est produite pendant la récupération des données",
+                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -112,7 +112,7 @@ function HostFamiliesPage({ ...props }) {
                 console.error(err);
                 notificationSystem.addNotification({
                     message:
-                        "Une erreur s'est produite pendant la récupération des données",
+                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });

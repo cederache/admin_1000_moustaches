@@ -44,7 +44,9 @@ class HostFamilyKindsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((hostFamilyKinds) =>
                 hostFamilyKinds.map(HostFamilyKindsManager.format)
@@ -57,7 +59,9 @@ class HostFamilyKindsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(HostFamilyKindsManager.format);
     };
@@ -73,7 +77,9 @@ class HostFamilyKindsManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((hostFamilyKinds) =>
                 hostFamilyKinds.map(HostFamilyKindsManager.format)
@@ -94,7 +100,9 @@ class HostFamilyKindsManager {
             if (response.status === 200) {
                 return response.json();
             }
-            throw new Error("Server error");
+            return response.json().then((json) => {
+                throw new Error(`Server error - ${json.message}`);
+            });
         });
     };
 
@@ -111,7 +119,9 @@ class HostFamilyKindsManager {
             if (response.status === 200) {
                 return response.json();
             }
-            throw new Error("Server error");
+            return response.json().then((json) => {
+                throw new Error(`Server error - ${json.message}`);
+            });
         });
     };
 }

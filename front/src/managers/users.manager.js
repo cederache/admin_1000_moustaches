@@ -8,7 +8,7 @@ class UsersManager {
     static dateFields = [];
 
     static createUser = () => {
-        const user = {};
+        const user = { is_referent: false };
         this.dateFields.forEach((dateField) => {
             user[dateField] = null;
             user[`${dateField}_object`] = {
@@ -53,7 +53,9 @@ class UsersManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((users) => users.map(UsersManager.format));
     };
@@ -64,7 +66,9 @@ class UsersManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then((users) =>
                 users
@@ -79,7 +83,9 @@ class UsersManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(UsersManager.format);
     };
@@ -99,7 +105,9 @@ class UsersManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(UsersManager.format);
     };
@@ -129,7 +137,9 @@ class UsersManager {
                 if (response.status === 200) {
                     return response.json();
                 }
-                throw new Error("Server error");
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
             .then(UsersManager.format);
     };
@@ -144,7 +154,9 @@ class UsersManager {
             if (response.status === 200) {
                 return response.json();
             }
-            throw new Error("Server error");
+            return response.json().then((json) => {
+                throw new Error(`Server error - ${json.message}`);
+            });
         });
     };
 

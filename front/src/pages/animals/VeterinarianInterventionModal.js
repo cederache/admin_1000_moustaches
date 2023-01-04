@@ -39,7 +39,7 @@ const VeterinarianInterventionModal = ({
                 console.error(err);
                 notificationSystem.addNotification({
                     message:
-                        "Une erreur s'est produite pendant la récupération des données",
+                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -70,7 +70,7 @@ const VeterinarianInterventionModal = ({
                     setIsEditing(true);
                     notificationSystem.addNotification({
                         message:
-                            "Une erreur s'est produite pendant la création des données",
+                            `Une erreur s'est produite pendant la création des données\n${err}`,
                         level: "error",
                     });
                 });
@@ -91,7 +91,7 @@ const VeterinarianInterventionModal = ({
                 setIsEditing(true);
                 notificationSystem.addNotification({
                     message:
-                        "Une erreur s'est produite pendant la mise à jour des données",
+                        `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
                     level: "error",
                 });
             });
@@ -110,7 +110,7 @@ const VeterinarianInterventionModal = ({
                 console.error(err);
                 notificationSystem.addNotification({
                     message:
-                        "Une erreur s'est produite pendant la suppression des données",
+                        `Une erreur s'est produite pendant la suppression des données\n${err}`,
                     level: "error",
                 });
             });
