@@ -19,7 +19,7 @@ const fields = [
   "exit_infos",
   "death_date",
   "death_reason",
-  "sterilisation_date",
+  "sterilised",
   "first_vaccination_date",
   "second_vaccination_date",
   "fiv_negative",

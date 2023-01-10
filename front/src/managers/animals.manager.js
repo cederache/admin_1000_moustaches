@@ -10,7 +10,6 @@ class AnimalsManager {
         "death_date",
         "host_entry_date",
         "host_exit_date",
-        "sterilisation_date",
         "first_vaccination_date",
         "second_vaccination_date",
     ];

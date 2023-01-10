@@ -697,27 +697,22 @@ function AnimalDetailPage({ match, ...props }) {
                                     </Row>
                                     <Row>
                                         <Col xs={12} md={6}>
-                                            <Label>Date de stérilisation</Label>
-                                            <Input
-                                                type="date"
+                                            <Label>Stérilisé·e</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
                                                 value={
-                                                    animal
-                                                        .sterilisation_date_object
-                                                        .input
+                                                    animal.sterilised
                                                 }
                                                 disabled={!isEditing}
-                                                onChange={(evt) =>
+                                                onChange={(
+                                                    newValue
+                                                ) => {
                                                     setAnimal({
                                                         ...animal,
-                                                        sterilisation_date_object:
-                                                            {
-                                                                ...animal.sterilisation_date_object,
-                                                                input: evt
-                                                                    .target
-                                                                    .value,
-                                                            },
-                                                    })
-                                                }
+                                                        sterilised:
+                                                            newValue,
+                                                    });
+                                                }}
                                             />
                                         </Col>
                                         {animal.species_id ===
