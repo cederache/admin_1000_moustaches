@@ -15,12 +15,14 @@ import { useState } from "react";
 import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
 import { sortBy } from "../../utils/sort";
 import Switch from "../../components/Switch";
+import Dropdown from "../../components/Dropdown";
 
 /*eslint no-unused-expressions: "off"*/
 
 function AnimalsPage({ ...props }) {
     const [animals, setAnimals] = useState([]);
     const [sexes, setSexes] = useState([]);
+    const [species, setSpecies] = useState([]);
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState([]);
     const [filters, setFilters] = useState([
@@ -39,10 +41,23 @@ function AnimalsPage({ ...props }) {
             },
         },
     ]);
+    const [filterSpecies, setFilterSpecies] = useState();
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
     );
+
+    const getSpecies = () => {
+        return AnimalsManager.getSpecies()
+            .then(setSpecies)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    level: "error",
+                });
+            });
+    };
 
     const getSexes = () => {
         return AnimalsManager.getSexes()
@@ -79,7 +94,7 @@ function AnimalsPage({ ...props }) {
     };
 
     useEffect(() => {
-        getSexes().then(getAllAnimals);
+        getSexes().then(getSpecies).then(getAllAnimals);
     }, []);
 
     useEffect(() => {
@@ -87,11 +102,15 @@ function AnimalsPage({ ...props }) {
             animals.filter(
                 (animal) =>
                     filters.every((f) =>
-                        f.activated == true ? f.check(animal) === true : true
-                    ) && animal.name.includes(searchText)
+                        f.activated === true ? f.check(animal) === true : true
+                    ) &&
+                    animal.name.includes(searchText) &&
+                    (filterSpecies === undefined
+                        ? true
+                        : animal.species_id === filterSpecies?.id)
             )
         );
-    }, [searchText, filters]);
+    }, [animals, searchText, filters, filterSpecies]);
 
     const createAnimal = () => {
         props.history.push("animals/new");
@@ -156,6 +175,30 @@ function AnimalsPage({ ...props }) {
                                 </Col>
                             );
                         })}
+                        <Col className="mb-0">
+                            <Label>Espèce</Label>
+                            <Dropdown
+                                withNewLine={true}
+                                color={"primary"}
+                                value={species.find(
+                                    (aSpecies) =>
+                                        aSpecies.id === filterSpecies?.id
+                                )}
+                                values={[...species, undefined]}
+                                valueDisplayName={(aSpecies) =>
+                                    aSpecies === undefined
+                                        ? "Toutes"
+                                        : aSpecies?.name
+                                }
+                                valueActiveCheck={(aSpecies) =>
+                                    aSpecies?.id === filterSpecies?.id
+                                }
+                                key={"species"}
+                                onChange={(newSpecies) =>
+                                    setFilterSpecies(newSpecies)
+                                }
+                            />
+                        </Col>
                     </Row>
                 </CardBody>
             </Card>
