@@ -1,7 +1,9 @@
+const GEOAPPIFY_API_KEY = process.env.REACT_APP_GEOAPPIFY_API_KEY;
+
 class Geocode {
     static getCoordinatesFromAddress = (address) => {
         return fetch(
-            `https://api.geoapify.com/v1/geocode/search?text=${address}&apiKey=37cb35014fea4b2ab2ca2ee35d3ec815`,
+            `https://api.geoapify.com/v1/geocode/search?text=${address}&apiKey=${GEOAPPIFY_API_KEY}`,
             { method: "GET" }
         )
             .then((response) => {
