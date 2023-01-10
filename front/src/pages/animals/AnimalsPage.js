@@ -28,19 +28,13 @@ function AnimalsPage({ ...props }) {
     const [filters, setFilters] = useState([
         {
             activated: false,
-            name: "Adopté·e·s",
-            check: function (animal) {
-                return animal.adopted === 1;
-            },
-        },
-        {
-            activated: false,
             name: "ICAD manquant",
             check: function (animal) {
                 return animal.icad === null || animal.icad === "";
             },
         },
     ]);
+    const [filterAdopted, setFilterAdopted] = useState();
     const [filterSpecies, setFilterSpecies] = useState();
 
     const [notificationSystem, setNotificationSystem] = useState(
@@ -105,12 +99,15 @@ function AnimalsPage({ ...props }) {
                         f.activated === true ? f.check(animal) === true : true
                     ) &&
                     animal.name.includes(searchText) &&
+                    (filterAdopted === undefined
+                        ? true
+                        : animal.adopted === filterAdopted) &&
                     (filterSpecies === undefined
                         ? true
                         : animal.species_id === filterSpecies?.id)
             )
         );
-    }, [animals, searchText, filters, filterSpecies]);
+    }, [animals, searchText, filters, filterAdopted, filterSpecies]);
 
     const createAnimal = () => {
         props.history.push("animals/new");
@@ -175,6 +172,29 @@ function AnimalsPage({ ...props }) {
                                 </Col>
                             );
                         })}
+                        <Col className="mb-0">
+                            <Label>Adopté·e</Label>
+                            <Dropdown
+                                withNewLine={true}
+                                color={"primary"}
+                                value={filterAdopted}
+                                values={[1, 0, undefined]}
+                                valueDisplayName={(value) =>
+                                    value === undefined
+                                        ? "Tous"
+                                        : value === 1
+                                        ? "Adopté·e"
+                                        : "Non adopté·es"
+                                }
+                                valueActiveCheck={(value) =>
+                                    filterAdopted === value
+                                }
+                                key={"adopted"}
+                                onChange={(newAdopted) => {
+                                    setFilterAdopted(newAdopted);
+                                }}
+                            />
+                        </Col>
                         <Col className="mb-0">
                             <Label>Espèce</Label>
                             <Dropdown
