@@ -338,7 +338,7 @@ function AnimalDetailPage({ match, ...props }) {
                         <Row className="text-center">
                             <Col xs={4}>
                                 <Label>Diffusable</Label>
-                                <BooleanDropdown
+                                <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={animal.broadcastable}
                                     disabled={!isEditing}
@@ -352,7 +352,7 @@ function AnimalDetailPage({ match, ...props }) {
                             </Col>
                             <Col xs={4}>
                                 <Label>Réservable</Label>
-                                <BooleanDropdown
+                                <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={animal.bookable}
                                     disabled={!isEditing}
@@ -366,7 +366,7 @@ function AnimalDetailPage({ match, ...props }) {
                             </Col>
                             <Col xs={4}>
                                 <Label>Adopté·e</Label>
-                                <BooleanDropdown
+                                <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={animal.adopted}
                                     disabled={!isEditing}
