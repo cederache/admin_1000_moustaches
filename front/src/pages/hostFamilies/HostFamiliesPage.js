@@ -56,14 +56,9 @@ function HostFamiliesPage({ ...props }) {
                 return hostFamily.membership_up_to_date === 0;
             },
         },
-        {
-            activated: false,
-            name: "En pause",
-            check: function (hostFamily) {
-                return hostFamily.on_break === 1;
-            },
-        },
     ]);
+    const [filterBreak, setFilterBreak] = useState(0);
+    const [filterTemporary, setFilterTemporary] = useState();
     const [filterReferent, setFilterReferent] = useState();
 
     const [notificationSystem, setNotificationSystem] = useState(
@@ -83,8 +78,7 @@ function HostFamiliesPage({ ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -97,8 +91,7 @@ function HostFamiliesPage({ ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -111,8 +104,7 @@ function HostFamiliesPage({ ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -132,13 +124,26 @@ function HostFamiliesPage({ ...props }) {
                             : true
                     ) &&
                     hostFamily.name.includes(searchText) &&
+                    (filterBreak === undefined
+                        ? true
+                        : hostFamily.on_break === filterBreak) &&
+                    (filterTemporary === undefined
+                        ? true
+                        : hostFamily.is_temporary === filterTemporary) &&
                     (filterReferent === undefined
                         ? true
                         : hostFamily.referent_id === filterReferent?.id)
                 );
             })
         );
-    }, [searchText, switchFilters, filterReferent]);
+    }, [
+        hostFamilies,
+        searchText,
+        switchFilters,
+        filterBreak,
+        filterTemporary,
+        filterReferent,
+    ]);
 
     useEffect(() => {
         if (mapRef !== null && mapRef.current !== null) {
@@ -243,6 +248,52 @@ function HostFamiliesPage({ ...props }) {
                                 </Col>
                             );
                         })}
+                        <Col className="mb-0">
+                            <Label>En pause</Label>
+                            <Dropdown
+                                withNewLine={true}
+                                color={"primary"}
+                                value={filterBreak}
+                                values={[1, 0, undefined]}
+                                valueDisplayName={(onBreak) =>
+                                    onBreak === undefined
+                                        ? "Toutes"
+                                        : onBreak === 1
+                                        ? "En pause"
+                                        : "Actives"
+                                }
+                                valueActiveCheck={(onBreak) =>
+                                    onBreak === filterBreak
+                                }
+                                key={"onBreak"}
+                                onChange={(newBreak) =>
+                                    setFilterBreak(newBreak)
+                                }
+                            />
+                        </Col>
+                        <Col className="mb-0">
+                            <Label>Tampon</Label>
+                            <Dropdown
+                                withNewLine={true}
+                                color={"primary"}
+                                value={filterTemporary}
+                                values={[1, 0, undefined]}
+                                valueDisplayName={(temporary) =>
+                                    temporary === undefined
+                                        ? "Toutes"
+                                        : temporary === 1
+                                        ? "Tampon"
+                                        : "Non tampon"
+                                }
+                                valueActiveCheck={(temporary) =>
+                                    temporary === filterTemporary
+                                }
+                                key={"temporay"}
+                                onChange={(newTemporary) =>
+                                    setFilterTemporary(newTemporary)
+                                }
+                            />
+                        </Col>
                         <Col className="mb-0">
                             <Label>Référent·e</Label>
                             <Dropdown

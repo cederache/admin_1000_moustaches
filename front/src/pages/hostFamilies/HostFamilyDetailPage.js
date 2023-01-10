@@ -429,6 +429,8 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         : "Active"}
                                 </Label>
                                 <Switch
+                                    id="break"
+                                    key="break"
                                     isOn={!hostFamily.on_break}
                                     disabled={!isEditing}
                                     handleToggle={() => {
@@ -448,6 +450,8 @@ function HostFamilyDetailPage({ match, ...props }) {
                             </Col>
                             <Col xs={"auto"}>
                                 <Switch
+                                    id="membership"
+                                    key="membership"
                                     isOn={hostFamily.membership_up_to_date}
                                     disabled={!isEditing}
                                     handleToggle={() => {
@@ -488,6 +492,26 @@ function HostFamilyDetailPage({ match, ...props }) {
                                             referent_id: newUser.id,
                                         })
                                     }
+                                />
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <Label>Est tampon</Label>
+                            </Col>
+                            <Col xs={"auto"}>
+                                <Switch
+                                    id="temporary"
+                                    key="temporary"
+                                    isOn={hostFamily.is_temporary}
+                                    disabled={!isEditing}
+                                    handleToggle={() => {
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            is_temporary:
+                                                !hostFamily.is_temporary,
+                                        });
+                                    }}
                                 />
                             </Col>
                         </Row>

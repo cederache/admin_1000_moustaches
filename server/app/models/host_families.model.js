@@ -26,6 +26,7 @@ const fields = [
   "on_break",
   "membership_up_to_date",
   "referent_id",
+  "is_temporary",
 ];
 
 // constructor
