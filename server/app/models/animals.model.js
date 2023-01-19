@@ -29,8 +29,6 @@ const fields = [
   "adopted",
   "broadcastable",
   "bookable",
-  "current_host_family_id",
-  "current_host_family_referent_id",
 ];
 
 // constructor
