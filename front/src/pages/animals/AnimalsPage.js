@@ -16,6 +16,7 @@ import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
 import { sortBy } from "../../utils/sort";
 import Switch from "../../components/Switch";
 import Dropdown from "../../components/Dropdown";
+import UsersManager from "../../managers/users.manager";
 
 /*eslint no-unused-expressions: "off"*/
 
@@ -23,6 +24,8 @@ function AnimalsPage({ ...props }) {
     const [animals, setAnimals] = useState([]);
     const [sexes, setSexes] = useState([]);
     const [species, setSpecies] = useState([]);
+    const [referents, setReferents] = useState([]);
+
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState([]);
     const [filters, setFilters] = useState([
@@ -36,6 +39,7 @@ function AnimalsPage({ ...props }) {
     ]);
     const [filterAdopted, setFilterAdopted] = useState();
     const [filterSpecies, setFilterSpecies] = useState();
+    const [filterReferent, setFilterReferent] = useState();
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -83,12 +87,25 @@ function AnimalsPage({ ...props }) {
             });
     };
 
+    const getReferents = () => {
+        setReferents([]);
+        return UsersManager.getAllReferents()
+            .then(setReferents)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    level: "error",
+                });
+            });
+    };
+
     const showDetail = (animal) => {
         props.history.push(`/animals/${animal.id}`);
     };
 
     useEffect(() => {
-        getSexes().then(getSpecies).then(getAllAnimals);
+        getSexes().then(getSpecies).then(getReferents).then(getAllAnimals);
     }, []);
 
     useEffect(() => {
@@ -104,10 +121,13 @@ function AnimalsPage({ ...props }) {
                         : animal.adopted === filterAdopted) &&
                     (filterSpecies === undefined
                         ? true
-                        : animal.species_id === filterSpecies?.id)
+                        : animal.species_id === filterSpecies?.id) &&
+                    (filterReferent === undefined
+                        ? true
+                        : animal.current_host_family_referent_id === filterReferent?.id)
             )
         );
-    }, [animals, searchText, filters, filterAdopted, filterSpecies]);
+    }, [animals, searchText, filters, filterAdopted, filterSpecies, filterReferent]);
 
     const createAnimal = () => {
         props.history.push("animals/new");
@@ -216,6 +236,29 @@ function AnimalsPage({ ...props }) {
                                 key={"species"}
                                 onChange={(newSpecies) =>
                                     setFilterSpecies(newSpecies)
+                                }
+                            />
+                        </Col>
+                        <Col className="mb-0">
+                            <Label>Référent·e</Label>
+                            <Dropdown
+                                withNewLine={true}
+                                color={"primary"}
+                                value={referents.find(
+                                    (referent) => referent.id === filterReferent?.id
+                                )}
+                                values={[...referents, undefined]}
+                                valueDisplayName={(referent) =>
+                                    referent === undefined
+                                        ? "Tous·tes"
+                                        : `${referent?.firstname} ${referent?.name}`
+                                }
+                                valueActiveCheck={(referent) =>
+                                    referent?.id === filterReferent?.id
+                                }
+                                key={"referents"}
+                                onChange={(newReferent) =>
+                                    setFilterReferent(newReferent)
                                 }
                             />
                         </Col>

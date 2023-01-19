@@ -20,7 +20,6 @@ import { useState } from "react";
 import { MdRefresh, MdOutlineModeEdit, MdSave, MdDelete } from "react-icons/md";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
-import BooleanDropdown from "../../components/BooleanDropdown";
 import { SPECIES_ID } from "../../utils/constants";
 import HostFamiliesHistory from "./HostFamiliesHistory";
 import VeterinarianInterventionsHistory from "./VeterinarianInterventionsHistory";
@@ -33,6 +32,7 @@ function AnimalDetailPage({ match, ...props }) {
     const [animal, setAnimal] = useState(null);
     const [animalToHostFamilies, setAnimalToHostFamilies] = useState([]);
     const [species, setSpecies] = useState([]);
+    const [hostFamilies, setHostFamilies] = useState([]);
     const [sexes, setSexes] = useState([]);
     const [veterinarianInterventions, setVeterinarianInterventions] = useState(
         []
@@ -109,7 +109,7 @@ function AnimalDetailPage({ match, ...props }) {
             });
     };
 
-    const getHostFamilies = () => {
+    const getAnimalToHostFamilies = () => {
         setAnimalToHostFamilies([]);
         return HostFamiliesManager.getByAnimalId(animalId)
             .then(setAnimalToHostFamilies)
@@ -161,11 +161,25 @@ function AnimalDetailPage({ match, ...props }) {
             });
     };
 
+    const getHostFamilies = () => {
+        setHostFamilies([]);
+        return HostFamiliesManager.getAll()
+            .then(setHostFamilies)
+            .catch((err) => {
+                console.log(err);
+                notificationSystem.addNotification({
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    level: "error",
+                });
+            });
+    }
+
     const refresh = () => {
         if (animalId !== "new") {
             getSpecies()
                 .then(getSexes)
                 .then(getAnimal)
+                .then(getAnimalToHostFamilies)
                 .then(getHostFamilies)
                 .then(getVeterinarianInterventions);
         } else {
@@ -173,7 +187,9 @@ function AnimalDetailPage({ match, ...props }) {
             setOpenPEC("1");
             setOpenHealth("1");
 
-            getSpecies().then(getSexes);
+            getSpecies()
+            .then(getSexes)
+            .then(getHostFamilies);
             setAnimal(AnimalsManager.createAnimal());
             setIsEditing(true);
         }
@@ -197,12 +213,6 @@ function AnimalDetailPage({ match, ...props }) {
             });
         }
     }, [animal, species]);
-
-    const showDetail = (animalToHostFamily) => {
-        props.history.push(
-            `/hostFamilies/${animalToHostFamily.host_family_id}`
-        );
-    };
 
     const save = () => {
         setIsEditing(false);
@@ -336,7 +346,7 @@ function AnimalDetailPage({ match, ...props }) {
                             </Row>
                         )}
                         <Row className="text-center">
-                            <Col xs={4}>
+                            <Col xs={6} lg={4}>
                                 <Label>Diffusable</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
@@ -350,7 +360,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     }
                                 />
                             </Col>
-                            <Col xs={4}>
+                            <Col xs={6} lg={4}>
                                 <Label>Réservable</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
@@ -364,7 +374,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     }
                                 />
                             </Col>
-                            <Col xs={4}>
+                            <Col xs={6} lg={4}>
                                 <Label>Adopté·e</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}

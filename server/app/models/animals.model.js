@@ -29,6 +29,8 @@ const fields = [
   "adopted",
   "broadcastable",
   "bookable",
+  "current_host_family_id",
+  "current_host_family_referent_id",
 ];
 
 // constructor
@@ -84,7 +86,11 @@ Animals.create = (newEntity, result) => {
 Animals.findById = (id, result) => {
   sql.connect((connection) =>
     connection.query(
-      `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id WHERE a.id = ${id}`,
+      `SELECT a.*, s.name as species, hf.id as current_host_family_id, hf.referent_id as current_host_family_referent_id
+      FROM ${tableName} a
+      JOIN Species s ON a.species_id = s.id
+      LEFT JOIN AnimalsToHostFamilies athf ON athf.animal_id = a.id
+      LEFT JOIN HostFamilies hf ON hf.id = athf.host_family_id WHERE a.id = ${id}`,
       (err, res) => {
         connection.end();
         if (err) {
@@ -107,7 +113,11 @@ Animals.findById = (id, result) => {
 };
 
 Animals.getAll = (name, result) => {
-  let query = `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id`;
+  let query = `SELECT a.*, s.name as species, hf.id as current_host_family_id, hf.referent_id as current_host_family_referent_id
+  FROM ${tableName} a
+  JOIN Species s ON a.species_id = s.id
+  LEFT JOIN AnimalsToHostFamilies athf ON athf.animal_id = a.id
+  LEFT JOIN HostFamilies hf ON hf.id = athf.host_family_id`;
 
   if (name) {
     query += ` WHERE name LIKE '%${name}%'`;
