@@ -2,7 +2,15 @@ const AnimalsToHostFamilies = require("../models/animals_to_host_families.model.
 
 // Create and Save a new AnimalsToHostFamilies
 exports.create = (req, res) => {
-  res.status(200).send({});
+  AnimalsToHostFamilies.create(req.body, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occured while creating animal to host family",
+      });
+    } else res.send(data);
+  });
 };
 
 // Retrieve all AnimalsToHostFamilies from the database (with condition).
@@ -10,13 +18,13 @@ exports.findAll = (req, res) => {
   const name = req.params.name;
 
   AnimalsToHostFamilies.getAll(name, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message ||
           "Some error occurred while retrieving animal to host families.",
       });
-    else res.send(data);
+    } else res.send(data);
   });
 };
 
@@ -25,13 +33,13 @@ exports.findAllWithAnimalId = (req, res) => {
   const animalId = req.params.id;
 
   AnimalsToHostFamilies.getAllWithAnimalId(animalId, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message ||
           "Some error occurred while retrieving animal to host families with animal id.",
       });
-    else res.send(data);
+    } else res.send(data);
   });
 };
 
@@ -40,24 +48,45 @@ exports.findAllWithHostFamilyId = (req, res) => {
   const hostFamilyId = req.params.id;
 
   AnimalsToHostFamilies.getAllWithHostFamilyId(hostFamilyId, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
         message:
           err.message ||
           "Some error occurred while retrieving animal to host families with animal id.",
       });
-    else res.send(data);
+    } else res.send(data);
   });
 };
 
 // Update a AnimalsToHostFamilies identified by the id in the request
 exports.update = (req, res) => {
-  res.status(200).send({});
+  AnimalsToHostFamilies.update(req.body, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occured while updating animal to host family",
+      });
+    } else res.send(data);
+  });
 };
 
 // Delete a AnimalsToHostFamilies with the specified id in the request
 exports.delete = (req, res) => {
-  res.status(200).send({});
+  AnimalsToHostFamilies.remove(
+    req.params.aId,
+    req.params.hfId,
+    (err, data) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occured while deleting animal to host family",
+        });
+      } else res.send(data);
+    }
+  );
 };
 
 // Delete all AnimalsToHostFamilies from the database.

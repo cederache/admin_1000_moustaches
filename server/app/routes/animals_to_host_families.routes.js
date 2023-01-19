@@ -1,7 +1,7 @@
 module.exports = (app) => {
   const animalsToHostFamilies = require("../controllers/animals_to_host_families.controller.js");
 
-  var router = require("express").Router();
+  const router = require("express").Router();
 
   // Create a new AnimalsToHostFamilies
   router.post("/", animalsToHostFamilies.create);
@@ -19,10 +19,13 @@ module.exports = (app) => {
   );
 
   // Update a AnimalsToHostFamilies with id
-  router.put("/:id", animalsToHostFamilies.update);
+  router.put("/animalId/:aId/hostFamilyId/:hfId", animalsToHostFamilies.update);
 
   // Delete a AnimalsToHostFamilies with id
-  router.delete("/:id", animalsToHostFamilies.delete);
+  router.delete(
+    "/animalId/:aId/hostFamilyId/:hfId",
+    animalsToHostFamilies.delete
+  );
 
   // Delete all AnimalsToHostFamilies
   router.delete("/", animalsToHostFamilies.deleteAll);

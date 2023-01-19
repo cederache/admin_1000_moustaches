@@ -931,7 +931,11 @@ function AnimalDetailPage({ match, ...props }) {
                         />
                         <br />
                         <HostFamiliesHistory
+                            animalId={animalId}
+                            hostFamilies={hostFamilies}
                             animalToHostFamilies={animalToHostFamilies}
+                            notificationSystem={notificationSystem}
+                            shouldRefresh={() => getAnimalToHostFamilies()}
                             {...props}
                         />
                     </>

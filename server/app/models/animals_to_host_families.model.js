@@ -12,23 +12,19 @@ const AnimalsToHostFamilies = function (animalsToHostFamily) {
 };
 
 AnimalsToHostFamilies.create = (newEntity, result) => {
-  const fieldsToUpdate = fields.filter((field) => {
-    return field !== "id";
-  });
-
-  var fieldsRequest = fieldsToUpdate
+  var fieldsRequest = fields
     .map((field) => {
       return `${field}`;
     })
     .join(", ");
 
-  var fieldsDataRequest = fieldsToUpdate
+  var fieldsDataRequest = fields
     .map((field) => {
       return "?";
     })
     .join(", ");
 
-  var fieldsData = fieldsToUpdate.map((field) => {
+  var fieldsData = fields.map((field) => {
     return newEntity[field];
   });
 
@@ -119,9 +115,9 @@ AnimalsToHostFamilies.getAllWithHostFamilyId = (host_family_id, result) => {
   );
 };
 
-AnimalsToHostFamilies.updateById = (id, animalToHostFamily, result) => {
+AnimalsToHostFamilies.update = (animalToHostFamily, result) => {
   const fieldsToUpdate = fields.filter((field) => {
-    return field !== "id";
+    return field !== "animal_id" && field !== "host_family_id";
   });
 
   var fieldsRequest = fieldsToUpdate
@@ -133,11 +129,12 @@ AnimalsToHostFamilies.updateById = (id, animalToHostFamily, result) => {
   var fieldsData = fieldsToUpdate.map((field) => {
     return animalToHostFamily[field];
   });
-  fieldsData.push(id);
+  fieldsData.push(animalToHostFamily.animal_id);
+  fieldsData.push(animalToHostFamily.host_family_id);
 
   sql.connect((connection) =>
     connection.query(
-      `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
+      `UPDATE ${tableName} SET ${fieldsRequest} WHERE animal_id = ? AND host_family_id = ?`,
       fieldsData,
       (err, res) => {
         connection.end();
@@ -164,11 +161,11 @@ AnimalsToHostFamilies.updateById = (id, animalToHostFamily, result) => {
   );
 };
 
-AnimalsToHostFamilies.remove = (id, result) => {
+AnimalsToHostFamilies.remove = (animalId, hostFamilyId, result) => {
   sql.connect((connection) =>
     connection.query(
-      `DELETE FROM ${tableName} WHERE id = ?`,
-      id,
+      `DELETE FROM ${tableName} WHERE animal_id = ? AND host_family_id = ?`,
+      [animalId, hostFamilyId],
       (err, res) => {
         connection.end();
 
@@ -180,11 +177,11 @@ AnimalsToHostFamilies.remove = (id, result) => {
 
         if (res.affectedRows == 0) {
           // not found Animal with the id
-          result({ kind: "not_found" }, null);
+          result({ kind: `not_found with ids ${animalId} ${hostFamilyId}` }, null);
           return;
         }
 
-        console.log(`deleted ${tableName} with id: `, id);
+        console.log(`deleted ${tableName} with animalId ${animalId} and hostFamilyId ${hostFamilyId}`);
         result(null, res);
       }
     )
