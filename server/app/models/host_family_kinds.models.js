@@ -90,7 +90,7 @@ HostFamilyKinds.getAll = (name, result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -124,7 +124,7 @@ HostFamilyKinds.updateById = (id, hostFamilyKind, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -150,7 +150,7 @@ HostFamilyKinds.remove = (id, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -173,7 +173,7 @@ HostFamilyKinds.removeAll = (result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 

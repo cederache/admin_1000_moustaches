@@ -64,7 +64,7 @@ AnimalsToHostFamilies.getAll = (name, result) => {
 
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -83,7 +83,7 @@ AnimalsToHostFamilies.getAllWithAnimalId = (animal_id, result) => {
 
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -102,7 +102,7 @@ AnimalsToHostFamilies.getAllWithHostFamilyId = (host_family_id, result) => {
 
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -141,7 +141,7 @@ AnimalsToHostFamilies.update = (animalToHostFamily, result) => {
 
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -171,7 +171,7 @@ AnimalsToHostFamilies.remove = (animalId, hostFamilyId, result) => {
 
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -195,7 +195,7 @@ AnimalsToHostFamilies.removeAll = (result) => {
 
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 

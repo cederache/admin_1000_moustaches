@@ -64,7 +64,7 @@ HostFamilyToHostFamilyKinds.getAll = (name, result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -85,7 +85,7 @@ HostFamilyToHostFamilyKinds.getAllWithHostFamilyId = (
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -109,7 +109,7 @@ HostFamilyToHostFamilyKinds.getAllWithHostFamilyKindId = (
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -146,7 +146,7 @@ HostFamilyToHostFamilyKinds.updateById = (id, animalToHostFamily, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -178,7 +178,7 @@ HostFamilyToHostFamilyKinds.remove = (link, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -201,7 +201,7 @@ HostFamilyToHostFamilyKinds.removeAll = (result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 

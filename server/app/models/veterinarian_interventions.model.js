@@ -90,7 +90,7 @@ VeterinarianInterventions.getAll = (name, result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -108,7 +108,7 @@ VeterinarianInterventions.getAllWithAnimalId = (animalId, result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -129,7 +129,7 @@ VeterinarianInterventions.getAllWithVeterinarianId = (
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -170,7 +170,7 @@ VeterinarianInterventions.updateById = (
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -199,7 +199,7 @@ VeterinarianInterventions.remove = (id, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
@@ -222,7 +222,7 @@ VeterinarianInterventions.removeAll = (result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
