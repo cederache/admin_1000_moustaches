@@ -29,6 +29,8 @@ const fields = [
   "adopted",
   "broadcastable",
   "bookable",
+  "need_external_access",
+  "transferor"
 ];
 
 // constructor

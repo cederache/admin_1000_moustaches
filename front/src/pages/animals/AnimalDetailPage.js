@@ -642,6 +642,23 @@ function AnimalDetailPage({ match, ...props }) {
                                             />
                                         </Col>
                                     </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>Cédant</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={animal.transferor || ""}
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        transferor:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
                                 </AccordionBody>
                             </AccordionItem>
                         </Accordion>
@@ -706,20 +723,32 @@ function AnimalDetailPage({ match, ...props }) {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} md={6}>
+                                        <Col xs={6} md={3}>
                                             <Label>Stérilisé·e</Label>
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
-                                                value={
-                                                    animal.sterilised
-                                                }
+                                                value={animal.sterilised}
                                                 disabled={!isEditing}
-                                                onChange={(
-                                                    newValue
-                                                ) => {
+                                                onChange={(newValue) => {
                                                     setAnimal({
                                                         ...animal,
-                                                        sterilised:
+                                                        sterilised: newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={6} md={3}>
+                                            <Label>Extérieur obligatoire</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
+                                                value={
+                                                    animal.need_external_access
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        need_external_access:
                                                             newValue,
                                                     });
                                                 }}
