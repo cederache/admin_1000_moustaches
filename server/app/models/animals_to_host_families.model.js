@@ -152,10 +152,9 @@ AnimalsToHostFamilies.update = (animalToHostFamily, result) => {
         }
 
         console.log(`updated ${tableName}: `, {
-          id: id,
           ...animalToHostFamily,
         });
-        result(null, { id: id, ...animalToHostFamily });
+        result(null, { ...animalToHostFamily });
       }
     )
   );
