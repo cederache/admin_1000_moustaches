@@ -26,6 +26,8 @@ import VeterinarianInterventionsHistory from "./VeterinarianInterventionsHistory
 import VeterinarianInterventionsManager from "../../managers/veterinarianInterventions.manager";
 import Dropdown from "../../components/Dropdown";
 import NullableDropdown from "../../components/NullableDropdown";
+import moment from "moment";
+import AnimalsToHostFamiliesManager from "../../managers/animalsToHostFamilies.manager";
 
 function AnimalDetailPage({ match, ...props }) {
     const animalId = match.params.id;
@@ -172,7 +174,7 @@ function AnimalDetailPage({ match, ...props }) {
                     level: "error",
                 });
             });
-    }
+    };
 
     const refresh = () => {
         if (animalId !== "new") {
@@ -187,9 +189,7 @@ function AnimalDetailPage({ match, ...props }) {
             setOpenPEC("1");
             setOpenHealth("1");
 
-            getSpecies()
-            .then(getSexes)
-            .then(getHostFamilies);
+            getSpecies().then(getSexes).then(getHostFamilies);
             setAnimal(AnimalsManager.createAnimal());
             setIsEditing(true);
         }
@@ -240,7 +240,29 @@ function AnimalDetailPage({ match, ...props }) {
         // Send new data to API
         AnimalsManager.update(animal)
             .then(() => {
-                getAnimal();
+                getAnimal().then(() => {
+                    var exitOrDeathDate =
+                        animal.death_date_object?.input ||
+                        animal.exit_date_object?.input;
+                    if (exitOrDeathDate !== undefined && exitOrDeathDate !== "") {
+                        animalToHostFamilies
+                            .filter(
+                                (athf) =>
+                                    athf.exit_date_object.input === undefined
+                            )
+                            .forEach((athf) => {
+                                AnimalsToHostFamiliesManager.update({
+                                    animal_id: animal.id,
+                                    host_family_id: athf.host_family_id,
+                                    entry_date_object: athf.entry_date_object,
+                                    exit_date_object: {
+                                        ...athf.exit_date_object,
+                                        input: exitOrDeathDate,
+                                    },
+                                });
+                            });
+                    }
+                });
                 notificationSystem.addNotification({
                     message: "Animal mis à jour",
                     level: "success",

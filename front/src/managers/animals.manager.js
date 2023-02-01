@@ -46,7 +46,8 @@ class AnimalsManager {
         this.dateFields.forEach((dateField) => {
             if (
                 animal[`${dateField}_object`]["input"] === undefined ||
-                animal[`${dateField}_object`]["input"] === null
+                animal[`${dateField}_object`]["input"] === null ||
+                animal[`${dateField}_object`]["input"] === ""
             ) {
                 animal[dateField] = null;
             } else {
@@ -142,22 +143,11 @@ class AnimalsManager {
     };
 
     static update = (animal) => {
-        this.dateFields.forEach((dateField) => {
-            if (
-                animal[`${dateField}_object`]["input"] === undefined ||
-                animal[`${dateField}_object`]["input"] === null
-            ) {
-                animal[dateField] = null;
-            } else {
-                animal[dateField] = moment(
-                    animal[`${dateField}_object`]["input"]
-                ).format("YYYYMMDD");
-            }
-        });
+        const animalToUpload = this.formatForServer(animal);
 
-        return fetch(`${API_URL}/animals/${animal.id}`, {
+        return fetch(`${API_URL}/animals/${animalToUpload.id}`, {
             method: "PUT",
-            body: JSON.stringify(animal),
+            body: JSON.stringify(animalToUpload),
             headers: {
                 "Content-Type": "application/json",
             },
