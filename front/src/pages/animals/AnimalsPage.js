@@ -39,6 +39,7 @@ function AnimalsPage({ ...props }) {
         },
     ]);
     const [filterAdopted, setFilterAdopted] = useState();
+    const [filterDead, setFilterDead] = useState(0);
     const [filterSpecies, setFilterSpecies] = useState();
     const [filterReferent, setFilterReferent] = useState();
 
@@ -111,8 +112,9 @@ function AnimalsPage({ ...props }) {
 
     useEffect(() => {
         setFilteredAnimals(
-            animals.filter(
-                (animal) =>
+            animals.filter((animal) => {
+                console.log(animal.death_date_object, filterDead);
+                return (
                     filters.every((f) =>
                         f.activated === true ? f.check(animal) === true : true
                     ) &&
@@ -126,8 +128,14 @@ function AnimalsPage({ ...props }) {
                     (filterReferent === undefined
                         ? true
                         : animal.current_host_family_referent_id ===
-                          filterReferent?.id)
-            )
+                          filterReferent?.id) &&
+                    (filterDead === undefined
+                        ? true
+                        : filterDead === 0
+                        ? animal.death_date_object.input === undefined
+                        : animal.death_date_object.input !== undefined)
+                );
+            })
         );
     }, [
         animals,
@@ -136,6 +144,7 @@ function AnimalsPage({ ...props }) {
         filterAdopted,
         filterSpecies,
         filterReferent,
+        filterDead,
     ]);
 
     const createAnimal = () => {
@@ -177,100 +186,130 @@ function AnimalsPage({ ...props }) {
                         <Col xs={"auto"} className="mb-0 border-end">
                             <MdFilterAlt />
                         </Col>
-                        {filters.map((filter) => {
-                            return (
+                        <Col>
+                            <Row>
                                 <Col className="mb-0">
-                                    <Label>{filter.name}</Label>
-                                    <Switch
-                                        id={filter.name}
-                                        isOn={filter.activated}
-                                        handleToggle={() => {
-                                            setFilters((previous) =>
-                                                previous.map((f) =>
-                                                    f.name === filter.name
-                                                        ? {
-                                                              ...f,
-                                                              activated:
-                                                                  !f.activated,
-                                                          }
-                                                        : f
-                                                )
-                                            );
+                                    <Label>Adopté·e</Label>
+                                    <Dropdown
+                                        withNewLine={true}
+                                        color={"primary"}
+                                        value={filterAdopted}
+                                        values={[1, 0, undefined]}
+                                        valueDisplayName={(value) =>
+                                            value === undefined
+                                                ? "Tous"
+                                                : value === 1
+                                                ? "Adopté·e"
+                                                : "Non adopté·es"
+                                        }
+                                        valueActiveCheck={(value) =>
+                                            filterAdopted === value
+                                        }
+                                        key={"adopted"}
+                                        onChange={(newAdopted) => {
+                                            setFilterAdopted(newAdopted);
                                         }}
                                     />
                                 </Col>
-                            );
-                        })}
-                        <Col className="mb-0">
-                            <Label>Adopté·e</Label>
-                            <Dropdown
-                                withNewLine={true}
-                                color={"primary"}
-                                value={filterAdopted}
-                                values={[1, 0, undefined]}
-                                valueDisplayName={(value) =>
-                                    value === undefined
-                                        ? "Tous"
-                                        : value === 1
-                                        ? "Adopté·e"
-                                        : "Non adopté·es"
-                                }
-                                valueActiveCheck={(value) =>
-                                    filterAdopted === value
-                                }
-                                key={"adopted"}
-                                onChange={(newAdopted) => {
-                                    setFilterAdopted(newAdopted);
-                                }}
-                            />
-                        </Col>
-                        <Col className="mb-0">
-                            <Label>Espèce</Label>
-                            <Dropdown
-                                withNewLine={true}
-                                color={"primary"}
-                                value={species.find(
-                                    (aSpecies) =>
-                                        aSpecies.id === filterSpecies?.id
-                                )}
-                                values={[...species, undefined]}
-                                valueDisplayName={(aSpecies) =>
-                                    aSpecies === undefined
-                                        ? "Toutes"
-                                        : aSpecies?.name
-                                }
-                                valueActiveCheck={(aSpecies) =>
-                                    aSpecies?.id === filterSpecies?.id
-                                }
-                                key={"species"}
-                                onChange={(newSpecies) =>
-                                    setFilterSpecies(newSpecies)
-                                }
-                            />
-                        </Col>
-                        <Col className="mb-0">
-                            <Label>Référent·e</Label>
-                            <Dropdown
-                                withNewLine={true}
-                                color={"primary"}
-                                value={referents.find(
-                                    (referent) =>
-                                        referent.id === filterReferent?.id
-                                )}
-                                values={[...referents, undefined]}
-                                valueDisplayName={(referent) =>
-                                    referent === undefined
-                                        ? "Tous·tes"
-                                        : `${referent?.firstname} ${referent?.name}`
-                                }
-                                valueActiveCheck={(referent) =>
-                                    referent?.id === filterReferent?.id
-                                }
-                                key={"referents"}
-                                onChange={(newReferent) =>
-                                    setFilterReferent(newReferent)
-                                }
-                            />
+                                <Col className="mb-0">
+                                    <Label>Décédé·e</Label>
+                                    <Dropdown
+                                        withNewLine={true}
+                                        color={"primary"}
+                                        value={filterDead}
+                                        values={[1, 0, undefined]}
+                                        valueDisplayName={(value) =>
+                                            value === undefined
+                                                ? "Tous"
+                                                : value === 1
+                                                ? "Décédé·e"
+                                                : "Vivant·e"
+                                        }
+                                        valueActiveCheck={(value) =>
+                                            filterDead === value
+                                        }
+                                        key={"dead"}
+                                        onChange={(newDead) => {
+                                            setFilterDead(newDead);
+                                        }}
+                                    />
+                                </Col>
+                                <Col className="mb-0">
+                                    <Label>Espèce</Label>
+                                    <Dropdown
+                                        withNewLine={true}
+                                        color={"primary"}
+                                        value={species.find(
+                                            (aSpecies) =>
+                                                aSpecies.id ===
+                                                filterSpecies?.id
+                                        )}
+                                        values={[...species, undefined]}
+                                        valueDisplayName={(aSpecies) =>
+                                            aSpecies === undefined
+                                                ? "Toutes"
+                                                : aSpecies?.name
+                                        }
+                                        valueActiveCheck={(aSpecies) =>
+                                            aSpecies?.id === filterSpecies?.id
+                                        }
+                                        key={"species"}
+                                        onChange={(newSpecies) =>
+                                            setFilterSpecies(newSpecies)
+                                        }
+                                    />
+                                </Col>
+                                <Col className="mb-0">
+                                    <Label>Référent·e</Label>
+                                    <Dropdown
+                                        withNewLine={true}
+                                        color={"primary"}
+                                        value={referents.find(
+                                            (referent) =>
+                                                referent.id ===
+                                                filterReferent?.id
+                                        )}
+                                        values={[...referents, undefined]}
+                                        valueDisplayName={(referent) =>
+                                            referent === undefined
+                                                ? "Tous·tes"
+                                                : `${referent?.firstname} ${referent?.name}`
+                                        }
+                                        valueActiveCheck={(referent) =>
+                                            referent?.id === filterReferent?.id
+                                        }
+                                        key={"referents"}
+                                        onChange={(newReferent) =>
+                                            setFilterReferent(newReferent)
+                                        }
+                                    />
+                                </Col>
+                                {filters.map((filter) => {
+                                    return (
+                                        <Col className="mb-0">
+                                            <Label>{filter.name}</Label>
+                                            <Switch
+                                                id={filter.name}
+                                                isOn={filter.activated}
+                                                handleToggle={() => {
+                                                    setFilters((previous) =>
+                                                        previous.map((f) =>
+                                                            f.name ===
+                                                            filter.name
+                                                                ? {
+                                                                      ...f,
+                                                                      activated:
+                                                                          !f.activated,
+                                                                  }
+                                                                : f
+                                                        )
+                                                    );
+                                                }}
+                                            />
+                                        </Col>
+                                    );
+                                })}
+                            </Row>
                         </Col>
                     </Row>
                 </CardBody>
@@ -299,7 +338,7 @@ function AnimalsPage({ ...props }) {
                                 key: "animal_detail",
                                 value: "Fiche animal",
                                 isMain: false,
-                                sortable: false
+                                sortable: false,
                             },
                         ]}
                         values={filteredAnimals.map((animal) => {
