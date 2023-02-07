@@ -17,6 +17,7 @@ import { sortBy } from "../../utils/sort";
 import Switch from "../../components/Switch";
 import Dropdown from "../../components/Dropdown";
 import UsersManager from "../../managers/users.manager";
+import SortableTable from "../../components/SortableTable";
 
 /*eslint no-unused-expressions: "off"*/
 
@@ -124,10 +125,18 @@ function AnimalsPage({ ...props }) {
                         : animal.species_id === filterSpecies?.id) &&
                     (filterReferent === undefined
                         ? true
-                        : animal.current_host_family_referent_id === filterReferent?.id)
+                        : animal.current_host_family_referent_id ===
+                          filterReferent?.id)
             )
         );
-    }, [animals, searchText, filters, filterAdopted, filterSpecies, filterReferent]);
+    }, [
+        animals,
+        searchText,
+        filters,
+        filterAdopted,
+        filterSpecies,
+        filterReferent,
+    ]);
 
     const createAnimal = () => {
         props.history.push("animals/new");
@@ -245,7 +254,8 @@ function AnimalsPage({ ...props }) {
                                 withNewLine={true}
                                 color={"primary"}
                                 value={referents.find(
-                                    (referent) => referent.id === filterReferent?.id
+                                    (referent) =>
+                                        referent.id === filterReferent?.id
                                 )}
                                 values={[...referents, undefined]}
                                 valueDisplayName={(referent) =>
@@ -270,41 +280,49 @@ function AnimalsPage({ ...props }) {
 
             <Row>
                 <Col xs={12} className="table-responsive">
-                    <Table {...{ striped: true }}>
-                        <thead>
-                            <tr>
-                                <th scope="col">Nom</th>
-                                <th scope="col">Sexe</th>
-                                <th scope="col">ICAD</th>
-                                <th scope="col">Date de naissance</th>
-                                <th scope="col">Date de PEC</th>
-                                <th scope="col">Fiche animal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredAnimals.map((animal, index) => (
-                                <tr key={index}>
-                                    <th scope="row">{animal.name}</th>
-                                    <td>
-                                        {sexes.find(
-                                            (aSexe) => aSexe.key === animal.sexe
-                                        )?.value || ""}
-                                    </td>
-                                    <td>{animal.icad}</td>
-                                    <td>{animal.readable_birth_date}</td>
-                                    <td>{animal.readable_entry_date}</td>
-                                    <td>
-                                        <Button
-                                            color="info"
-                                            onClick={() => showDetail(animal)}
-                                        >
-                                            <MdAssignment />
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                    <SortableTable
+                        columns={[
+                            { key: "name", value: "Nom", isMain: true },
+                            { key: "sexe", value: "Sexe", isMain: false },
+                            { key: "icad", value: "ICAD", isMain: false },
+                            {
+                                key: "birthdate",
+                                value: "Date de naissance",
+                                isMain: false,
+                            },
+                            {
+                                key: "pec_date",
+                                value: "Date de PEC",
+                                isMain: false,
+                            },
+                            {
+                                key: "animal_detail",
+                                value: "Fiche animal",
+                                isMain: false,
+                                sortable: false
+                            },
+                        ]}
+                        values={filteredAnimals.map((animal) => {
+                            return {
+                                name: animal.name,
+                                sexe:
+                                    sexes.find(
+                                        (aSexe) => aSexe.key === animal.sexe
+                                    )?.value || "",
+                                icad: animal.icad,
+                                birthdate: animal.readable_birth_date,
+                                pec_date: animal.readable_entry_date,
+                                animal_detail: (
+                                    <Button
+                                        color="info"
+                                        onClick={() => showDetail(animal)}
+                                    >
+                                        <MdAssignment />
+                                    </Button>
+                                ),
+                            };
+                        })}
+                    />
                 </Col>
             </Row>
         </Page>

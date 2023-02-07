@@ -8,6 +8,8 @@ import { FaUserAlt } from "react-icons/fa";
 import { sortBy } from "../../utils/sort";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase-config";
+import SortableTable from "../../components/SortableTable";
+import { map } from "leaflet";
 
 function UsersPage({ ...props }) {
     const [users, setUsers] = useState([]);
@@ -31,8 +33,7 @@ function UsersPage({ ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -109,43 +110,48 @@ function UsersPage({ ...props }) {
                 <Col xs={12}>
                     <Row>
                         <Col xs={12} className="table-responsive">
-                            <Table {...{ striped: true }}>
-                                <thead>
-                                    <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col">Prénom Nom</th>
-                                        <th scope="col">E-mail</th>
-                                        <th scope="col">
-                                            Fiche utilisateur·ice
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredUsers.map((user, index) => (
-                                        <tr key={index}>
-                                            <td>
-                                                {loggedUser?.email ===
-                                                    user.email && <FaUserAlt />}
-                                            </td>
-                                            <th scope="row">
-                                                {user.firstname} {user.name}
-                                            </th>
-                                            <td>{user.email}</td>
-                                            <td>
-                                                <Button
-                                                    title="Voir le détail"
-                                                    color="info"
-                                                    onClick={() =>
-                                                        showDetail(user)
-                                                    }
-                                                >
-                                                    <MdAssignment />
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
+                            <SortableTable
+                                columns={[
+                                    { key: "icon", value: "", isMain: false },
+                                    {
+                                        key: "name",
+                                        value: "Prénom Nom",
+                                        isMain: true,
+                                    },
+                                    {
+                                        key: "mail",
+                                        value: "E-mail",
+                                        isMain: false,
+                                    },
+                                    {
+                                        key: "userDetail",
+                                        value: "Fiche utilisateur·ice",
+                                        isMain: false,
+                                        sortable: false
+                                    },
+                                ]}
+                                values={filteredUsers.map((user) => {
+                                    return {
+                                        icon:
+                                            loggedUser?.email === user.email ? (
+                                                <FaUserAlt />
+                                            ) : (
+                                                <></>
+                                            ),
+                                        name: `${user.firstname} ${user.name}`,
+                                        mail: user.email,
+                                        userDetail: (
+                                            <Button
+                                                title="Voir le détail"
+                                                color="info"
+                                                onClick={() => showDetail(user)}
+                                            >
+                                                <MdAssignment />
+                                            </Button>
+                                        ),
+                                    };
+                                })}
+                            />
                         </Col>
                     </Row>
                 </Col>

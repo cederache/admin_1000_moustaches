@@ -37,6 +37,7 @@ import {
 import Switch from "../../components/Switch";
 import UsersManager from "../../managers/users.manager";
 import Dropdown from "../../components/Dropdown";
+import SortableTable from "../../components/SortableTable";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -341,47 +342,52 @@ function HostFamiliesPage({ ...props }) {
                         <TabPane tabId="1">
                             <Row>
                                 <Col xs={12} className="table-responsive">
-                                    <Table {...{ striped: true }}>
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Prénom Nom</th>
-                                                <th scope="col">Téléphone</th>
-                                                <th scope="col">E-mail</th>
-                                                <th scope="col">Fiche FA</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredHostFamilies.map(
-                                                (hostFamily, index) => (
-                                                    <tr key={index}>
-                                                        <th scope="row">
-                                                            {
-                                                                hostFamily.display_name
+                                    <SortableTable
+                                        columns={[
+                                            {
+                                                key: "name",
+                                                value: "Prénom Nom",
+                                                isMain: true,
+                                            },
+                                            {
+                                                key: "phone",
+                                                value: "Téléphone",
+                                                isMain: false,
+                                            },
+                                            {
+                                                key: "mail",
+                                                value: "E-mail",
+                                                isMain: false,
+                                            },
+                                            {
+                                                key: "hostFamilyDetail",
+                                                value: "Fiche FA",
+                                                isMain: false,
+                                                sortable: false
+                                            },
+                                        ]}
+                                        values={filteredHostFamilies.map(
+                                            (hostFamily) => {
+                                                return {
+                                                    name: hostFamily.display_name,
+                                                    phone: hostFamily.phone,
+                                                    mail: hostFamily.phone,
+                                                    hostFamilyDetail: (
+                                                        <Button
+                                                            color="info"
+                                                            onClick={() =>
+                                                                showDetail(
+                                                                    hostFamily
+                                                                )
                                                             }
-                                                        </th>
-                                                        <td>
-                                                            {hostFamily.phone}
-                                                        </td>
-                                                        <td>
-                                                            {hostFamily.mail}
-                                                        </td>
-                                                        <td>
-                                                            <Button
-                                                                color="info"
-                                                                onClick={() =>
-                                                                    showDetail(
-                                                                        hostFamily
-                                                                    )
-                                                                }
-                                                            >
-                                                                <MdAssignment />
-                                                            </Button>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </Table>
+                                                        >
+                                                            <MdAssignment />
+                                                        </Button>
+                                                    ),
+                                                };
+                                            }
+                                        )}
+                                    />
                                 </Col>
                             </Row>
                         </TabPane>

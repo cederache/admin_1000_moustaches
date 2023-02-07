@@ -12,7 +12,6 @@ import {
     NavLink,
     Row,
     TabContent,
-    Table,
     TabPane,
 } from "reactstrap";
 import VeterinariansManager from "../../managers/veterinarians.manager";
@@ -30,6 +29,7 @@ import {
     YellowIcon,
 } from "../../utils/mapIcons";
 import Switch from "../../components/Switch";
+import SortableTable from "../../components/SortableTable";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -67,8 +67,7 @@ function VeterinariansPage({ ...props }) {
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
-                    message:
-                        `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
                     level: "error",
                 });
             });
@@ -98,7 +97,6 @@ function VeterinariansPage({ ...props }) {
         if (mapRef !== null && mapRef.current !== null) {
             mapRef.invalidateSize();
             mapRef.locate().on("locationfound", function (e) {
-                console.log(e.latlng);
                 setUserPosition(e.latlng);
             });
         }
@@ -241,44 +239,56 @@ function VeterinariansPage({ ...props }) {
                         <TabPane tabId="1">
                             <Row>
                                 <Col xs={12} className="table-responsive">
-                                    <Table {...{ striped: true }}>
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Nom</th>
-                                                <th scope="col">E-mail</th>
-                                                <th scope="col">Téléphone</th>
-                                                <th scope="col">
-                                                    Fiche vétérinaire
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredVeterinarians.map(
-                                                (vet, index) => (
-                                                    <tr key={index}>
-                                                        <th scope="row">
-                                                            {vet.name}
-                                                        </th>
-                                                        <td>{vet.mail}</td>
-                                                        <td>{vet.phone}</td>
-                                                        <td>
-                                                            <Button
-                                                                title="Voir le détail"
-                                                                color="info"
-                                                                onClick={() =>
-                                                                    showDetail(
-                                                                        vet
-                                                                    )
-                                                                }
-                                                            >
-                                                                <MdAssignment />
-                                                            </Button>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </Table>
+                                    <SortableTable
+                                        columns={[
+                                            {
+                                                key: "name",
+                                                value: "Nom",
+                                                isMain: true,
+                                            },
+                                            {
+                                                key: "mail",
+                                                value: "E-mail",
+                                                isMain: false,
+                                            },
+                                            {
+                                                key: "phone",
+                                                value: "Téléphone",
+                                                isMain: false,
+                                            },
+                                            {
+                                                key: "price",
+                                                value: "Tarif",
+                                            },
+                                            {
+                                                key: "veterinarianDetail",
+                                                value: "Fiche vétérinaire",
+                                                isMain: false,
+                                                sortable: false,
+                                            },
+                                        ]}
+                                        values={filteredVeterinarians.map(
+                                            (vet) => {
+                                                return {
+                                                    name: vet.name,
+                                                    mail: vet.mail,
+                                                    phone: vet.phone,
+                                                    price: vet.price_level_text,
+                                                    veterinarianDetail: (
+                                                        <Button
+                                                            title="Voir le détail"
+                                                            color="info"
+                                                            onClick={() =>
+                                                                showDetail(vet)
+                                                            }
+                                                        >
+                                                            <MdAssignment />
+                                                        </Button>
+                                                    ),
+                                                };
+                                            }
+                                        )}
+                                    />
                                 </Col>
                             </Row>
                         </TabPane>
