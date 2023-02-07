@@ -30,7 +30,9 @@ const fields = [
   "broadcastable",
   "bookable",
   "need_external_access",
-  "transferor"
+  "transferor",
+  "anti_parasitic_date",
+  "transfer_certificate"
 ];
 
 // constructor

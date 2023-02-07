@@ -12,6 +12,7 @@ class AnimalsManager {
         "host_exit_date",
         "first_vaccination_date",
         "second_vaccination_date",
+        "anti_parasitic_date"
     ];
 
     static createAnimal = () => {

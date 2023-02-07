@@ -821,6 +821,31 @@ function AnimalDetailPage({ match, ...props }) {
                                         )}
                                     </Row>
                                     <Row>
+                                        <Col xs={6}>
+                                            <Label>
+                                                Date des anti-parasitaires
+                                            </Label>
+                                            <Input
+                                                type="date"
+                                                value={
+                                                    animal.anti_parasitic_date_object
+                                                        .input
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        anti_parasitic_date_object: {
+                                                            ...animal.anti_parasitic_date_object,
+                                                            input: evt.target
+                                                                .value,
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
                                         <Col xs={12}>
                                             <Label>
                                                 Particularité de santé
@@ -872,7 +897,24 @@ function AnimalDetailPage({ match, ...props }) {
                                 </AccordionHeader>
                                 <AccordionBody accordionId="1">
                                     <Row>
-                                        <Col xs={6}>
+                                        <Col xs={6} md={4}>
+                                            <Label>Certificat de cession</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
+                                                value={
+                                                    animal.transfer_certificate
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        transfer_certificate:
+                                                            newValue,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={6} md={8}>
                                             <Label>Date de sortie</Label>
                                             <Input
                                                 type="date"
@@ -893,7 +935,7 @@ function AnimalDetailPage({ match, ...props }) {
                                                 }
                                             />
                                         </Col>
-                                        <Col xs={6}>
+                                        <Col xs={12}>
                                             <Label>Raison de sortie</Label>
                                             <Input
                                                 type="textarea"
