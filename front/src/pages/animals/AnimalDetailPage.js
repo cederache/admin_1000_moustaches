@@ -488,13 +488,13 @@ function AnimalDetailPage({ match, ...props }) {
                                                         value={
                                                             animal.sexe ===
                                                                 undefined ||
-                                                            animal.sexe === null
+                                                                animal.sexe === null
                                                                 ? null
                                                                 : sexes.find(
-                                                                      (aSexe) =>
-                                                                          aSexe.key ===
-                                                                          animal.sexe
-                                                                  )
+                                                                    (aSexe) =>
+                                                                        aSexe.key ===
+                                                                        animal.sexe
+                                                                )
                                                         }
                                                         values={sexes}
                                                         valueDisplayName={(
@@ -709,12 +709,12 @@ function AnimalDetailPage({ match, ...props }) {
                                                     setAnimal({
                                                         ...animal,
                                                         first_vaccination_date_object:
-                                                            {
-                                                                ...animal.first_vaccination_date_object,
-                                                                input: evt
-                                                                    .target
-                                                                    .value,
-                                                            },
+                                                        {
+                                                            ...animal.first_vaccination_date_object,
+                                                            input: evt
+                                                                .target
+                                                                .value,
+                                                        },
                                                     })
                                                 }
                                             />
@@ -733,12 +733,12 @@ function AnimalDetailPage({ match, ...props }) {
                                                     setAnimal({
                                                         ...animal,
                                                         second_vaccination_date_object:
-                                                            {
-                                                                ...animal.second_vaccination_date_object,
-                                                                input: evt
-                                                                    .target
-                                                                    .value,
-                                                            },
+                                                        {
+                                                            ...animal.second_vaccination_date_object,
+                                                            input: evt
+                                                                .target
+                                                                .value,
+                                                        },
                                                     })
                                                 }
                                             />
@@ -759,26 +759,25 @@ function AnimalDetailPage({ match, ...props }) {
                                                 }}
                                             />
                                         </Col>
-                                        <Col xs={6} md={3}>
-                                            <Label>Extérieur obligatoire</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={
-                                                    animal.need_external_access
-                                                }
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setAnimal({
-                                                        ...animal,
-                                                        need_external_access:
-                                                            newValue,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        {animal.species_id ===
-                                            SPECIES_ID.CAT && (
+                                        {animal.species_id === SPECIES_ID.CAT && (
                                             <>
+                                                <Col xs={6} md={3}>
+                                                    <Label>Extérieur obligatoire</Label>
+                                                    <BooleanNullableDropdown
+                                                        withNewLine={true}
+                                                        value={
+                                                            animal.need_external_access
+                                                        }
+                                                        disabled={!isEditing}
+                                                        onChange={(newValue) => {
+                                                            setAnimal({
+                                                                ...animal,
+                                                                need_external_access:
+                                                                    newValue,
+                                                            });
+                                                        }}
+                                                    />
+                                                </Col>
                                                 <Col xs={6} md={3}>
                                                     <Label>Négatif FIV</Label>
                                                     <BooleanNullableDropdown
