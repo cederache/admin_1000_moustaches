@@ -47,7 +47,7 @@ function HostFamiliesPage({ ...props }) {
     const [hostFamilyKinds, setHostFamilyKinds] = useState([]);
     const [filteredHostFamilies, setFilteredHostFamilies] = useState([]);
     const [referents, setReferents] = useState([]);
-    const [searchText, setSearchText] = useState([]);
+    const [searchText, setSearchText] = useState("");
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState(null);
     const [switchFilters, setSwitchFilters] = useState([
@@ -128,7 +128,7 @@ function HostFamiliesPage({ ...props }) {
                             ? f.check(hostFamily) === true
                             : true
                     ) &&
-                    hostFamily.name.includes(searchText) &&
+                    hostFamily.name.toLowerCase().includes(searchText.toLowerCase()) &&
                     (filterBreak === undefined
                         ? true
                         : hostFamily.on_break === filterBreak) &&

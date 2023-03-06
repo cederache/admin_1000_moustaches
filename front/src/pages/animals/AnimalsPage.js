@@ -29,7 +29,7 @@ function AnimalsPage({ ...props }) {
     const [referents, setReferents] = useState([]);
 
     const [filteredAnimals, setFilteredAnimals] = useState([]);
-    const [searchText, setSearchText] = useState([]);
+    const [searchText, setSearchText] = useState("");
     const [filters, setFilters] = useState([
         {
             activated: false,
@@ -121,7 +121,7 @@ function AnimalsPage({ ...props }) {
                     filters.every((f) =>
                         f.activated === true ? f.check(animal) === true : true
                     ) &&
-                    animal.name.includes(searchText) &&
+                    animal.name.toLowerCase().includes(searchText.toLowerCase()) &&
                     (filterAdopted === undefined
                         ? true
                         : animal.adopted === filterAdopted) &&
