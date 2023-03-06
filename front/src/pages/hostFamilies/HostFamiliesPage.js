@@ -42,6 +42,7 @@ import SortableTable from "../../components/SortableTable";
 L.Marker.prototype.options.icon = BlueIcon;
 
 function HostFamiliesPage({ ...props }) {
+    const [isLoading, setIsLoading] = useState(false);
     const [hostFamilies, setHostFamilies] = useState([]);
     const [hostFamilyKinds, setHostFamilyKinds] = useState([]);
     const [filteredHostFamilies, setFilteredHostFamilies] = useState([]);
@@ -112,7 +113,10 @@ function HostFamiliesPage({ ...props }) {
     };
 
     useEffect(() => {
-        getHostFamilyKinds().then(getAllHostFamilies).then(getReferents);
+        setIsLoading(true);
+        getHostFamilyKinds().then(getAllHostFamilies).then(getReferents).then(() => {
+            setIsLoading(false);
+        });
     }, []);
 
     useEffect(() => {
@@ -237,10 +241,10 @@ function HostFamiliesPage({ ...props }) {
                                                 previous.map((f) =>
                                                     f.name === filter.name
                                                         ? {
-                                                              ...f,
-                                                              activated:
-                                                                  !f.activated,
-                                                          }
+                                                            ...f,
+                                                            activated:
+                                                                !f.activated,
+                                                        }
                                                         : f
                                                 )
                                             );
@@ -260,8 +264,8 @@ function HostFamiliesPage({ ...props }) {
                                     onBreak === undefined
                                         ? "Toutes"
                                         : onBreak === 1
-                                        ? "En pause"
-                                        : "Actives"
+                                            ? "En pause"
+                                            : "Actives"
                                 }
                                 valueActiveCheck={(onBreak) =>
                                     onBreak === filterBreak
@@ -283,8 +287,8 @@ function HostFamiliesPage({ ...props }) {
                                     temporary === undefined
                                         ? "Toutes"
                                         : temporary === 1
-                                        ? "Tampon"
-                                        : "Non tampon"
+                                            ? "Tampon"
+                                            : "Non tampon"
                                 }
                                 valueActiveCheck={(temporary) =>
                                     temporary === filterTemporary
@@ -387,6 +391,7 @@ function HostFamiliesPage({ ...props }) {
                                                 };
                                             }
                                         )}
+                                        isLoading={isLoading}
                                     />
                                 </Col>
                             </Row>
@@ -440,14 +445,14 @@ function HostFamiliesPage({ ...props }) {
                                                                     hostFamily.main_host_family_kind_id
                                                                 ) !==
                                                                     undefined && (
-                                                                    <>
-                                                                        <br />
-                                                                        FA{" "}
-                                                                        {hostFamilyKindNameForId(
-                                                                            hostFamily.main_host_family_kind_id
-                                                                        )}
-                                                                    </>
-                                                                )}
+                                                                        <>
+                                                                            <br />
+                                                                            FA{" "}
+                                                                            {hostFamilyKindNameForId(
+                                                                                hostFamily.main_host_family_kind_id
+                                                                            )}
+                                                                        </>
+                                                                    )}
                                                                 <br />
                                                                 <div className="pt-2">
                                                                     <Button

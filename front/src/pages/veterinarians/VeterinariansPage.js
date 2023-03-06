@@ -34,6 +34,7 @@ import SortableTable from "../../components/SortableTable";
 L.Marker.prototype.options.icon = BlueIcon;
 
 function VeterinariansPage({ ...props }) {
+    const [isLoading, setIsLoading] = useState(false);
     const [veterinarians, setVeterinarians] = useState([]);
     const [filteredVeterinarians, setFilteredVeterinarians] = useState([]);
     const [searchText, setSearchText] = useState("");
@@ -56,7 +57,7 @@ function VeterinariansPage({ ...props }) {
     const [mapRef, setMapRef] = useState(React.createRef());
 
     const getAllVeterinarians = () => {
-        VeterinariansManager.getAll()
+        return VeterinariansManager.getAll()
             .then((veterinarians) => {
                 return sortBy(veterinarians || [], "name");
             })
@@ -74,7 +75,10 @@ function VeterinariansPage({ ...props }) {
     };
 
     useEffect(() => {
-        getAllVeterinarians();
+        setIsLoading(true);
+        getAllVeterinarians().then(() => {
+            setIsLoading(false)
+        });
     }, []);
 
     useEffect(() => {
@@ -203,10 +207,10 @@ function VeterinariansPage({ ...props }) {
                                                 previous.map((f) =>
                                                     f.name === filter.name
                                                         ? {
-                                                              ...f,
-                                                              activated:
-                                                                  !f.activated,
-                                                          }
+                                                            ...f,
+                                                            activated:
+                                                                !f.activated,
+                                                        }
                                                         : f
                                                 )
                                             );
@@ -288,6 +292,7 @@ function VeterinariansPage({ ...props }) {
                                                 };
                                             }
                                         )}
+                                        isLoading={isLoading}
                                     />
                                 </Col>
                             </Row>

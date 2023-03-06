@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { MdArrowDownward, MdArrowUpward } from "react-icons/md";
-import { Table } from "reactstrap";
+import { Col, Row, Table } from "reactstrap";
 import PropTypes from "../utils/propTypes";
+import { TailSpin } from "react-loading-icons";
 
-const SortableTable = ({ columns, values, ...props }) => {
+const SortableTable = ({ columns, values, isLoading, ...props }) => {
     const [sortColumn, setSortColumn] = useState(undefined);
     const [sortInverted, setSortInverted] = useState(false);
     const [sortedValues, setSortedValues] = useState([]);
@@ -42,51 +43,62 @@ const SortableTable = ({ columns, values, ...props }) => {
     };
 
     return (
-        <Table {...{ striped: true }}>
-            <thead>
-                <tr>
-                    {columns.map((column) => {
-                        return (
-                            <th
-                                scope="col"
-                                onClick={() => {
-                                    if (column.sortable !== false) {
-                                        sortWithColumn(column);
-                                    }
-                                }}
-                            >
-                                {column.value}
-                                {sortColumn?.key === column.key &&
-                                    sortInverted === true && (
-                                        <MdArrowDownward />
-                                    )}
-                                {sortColumn?.key === column.key &&
-                                    sortInverted === false && <MdArrowUpward />}
-                            </th>
-                        );
-                    })}
-                </tr>
-            </thead>
-            <tbody>
-                {sortedValues.map((value, index) => (
-                    <tr key={index}>
+        <>
+            <Table {...{ striped: true }}>
+                <thead>
+                    <tr>
                         {columns.map((column) => {
-                            return column.isMain ? (
-                                <th scope="row">{value[column.key]}</th>
-                            ) : (
-                                <td>{value[column.key]}</td>
+                            return (
+                                <th
+                                    scope="col"
+                                    onClick={() => {
+                                        if (column.sortable !== false) {
+                                            sortWithColumn(column);
+                                        }
+                                    }}
+                                >
+                                    {column.value}
+                                    {sortColumn?.key === column.key &&
+                                        sortInverted === true && (
+                                            <MdArrowDownward />
+                                        )}
+                                    {sortColumn?.key === column.key &&
+                                        sortInverted === false && <MdArrowUpward />}
+                                </th>
                             );
                         })}
                     </tr>
-                ))}
-            </tbody>
-        </Table>
+                </thead>
+                <tbody>
+                    {sortedValues.map((value, index) => (
+                        <tr key={index}>
+                            {columns.map((column) => {
+                                return column.isMain ? (
+                                    <th scope="row">{value[column.key]}</th>
+                                ) : (
+                                    <td>{value[column.key]}</td>
+                                );
+                            })}
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+            
+            { isLoading &&
+                <Row>
+                    <Col className="d-flex justify-content-center">
+                        <TailSpin stroke="#000000" />
+                    </Col>
+                </Row>
+            }
+        </>
     );
 };
 
 SortableTable.propTypes = {
     columns: PropTypes.object.isRequired,
     values: PropTypes.array.isRequired,
+    isLoading: PropTypes.bool.isRequired,
 };
 
 export default SortableTable;

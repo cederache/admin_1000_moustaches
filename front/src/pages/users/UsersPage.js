@@ -12,6 +12,7 @@ import SortableTable from "../../components/SortableTable";
 import { map } from "leaflet";
 
 function UsersPage({ ...props }) {
+    const [isLoading, setIsLoading] = useState(false);
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [searchText, setSearchText] = useState("");
@@ -22,7 +23,7 @@ function UsersPage({ ...props }) {
     );
 
     const getAllUsers = () => {
-        UsersManager.getAll()
+        return UsersManager.getAll()
             .then((users) => {
                 return sortBy(users || [], "name");
             })
@@ -44,7 +45,10 @@ function UsersPage({ ...props }) {
             setLoggedUser(firebaseUser);
         });
 
-        getAllUsers();
+        setIsLoading(true);
+        getAllUsers().then(() => {
+            setIsLoading(false);
+        });
     }, []);
 
     useEffect(() => {
@@ -151,6 +155,7 @@ function UsersPage({ ...props }) {
                                         ),
                                     };
                                 })}
+                                isLoading={isLoading}
                             />
                         </Col>
                     </Row>

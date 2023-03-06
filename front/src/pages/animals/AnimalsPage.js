@@ -8,7 +8,6 @@ import {
     Input,
     Label,
     Row,
-    Table,
 } from "reactstrap";
 import AnimalsManager from "../../managers/animals.manager";
 import { useState } from "react";
@@ -18,10 +17,12 @@ import Switch from "../../components/Switch";
 import Dropdown from "../../components/Dropdown";
 import UsersManager from "../../managers/users.manager";
 import SortableTable from "../../components/SortableTable";
+import { TailSpin } from 'react-loading-icons'
 
 /*eslint no-unused-expressions: "off"*/
 
 function AnimalsPage({ ...props }) {
+    const [isLoading, setIsLoading] = useState(false);
     const [animals, setAnimals] = useState([]);
     const [sexes, setSexes] = useState([]);
     const [species, setSpecies] = useState([]);
@@ -107,13 +108,15 @@ function AnimalsPage({ ...props }) {
     };
 
     useEffect(() => {
-        getSexes().then(getSpecies).then(getReferents).then(getAllAnimals);
+        setIsLoading(true);
+        getSexes().then(getSpecies).then(getReferents).then(getAllAnimals).then(() => {
+            setIsLoading(false);
+        });
     }, []);
 
     useEffect(() => {
         setFilteredAnimals(
             animals.filter((animal) => {
-                console.log(animal.death_date_object, filterDead);
                 return (
                     filters.every((f) =>
                         f.activated === true ? f.check(animal) === true : true
@@ -128,12 +131,12 @@ function AnimalsPage({ ...props }) {
                     (filterReferent === undefined
                         ? true
                         : animal.current_host_family_referent_id ===
-                          filterReferent?.id) &&
+                        filterReferent?.id) &&
                     (filterDead === undefined
                         ? true
                         : filterDead === 0
-                        ? animal.death_date_object.input === undefined
-                        : animal.death_date_object.input !== undefined)
+                            ? animal.death_date_object.input === undefined
+                            : animal.death_date_object.input !== undefined)
                 );
             })
         );
@@ -199,8 +202,8 @@ function AnimalsPage({ ...props }) {
                                             value === undefined
                                                 ? "Tous"
                                                 : value === 1
-                                                ? "Adopté·e"
-                                                : "Non adopté·es"
+                                                    ? "Adopté·e"
+                                                    : "Non adopté·es"
                                         }
                                         valueActiveCheck={(value) =>
                                             filterAdopted === value
@@ -222,8 +225,8 @@ function AnimalsPage({ ...props }) {
                                             value === undefined
                                                 ? "Tous"
                                                 : value === 1
-                                                ? "Décédé·e"
-                                                : "Vivant·e"
+                                                    ? "Décédé·e"
+                                                    : "Vivant·e"
                                         }
                                         valueActiveCheck={(value) =>
                                             filterDead === value
@@ -295,12 +298,12 @@ function AnimalsPage({ ...props }) {
                                                     setFilters((previous) =>
                                                         previous.map((f) =>
                                                             f.name ===
-                                                            filter.name
+                                                                filter.name
                                                                 ? {
-                                                                      ...f,
-                                                                      activated:
-                                                                          !f.activated,
-                                                                  }
+                                                                    ...f,
+                                                                    activated:
+                                                                        !f.activated,
+                                                                }
                                                                 : f
                                                         )
                                                     );
@@ -361,6 +364,7 @@ function AnimalsPage({ ...props }) {
                                 ),
                             };
                         })}
+                        isLoading={isLoading}
                     />
                 </Col>
             </Row>
