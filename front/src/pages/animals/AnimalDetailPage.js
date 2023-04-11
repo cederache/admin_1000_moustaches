@@ -373,7 +373,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={animal.broadcastable}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || animal.adopted}
                                     onChange={(newValue) =>
                                         setAnimal({
                                             ...animal,
@@ -387,7 +387,7 @@ function AnimalDetailPage({ match, ...props }) {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={animal.bookable}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || animal.adopted}
                                     onChange={(newValue) =>
                                         setAnimal({
                                             ...animal,
