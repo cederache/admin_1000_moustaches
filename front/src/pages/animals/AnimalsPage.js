@@ -40,6 +40,8 @@ function AnimalsPage({ ...props }) {
             },
         },
     ]);
+    const [filterBroadcastable, setFilterBroadcastable] = useState();
+    const [filterReserved, setFilterReserved] = useState();
     const [filterAdopted, setFilterAdopted] = useState();
     const [filterDead, setFilterDead] = useState(0);
     const [filterSpecies, setFilterSpecies] = useState();
@@ -51,6 +53,9 @@ function AnimalsPage({ ...props }) {
 
     const getSpecies = () => {
         return AnimalsManager.getSpecies()
+            .then((species) => {
+                return sortBy(species || [], "name");
+            })
             .then(setSpecies)
             .catch((err) => {
                 console.error(err);
@@ -64,6 +69,9 @@ function AnimalsPage({ ...props }) {
     const getSexes = () => {
         return AnimalsManager.getSexes()
             .then(setSexes)
+            .then((sexes) => {
+                return sortBy(sexes || [], "name");
+            })
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
@@ -95,6 +103,9 @@ function AnimalsPage({ ...props }) {
         setReferents([]);
         return UsersManager.getAllReferents()
             .then(setReferents)
+            .then((referents) => {
+                return sortBy(referents || [], "display_name");
+            })
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
@@ -136,6 +147,12 @@ function AnimalsPage({ ...props }) {
                         f.activated === true ? f.check(animal) === true : true
                     ) &&
                     animal.name.toLowerCase().includes(searchText.toLowerCase()) &&
+                    (filterBroadcastable === undefined
+                        ? true
+                        : animal.broadcastable === filterBroadcastable) &&
+                    (filterReserved === undefined
+                        ? true
+                        : animal.reserved === filterReserved) &&
                     (filterAdopted === undefined
                         ? true
                         : animal.adopted === filterAdopted) &&
@@ -158,6 +175,8 @@ function AnimalsPage({ ...props }) {
         animals,
         searchText,
         filters,
+        filterBroadcastable,
+        filterReserved,
         filterAdopted,
         filterSpecies,
         filterReferent,
@@ -206,6 +225,48 @@ function AnimalsPage({ ...props }) {
                         <Col>
                             <Row>
                                 <Col className="mb-0">
+                                    <Label>Diffusable</Label>
+                                    <Dropdown
+                                        withNewLine={true}
+                                        color={"primary"}
+                                        value={filterBroadcastable}
+                                        values={[1, 0, undefined]}
+                                        valueDisplayName={(value) =>
+                                            value === undefined
+                                                ? "Tous"
+                                                : value === 1
+                                                    ? "Diffusable"
+                                                    : "Non diffusable"
+                                        }
+                                        valueActiveCheck={(value) =>
+                                            filterBroadcastable === value
+                                        }
+                                        key={"broadcastable"}
+                                        onChange={setFilterBroadcastable}
+                                    />
+                                </Col>
+                                <Col className="mb-0">
+                                    <Label>Réservé·e</Label>
+                                    <Dropdown
+                                        withNewLine={true}
+                                        color={"primary"}
+                                        value={filterReserved}
+                                        values={[1, 0, undefined]}
+                                        valueDisplayName={(value) =>
+                                            value === undefined
+                                                ? "Tous"
+                                                : value === 1
+                                                    ? "Réservé·e"
+                                                    : "Non réservé·es"
+                                        }
+                                        valueActiveCheck={(value) =>
+                                            filterReserved === value
+                                        }
+                                        key={"reserved"}
+                                        onChange={setFilterReserved}
+                                    />
+                                </Col>
+                                <Col className="mb-0">
                                     <Label>Adopté·e</Label>
                                     <Dropdown
                                         withNewLine={true}
@@ -223,9 +284,7 @@ function AnimalsPage({ ...props }) {
                                             filterAdopted === value
                                         }
                                         key={"adopted"}
-                                        onChange={(newAdopted) => {
-                                            setFilterAdopted(newAdopted);
-                                        }}
+                                        onChange={setFilterAdopted}
                                     />
                                 </Col>
                                 <Col className="mb-0">
@@ -246,9 +305,7 @@ function AnimalsPage({ ...props }) {
                                             filterDead === value
                                         }
                                         key={"dead"}
-                                        onChange={(newDead) => {
-                                            setFilterDead(newDead);
-                                        }}
+                                        onChange={setFilterDead}
                                     />
                                 </Col>
                                 <Col className="mb-0">
@@ -271,9 +328,7 @@ function AnimalsPage({ ...props }) {
                                             aSpecies?.id === filterSpecies?.id
                                         }
                                         key={"species"}
-                                        onChange={(newSpecies) =>
-                                            setFilterSpecies(newSpecies)
-                                        }
+                                        onChange={setFilterSpecies}
                                     />
                                 </Col>
                                 <Col className="mb-0">
@@ -290,15 +345,13 @@ function AnimalsPage({ ...props }) {
                                         valueDisplayName={(referent) =>
                                             referent === undefined
                                                 ? "Tous·tes"
-                                                : `${referent?.firstname} ${referent?.name}`
+                                                : referent?.display_name
                                         }
                                         valueActiveCheck={(referent) =>
                                             referent?.id === filterReferent?.id
                                         }
                                         key={"referents"}
-                                        onChange={(newReferent) =>
-                                            setFilterReferent(newReferent)
-                                        }
+                                        onChange={setFilterReferent}
                                     />
                                 </Col>
                                 {filters.map((filter) => {

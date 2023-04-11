@@ -28,6 +28,7 @@ class UsersManager {
             user[date]["input"] =
                 rawValue != null ? moment(rawValue).format("YYYY-MM-DD") : null;
         });
+        user["display_name"] = `${user?.firstname} ${user?.name}`
         return user;
     };
 
