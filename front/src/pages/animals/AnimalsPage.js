@@ -17,7 +17,7 @@ import Switch from "../../components/Switch";
 import Dropdown from "../../components/Dropdown";
 import UsersManager from "../../managers/users.manager";
 import SortableTable from "../../components/SortableTable";
-import { TailSpin } from 'react-loading-icons'
+import HostFamiliesManager from "../../managers/hostFamilies.manager";
 
 /*eslint no-unused-expressions: "off"*/
 
@@ -27,6 +27,7 @@ function AnimalsPage({ ...props }) {
     const [sexes, setSexes] = useState([]);
     const [species, setSpecies] = useState([]);
     const [referents, setReferents] = useState([]);
+    const [hostFamilies, setHostFamilies] = useState([]);
 
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [searchText, setSearchText] = useState("");
@@ -103,13 +104,26 @@ function AnimalsPage({ ...props }) {
             });
     };
 
+    const getHostFamilies = () => {
+        setHostFamilies([]);
+        return HostFamiliesManager.getAll()
+            .then(setHostFamilies)
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
+                    level: "error",
+                });
+            });
+    };
+
     const showDetail = (animal) => {
         props.history.push(`/animals/${animal.id}`);
     };
 
     useEffect(() => {
         setIsLoading(true);
-        getSexes().then(getSpecies).then(getReferents).then(getAllAnimals).then(() => {
+        getSexes().then(getSpecies).then(getReferents).then(getHostFamilies).then(getAllAnimals).then(() => {
             setIsLoading(false);
         });
     }, []);
@@ -333,6 +347,11 @@ function AnimalsPage({ ...props }) {
                                 isMain: false,
                             },
                             {
+                                key: "hostFamily",
+                                value: "Famille d'acceuil",
+                                isMain: false,
+                            },
+                            {
                                 key: "pec_date",
                                 value: "Date de PEC",
                                 isMain: false,
@@ -353,6 +372,10 @@ function AnimalsPage({ ...props }) {
                                     )?.value || "",
                                 icad: animal.icad,
                                 birthdate: animal.readable_birth_date,
+                                hostFamily:
+                                    hostFamilies.find(
+                                        (aHF) => aHF.id === animal.current_host_family_id
+                                    )?.display_name || "",
                                 pec_date: animal.readable_entry_date,
                                 animal_detail: (
                                     <Button
