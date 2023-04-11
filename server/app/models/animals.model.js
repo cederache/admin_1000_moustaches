@@ -32,7 +32,8 @@ const fields = [
   "need_external_access",
   "transferor",
   "anti_parasitic_date",
-  "transfer_certificate"
+  "transfer_certificate",
+  "reserved"
 ];
 
 // constructor

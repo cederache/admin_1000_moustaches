@@ -397,6 +397,20 @@ function AnimalDetailPage({ match, ...props }) {
                                 />
                             </Col>
                             <Col xs={6} lg={4}>
+                                <Label>Réservé·e</Label>
+                                <BooleanNullableDropdown
+                                    withNewLine={true}
+                                    value={animal.reserved}
+                                    disabled={!isEditing || animal.adopted}
+                                    onChange={(newValue) =>
+                                        setAnimal({
+                                            ...animal,
+                                            reserved: newValue,
+                                        })
+                                    }
+                                />
+                            </Col>
+                            <Col xs={6} lg={4}>
                                 <Label>Adopté·e</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
