@@ -368,7 +368,7 @@ function AnimalDetailPage({ match, ...props }) {
                             </Row>
                         )}
                         <Row className="text-center">
-                            <Col xs={6} lg={4}>
+                            <Col md={4} lg={3}>
                                 <Label>Diffusable</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
@@ -382,7 +382,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     }
                                 />
                             </Col>
-                            <Col xs={6} lg={4}>
+                            <Col md={4} lg={3}>
                                 <Label>Réservable</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
@@ -396,7 +396,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     }
                                 />
                             </Col>
-                            <Col xs={6} lg={4}>
+                            <Col md={4} lg={3}>
                                 <Label>Réservé·e</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
@@ -410,7 +410,7 @@ function AnimalDetailPage({ match, ...props }) {
                                     }
                                 />
                             </Col>
-                            <Col xs={6} lg={4}>
+                            <Col md={4} lg={3}>
                                 <Label>Adopté·e</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
@@ -422,6 +422,43 @@ function AnimalDetailPage({ match, ...props }) {
                                             adopted: newValue,
                                         })
                                     }
+                                />
+                            </Col>
+                            <Col md={4} lg={3}>
+                                <Label>Duplicata ICAD nécessaire ?</Label>
+                                <NullableDropdown
+                                    withNewLine={true}
+                                    color={
+                                        animal.need_icad_duplicate === null || animal.need_icad_duplicate === undefined
+                                            ? "warning"
+                                            : animal.need_icad_duplicate === "received"
+                                                ? "success"
+                                                : animal.need_icad_duplicate === "waiting"
+                                                    ? "info"
+                                                    : "danger"
+                                    }
+                                    value={animal.need_icad_duplicate}
+                                    values={["no", "waiting", "received"]}
+                                    valueDisplayName={(value) =>
+                                        value === null || value === undefined
+                                            ? "NSP"
+                                            : value === "received"
+                                                ? "Oui, reçu"
+                                                : value === "waiting"
+                                                    ? "Oui, demandé"
+                                                    : "Non"
+                                    }
+                                    valueActiveCheck={(value) =>
+                                        animal.need_icad_duplicate === value
+                                    }
+                                    key={"need_icad_duplicate"}
+                                    disabled={!isEditing || animal.adopted}
+                                    onChange={(newNeedIcadDuplicate) => {
+                                        setAnimal({
+                                            ...animal,
+                                            need_icad_duplicate: newNeedIcadDuplicate,
+                                        })
+                                    }}
                                 />
                             </Col>
                         </Row>

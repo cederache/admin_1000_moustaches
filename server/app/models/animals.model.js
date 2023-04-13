@@ -33,7 +33,8 @@ const fields = [
   "transferor",
   "anti_parasitic_date",
   "transfer_certificate",
-  "reserved"
+  "reserved",
+  "need_icad_duplicate"
 ];
 
 // constructor
