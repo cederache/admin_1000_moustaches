@@ -26,18 +26,29 @@ const AnimalToHostFamilyModal = ({
     const [animalToHostFamily, setAnimalToHostFamily] = useState({
         ...athf,
     });
+    const modification = athf.host_family_id !== undefined;
 
     useEffect(() => {}, []);
 
     const save = () => {
-        AnimalsToHostFamiliesManager.create(animalToHostFamily)
-            .then(() => {
-                if (currentAnimalToHostFamily !== undefined) {
-                    return AnimalsToHostFamiliesManager.update({ ...currentAnimalToHostFamily, exit_date_object: animalToHostFamily.entry_date_object })
-                } else {
-                    return Promise.resolve()
-                }
+        if (modification) {
+            AnimalsToHostFamiliesManager.update(animalToHostFamily)
+            .then((updatedAnimalToHostFamily) => {
+                notificationSystem.addNotification({
+                    message: "Lien Animal / Famille d'accueil modifié",
+                    level: "success",
+                });
+                handleClose(true);
             })
+            .catch((err) => {
+                console.error(err);
+                notificationSystem.addNotification({
+                    message: `Une erreur s'est produite pendant la modification des données\n${err}`,
+                    level: "error",
+                });
+            });
+        } else {
+            AnimalsToHostFamiliesManager.create(animalToHostFamily)
             .then((updatedAnimalToHostFamily) => {
                 notificationSystem.addNotification({
                     message: "Lien Animal / Famille d'accueil créé",
@@ -52,6 +63,7 @@ const AnimalToHostFamilyModal = ({
                     level: "error",
                 });
             });
+        }
         return;
     };
 
@@ -128,8 +140,7 @@ const AnimalToHostFamilyModal = ({
                     color="primary"
                     onClick={() => save()}
                     disabled={
-                        animalToHostFamily.host_family_id === undefined ||
-                        animalToHostFamily.entry_date_object.input === undefined
+                        animalToHostFamily.host_family_id === undefined
                     }
                 >
                     Sauvegarder

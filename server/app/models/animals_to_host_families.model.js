@@ -1,14 +1,13 @@
 const sql = require("./db.js");
 
 const tableName = "AnimalsToHostFamilies";
-const fields = ["animal_id", "host_family_id", "entry_date", "exit_date"];
+const fields = ["animal_id", "host_family_id", "entry_date"];
 
 // constructor
 const AnimalsToHostFamilies = function (animalsToHostFamily) {
   this.animal_id = animalsToHostFamily.animal_id;
   this.host_family_id = animalsToHostFamily.host_family_id;
   this.entry_date = animalsToHostFamily.entry_date;
-  this.exit_date = animalsToHostFamily.exit_date;
 };
 
 AnimalsToHostFamilies.create = (newEntity, result) => {
@@ -94,7 +93,7 @@ AnimalsToHostFamilies.getAllWithAnimalId = (animal_id, result) => {
 };
 
 AnimalsToHostFamilies.getAllWithHostFamilyId = (host_family_id, result) => {
-  let query = `SELECT athf.*, a.id as animal_id, a.name as animal_name, a.entry_date as host_entry_date, a.exit_date as host_exit_date FROM ${tableName} athf JOIN Animals a ON athf.animal_id = a.id WHERE athf.host_family_id = ${host_family_id} ORDER BY athf.entry_date ASC`;
+  let query = `SELECT athf.*, a.id as animal_id, a.name as animal_name, a.entry_date as host_entry_date FROM ${tableName} athf JOIN Animals a ON athf.animal_id = a.id WHERE athf.host_family_id = ${host_family_id} ORDER BY athf.entry_date ASC`;
 
   sql.connect((connection) =>
     connection.query(query, (err, res) => {

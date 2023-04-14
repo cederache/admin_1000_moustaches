@@ -46,6 +46,9 @@ class AnimalsToHostFamiliesManager {
                     animalToHostFamily[`${dateField}_object`]["input"]
                 ).format("YYYYMMDD");
             }
+            if (animalToHostFamily[dateField] === "Invalid date") {
+                animalToHostFamily[dateField] = null;
+            }
         });
         return animalToHostFamily;
     };

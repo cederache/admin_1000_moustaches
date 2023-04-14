@@ -4,11 +4,17 @@ const AnimalsToHostFamilies = require("../models/animals_to_host_families.model.
 exports.create = (req, res) => {
   AnimalsToHostFamilies.create(req.body, (err, data) => {
     if (err) {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occured while creating animal to host family",
-      });
+      if (res.kind == "not_found") {
+        res.status(404).send({
+          message: "Not found",
+        });
+      } else {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occured while creating animal to host family",
+        });
+      }
     } else res.send(data);
   });
 };
@@ -19,11 +25,17 @@ exports.findAll = (req, res) => {
 
   AnimalsToHostFamilies.getAll(name, (err, data) => {
     if (err) {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving animal to host families.",
-      });
+      if (res.kind == "not_found") {
+        res.status(404).send({
+          message: "Not found",
+        });
+      } else {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving animal to host families.",
+        });
+      }
     } else res.send(data);
   });
 };
@@ -34,11 +46,17 @@ exports.findAllWithAnimalId = (req, res) => {
 
   AnimalsToHostFamilies.getAllWithAnimalId(animalId, (err, data) => {
     if (err) {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving animal to host families with animal id.",
-      });
+      if (res.kind == "not_found") {
+        res.status(404).send({
+          message: "Not found",
+        });
+      } else {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving animal to host families with animal id.",
+        });
+      }
     } else res.send(data);
   });
 };
@@ -49,11 +67,17 @@ exports.findAllWithHostFamilyId = (req, res) => {
 
   AnimalsToHostFamilies.getAllWithHostFamilyId(hostFamilyId, (err, data) => {
     if (err) {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving animal to host families with animal id.",
-      });
+      if (res.kind == "not_found") {
+        res.status(404).send({
+          message: "Not found",
+        });
+      } else {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving animal to host families with animal id.",
+        });
+      }
     } else res.send(data);
   });
 };
@@ -62,11 +86,17 @@ exports.findAllWithHostFamilyId = (req, res) => {
 exports.update = (req, res) => {
   AnimalsToHostFamilies.update(req.body, (err, data) => {
     if (err) {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occured while updating animal to host family",
-      });
+      if (res.kind == "not_found") {
+        res.status(404).send({
+          message: "Not found",
+        });
+      } else {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occured while updating animal to host family",
+        });
+      }
     } else res.send(data);
   });
 };
@@ -78,12 +108,18 @@ exports.delete = (req, res) => {
     req.params.hfId,
     (err, data) => {
       if (err) {
-        console.error(err);
-        res.status(500).send({
-          message:
-            err.message ||
-            "Some error occured while deleting animal to host family",
-        });
+        if (res.kind == "not_found") {
+          res.status(404).send({
+            message: "Not found",
+          });
+        } else {
+          console.error(err);
+          res.status(500).send({
+            message:
+              err.message ||
+              "Some error occured while deleting animal to host family",
+          });
+        }
       } else res.send(data);
     }
   );

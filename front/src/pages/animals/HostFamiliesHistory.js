@@ -72,9 +72,7 @@ function HostFamiliesHistory({
                                 color="primary"
                                 onClick={() => {
                                     setModalAnimalToHostFamily(
-                                        AnimalsToHostFamiliesManager.createAnimalToHostFamily(
-                                            animalId
-                                        )
+                                        AnimalsToHostFamiliesManager.createAnimalToHostFamily(animalId)
                                     );
                                     setShowAnimalToHostFamilyModal(true);
                                 }}
@@ -90,8 +88,8 @@ function HostFamiliesHistory({
                             <tr>
                                 <th scope="col">Nom Prénom</th>
                                 <th scope="col">Date d'entrée</th>
-                                <th scope="col">Date de sortie</th>
                                 <th scope="col">Fiche de la FA</th>
+                                <th scope="col">Modification</th>
                                 <th scope="col">Suppression</th>
                             </tr>
                         </thead>
@@ -109,12 +107,6 @@ function HostFamiliesHistory({
                                             }
                                         </td>
                                         <td>
-                                            {
-                                                animalToHostFamily
-                                                    .exit_date_object.readable
-                                            }
-                                        </td>
-                                        <td>
                                             <Button
                                                 color="info"
                                                 onClick={() =>
@@ -124,6 +116,17 @@ function HostFamiliesHistory({
                                                 }
                                             >
                                                 <MdAssignment />
+                                            </Button>
+                                        </td>
+                                        <td>
+                                            <Button
+                                                color="info"
+                                                onClick={() => {
+                                                    setModalAnimalToHostFamily(animalToHostFamily);
+                                                    setShowAnimalToHostFamilyModal(true);
+                                                }}
+                                            >
+                                                <MdDelete />
                                             </Button>
                                         </td>
                                         <td>
