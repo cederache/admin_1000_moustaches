@@ -53,9 +53,16 @@ function HostFamiliesPage({ ...props }) {
     const [switchFilters, setSwitchFilters] = useState([
         {
             activated: false,
-            name: "En retard de cotisation",
+            name: "En retard de cotisation uniquement",
             check: function (hostFamily) {
                 return hostFamily.membership_up_to_date === 0;
+            },
+        },
+        {
+            activated: false,
+            name: "Véhiculé·e uniquement",
+            check: function (hostFamily) {
+                return hostFamily.has_vehicule === 1;
             },
         },
     ]);
@@ -114,9 +121,12 @@ function HostFamiliesPage({ ...props }) {
 
     useEffect(() => {
         setIsLoading(true);
-        getHostFamilyKinds().then(getAllHostFamilies).then(getReferents).then(() => {
-            setIsLoading(false);
-        });
+        getHostFamilyKinds()
+            .then(getAllHostFamilies)
+            .then(getReferents)
+            .then(() => {
+                setIsLoading(false);
+            });
     }, []);
 
     useEffect(() => {
@@ -128,7 +138,9 @@ function HostFamiliesPage({ ...props }) {
                             ? f.check(hostFamily) === true
                             : true
                     ) &&
-                    hostFamily.name.toLowerCase().includes(searchText.toLowerCase()) &&
+                    hostFamily.name
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase()) &&
                     (filterBreak === undefined
                         ? true
                         : hostFamily.on_break === filterBreak) &&
@@ -241,10 +253,10 @@ function HostFamiliesPage({ ...props }) {
                                                 previous.map((f) =>
                                                     f.name === filter.name
                                                         ? {
-                                                            ...f,
-                                                            activated:
-                                                                !f.activated,
-                                                        }
+                                                              ...f,
+                                                              activated:
+                                                                  !f.activated,
+                                                          }
                                                         : f
                                                 )
                                             );
@@ -253,6 +265,8 @@ function HostFamiliesPage({ ...props }) {
                                 </Col>
                             );
                         })}
+                    </Row>
+                    <Row>
                         <Col className="mb-0">
                             <Label>En pause</Label>
                             <Dropdown
@@ -264,8 +278,8 @@ function HostFamiliesPage({ ...props }) {
                                     onBreak === undefined
                                         ? "Toutes"
                                         : onBreak === 1
-                                            ? "En pause"
-                                            : "Actives"
+                                        ? "En pause"
+                                        : "Actives"
                                 }
                                 valueActiveCheck={(onBreak) =>
                                     onBreak === filterBreak
@@ -287,8 +301,8 @@ function HostFamiliesPage({ ...props }) {
                                     temporary === undefined
                                         ? "Toutes"
                                         : temporary === 1
-                                            ? "Tampon"
-                                            : "Non tampon"
+                                        ? "Tampon"
+                                        : "Non tampon"
                                 }
                                 valueActiveCheck={(temporary) =>
                                     temporary === filterTemporary
@@ -367,7 +381,7 @@ function HostFamiliesPage({ ...props }) {
                                                 key: "hostFamilyDetail",
                                                 value: "Fiche FA",
                                                 isMain: false,
-                                                sortable: false
+                                                sortable: false,
                                             },
                                         ]}
                                         values={filteredHostFamilies.map(
@@ -445,14 +459,14 @@ function HostFamiliesPage({ ...props }) {
                                                                     hostFamily.main_host_family_kind_id
                                                                 ) !==
                                                                     undefined && (
-                                                                        <>
-                                                                            <br />
-                                                                            FA{" "}
-                                                                            {hostFamilyKindNameForId(
-                                                                                hostFamily.main_host_family_kind_id
-                                                                            )}
-                                                                        </>
-                                                                    )}
+                                                                    <>
+                                                                        <br />
+                                                                        FA{" "}
+                                                                        {hostFamilyKindNameForId(
+                                                                            hostFamily.main_host_family_kind_id
+                                                                        )}
+                                                                    </>
+                                                                )}
                                                                 <br />
                                                                 <div className="pt-2">
                                                                     <Button

@@ -515,6 +515,36 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 />
                             </Col>
                         </Row>
+                        <Row>
+                            <Col xs={6}>
+                                <Label>Permis de conduire</Label>
+                                <BooleanNullableDropdown
+                                    withNewLine={true}
+                                    value={hostFamily.driver_license}
+                                    disabled={!isEditing}
+                                    onChange={(newValue) => {
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            driver_license: newValue,
+                                        });
+                                    }}
+                                />
+                            </Col>
+                            <Col xs={6}>
+                                <Label>Véhiculé·e</Label>
+                                <BooleanNullableDropdown
+                                    withNewLine={true}
+                                    value={hostFamily.has_vehicule}
+                                    disabled={!isEditing}
+                                    onChange={(newValue) => {
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            has_vehicule: newValue,
+                                        });
+                                    }}
+                                />
+                            </Col>
+                        </Row>
                         <Accordion
                             className="pb-3"
                             open={openContactInfo}
@@ -743,25 +773,6 @@ function HostFamilyDetailPage({ match, ...props }) {
                                                             evt.target.value,
                                                     })
                                                 }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={4}>
-                                            <Label>Permis de conduire</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={
-                                                    hostFamily.driver_license
-                                                }
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        driver_license:
-                                                            newValue,
-                                                    });
-                                                }}
                                             />
                                         </Col>
                                     </Row>
