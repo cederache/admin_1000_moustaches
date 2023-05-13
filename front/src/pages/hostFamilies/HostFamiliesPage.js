@@ -383,7 +383,7 @@ function HostFamiliesPage({ ...props }) {
                                                 return {
                                                     name: hostFamily.display_name,
                                                     phone: hostFamily.phone,
-                                                    mail: hostFamily.phone,
+                                                    mail: hostFamily.mail,
                                                     hostFamilyDetail: (
                                                         <Button
                                                             color="info"
