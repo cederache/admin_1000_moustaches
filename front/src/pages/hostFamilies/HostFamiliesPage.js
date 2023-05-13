@@ -80,10 +80,7 @@ function HostFamiliesPage({ ...props }) {
             .then((hostFamily) => {
                 return sortBy(hostFamily || [], "id");
             })
-            .then((hostFamilies) => {
-                setHostFamilies(hostFamilies);
-                setFilteredHostFamilies(hostFamilies);
-            })
+            .then(setHostFamilies)
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
@@ -130,29 +127,26 @@ function HostFamiliesPage({ ...props }) {
     }, []);
 
     useEffect(() => {
-        setFilteredHostFamilies(
-            hostFamilies.filter((hostFamily) => {
-                return (
-                    switchFilters.every((f) =>
-                        f.activated == true
-                            ? f.check(hostFamily) === true
-                            : true
-                    ) &&
-                    hostFamily.name
-                        .toLowerCase()
-                        .includes(searchText.toLowerCase()) &&
-                    (filterBreak === undefined
-                        ? true
-                        : hostFamily.on_break === filterBreak) &&
-                    (filterTemporary === undefined
-                        ? true
-                        : hostFamily.is_temporary === filterTemporary) &&
-                    (filterReferent === undefined
-                        ? true
-                        : hostFamily.referent_id === filterReferent?.id)
-                );
-            })
-        );
+        var filteredHostFamilies = hostFamilies.filter((hostFamily) => {
+            var filtered =
+                switchFilters.every((f) =>
+                    f.activated === true ? f.check(hostFamily) === true : true
+                ) &&
+                hostFamily.name
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()) &&
+                (filterBreak === undefined
+                    ? true
+                    : hostFamily.on_break === filterBreak) &&
+                (filterTemporary === undefined
+                    ? true
+                    : hostFamily.is_temporary === filterTemporary) &&
+                (filterReferent === undefined
+                    ? true
+                    : hostFamily.referent_id === filterReferent?.id);
+            return filtered;
+        });
+        setFilteredHostFamilies(filteredHostFamilies);
     }, [
         hostFamilies,
         searchText,
