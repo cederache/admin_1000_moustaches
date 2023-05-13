@@ -429,11 +429,7 @@ function HostFamilyDetailPage({ match, ...props }) {
                                 )}
                             </Col>
                             <Col xs={"auto"} className="justify-content-end">
-                                <Label>
-                                    {hostFamily.on_break
-                                        ? "En pause"
-                                        : "Active"}
-                                </Label>
+                                <Label>{"Active"}</Label>
                                 <Switch
                                     id="break"
                                     key="break"
