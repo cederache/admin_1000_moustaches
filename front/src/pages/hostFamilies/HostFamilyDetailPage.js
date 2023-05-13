@@ -103,7 +103,13 @@ function HostFamilyDetailPage({ match, ...props }) {
     const getHostFamilyKinds = () => {
         setHostFamilyKinds([]);
         return HostFamilyKindsManager.getAll()
-            .then(setHostFamilyKinds)
+            .then((hfk) =>
+                setHostFamilyKinds(
+                    hfk.toSorted((a, b) => {
+                        return a.name > b.name;
+                    })
+                )
+            )
             .catch((err) => {
                 console.error(err);
                 notificationSystem.addNotification({
