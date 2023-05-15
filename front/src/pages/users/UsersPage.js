@@ -119,7 +119,7 @@ function UsersPage({ ...props }) {
                                     { key: "icon", value: "", isMain: false },
                                     {
                                         key: "name",
-                                        value: "Prénom Nom",
+                                        value: "Nom Préom",
                                         isMain: true,
                                     },
                                     {
@@ -131,7 +131,7 @@ function UsersPage({ ...props }) {
                                         key: "userDetail",
                                         value: "Fiche utilisateur·ice",
                                         isMain: false,
-                                        sortable: false
+                                        sortable: false,
                                     },
                                 ]}
                                 values={filteredUsers.map((user) => {

@@ -334,7 +334,7 @@ function HostFamiliesPage({ ...props }) {
                                 valueDisplayName={(usr) =>
                                     usr === undefined
                                         ? "-"
-                                        : `${usr?.firstname} ${usr?.name}`
+                                        : `${usr?.name} ${usr?.firstname}`
                                 }
                                 valueActiveCheck={(usr) =>
                                     usr?.id === filterReferent?.id
@@ -394,7 +394,7 @@ function HostFamiliesPage({ ...props }) {
                                         columns={[
                                             {
                                                 key: "name",
-                                                value: "Prénom Nom",
+                                                value: "Nom Prénom",
                                                 isMain: true,
                                             },
                                             {
