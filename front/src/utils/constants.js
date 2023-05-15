@@ -5,11 +5,14 @@ export const SPECIES_ID = {
 
 export const HOST_FAMILY_KIND_ID = {
     CAT: 1,
-    KITTEN: 2,
+    KITTEN_AND_MOM: 2,
     DOG: 3,
     KITTEN_FEEDING: 4,
     PUPPY: 5,
     RABBIT: 6,
+    RAT: 14,
+    HAMSTER: 15,
+    KITTEN: 13,
 };
 
 export const NOTIFICATION_SYSTEM_STYLE = {

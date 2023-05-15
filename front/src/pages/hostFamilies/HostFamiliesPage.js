@@ -33,6 +33,7 @@ import {
     PuppyIcon,
     RabbitIcon,
     UserIcon,
+    NACIcon,
 } from "../../utils/mapIcons";
 import Switch from "../../components/Switch";
 import UsersManager from "../../managers/users.manager";
@@ -69,6 +70,7 @@ function HostFamiliesPage({ ...props }) {
     const [filterBreak, setFilterBreak] = useState(0);
     const [filterTemporary, setFilterTemporary] = useState();
     const [filterReferent, setFilterReferent] = useState();
+    const [filterHostFamilyKind, setFilterHostFamilyKind] = useState();
 
     const [notificationSystem, setNotificationSystem] = useState(
         React.createRef()
@@ -143,7 +145,12 @@ function HostFamiliesPage({ ...props }) {
                     : hostFamily.is_temporary === filterTemporary) &&
                 (filterReferent === undefined
                     ? true
-                    : hostFamily.referent_id === filterReferent?.id);
+                    : hostFamily.referent_id === filterReferent?.id) &&
+                (filterHostFamilyKind === undefined
+                    ? true
+                    : hostFamily.hostFamilyKinds.find(
+                          (hfk) => hfk == filterHostFamilyKind?.id
+                      ) !== undefined);
             return filtered;
         });
         setFilteredHostFamilies(filteredHostFamilies);
@@ -154,6 +161,7 @@ function HostFamiliesPage({ ...props }) {
         filterBreak,
         filterTemporary,
         filterReferent,
+        filterHostFamilyKind,
     ]);
 
     useEffect(() => {
@@ -182,20 +190,27 @@ function HostFamiliesPage({ ...props }) {
     };
 
     const iconForHostFamilyKind = (host_family_kind_id) => {
-        switch (host_family_kind_id) {
-            case HOST_FAMILY_KIND_ID.CAT:
-                return CatIcon;
-            case HOST_FAMILY_KIND_ID.KITTEN:
-                return KittenIcon;
-            case HOST_FAMILY_KIND_ID.KITTEN_FEEDING:
-                return KittenFeedingIcon;
-            case HOST_FAMILY_KIND_ID.DOG:
-                return DogIcon;
-            case HOST_FAMILY_KIND_ID.PUPPY:
-                return PuppyIcon;
-            case HOST_FAMILY_KIND_ID.RABBIT:
-                return RabbitIcon;
+        if (host_family_kind_id == HOST_FAMILY_KIND_ID.CAT) {
+            return CatIcon;
+        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.KITTEN) {
+            return KittenIcon;
+        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.KITTEN_FEEDING) {
+            return KittenFeedingIcon;
+        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.KITTEN_AND_MOM) {
+            return KittenIcon;
+        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.DOG) {
+            return DogIcon;
+        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.PUPPY) {
+            return PuppyIcon;
+        } else if (
+            host_family_kind_id == HOST_FAMILY_KIND_ID.RABBIT ||
+            host_family_kind_id == HOST_FAMILY_KIND_ID.RAT ||
+            host_family_kind_id == HOST_FAMILY_KIND_ID.HAMSTER
+        ) {
+            return NACIcon;
         }
+        console.log("Can't find Icon for HostFamilyKind");
+        console.log(host_family_kind_id);
         return BlueIcon;
     };
 
@@ -330,6 +345,27 @@ function HostFamiliesPage({ ...props }) {
                                 }
                             />
                         </Col>
+                        <Col className="mb-0">
+                            <Label>Type de FA</Label>
+                            <Dropdown
+                                withNewLine={true}
+                                color={"primary"}
+                                value={hostFamilyKinds.find(
+                                    (hfk) => hfk.id === filterHostFamilyKind?.id
+                                )}
+                                values={[...hostFamilyKinds, undefined]}
+                                valueDisplayName={(hfk) =>
+                                    hfk === undefined ? "-" : hfk?.name ?? ""
+                                }
+                                valueActiveCheck={(hfk) =>
+                                    hfk?.id === filterHostFamilyKind?.id
+                                }
+                                key={"hostFamilyKind"}
+                                onChange={(newHFK) =>
+                                    setFilterHostFamilyKind(newHFK)
+                                }
+                            />
+                        </Col>
                     </Row>
                 </CardBody>
             </Card>
@@ -429,6 +465,12 @@ function HostFamiliesPage({ ...props }) {
                                                 );
                                             })
                                             .map((hostFamily) => {
+                                                var hostFamilyKind =
+                                                    hostFamily.hostFamilyKinds
+                                                        ?.length ?? 0 > 0
+                                                        ? hostFamily
+                                                              .hostFamilyKinds[0]
+                                                        : null;
                                                 return (
                                                     <Marker
                                                         title={
@@ -440,7 +482,7 @@ function HostFamiliesPage({ ...props }) {
                                                             hostFamily.longitude,
                                                         ]}
                                                         icon={iconForHostFamilyKind(
-                                                            hostFamily.main_host_family_kind_id
+                                                            hostFamilyKind
                                                         )}
                                                         pane="markerPane"
                                                     >
@@ -450,14 +492,14 @@ function HostFamiliesPage({ ...props }) {
                                                                     hostFamily.display_name
                                                                 }
                                                                 {hostFamilyKindNameForId(
-                                                                    hostFamily.main_host_family_kind_id
+                                                                    hostFamilyKind
                                                                 ) !==
                                                                     undefined && (
                                                                     <>
                                                                         <br />
                                                                         FA{" "}
                                                                         {hostFamilyKindNameForId(
-                                                                            hostFamily.main_host_family_kind_id
+                                                                            hostFamilyKind
                                                                         )}
                                                                     </>
                                                                 )}

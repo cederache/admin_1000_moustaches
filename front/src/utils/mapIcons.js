@@ -87,3 +87,9 @@ export const RabbitIcon = L.icon({
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });
+export const NACIcon = L.icon({
+    iconUrl: rabbitIcon,
+    shadowUrl: null,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+});

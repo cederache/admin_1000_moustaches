@@ -37,6 +37,9 @@ class HostFamiliesManager {
         hostFamily[
             "display_name"
         ] = `${hostFamily.firstname} ${hostFamily.name}`;
+
+        hostFamily["hostFamilyKinds"] =
+            hostFamily.host_family_kinds?.split(",") ?? [];
         return hostFamily;
     };
 

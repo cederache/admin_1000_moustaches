@@ -107,13 +107,12 @@ HostFamilies.findById = (id, result) => {
 
 HostFamilies.getAll = (name, result) => {
   let query = `SELECT T.*, (
-    Select host_family_kind_id
+    Select GROUP_CONCAT(host_family_kind_id)
     from
      HostFamilyToHostFamilyKinds hfthfk
     where
      hfthfk.host_family_id = T.id
-     limit 1
-  ) main_host_family_kind_id FROM ${tableName} T`;
+  ) host_family_kinds FROM ${tableName} T`;
 
   if (name) {
     query += ` WHERE name LIKE '%${name}%'`;

@@ -106,7 +106,9 @@ function HostFamilyDetailPage({ match, ...props }) {
             .then((hfk) =>
                 setHostFamilyKinds(
                     hfk.toSorted((a, b) => {
-                        return a.name > b.name;
+                        if (a.name < b.name) return -1;
+                        else if (a.name > b.name) return 1;
+                        else return 0;
                     })
                 )
             )
