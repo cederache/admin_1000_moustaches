@@ -35,6 +35,7 @@ import SourceLink from "../../components/SourceLink";
 import HostFamilyKindsManager from "../../managers/hostFamilyKinds.manager";
 import Switch from "../../components/Switch";
 import Dropdown from "../../components/Dropdown";
+import NullableDropdown from "../../components/NullableDropdown";
 
 function HostFamilyDetailPage({ match, ...props }) {
     const hostFamilyId = match.params.id;
@@ -997,14 +998,49 @@ function HostFamilyDetailPage({ match, ...props }) {
                                         </Col>
                                         <Col xs={4} lg={3}>
                                             <Label>Peut isoler</Label>
-                                            <BooleanNullableDropdown
+                                            <NullableDropdown
                                                 withNewLine={true}
+                                                color={
+                                                    hostFamily.can_isolate ===
+                                                        null ||
+                                                    hostFamily.can_isolate ===
+                                                        undefined
+                                                        ? "warning"
+                                                        : hostFamily.can_isolate ===
+                                                          "received"
+                                                        ? "success"
+                                                        : hostFamily.can_isolate ===
+                                                          "waiting"
+                                                        ? "info"
+                                                        : "danger"
+                                                }
                                                 value={hostFamily.can_isolate}
+                                                values={[
+                                                    "no",
+                                                    "yes_short",
+                                                    "yes_long",
+                                                ]}
+                                                valueDisplayName={(value) =>
+                                                    value === null ||
+                                                    value === undefined
+                                                        ? "NSP"
+                                                        : value === "yes_short"
+                                                        ? "Oui, qqs jours"
+                                                        : value === "yes_long"
+                                                        ? "Oui, ok long terme"
+                                                        : "Non"
+                                                }
+                                                valueActiveCheck={(value) =>
+                                                    hostFamily.can_isolate ===
+                                                    value
+                                                }
+                                                key={"can_isolate"}
                                                 disabled={!isEditing}
-                                                onChange={(newValue) => {
+                                                onChange={(newCanIsolate) => {
                                                     setHostFamily({
                                                         ...hostFamily,
-                                                        can_isolate: newValue,
+                                                        can_isolate:
+                                                            newCanIsolate,
                                                     });
                                                 }}
                                             />

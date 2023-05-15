@@ -209,8 +209,6 @@ function HostFamiliesPage({ ...props }) {
         ) {
             return NACIcon;
         }
-        console.log("Can't find Icon for HostFamilyKind");
-        console.log(host_family_kind_id);
         return BlueIcon;
     };
 
