@@ -24,7 +24,6 @@ import VeterinarianInterventionsHistory from "./VeterinarianInterventionsHistory
 import VeterinarianInterventionsManager from "../../managers/veterinarianInterventions.manager";
 import Dropdown from "../../components/Dropdown";
 import NullableDropdown from "../../components/NullableDropdown";
-import moment from "moment";
 import AnimalsToHostFamiliesManager from "../../managers/animalsToHostFamilies.manager";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import NotificationSystem from "react-notification-system";
@@ -243,7 +242,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                 species_id: species[0].id,
             });
         }
-    }, [animal, species]);
+    }, [animalId, animal, species]);
 
     const save = () => {
         setIsEditing(false);

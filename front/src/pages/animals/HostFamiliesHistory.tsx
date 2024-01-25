@@ -115,7 +115,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({
                                 (animalToHostFamily, index) => {
                                     var hostFamily = hostFamilies.find(
                                         (hf) =>
-                                            hf.id ==
+                                            hf.id ===
                                             animalToHostFamily.host_family_id
                                     );
                                     return (

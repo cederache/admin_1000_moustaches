@@ -99,7 +99,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
             veterinarians.filter(
                 (veterinarian) =>
                     filters.every((f) =>
-                        f.activated == true
+                        f.activated === true
                             ? f.check(veterinarian) === true
                             : true
                     ) &&
@@ -117,7 +117,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                 setUserPosition(e.latlng);
             });
         }
-    }, [showMap]);
+    }, [mapRef, showMap]);
 
     useEffect(() => {
         if (mapRef !== null && mapRef !== null) {

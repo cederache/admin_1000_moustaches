@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState, RefObject } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Button, Col, Input, Row } from "reactstrap";
 import UsersManager from "../../managers/users.manager";
 import { MdRefresh, MdAddBox, MdAssignment } from "react-icons/md";
 import { FaUserAlt } from "react-icons/fa";
 import { sortBy } from "../../utils/sort";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";

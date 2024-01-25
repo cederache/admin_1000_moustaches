@@ -1,4 +1,3 @@
-import moment from "moment";
 import HostFamiliesManager from "./hostFamilies.manager";
 import AnimalToHostFamily from "../entities/AnimalToHostFamily";
 

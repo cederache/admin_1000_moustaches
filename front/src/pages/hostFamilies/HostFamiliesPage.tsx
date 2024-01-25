@@ -1,10 +1,9 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
     Button,
     Col,
     Input,
     Row,
-    Table,
     Nav,
     NavItem,
     NavLink,
@@ -29,7 +28,6 @@ import {
     KittenFeedingIcon,
     KittenIcon,
     PuppyIcon,
-    RabbitIcon,
     UserIcon,
     NACIcon,
 } from "../../utils/mapIcons";
@@ -171,7 +169,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                 (filterHostFamilyKind === null
                     ? true
                     : hostFamily.kindsIds.find(
-                          (hfk) => hfk == filterHostFamilyKind?.id
+                          (hfk) => hfk === filterHostFamilyKind?.id
                       ) !== undefined);
             return filtered;
         });
@@ -193,7 +191,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                 setUserPosition(e.latlng);
             });
         }
-    }, [showMap]);
+    }, [showMap, mapRef]);
 
     const showDetail = (hostFamily: HostFamily) => {
         history.push(`/hostFamilies/${hostFamily.id}`);
@@ -208,26 +206,26 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
     };
 
     const hostFamilyKindNameForId = (id: number | null) => {
-        return hostFamilyKinds.find((hfk) => hfk.id == id)?.name;
+        return hostFamilyKinds.find((hfk) => hfk.id === id)?.name;
     };
 
     const iconForHostFamilyKind = (host_family_kind_id: number | null) => {
-        if (host_family_kind_id == HOST_FAMILY_KIND_ID.CAT) {
+        if (host_family_kind_id === HOST_FAMILY_KIND_ID.CAT) {
             return CatIcon;
-        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.KITTEN) {
+        } else if (host_family_kind_id === HOST_FAMILY_KIND_ID.KITTEN) {
             return KittenIcon;
-        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.KITTEN_FEEDING) {
+        } else if (host_family_kind_id === HOST_FAMILY_KIND_ID.KITTEN_FEEDING) {
             return KittenFeedingIcon;
-        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.KITTEN_AND_MOM) {
+        } else if (host_family_kind_id === HOST_FAMILY_KIND_ID.KITTEN_AND_MOM) {
             return KittenIcon;
-        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.DOG) {
+        } else if (host_family_kind_id === HOST_FAMILY_KIND_ID.DOG) {
             return DogIcon;
-        } else if (host_family_kind_id == HOST_FAMILY_KIND_ID.PUPPY) {
+        } else if (host_family_kind_id === HOST_FAMILY_KIND_ID.PUPPY) {
             return PuppyIcon;
         } else if (
-            host_family_kind_id == HOST_FAMILY_KIND_ID.RABBIT ||
-            host_family_kind_id == HOST_FAMILY_KIND_ID.RAT ||
-            host_family_kind_id == HOST_FAMILY_KIND_ID.HAMSTER
+            host_family_kind_id === HOST_FAMILY_KIND_ID.RABBIT ||
+            host_family_kind_id === HOST_FAMILY_KIND_ID.RAT ||
+            host_family_kind_id === HOST_FAMILY_KIND_ID.HAMSTER
         ) {
             return NACIcon;
         }
@@ -494,8 +492,8 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                             })
                                             .map((hostFamily) => {
                                                 var hostFamilyKind =
-                                                    hostFamily.kindsIds
-                                                        ?.length ?? 0 > 0
+                                                    (hostFamily.kindsIds
+                                                        ?.length ?? 0) > 0
                                                         ? hostFamily.kindsIds[0]
                                                         : null;
                                                 return (

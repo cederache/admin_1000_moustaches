@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { FC, HTMLAttributes, ReactNode } from "react";
+import React, { FC, HTMLAttributes } from "react";
 
 const tagMap = {
     h1: "h1",

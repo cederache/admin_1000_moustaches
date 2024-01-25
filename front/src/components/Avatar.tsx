@@ -1,6 +1,5 @@
-import React, { CSSProperties, FC, ImgHTMLAttributes } from "react";
+import { CSSProperties, FC, ImgHTMLAttributes } from "react";
 import classNames from "classnames";
-import userImage from "../assets/img/users/100_4.jpg";
 
 interface AvatarProps extends ImgHTMLAttributes<HTMLImageElement> {
     rounded?: boolean;
@@ -28,6 +27,7 @@ const Avatar: FC<AvatarProps> = ({
     return (
         <img
             src={src}
+            alt=""
             style={{ width: size, height: size, ...style }}
             className={classes}
             {...restProps}

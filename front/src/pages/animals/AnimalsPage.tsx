@@ -434,7 +434,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                         ]}
                         values={filteredAnimals.map((animal) => {
                             var hostFamily = hostFamilies.find(
-                                (hf) => hf.id == animal.current_host_family_id
+                                (hf) => hf.id === animal.current_host_family_id
                             );
                             return {
                                 name: animal.name,

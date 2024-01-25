@@ -1,4 +1,3 @@
-import moment from "moment";
 import Veterinarian from "../entities/Veterinarian";
 
 const API_URL = process.env.REACT_APP_API_URL;

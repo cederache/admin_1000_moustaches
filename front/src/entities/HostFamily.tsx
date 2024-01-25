@@ -1,5 +1,3 @@
-import HostFamilyKind from "./HostFamilyKind";
-
 class HostFamily {
     id?: number;
     name?: string;

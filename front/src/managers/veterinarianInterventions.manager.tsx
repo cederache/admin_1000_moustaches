@@ -1,4 +1,3 @@
-import moment from "moment";
 import VeterinarianIntervention from "../entities/VeterinarianIntervention";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -8,12 +7,16 @@ class VeterinarianInterventionsManager {
         return new VeterinarianIntervention();
     };
 
-    static format = (vetInter: VeterinarianIntervention): VeterinarianIntervention => {
-        return VeterinarianIntervention.copy(vetInter)
+    static format = (
+        vetInter: VeterinarianIntervention
+    ): VeterinarianIntervention => {
+        return VeterinarianIntervention.copy(vetInter);
     };
 
-    static formatForServer = (vetInter: VeterinarianIntervention): VeterinarianIntervention => {
-        return vetInter
+    static formatForServer = (
+        vetInter: VeterinarianIntervention
+    ): VeterinarianIntervention => {
+        return vetInter;
     };
 
     static getAll = () => {

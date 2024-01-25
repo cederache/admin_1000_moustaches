@@ -3,7 +3,7 @@ import {
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
 } from "firebase/auth";
-import React, { useState, FC, ReactElement, ReactNode } from "react";
+import { useState, FC, ReactElement, ReactNode } from "react";
 import {
     Button,
     Form,
@@ -69,7 +69,7 @@ const AuthForm: FC<AuthFormProps> = ({
         useState<NotificationSystem | null>(null);
 
     let isLogin = () => {
-        return authState == AuthFormState.LOGIN;
+        return authState === AuthFormState.LOGIN;
     };
 
     let renderButtonText = () => {
@@ -133,7 +133,7 @@ const AuthForm: FC<AuthFormProps> = ({
             if (confirmPassword === password) {
                 // Check if user is prepared in database
                 UsersManager.getAll().then((users) => {
-                    if (users.find((usr) => usr.email === username) == null) {
+                    if (users.find((usr) => usr.email === username) === null) {
                         notificationSystem?.addNotification({
                             message:
                                 "Le compte doit être préparé avec cet e-mail. Merci de contacter un administrateur.",

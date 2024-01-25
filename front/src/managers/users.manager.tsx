@@ -1,4 +1,3 @@
-import moment from "moment";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase-config";
 import User from "../entities/User";

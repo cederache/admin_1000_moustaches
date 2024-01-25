@@ -184,7 +184,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                                 name:
                                     veterinarians.find(
                                         (vet) =>
-                                            vet.id ==
+                                            vet.id ===
                                             veterinarianIntervention.veterinarian_id
                                     )?.name || "",
                             }}
