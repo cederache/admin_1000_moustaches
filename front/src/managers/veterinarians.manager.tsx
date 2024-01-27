@@ -1,4 +1,5 @@
-import Veterinarian from "../entities/Veterinarian";
+import Veterinarian from "../logic/entities/Veterinarian";
+import VeterinarianDTO from "../logic/dto/VeterinarianDTO";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -9,28 +10,8 @@ class VeterinariansManager {
         return new Veterinarian();
     };
 
-    // TODO: set vet as VeterinarianDTO
-    static format = (vet: any) => {
-        switch (vet.price_level) {
-            case 0:
-                vet.price_level_text = "€";
-                vet.price_level_tooltip = "Pas cher";
-                break;
-            case 1:
-                vet.price_level_text = "€€";
-                vet.price_level_tooltip = "Cher";
-                break;
-            case 2:
-                vet.price_level_text = "€€€";
-                vet.price_level_tooltip = "Cher sa mère";
-                break;
-            default:
-                vet.price_level_text = null;
-                vet.price_level_tooltip = "Ne sait pas";
-                break;
-        }
-        vet.emergencies = vet.emergencies === 1;
-        return vet as Veterinarian;
+    static format = (vetDTO: any) => {
+        return new VeterinarianDTO(vetDTO).toEntity();
     };
 
     static formatForServer = (vet: Veterinarian) => {

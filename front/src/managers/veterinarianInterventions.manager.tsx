@@ -1,4 +1,5 @@
-import VeterinarianIntervention from "../entities/VeterinarianIntervention";
+import VeterinarianInterventionDTO from "../logic/dto/VeterinarianInterventionDTO";
+import VeterinarianIntervention from "../logic/entities/VeterinarianIntervention";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -7,10 +8,8 @@ class VeterinarianInterventionsManager {
         return new VeterinarianIntervention();
     };
 
-    static format = (
-        vetInter: VeterinarianIntervention
-    ): VeterinarianIntervention => {
-        return VeterinarianIntervention.copy(vetInter);
+    static format = (vetInter: any): VeterinarianIntervention => {
+        return new VeterinarianInterventionDTO(vetInter).toEntity();
     };
 
     static formatForServer = (

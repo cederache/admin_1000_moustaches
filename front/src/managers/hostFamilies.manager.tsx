@@ -1,4 +1,7 @@
-import HostFamily from "../entities/HostFamily";
+import AnimalToHostFamilyDTO from "../logic/dto/AnimalToHostFamilyDTO";
+import HostFamilyDTO from "../logic/dto/HostFamilyDTO";
+import AnimalToHostFamily from "../logic/entities/AnimalToHostFamily";
+import HostFamily from "../logic/entities/HostFamily";
 import AnimalsToHostFamiliesManager from "./animalsToHostFamilies.manager";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -8,8 +11,8 @@ class HostFamiliesManager {
         return new HostFamily();
     };
 
-    static format = (hostFamily: HostFamily) => {
-        return HostFamily.copy(hostFamily);
+    static format = (hostFamily: any): HostFamily => {
+        return new HostFamilyDTO(hostFamily).toEntity();
     };
 
     static formatForServer = (hostFamily: HostFamily) => {
@@ -44,7 +47,7 @@ class HostFamiliesManager {
             .then(HostFamiliesManager.format);
     };
 
-    static getByAnimalId = (id: number) => {
+    static getByAnimalId = (id: number): Promise<AnimalToHostFamily[]> => {
         return fetch(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
             method: "GET",
         })
@@ -56,12 +59,14 @@ class HostFamiliesManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then((hostFamilies) =>
-                hostFamilies.map(AnimalsToHostFamiliesManager.format)
+            .then((athfs) =>
+                athfs.map((athf: any) =>
+                    new AnimalToHostFamilyDTO(athf).toEntity()
+                )
             );
     };
 
-    static create = (hostFamily: HostFamily) => {
+    static create = (hostFamily: HostFamily): Promise<HostFamily> => {
         const hostFamilyToUpload = this.formatForServer(hostFamily);
 
         return fetch(`${API_URL}/hostFamilies`, {
@@ -82,7 +87,7 @@ class HostFamiliesManager {
             .then(HostFamiliesManager.format);
     };
 
-    static update = (hostFamily: HostFamily) => {
+    static update = (hostFamily: HostFamily): Promise<HostFamily> => {
         const hostFamilyToUpload = this.formatForServer(hostFamily);
 
         return fetch(`${API_URL}/hostFamilies/${hostFamily.id}`, {

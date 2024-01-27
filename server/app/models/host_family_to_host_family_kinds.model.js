@@ -150,7 +150,7 @@ HostFamilyToHostFamilyKinds.updateById = (id, animalToHostFamily, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -182,7 +182,7 @@ HostFamilyToHostFamilyKinds.remove = (link, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;

@@ -1,11 +1,15 @@
 import HostFamiliesManager from "./hostFamilies.manager";
-import AnimalToHostFamily from "../entities/AnimalToHostFamily";
+import AnimalToHostFamily from "../logic/entities/AnimalToHostFamily";
+import AnimalToHostFamilyDTO from "../logic/dto/AnimalToHostFamilyDTO";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 class AnimalsToHostFamiliesManager {
-    static createAnimalToHostFamily = (animalId: number) => {
-        return new AnimalToHostFamily(animalId);
+    static createAnimalToHostFamily = (
+        animalId: number,
+        animalName: string
+    ) => {
+        return new AnimalToHostFamily(animalId, animalName);
     };
 
     static format = (animalToHostFamily: AnimalToHostFamily) => {
@@ -17,25 +21,22 @@ class AnimalsToHostFamiliesManager {
     };
 
     static getByAnimalId = (id: number) => {
-        return (
-            fetch(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
-                method: "GET",
+        return fetch(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
+            method: "GET",
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
             })
-                .then((response) => {
-                    if (response.status === 200) {
-                        return response.json();
-                    }
-                    return response.json().then((json) => {
-                        throw new Error(`Server error - ${json.message}`);
-                    });
-                })
-                // TODO: Handle ATHF_DTO from server
-                .then((hostFamilies) =>
-                    hostFamilies
-                        .map(HostFamiliesManager.format)
-                        .map(AnimalsToHostFamiliesManager.format)
+            .then((athfs) =>
+                athfs.map((athf: any) =>
+                    new AnimalToHostFamilyDTO(athf).toEntity()
                 )
-        );
+            );
     };
 
     static create = (animalToHostFamily: AnimalToHostFamily) => {

@@ -1,6 +1,9 @@
-import Animal from "../entities/Animal";
-import Species from "../entities/Species";
-import AnimalToHostFamily from "../entities/AnimalToHostFamily";
+import Animal from "../logic/entities/Animal";
+import Species from "../logic/entities/Species";
+import AnimalToHostFamily from "../logic/entities/AnimalToHostFamily";
+import AnimalDTO from "../logic/dto/AnimalDTO";
+import AnimalToHostFamilyDTO from "../logic/dto/AnimalToHostFamilyDTO";
+import SpeciesDTO from "../logic/dto/SpeciesDTO";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -14,8 +17,8 @@ class AnimalsManager {
         return new Animal();
     };
 
-    static format = (animal: Animal): Animal => {
-        return Animal.copy(animal);
+    static format = (animal: any): Animal => {
+        return new AnimalDTO(animal).toEntity();
     };
 
     static formatForServer = (animal: Animal): Animal => {
@@ -45,7 +48,7 @@ class AnimalsManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then(AnimalsManager.format);
+            .then((animal) => new AnimalDTO(animal).toEntity());
     };
 
     static getByHostFamilyId = (
@@ -63,20 +66,28 @@ class AnimalsManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then((animals) => animals.map(AnimalsManager.format));
+            .then((athfs) =>
+                athfs.map((athf: any) =>
+                    new AnimalToHostFamilyDTO(athf).toEntity()
+                )
+            );
     };
 
     static getSpecies = (): Promise<Species[]> => {
-        return fetch(`${API_URL}/species`, { method: "GET" }).then(
-            (response) => {
+        return fetch(`${API_URL}/species`, { method: "GET" })
+            .then((response) => {
                 if (response.status === 200) {
                     return response.json();
                 }
                 return response.json().then((json) => {
                     throw new Error(`Server error - ${json.message}`);
                 });
-            }
-        );
+            })
+            .then((species) =>
+                species.map((species: any) =>
+                    new SpeciesDTO(species).toEntity()
+                )
+            );
     };
 
     static getSexes = (): Promise<Sexe[]> => {
@@ -104,7 +115,7 @@ class AnimalsManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then(AnimalsManager.format);
+            .then((animal) => new AnimalDTO(animal).toEntity());
     };
 
     static update = (animal: Animal): Promise<Animal> => {
@@ -125,7 +136,7 @@ class AnimalsManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then(AnimalsManager.format);
+            .then((animal) => new AnimalDTO(animal).toEntity());
     };
 
     static delete = (animal: Animal): Promise<string> => {

@@ -1,31 +1,33 @@
 import React from "react";
 import componentQueries from "react-component-queries";
 import { BrowserRouter, Switch } from "react-router-dom";
-import { AuthFormState } from "./components/AuthForm";
-import { EmptyLayout, LayoutRoute, MainLayout } from "./components/Layout";
-import PageSpinner from "./components/PageSpinner";
-import "./styles/reduction.scss";
+import { AuthFormState } from "./ui/components/AuthForm";
+import { EmptyLayout, LayoutRoute, MainLayout } from "./ui/components/Layout";
+import PageSpinner from "./ui/components/PageSpinner";
+import "./ui/styles/reduction.scss";
 
-const AuthPage = React.lazy(() => import("./pages/AuthPage"));
-const DashboardPage = React.lazy(() => import("./pages/DashboardPage"));
-const AnimalsPage = React.lazy(() => import("./pages/animals/AnimalsPage"));
+const AuthPage = React.lazy(() => import("./ui/pages/AuthPage"));
+const DashboardPage = React.lazy(() => import("./ui/pages/DashboardPage"));
+const AnimalsPage = React.lazy(() => import("./ui/pages/animals/AnimalsPage"));
 const AnimalDetailPage = React.lazy(() =>
-    import("./pages/animals/AnimalDetailPage")
+    import("./ui/pages/animals/AnimalDetailPage")
 );
 const VeterinariansPage = React.lazy(() =>
-    import("./pages/veterinarians/VeterinariansPage")
+    import("./ui/pages/veterinarians/VeterinariansPage")
 );
 const VeterinarianDetailPage = React.lazy(() =>
-    import("./pages/veterinarians/VeterinarianDetailPage")
+    import("./ui/pages/veterinarians/VeterinarianDetailPage")
 );
 const HostFamiliesPage = React.lazy(() =>
-    import("./pages/hostFamilies/HostFamiliesPage")
+    import("./ui/pages/hostFamilies/HostFamiliesPage")
 );
 const HostFamilyDetailPage = React.lazy(() =>
-    import("./pages/hostFamilies/HostFamilyDetailPage")
+    import("./ui/pages/hostFamilies/HostFamilyDetailPage")
 );
-const UsersPage = React.lazy(() => import("./pages/users/UsersPage"));
-const UserDetailPage = React.lazy(() => import("./pages/users/UserDetailPage"));
+const UsersPage = React.lazy(() => import("./ui/pages/users/UsersPage"));
+const UserDetailPage = React.lazy(() =>
+    import("./ui/pages/users/UserDetailPage")
+);
 
 const getBasename = () => {
     return `/${process.env.PUBLIC_URL.split("/").pop()}`;

@@ -1,4 +1,4 @@
-import HostFamilyKind from "../entities/HostFamilyKind";
+import HostFamilyKind from "../logic/entities/HostFamilyKind";
 
 const API_URL = process.env.REACT_APP_API_URL;
 

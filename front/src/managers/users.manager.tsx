@@ -1,6 +1,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase-config";
-import User from "../entities/User";
+import User from "../logic/entities/User";
+import UserDTO from "../logic/dto/UserDTO";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -11,8 +12,8 @@ class UsersManager {
         return new User();
     };
 
-    static format = (user: User): User => {
-        return user;
+    static format = (user: any): User => {
+        return new UserDTO(user).toEntity();
     };
 
     static formatForServer = (user: User): User => {
@@ -119,7 +120,7 @@ class UsersManager {
         });
     };
 
-    static getLoggedUser = () => {
+    static getLoggedUser = (): Promise<User | undefined | null> => {
         return new Promise((resolve, reject) => {
             const firebaseUser = auth.currentUser;
             if (firebaseUser !== null) {

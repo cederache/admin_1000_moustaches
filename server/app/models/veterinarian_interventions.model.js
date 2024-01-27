@@ -174,7 +174,7 @@ VeterinarianInterventions.updateById = (
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found with the id
           result({ kind: "not_found" }, null);
           return;
@@ -203,7 +203,7 @@ VeterinarianInterventions.remove = (id, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
