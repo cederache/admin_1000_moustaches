@@ -2,7 +2,7 @@ import AnimalToHostFamilyDTO from "../logic/dto/AnimalToHostFamilyDTO";
 import HostFamilyDTO from "../logic/dto/HostFamilyDTO";
 import AnimalToHostFamily from "../logic/entities/AnimalToHostFamily";
 import HostFamily from "../logic/entities/HostFamily";
-import AnimalsToHostFamiliesManager from "./animalsToHostFamilies.manager";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -20,7 +20,7 @@ class HostFamiliesManager {
     };
 
     static getAll = () => {
-        return fetch(`${API_URL}/hostFamilies`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/hostFamilies`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -35,7 +35,7 @@ class HostFamiliesManager {
     };
 
     static getById = (id: number) => {
-        return fetch(`${API_URL}/hostFamilies/${id}`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/hostFamilies/${id}`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -48,9 +48,12 @@ class HostFamiliesManager {
     };
 
     static getByAnimalId = (id: number): Promise<AnimalToHostFamily[]> => {
-        return fetch(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
-            method: "GET",
-        })
+        return fetchWithAuth(
+            `${API_URL}/animalsToHostFamilies/withAnimalId/${id}`,
+            {
+                method: "GET",
+            }
+        )
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -69,7 +72,7 @@ class HostFamiliesManager {
     static create = (hostFamily: HostFamily): Promise<HostFamily> => {
         const hostFamilyToUpload = this.formatForServer(hostFamily);
 
-        return fetch(`${API_URL}/hostFamilies`, {
+        return fetchWithAuth(`${API_URL}/hostFamilies`, {
             method: "POST",
             body: JSON.stringify(hostFamilyToUpload),
             headers: {
@@ -90,7 +93,7 @@ class HostFamiliesManager {
     static update = (hostFamily: HostFamily): Promise<HostFamily> => {
         const hostFamilyToUpload = this.formatForServer(hostFamily);
 
-        return fetch(`${API_URL}/hostFamilies/${hostFamily.id}`, {
+        return fetchWithAuth(`${API_URL}/hostFamilies/${hostFamily.id}`, {
             method: "PUT",
             body: JSON.stringify(hostFamilyToUpload),
             headers: {
@@ -109,7 +112,7 @@ class HostFamiliesManager {
     };
 
     static delete = (hostFamily: HostFamily) => {
-        return fetch(`${API_URL}/hostFamilies/${hostFamily.id}`, {
+        return fetchWithAuth(`${API_URL}/hostFamilies/${hostFamily.id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

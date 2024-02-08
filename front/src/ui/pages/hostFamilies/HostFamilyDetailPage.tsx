@@ -38,7 +38,6 @@ import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import HostFamily from "../../../logic/entities/HostFamily";
 import NotificationSystem from "react-notification-system";
-import Animal from "../../../logic/entities/Animal";
 import User from "../../../logic/entities/User";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import { useHistory } from "react-router-dom";

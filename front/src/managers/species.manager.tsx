@@ -1,5 +1,6 @@
 import SpeciesDTO from "../logic/dto/SpeciesDTO";
 import Species from "../logic/entities/Species";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -9,7 +10,7 @@ class SpeciesManager {
     };
 
     static getAll = (): Promise<Species[]> => {
-        return fetch(`${API_URL}/species`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/species`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -22,7 +23,7 @@ class SpeciesManager {
     };
 
     static getById = (id: number): Promise<Species> => {
-        return fetch(`${API_URL}/species/${id}`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/species/${id}`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();

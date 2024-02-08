@@ -1,5 +1,6 @@
 import Veterinarian from "../logic/entities/Veterinarian";
 import VeterinarianDTO from "../logic/dto/VeterinarianDTO";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -19,7 +20,7 @@ class VeterinariansManager {
     };
 
     static getAll = (): Promise<[Veterinarian]> => {
-        return fetch(`${API_URL}/veterinarians`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/veterinarians`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -32,7 +33,9 @@ class VeterinariansManager {
     };
 
     static getById = (id: number): Promise<Veterinarian> => {
-        return fetch(`${API_URL}/veterinarians/${id}`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/veterinarians/${id}`, {
+            method: "GET",
+        })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -46,7 +49,7 @@ class VeterinariansManager {
 
     static create = (veterinarian: Veterinarian): Promise<Veterinarian> => {
         const veterinarianToUpload = this.formatForServer(veterinarian);
-        return fetch(`${API_URL}/veterinarians`, {
+        return fetchWithAuth(`${API_URL}/veterinarians`, {
             method: "POST",
             body: JSON.stringify(veterinarianToUpload),
             headers: {
@@ -65,7 +68,7 @@ class VeterinariansManager {
     };
 
     static update = (vet: Veterinarian): Promise<Veterinarian> => {
-        return fetch(`${API_URL}/veterinarians/${vet.id}`, {
+        return fetchWithAuth(`${API_URL}/veterinarians/${vet.id}`, {
             method: "PUT",
             body: JSON.stringify(vet),
             headers: {
@@ -84,7 +87,7 @@ class VeterinariansManager {
     };
 
     static delete = (veterinarian: Veterinarian): Promise<Veterinarian> => {
-        return fetch(`${API_URL}/veterinarians/${veterinarian.id}`, {
+        return fetchWithAuth(`${API_URL}/veterinarians/${veterinarian.id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

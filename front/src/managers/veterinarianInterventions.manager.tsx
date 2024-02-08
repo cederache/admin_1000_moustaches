@@ -1,5 +1,6 @@
 import VeterinarianInterventionDTO from "../logic/dto/VeterinarianInterventionDTO";
 import VeterinarianIntervention from "../logic/entities/VeterinarianIntervention";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -19,7 +20,9 @@ class VeterinarianInterventionsManager {
     };
 
     static getAll = () => {
-        return fetch(`${API_URL}/veterinarianInterventions`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/veterinarianInterventions`, {
+            method: "GET",
+        })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -34,7 +37,7 @@ class VeterinarianInterventionsManager {
     };
 
     static getById = (id: number) => {
-        return fetch(`${API_URL}/veterinarianInterventions/${id}`, {
+        return fetchWithAuth(`${API_URL}/veterinarianInterventions/${id}`, {
             method: "GET",
         })
             .then((response) => {
@@ -49,7 +52,7 @@ class VeterinarianInterventionsManager {
     };
 
     static getByAnimalId = (animalId: number) => {
-        return fetch(
+        return fetchWithAuth(
             `${API_URL}/veterinarianInterventions/withAnimalId/${animalId}`,
             { method: "GET" }
         )
@@ -67,7 +70,7 @@ class VeterinarianInterventionsManager {
     };
 
     static getByVeterinarianId = (vetId: number) => {
-        return fetch(
+        return fetchWithAuth(
             `${API_URL}/veterinarianInterventions/withVeterinarianId/${vetId}`,
             { method: "GET" }
         )
@@ -87,7 +90,7 @@ class VeterinarianInterventionsManager {
     static create = (vetInter: VeterinarianIntervention) => {
         const vetInterToUpload = this.formatForServer(vetInter);
 
-        return fetch(`${API_URL}/veterinarianInterventions`, {
+        return fetchWithAuth(`${API_URL}/veterinarianInterventions`, {
             method: "POST",
             body: JSON.stringify(vetInterToUpload),
             headers: {
@@ -106,13 +109,16 @@ class VeterinarianInterventionsManager {
     };
 
     static update = (vetInter: VeterinarianIntervention) => {
-        return fetch(`${API_URL}/veterinarianInterventions/${vetInter.id}`, {
-            method: "PUT",
-            body: JSON.stringify(vetInter),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
+        return fetchWithAuth(
+            `${API_URL}/veterinarianInterventions/${vetInter.id}`,
+            {
+                method: "PUT",
+                body: JSON.stringify(vetInter),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        )
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -125,12 +131,15 @@ class VeterinarianInterventionsManager {
     };
 
     static delete = (vetInter: VeterinarianIntervention) => {
-        return fetch(`${API_URL}/veterinarianInterventions/${vetInter.id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((response) => {
+        return fetchWithAuth(
+            `${API_URL}/veterinarianInterventions/${vetInter.id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        ).then((response) => {
             if (response.status === 200) {
                 return response.json();
             }

@@ -4,6 +4,7 @@ import AnimalToHostFamily from "../logic/entities/AnimalToHostFamily";
 import AnimalDTO from "../logic/dto/AnimalDTO";
 import AnimalToHostFamilyDTO from "../logic/dto/AnimalToHostFamilyDTO";
 import SpeciesDTO from "../logic/dto/SpeciesDTO";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -26,7 +27,7 @@ class AnimalsManager {
     };
 
     static getAll = (): Promise<Animal[]> => {
-        return fetch(`${API_URL}/animals`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/animals`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -39,7 +40,7 @@ class AnimalsManager {
     };
 
     static getById = (id: number): Promise<Animal> => {
-        return fetch(`${API_URL}/animals/${id}`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/animals/${id}`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -54,7 +55,7 @@ class AnimalsManager {
     static getByHostFamilyId = (
         hostFamilyId: number
     ): Promise<AnimalToHostFamily[]> => {
-        return fetch(
+        return fetchWithAuth(
             `${API_URL}/animalsToHostFamilies/withHostFamilyId/${hostFamilyId}`,
             { method: "GET" }
         )
@@ -74,7 +75,7 @@ class AnimalsManager {
     };
 
     static getSpecies = (): Promise<Species[]> => {
-        return fetch(`${API_URL}/species`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/species`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -100,7 +101,7 @@ class AnimalsManager {
     static create = (animal: Animal): Promise<Animal> => {
         const animalToUpload = this.formatForServer(animal);
 
-        return fetch(`${API_URL}/animals`, {
+        return fetchWithAuth(`${API_URL}/animals`, {
             method: "POST",
             body: JSON.stringify(animalToUpload),
             headers: {
@@ -121,7 +122,7 @@ class AnimalsManager {
     static update = (animal: Animal): Promise<Animal> => {
         const animalToUpload = this.formatForServer(animal);
 
-        return fetch(`${API_URL}/animals/${animalToUpload.id}`, {
+        return fetchWithAuth(`${API_URL}/animals/${animalToUpload.id}`, {
             method: "PUT",
             body: JSON.stringify(animalToUpload),
             headers: {
@@ -140,7 +141,7 @@ class AnimalsManager {
     };
 
     static delete = (animal: Animal): Promise<string> => {
-        return fetch(`${API_URL}/animals/${animal.id}`, {
+        return fetchWithAuth(`${API_URL}/animals/${animal.id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
