@@ -141,7 +141,7 @@ Veterinarians.updateById = (id, vet, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -167,7 +167,7 @@ Veterinarians.remove = (id, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;

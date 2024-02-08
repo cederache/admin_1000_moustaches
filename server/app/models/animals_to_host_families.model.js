@@ -144,7 +144,7 @@ AnimalsToHostFamilies.update = (animalToHostFamily, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -173,13 +173,18 @@ AnimalsToHostFamilies.remove = (animalId, hostFamilyId, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
-          result({ kind: `not_found with ids ${animalId} ${hostFamilyId}` }, null);
+          result(
+            { kind: `not_found with ids ${animalId} ${hostFamilyId}` },
+            null
+          );
           return;
         }
 
-        console.log(`deleted ${tableName} with animalId ${animalId} and hostFamilyId ${hostFamilyId}`);
+        console.log(
+          `deleted ${tableName} with animalId ${animalId} and hostFamilyId ${hostFamilyId}`
+        );
         result(null, res);
       }
     )

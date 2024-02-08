@@ -1,0 +1,38 @@
+import SpeciesDTO from "../logic/dto/SpeciesDTO";
+import Species from "../logic/entities/Species";
+
+const API_URL = process.env.REACT_APP_API_URL;
+
+class SpeciesManager {
+    static format = (species: any): Species => {
+        return new SpeciesDTO(species).toEntity();
+    };
+
+    static getAll = (): Promise<Species[]> => {
+        return fetch(`${API_URL}/species`, { method: "GET" })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
+            })
+            .then((species) => species.map(SpeciesManager.format));
+    };
+
+    static getById = (id: number): Promise<Species> => {
+        return fetch(`${API_URL}/species/${id}`, { method: "GET" })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                return response.json().then((json) => {
+                    throw new Error(`Server error - ${json.message}`);
+                });
+            })
+            .then(SpeciesManager.format);
+    };
+}
+
+export default SpeciesManager;

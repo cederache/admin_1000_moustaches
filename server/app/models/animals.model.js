@@ -34,7 +34,7 @@ const fields = [
   "anti_parasitic_date",
   "transfer_certificate",
   "reserved",
-  "need_icad_duplicate"
+  "need_icad_duplicate",
 ];
 
 // constructor
@@ -170,7 +170,7 @@ Animals.updateById = (id, animal, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -196,7 +196,7 @@ Animals.remove = (id, result) => {
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;

@@ -4,7 +4,7 @@ const AnimalsToHostFamilies = require("../models/animals_to_host_families.model.
 exports.create = (req, res) => {
   AnimalsToHostFamilies.create(req.body, (err, data) => {
     if (err) {
-      if (res.kind == "not_found") {
+      if (res.kind === "not_found") {
         res.status(404).send({
           message: "Not found",
         });
@@ -25,7 +25,7 @@ exports.findAll = (req, res) => {
 
   AnimalsToHostFamilies.getAll(name, (err, data) => {
     if (err) {
-      if (res.kind == "not_found") {
+      if (res.kind === "not_found") {
         res.status(404).send({
           message: "Not found",
         });
@@ -46,7 +46,7 @@ exports.findAllWithAnimalId = (req, res) => {
 
   AnimalsToHostFamilies.getAllWithAnimalId(animalId, (err, data) => {
     if (err) {
-      if (res.kind == "not_found") {
+      if (res.kind === "not_found") {
         res.status(404).send({
           message: "Not found",
         });
@@ -67,7 +67,7 @@ exports.findAllWithHostFamilyId = (req, res) => {
 
   AnimalsToHostFamilies.getAllWithHostFamilyId(hostFamilyId, (err, data) => {
     if (err) {
-      if (res.kind == "not_found") {
+      if (res.kind === "not_found") {
         res.status(404).send({
           message: "Not found",
         });
@@ -86,7 +86,7 @@ exports.findAllWithHostFamilyId = (req, res) => {
 exports.update = (req, res) => {
   AnimalsToHostFamilies.update(req.body, (err, data) => {
     if (err) {
-      if (res.kind == "not_found") {
+      if (res.kind === "not_found") {
         res.status(404).send({
           message: "Not found",
         });
@@ -103,26 +103,22 @@ exports.update = (req, res) => {
 
 // Delete a AnimalsToHostFamilies with the specified id in the request
 exports.delete = (req, res) => {
-  AnimalsToHostFamilies.remove(
-    req.params.aId,
-    req.params.hfId,
-    (err, data) => {
-      if (err) {
-        if (res.kind == "not_found") {
-          res.status(404).send({
-            message: "Not found",
-          });
-        } else {
-          console.error(err);
-          res.status(500).send({
-            message:
-              err.message ||
-              "Some error occured while deleting animal to host family",
-          });
-        }
-      } else res.send(data);
-    }
-  );
+  AnimalsToHostFamilies.remove(req.params.aId, req.params.hfId, (err, data) => {
+    if (err) {
+      if (res.kind === "not_found") {
+        res.status(404).send({
+          message: "Not found",
+        });
+      } else {
+        console.error(err);
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occured while deleting animal to host family",
+        });
+      }
+    } else res.send(data);
+  });
 };
 
 // Delete all AnimalsToHostFamilies from the database.
