@@ -2,6 +2,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase-config";
 import User from "../logic/entities/User";
 import UserDTO from "../logic/dto/UserDTO";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -21,7 +22,7 @@ class UsersManager {
     };
 
     static getAll = (): Promise<User[]> => {
-        return fetch(`${API_URL}/users`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/users`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -34,7 +35,7 @@ class UsersManager {
     };
 
     static getAllReferents = (): Promise<User[]> => {
-        return fetch(`${API_URL}/users`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/users`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -51,7 +52,7 @@ class UsersManager {
     };
 
     static getById = (id: number): Promise<User> => {
-        return fetch(`${API_URL}/users/${id}`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/users/${id}`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -67,7 +68,7 @@ class UsersManager {
         const userToUpload = this.formatForServer(user);
 
         console.log("Will call post on users");
-        return fetch(`${API_URL}/users`, {
+        return fetchWithAuth(`${API_URL}/users`, {
             method: "POST",
             body: JSON.stringify(userToUpload),
             headers: {
@@ -86,7 +87,7 @@ class UsersManager {
     };
 
     static update = (user: User): Promise<User> => {
-        return fetch(`${API_URL}/users/${user.id}`, {
+        return fetchWithAuth(`${API_URL}/users/${user.id}`, {
             method: "PUT",
             body: JSON.stringify(user),
             headers: {
@@ -105,7 +106,7 @@ class UsersManager {
     };
 
     static delete = (user: User) => {
-        return fetch(`${API_URL}/users/${user.id}`, {
+        return fetchWithAuth(`${API_URL}/users/${user.id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

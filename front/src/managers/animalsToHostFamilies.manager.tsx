@@ -1,6 +1,6 @@
-import HostFamiliesManager from "./hostFamilies.manager";
 import AnimalToHostFamily from "../logic/entities/AnimalToHostFamily";
 import AnimalToHostFamilyDTO from "../logic/dto/AnimalToHostFamilyDTO";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -21,9 +21,12 @@ class AnimalsToHostFamiliesManager {
     };
 
     static getByAnimalId = (id: number) => {
-        return fetch(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
-            method: "GET",
-        })
+        return fetchWithAuth(
+            `${API_URL}/animalsToHostFamilies/withAnimalId/${id}`,
+            {
+                method: "GET",
+            }
+        )
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -43,7 +46,7 @@ class AnimalsToHostFamiliesManager {
         const animalToHostFamilyToUpload =
             this.formatForServer(animalToHostFamily);
 
-        return fetch(`${API_URL}/animalsToHostFamilies`, {
+        return fetchWithAuth(`${API_URL}/animalsToHostFamilies`, {
             method: "POST",
             body: JSON.stringify(animalToHostFamilyToUpload),
             headers: {
@@ -64,7 +67,7 @@ class AnimalsToHostFamiliesManager {
     static update = (animalToHostFamily: AnimalToHostFamily) => {
         const hostFamilyToUpload = this.formatForServer(animalToHostFamily);
 
-        return fetch(
+        return fetchWithAuth(
             `${API_URL}/animalsToHostFamilies/animalId/${animalToHostFamily.animal_id}/hostFamilyId/${animalToHostFamily.host_family_id}`,
             {
                 method: "PUT",
@@ -86,7 +89,7 @@ class AnimalsToHostFamiliesManager {
     };
 
     static delete = (animalToHostFamily: AnimalToHostFamily) => {
-        return fetch(
+        return fetchWithAuth(
             `${API_URL}/animalsToHostFamilies/animalId/${animalToHostFamily.animal_id}/hostFamilyId/${animalToHostFamily.host_family_id}`,
             {
                 method: "DELETE",

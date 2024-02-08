@@ -1,6 +1,4 @@
-import Animal from "./Animal";
 import DateObject from "./DateObject";
-import HostFamily from "./HostFamily";
 
 class AnimalToHostFamily {
     animal_id: number;

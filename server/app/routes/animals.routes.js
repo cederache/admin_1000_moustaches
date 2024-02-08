@@ -1,25 +1,26 @@
 module.exports = (app) => {
   const animals = require("../controllers/animals.controller.js");
+  const { checkIfAuthenticated } = require("../auth/auth-middleware.js");
 
   var router = require("express").Router();
 
   // Create a new Animals
-  router.post("/", animals.create);
+  router.post("/", checkIfAuthenticated, animals.create);
 
   // Retrieve all Animals
-  router.get("/", animals.findAll);
+  router.get("/", checkIfAuthenticated, animals.findAll);
 
   // Retrieve a single Animals with id
-  router.get("/:id", animals.findOne);
+  router.get("/:id", checkIfAuthenticated, animals.findOne);
 
   // Update a Animals with id
-  router.put("/:id", animals.update);
+  router.put("/:id", checkIfAuthenticated, animals.update);
 
   // Delete a Animals with id
-  router.delete("/:id", animals.delete);
+  router.delete("/:id", checkIfAuthenticated, animals.delete);
 
   // Delete all Animals
-  router.delete("/", animals.deleteAll);
+  router.delete("/", checkIfAuthenticated, animals.deleteAll);
 
   app.use("/animals", router);
 };

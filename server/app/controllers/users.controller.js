@@ -1,9 +1,20 @@
+const admin = require("firebase-admin");
 const Users = require("../models/users.model.js");
 
 // Create and Save a new Users
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
+  const { email, password, firstname, name } = req.body;
+
+  const user = await admin.auth().createUser({
+    email: email,
+    password: password,
+    displayName: `${firstname} ${name}`,
+  });
+
   Users.create(req.body, (err, data) => {
     if (err) {
+      admin.auth().deleteUser(user.uid);
+
       res.status(500).send({
         message: err.message || "Some error occurred while creating a user.",
       });

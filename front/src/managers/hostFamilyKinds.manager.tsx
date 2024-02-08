@@ -1,4 +1,5 @@
 import HostFamilyKind from "../logic/entities/HostFamilyKind";
+import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -12,7 +13,7 @@ class HostFamilyKindsManager {
     };
 
     static getAll = (): Promise<HostFamilyKind[]> => {
-        return fetch(`${API_URL}/hostFamilyKinds`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/hostFamilyKinds`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -27,7 +28,9 @@ class HostFamilyKindsManager {
     };
 
     static getById = (id: number): Promise<HostFamilyKind> => {
-        return fetch(`${API_URL}/hostFamilyKinds/${id}`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/hostFamilyKinds/${id}`, {
+            method: "GET",
+        })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -40,7 +43,7 @@ class HostFamilyKindsManager {
     };
 
     static getByHostFamilyId = (id: number): Promise<HostFamilyKind[]> => {
-        return fetch(
+        return fetchWithAuth(
             `${API_URL}/hostFamilyToHostFamilyKinds/withHostFamilyId/${id}`,
             {
                 method: "GET",
@@ -63,7 +66,7 @@ class HostFamilyKindsManager {
         hostFamilyKindId: number,
         hostFamilyId: number
     ) => {
-        return fetch(`${API_URL}/hostFamilyToHostFamilyKinds`, {
+        return fetchWithAuth(`${API_URL}/hostFamilyToHostFamilyKinds`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -86,7 +89,7 @@ class HostFamilyKindsManager {
         hostFamilyKindId: number,
         hostFamilyId: number
     ) => {
-        return fetch(
+        return fetchWithAuth(
             `${API_URL}/hostFamilyToHostFamilyKinds/hostFamilyKind/${hostFamilyKindId}/hostFamily/${hostFamilyId}`,
             {
                 method: "DELETE",

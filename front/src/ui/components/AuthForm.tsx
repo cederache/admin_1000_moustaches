@@ -114,10 +114,10 @@ const AuthForm: FC<AuthFormProps> = ({
                         message: "Connexion réussie.\nBienvenue",
                         level: "success",
                     });
-                    sessionStorage.setItem(
-                        "Auth Token",
-                        response.user.refreshToken
-                    );
+                    return response.user.getIdToken();
+                })
+                .then((token) => {
+                    sessionStorage.setItem("Auth Token", token);
                     window.location.href = "/";
                 })
                 .catch((error) => {
