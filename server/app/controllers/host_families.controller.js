@@ -5,8 +5,7 @@ exports.create = (req, res) => {
   HostFamilies.create(req.body, (err, data) => {
     if (err) {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating a host family.",
+        message: err.message || "Some error occurred while creating a host family.",
       });
     } else res.send(data);
   });
@@ -19,8 +18,7 @@ exports.findAll = (req, res) => {
   HostFamilies.getAll(name, (err, data) => {
     if (err) {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving host families.",
+        message: err.message || "Some error occurred while retrieving host families.",
       });
     } else res.send(data);
   });
@@ -33,9 +31,7 @@ exports.findOne = (req, res) => {
   HostFamilies.findById(id, (err, data) => {
     if (err) {
       res.status(500).send({
-        message:
-          err.message ||
-          `Some error occurred while retrieving host family with id ${id}.`,
+        message: err.message || `Some error occurred while retrieving host family with id ${id}.`,
       });
     } else res.send(data);
   });
@@ -46,13 +42,11 @@ exports.update = (req, res) => {
   const id = req.params.id;
 
   HostFamilies.updateById(id, req.body, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
-        message:
-          err.message ||
-          `Some error occurred while updating host family with id ${id}.`,
+        message: err.message || `Some error occurred while updating host family with id ${id}.`,
       });
-    else res.send(data);
+    } else res.send(data);
   });
 };
 
@@ -61,13 +55,11 @@ exports.delete = (req, res) => {
   const id = req.params.id;
 
   HostFamilies.remove(id, (err, data) => {
-    if (err)
+    if (err) {
       res.status(500).send({
-        message:
-          err.message ||
-          `Some error occurred while deleting host family with id ${id}.`,
+        message: err.message || `Some error occurred while deleting host family with id ${id}.`,
       });
-    else res.send(data);
+    } else res.send(data);
   });
 };
 
