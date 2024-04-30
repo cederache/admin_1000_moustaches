@@ -23,6 +23,7 @@ import {
     MdSave,
     MdDelete,
     MdDirections,
+    MdThumbUp,
 } from "react-icons/md";
 import AnimalsManager from "../../../managers/animals.manager";
 import UsersManager from "../../../managers/users.manager";
@@ -41,6 +42,7 @@ import NotificationSystem from "react-notification-system";
 import User from "../../../logic/entities/User";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import { useHistory } from "react-router-dom";
+import { RiZzzFill } from "react-icons/ri";
 
 interface HostFamilyDetailPageProps {
     match: {
@@ -482,19 +484,33 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                 )}
                             </Col>
                             <Col xs={"auto"} className="justify-content-end">
-                                <Label>{"Active"}</Label>
-                                <Switch
-                                    id="break"
-                                    key="break"
-                                    isOn={!hostFamily.on_break}
-                                    disabled={!isEditing}
-                                    handleToggle={() => {
-                                        setHostFamily({
-                                            ...hostFamily,
-                                            on_break: !hostFamily.on_break,
-                                        });
-                                    }}
-                                />
+                                <Row>
+                                    <Col>
+                                        <Label>{"Statut"}</Label>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        {hostFamily.on_break ? (
+                                            <RiZzzFill />
+                                        ) : (
+                                            <MdThumbUp />
+                                        )}
+                                        <Switch
+                                            id="break"
+                                            key="break"
+                                            isOn={!hostFamily.on_break}
+                                            disabled={!isEditing}
+                                            handleToggle={() => {
+                                                setHostFamily({
+                                                    ...hostFamily,
+                                                    on_break:
+                                                        !hostFamily.on_break,
+                                                });
+                                            }}
+                                        />
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
                     </CardHeader>
@@ -575,12 +591,13 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                 <Label>Permis de conduire</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={hostFamily.driver_license}
+                                    value={hostFamily.driver_license ?? null}
                                     disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
-                                            driver_license: newValue,
+                                            driver_license:
+                                                newValue ?? undefined,
                                         });
                                     }}
                                 />
@@ -589,12 +606,12 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                 <Label>Véhiculé·e</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={hostFamily.has_vehicule}
+                                    value={hostFamily.has_vehicule ?? null}
                                     disabled={!isEditing}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
-                                            has_vehicule: newValue,
+                                            has_vehicule: newValue ?? undefined,
                                         });
                                     }}
                                 />
@@ -1010,14 +1027,16 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
                                                 value={
-                                                    hostFamily.can_provide_veterinary_care
+                                                    hostFamily.can_provide_veterinary_care ??
+                                                    null
                                                 }
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setHostFamily({
                                                         ...hostFamily,
                                                         can_provide_veterinary_care:
-                                                            newValue,
+                                                            newValue ??
+                                                            undefined,
                                                     });
                                                 }}
                                             />
@@ -1027,14 +1046,16 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
                                                 value={
-                                                    hostFamily.can_provide_sociabilisation
+                                                    hostFamily.can_provide_sociabilisation ??
+                                                    null
                                                 }
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setHostFamily({
                                                         ...hostFamily,
                                                         can_provide_sociabilisation:
-                                                            newValue,
+                                                            newValue ??
+                                                            undefined,
                                                     });
                                                 }}
                                             />
@@ -1047,14 +1068,16 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
                                                 value={
-                                                    hostFamily.can_host_disable_animal
+                                                    hostFamily.can_host_disable_animal ??
+                                                    null
                                                 }
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setHostFamily({
                                                         ...hostFamily,
                                                         can_host_disable_animal:
-                                                            newValue,
+                                                            newValue ??
+                                                            undefined,
                                                     });
                                                 }}
                                             />
@@ -1066,14 +1089,16 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
                                                 value={
-                                                    hostFamily.can_provide_night_care
+                                                    hostFamily.can_provide_night_care ??
+                                                    null
                                                 }
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setHostFamily({
                                                         ...hostFamily,
                                                         can_provide_night_care:
-                                                            newValue,
+                                                            newValue ??
+                                                            undefined,
                                                     });
                                                 }}
                                             />

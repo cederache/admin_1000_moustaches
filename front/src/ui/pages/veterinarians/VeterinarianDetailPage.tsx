@@ -375,12 +375,15 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({
                                 <Row>
                                     <Col xs={6}>
                                         <BooleanNullableDropdown
-                                            value={veterinarian.emergencies}
+                                            value={
+                                                veterinarian.emergencies ?? null
+                                            }
                                             disabled={!isEditing}
                                             onChange={(newValue) => {
                                                 setVeterinarian({
                                                     ...veterinarian,
-                                                    emergencies: newValue,
+                                                    emergencies:
+                                                        newValue ?? undefined,
                                                 });
                                             }}
                                         />

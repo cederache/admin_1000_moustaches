@@ -404,12 +404,13 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                 <Label>Diffusable</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={animal.broadcastable}
+                                    value={animal.broadcastable ?? null}
                                     disabled={!isEditing || animal.adopted}
                                     onChange={(newValue) =>
                                         setAnimal({
                                             ...animal,
-                                            broadcastable: newValue,
+                                            broadcastable:
+                                                newValue ?? undefined,
                                         })
                                     }
                                 />
@@ -418,12 +419,12 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                 <Label>Réservable</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={animal.bookable}
+                                    value={animal.bookable ?? null}
                                     disabled={!isEditing || animal.adopted}
                                     onChange={(newValue) =>
                                         setAnimal({
                                             ...animal,
-                                            bookable: newValue,
+                                            bookable: newValue ?? undefined,
                                         })
                                     }
                                 />
@@ -432,12 +433,12 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                 <Label>Réservé·e</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={animal.reserved}
+                                    value={animal.reserved ?? null}
                                     disabled={!isEditing || animal.adopted}
                                     onChange={(newValue) =>
                                         setAnimal({
                                             ...animal,
-                                            reserved: newValue,
+                                            reserved: newValue ?? undefined,
                                         })
                                     }
                                 />
@@ -446,12 +447,12 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                 <Label>Adopté·e</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={animal.adopted}
+                                    value={animal.adopted ?? null}
                                     disabled={!isEditing}
                                     onChange={(newValue) =>
                                         setAnimal({
                                             ...animal,
-                                            adopted: newValue,
+                                            adopted: newValue ?? undefined,
                                         })
                                     }
                                 />
@@ -816,12 +817,16 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             <Label>Stérilisé·e</Label>
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
-                                                value={animal.sterilised}
+                                                value={
+                                                    animal.sterilised ?? null
+                                                }
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setAnimal({
                                                         ...animal,
-                                                        sterilised: newValue,
+                                                        sterilised:
+                                                            newValue ??
+                                                            undefined,
                                                     });
                                                 }}
                                             />
@@ -836,7 +841,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                                     <BooleanNullableDropdown
                                                         withNewLine={true}
                                                         value={
-                                                            animal.need_external_access
+                                                            animal.need_external_access ??
+                                                            null
                                                         }
                                                         disabled={!isEditing}
                                                         onChange={(
@@ -845,7 +851,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                                             setAnimal({
                                                                 ...animal,
                                                                 need_external_access:
-                                                                    newValue,
+                                                                    newValue ??
+                                                                    undefined,
                                                             });
                                                         }}
                                                     />
@@ -855,7 +862,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                                     <BooleanNullableDropdown
                                                         withNewLine={true}
                                                         value={
-                                                            animal.fiv_negative
+                                                            animal.fiv_negative ??
+                                                            null
                                                         }
                                                         disabled={!isEditing}
                                                         onChange={(
@@ -864,7 +872,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                                             setAnimal({
                                                                 ...animal,
                                                                 fiv_negative:
-                                                                    newValue,
+                                                                    newValue ??
+                                                                    undefined,
                                                             });
                                                         }}
                                                     />
@@ -874,7 +883,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                                     <BooleanNullableDropdown
                                                         withNewLine={true}
                                                         value={
-                                                            animal.felv_negative
+                                                            animal.felv_negative ??
+                                                            null
                                                         }
                                                         disabled={!isEditing}
                                                         onChange={(
@@ -883,7 +893,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                                             setAnimal({
                                                                 ...animal,
                                                                 felv_negative:
-                                                                    newValue,
+                                                                    newValue ??
+                                                                    undefined,
                                                             });
                                                         }}
                                                     />
@@ -971,14 +982,16 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
                                                 value={
-                                                    animal.transfer_certificate
+                                                    animal.transfer_certificate ??
+                                                    null
                                                 }
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setAnimal({
                                                         ...animal,
                                                         transfer_certificate:
-                                                            newValue,
+                                                            newValue ??
+                                                            undefined,
                                                     });
                                                 }}
                                             />

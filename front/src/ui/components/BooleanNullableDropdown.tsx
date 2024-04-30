@@ -2,8 +2,8 @@ import React, { FC, ReactElement } from "react";
 import NullableDropdown from "./NullableDropdown";
 
 interface BooleanNullableDropdownProps {
-    value: boolean | undefined;
-    onChange: (value: boolean | undefined) => void;
+    value: boolean | null;
+    onChange: (value: boolean | null) => void;
     [key: string]: any;
 }
 
@@ -35,7 +35,7 @@ const BooleanNullableDropdown: FC<BooleanNullableDropdownProps> = ({
                     } else if (newValue === "Non") {
                         onChange(false);
                     } else {
-                        onChange(undefined);
+                        onChange(null);
                     }
                 },
             }}

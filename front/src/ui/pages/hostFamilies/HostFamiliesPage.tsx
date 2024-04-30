@@ -90,7 +90,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             },
         },
     ]);
-    const [filterBreak, setFilterBreak] = useState<boolean | null>(null);
+    const [filterBreak, setFilterBreak] = useState<boolean | null>(false);
     const [filterTemporary, setFilterTemporary] = useState<boolean | null>(
         null
     );
@@ -315,20 +315,20 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                 withNewLine={true}
                                 color={"primary"}
                                 value={filterBreak}
-                                values={[1, 0, undefined]}
-                                valueDisplayName={(onBreak) =>
-                                    onBreak === undefined
+                                values={[true, false, null]}
+                                valueDisplayName={(onBreak: boolean | null) =>
+                                    onBreak === null
                                         ? "Toutes"
-                                        : onBreak === 1
+                                        : onBreak === true
                                         ? "En pause"
                                         : "Actives"
                                 }
-                                valueActiveCheck={(onBreak) =>
+                                valueActiveCheck={(onBreak: boolean | null) =>
                                     onBreak === filterBreak
                                 }
                                 key={"onBreak"}
                                 onChange={(newBreak) =>
-                                    setFilterBreak(newBreak)
+                                    setFilterBreak(newBreak ?? null)
                                 }
                             />
                         </Col>
