@@ -15,7 +15,14 @@ import {
 } from "reactstrap";
 import HostFamiliesManager from "../../../managers/hostFamilies.manager";
 import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
-import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
+import {
+    MdRefresh,
+    MdAssignment,
+    MdAddBox,
+    MdFilterAlt,
+    MdOutlineThumbUp,
+} from "react-icons/md";
+import { RiZzzFill } from "react-icons/ri";
 import { sortBy } from "../../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
@@ -429,8 +436,8 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                                 isMain: false,
                                             },
                                             {
-                                                key: "mail",
-                                                value: "E-mail",
+                                                key: "situation",
+                                                value: "Situation",
                                                 isMain: false,
                                             },
                                             {
@@ -443,9 +450,15 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                         values={filteredHostFamilies.map(
                                             (hostFamily) => {
                                                 return {
+                                                    status: hostFamily.on_break ? (
+                                                        <RiZzzFill />
+                                                    ) : (
+                                                        <MdOutlineThumbUp />
+                                                    ),
                                                     name: hostFamily.displayName,
                                                     phone: hostFamily.phone,
-                                                    mail: hostFamily.mail,
+                                                    situation:
+                                                        hostFamily.situation,
                                                     hostFamilyDetail: (
                                                         <Button
                                                             color="info"

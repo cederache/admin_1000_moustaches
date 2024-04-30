@@ -600,6 +600,22 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                                 />
                             </Col>
                         </Row>
+                        <Row>
+                            <Col>
+                                <Label>Situation</Label>
+                                <Input
+                                    type="textarea"
+                                    value={hostFamily.situation || ""}
+                                    disabled={!isEditing}
+                                    onChange={(evt) =>
+                                        setHostFamily({
+                                            ...hostFamily,
+                                            situation: evt.target.value,
+                                        })
+                                    }
+                                />
+                            </Col>
+                        </Row>
                         <Accordion
                             className="pb-3"
                             open={openContactInfo}

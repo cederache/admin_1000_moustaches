@@ -27,6 +27,7 @@ class HostFamily {
     membership_up_to_date?: boolean;
     referent_id?: number;
     is_temporary?: boolean;
+    situation?: string;
 
     displayName: string;
 
@@ -60,6 +61,7 @@ class HostFamily {
             hf.host_conditions,
             hf.referent_id,
             hf.is_temporary,
+            hf.situation,
             hf.kinds
         );
     }
@@ -91,6 +93,7 @@ class HostFamily {
         host_conditions?: string,
         referent_id?: number,
         is_temporary?: boolean,
+        situation?: string,
         kinds?: HostFamilyKind[]
     ) {
         this.id = id;
@@ -119,6 +122,7 @@ class HostFamily {
         this.membership_up_to_date = membership_up_to_date;
         this.referent_id = referent_id;
         this.is_temporary = is_temporary;
+        this.situation = situation;
 
         this.displayName = this.firstname + " " + this.name;
 
