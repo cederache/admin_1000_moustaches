@@ -1,4 +1,5 @@
 import HostFamily from "../entities/HostFamily";
+import HostFamilyKind from "../entities/HostFamilyKind";
 
 class HostFamilyDTO {
     id: number;
@@ -27,6 +28,7 @@ class HostFamilyDTO {
     membership_up_to_date: number;
     referent_id?: number;
     is_temporary: number;
+    host_family_kinds_ids?: number[];
 
     constructor(hostFamily: any) {
         this.id = hostFamily.id;
@@ -55,9 +57,11 @@ class HostFamilyDTO {
         this.membership_up_to_date = hostFamily.membership_up_to_date;
         this.referent_id = hostFamily.referent_id;
         this.is_temporary = hostFamily.is_temporary;
+        let ids = hostFamily.host_family_kinds as string;
+        this.host_family_kinds_ids = ids?.split(",").map((id) => parseInt(id)) ?? [];
     }
 
-    toEntity(): HostFamily {
+    toEntity(hostFamilyKinds: HostFamilyKind[]): HostFamily {
         return {
             id: this.id,
             name: this.name,
@@ -86,7 +90,7 @@ class HostFamilyDTO {
             referent_id: this.referent_id,
             is_temporary: this.is_temporary === 1,
             displayName: this.firstname + " " + this.name,
-            kinds: [],
+            kinds: hostFamilyKinds.filter((kind) => this.host_family_kinds_ids?.includes(kind.id)),
         };
     }
 }

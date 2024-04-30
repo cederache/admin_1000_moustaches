@@ -2,7 +2,9 @@ import AnimalToHostFamilyDTO from "../logic/dto/AnimalToHostFamilyDTO";
 import HostFamilyDTO from "../logic/dto/HostFamilyDTO";
 import AnimalToHostFamily from "../logic/entities/AnimalToHostFamily";
 import HostFamily from "../logic/entities/HostFamily";
+import HostFamilyKind from "../logic/entities/HostFamilyKind";
 import fetchWithAuth from "../middleware/fetch-middleware";
+import HostFamilyKindsManager from "./hostFamilyKinds.manager";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -11,8 +13,13 @@ class HostFamiliesManager {
         return new HostFamily();
     };
 
-    static format = (hostFamily: any): HostFamily => {
-        return new HostFamilyDTO(hostFamily).toEntity();
+    static format = (
+        hostFamily: any,
+        hostFamilyKinds: HostFamilyKind[]
+    ): HostFamily => {
+        let hfDTO = new HostFamilyDTO(hostFamily);
+
+        return hfDTO.toEntity(hostFamilyKinds);
     };
 
     static formatForServer = (hostFamily: HostFamily) => {
@@ -20,31 +27,45 @@ class HostFamiliesManager {
     };
 
     static getAll = () => {
-        return fetchWithAuth(`${API_URL}/hostFamilies`, { method: "GET" })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                return response.json().then((json) => {
-                    throw new Error(`Server error - ${json.message}`);
-                });
-            })
-            .then((hostFamilies) =>
-                hostFamilies.map(HostFamiliesManager.format)
-            );
+        let hostFamilyKinds: HostFamilyKind[] = [];
+        return HostFamilyKindsManager.getAll().then((kinds) => {
+            hostFamilyKinds = kinds;
+            return fetchWithAuth(`${API_URL}/hostFamilies`, { method: "GET" })
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    return response.json().then((json) => {
+                        throw new Error(`Server error - ${json.message}`);
+                    });
+                })
+                .then((hostFamilies) =>
+                    hostFamilies.map((hf: any) =>
+                        HostFamiliesManager.format(hf, hostFamilyKinds)
+                    )
+                );
+        });
     };
 
     static getById = (id: number) => {
-        return fetchWithAuth(`${API_URL}/hostFamilies/${id}`, { method: "GET" })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                return response.json().then((json) => {
-                    throw new Error(`Server error - ${json.message}`);
-                });
+        let hostFamilyKinds: HostFamilyKind[] = [];
+        return HostFamilyKindsManager.getAll().then((kinds) => {
+            hostFamilyKinds = kinds;
+            return fetchWithAuth(`${API_URL}/hostFamilies/${id}`, {
+                method: "GET",
             })
-            .then(HostFamiliesManager.format);
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    return response.json().then((json) => {
+                        throw new Error(`Server error - ${json.message}`);
+                    });
+                })
+                .then((hf: any) =>
+                    HostFamiliesManager.format(hf, hostFamilyKinds)
+                );
+        });
     };
 
     static getByAnimalId = (id: number): Promise<AnimalToHostFamily[]> => {
@@ -87,7 +108,9 @@ class HostFamiliesManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then(HostFamiliesManager.format);
+            .then((hf: any) =>
+                HostFamiliesManager.format(hf, hostFamily.kinds)
+            );
     };
 
     static update = (hostFamily: HostFamily): Promise<HostFamily> => {
@@ -108,7 +131,9 @@ class HostFamiliesManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then(HostFamiliesManager.format);
+            .then((hf: any) =>
+                HostFamiliesManager.format(hf, hostFamily.kinds)
+            );
     };
 
     static delete = (hostFamily: HostFamily) => {
