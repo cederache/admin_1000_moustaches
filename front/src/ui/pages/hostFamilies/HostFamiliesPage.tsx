@@ -310,7 +310,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     </Row>
                     <Row>
                         <Col className="mb-0">
-                            <Label>En pause</Label>
+                            <Label>Statut</Label>
                             <Dropdown
                                 withNewLine={true}
                                 color={"primary"}
@@ -425,6 +425,11 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                 <Col xs={12} className="table-responsive">
                                     <SortableTable
                                         columns={[
+                                            {
+                                                key: "status",
+                                                value: "Statut",
+                                                isMain: false,
+                                            },
                                             {
                                                 key: "name",
                                                 value: "Nom Prénom",
