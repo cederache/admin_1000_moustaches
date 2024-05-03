@@ -35,6 +35,8 @@ const fields = [
   "transfer_certificate",
   "reserved",
   "need_icad_duplicate",
+  "contract_sent",
+  "album_created",
 ];
 
 // constructor
@@ -66,24 +68,20 @@ Animals.create = (newEntity, result) => {
   });
 
   sql.connect((connection) =>
-    connection.query(
-      `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
-      fieldsData,
-      (err, res) => {
-        connection.end();
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
-        }
-
-        console.log(`created ${tableName}: `, {
-          id: res.insertId,
-          ...newEntity,
-        });
-        result(null, { id: res.insertId, ...newEntity });
+    connection.query(`INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`, fieldsData, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      console.log(`created ${tableName}: `, {
+        id: res.insertId,
+        ...newEntity,
+      });
+      result(null, { id: res.insertId, ...newEntity });
+    })
   );
 };
 
@@ -159,53 +157,67 @@ Animals.updateById = (id, animal, result) => {
   fieldsData.push(id);
 
   sql.connect((connection) =>
-    connection.query(
-      `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
-      fieldsData,
-      (err, res) => {
-        connection.end();
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
-        }
-
-        if (res.affectedRows === 0) {
-          // not found Animal with the id
-          result({ kind: "not_found" }, null);
-          return;
-        }
-
-        console.log(`updated ${tableName}: `, { id: id, ...animal });
-        result(null, { id: id, ...animal });
+    connection.query(`UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`, fieldsData, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log(`updated ${tableName}: `, { id: id, ...animal });
+      result(null, { id: id, ...animal });
+    })
+  );
+};
+
+Animals.resetContractSent = (id, result) => {
+  sql.connect((connection) =>
+    connection.query(`UPDATE ${tableName} SET contract_sent = 0 WHERE id = ?`, id, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log(`reset contract_sent for ${tableName} with id: `, id);
+      result(null, res);
+    })
   );
 };
 
 Animals.remove = (id, result) => {
   sql.connect((connection) =>
-    connection.query(
-      `DELETE FROM ${tableName} WHERE id = ?`,
-      id,
-      (err, res) => {
-        connection.end();
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
-        }
-
-        if (res.affectedRows === 0) {
-          // not found Animal with the id
-          result({ kind: "not_found" }, null);
-          return;
-        }
-
-        console.log(`deleted ${tableName} with id: `, id);
-        result(null, res);
+    connection.query(`DELETE FROM ${tableName} WHERE id = ?`, id, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log(`deleted ${tableName} with id: `, id);
+      result(null, res);
+    })
   );
 };
 

@@ -444,20 +444,6 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                 />
                             </Col>
                             <Col md={4} lg={3}>
-                                <Label>Adopté·e</Label>
-                                <BooleanNullableDropdown
-                                    withNewLine={true}
-                                    value={animal.adopted ?? null}
-                                    disabled={!isEditing}
-                                    onChange={(newValue) =>
-                                        setAnimal({
-                                            ...animal,
-                                            adopted: newValue ?? undefined,
-                                        })
-                                    }
-                                />
-                            </Col>
-                            <Col md={4} lg={3}>
                                 <Label>Duplicata ICAD nécessaire ?</Label>
                                 <NullableDropdown
                                     withNewLine={true}
@@ -496,6 +482,50 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                                 newNeedIcadDuplicate,
                                         });
                                     }}
+                                />
+                            </Col>
+                            <Col md={4} lg={3}>
+                                <Label>Adopté·e</Label>
+                                <BooleanNullableDropdown
+                                    withNewLine={true}
+                                    value={animal.adopted ?? null}
+                                    disabled={!isEditing}
+                                    onChange={(newValue) =>
+                                        setAnimal({
+                                            ...animal,
+                                            adopted: newValue ?? undefined,
+                                        })
+                                    }
+                                />
+                            </Col>
+                            <Col md={4} lg={3}>
+                                <Label>Album créé</Label>
+                                <BooleanNullableDropdown
+                                    withNewLine={true}
+                                    value={animal.album_created ?? null}
+                                    disabled={!isEditing || animal.adopted}
+                                    onChange={(newValue) =>
+                                        setAnimal({
+                                            ...animal,
+                                            album_created:
+                                                newValue ?? undefined,
+                                        })
+                                    }
+                                />
+                            </Col>
+                            <Col md={4} lg={3}>
+                                <Label>Contrat envoyé</Label>
+                                <BooleanNullableDropdown
+                                    withNewLine={true}
+                                    value={animal.contract_sent ?? null}
+                                    disabled={!isEditing || animal.adopted}
+                                    onChange={(newValue) =>
+                                        setAnimal({
+                                            ...animal,
+                                            contract_sent:
+                                                newValue ?? undefined,
+                                        })
+                                    }
                                 />
                             </Col>
                         </Row>
@@ -1101,7 +1131,9 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                             hostFamilies={hostFamilies}
                             animalToHostFamilies={animalToHostFamilies}
                             notificationSystem={notificationSystem}
-                            shouldRefresh={getAnimalToHostFamilies}
+                            shouldRefresh={() => {
+                                getAnimalToHostFamilies()?.then(getAnimal);
+                            }}
                             {...props}
                         />
                     </>

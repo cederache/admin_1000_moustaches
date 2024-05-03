@@ -1,3 +1,4 @@
+const Animals = require("./animals.model.js");
 const sql = require("./db.js");
 
 const tableName = "AnimalsToHostFamilies";
@@ -28,25 +29,29 @@ AnimalsToHostFamilies.create = (newEntity, result) => {
   });
 
   sql.connect((connection) =>
-    connection.query(
-      `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
-      fieldsData,
-      (err, res) => {
-        connection.end();
+    connection.query(`INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`, fieldsData, (err, res) => {
+      connection.end();
 
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(`created ${tableName}: `, {
+        id: res.insertId,
+        ...newEntity,
+      });
+
+      Animals.resetContractSent(newEntity.animal_id, (err, res) => {
         if (err) {
-          console.log("error: ", err);
-          result(err, null);
+          console.log("error while reseting animal contract_sent: ", err);
+          result(null, { id: res.insertId, ...newEntity });
           return;
         }
-
-        console.log(`created ${tableName}: `, {
-          id: res.insertId,
-          ...newEntity,
-        });
         result(null, { id: res.insertId, ...newEntity });
-      }
-    )
+      });
+    })
   );
 };
 
@@ -105,10 +110,7 @@ AnimalsToHostFamilies.getAllWithHostFamilyId = (host_family_id, result) => {
         return;
       }
 
-      console.log(
-        `getAllWithHostFamilyId(${host_family_id}) : ${tableName}: `,
-        res
-      );
+      console.log(`getAllWithHostFamilyId(${host_family_id}) : ${tableName}: `, res);
       result(null, res);
     })
   );
@@ -132,62 +134,58 @@ AnimalsToHostFamilies.update = (animalToHostFamily, result) => {
   fieldsData.push(animalToHostFamily.host_family_id);
 
   sql.connect((connection) =>
-    connection.query(
-      `UPDATE ${tableName} SET ${fieldsRequest} WHERE animal_id = ? AND host_family_id = ?`,
-      fieldsData,
-      (err, res) => {
-        connection.end();
+    connection.query(`UPDATE ${tableName} SET ${fieldsRequest} WHERE animal_id = ? AND host_family_id = ?`, fieldsData, (err, res) => {
+      connection.end();
 
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
-        }
-
-        if (res.affectedRows === 0) {
-          // not found Animal with the id
-          result({ kind: "not_found" }, null);
-          return;
-        }
-
-        console.log(`updated ${tableName}: `, {
-          ...animalToHostFamily,
-        });
-        result(null, { ...animalToHostFamily });
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log(`updated ${tableName}: `, {
+        ...animalToHostFamily,
+      });
+      result(null, { ...animalToHostFamily });
+    })
   );
 };
 
 AnimalsToHostFamilies.remove = (animalId, hostFamilyId, result) => {
   sql.connect((connection) =>
-    connection.query(
-      `DELETE FROM ${tableName} WHERE animal_id = ? AND host_family_id = ?`,
-      [animalId, hostFamilyId],
-      (err, res) => {
-        connection.end();
+    connection.query(`DELETE FROM ${tableName} WHERE animal_id = ? AND host_family_id = ?`, [animalId, hostFamilyId], (err, res) => {
+      connection.end();
 
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
-        }
-
-        if (res.affectedRows === 0) {
-          // not found Animal with the id
-          result(
-            { kind: `not_found with ids ${animalId} ${hostFamilyId}` },
-            null
-          );
-          return;
-        }
-
-        console.log(
-          `deleted ${tableName} with animalId ${animalId} and hostFamilyId ${hostFamilyId}`
-        );
-        result(null, res);
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: `not_found with ids ${animalId} ${hostFamilyId}` }, null);
+        return;
+      }
+
+      console.log(`deleted ${tableName} with animalId ${animalId} and hostFamilyId ${hostFamilyId}`);
+
+      Animals.resetContractSent(animalId, (err, res) => {
+        if (err) {
+          console.log("error while reseting animal contract_sent: ", err);
+          result(null, res);
+          return;
+        }
+        result(null, res);
+      });
+      result(null, res);
+    })
   );
 };
 

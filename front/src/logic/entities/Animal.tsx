@@ -37,6 +37,8 @@ class Animal {
     need_icad_duplicate?: string;
     current_host_family_id?: string;
     current_host_family_referent_id?: number;
+    contract_sent?: boolean;
+    album_created?: boolean;
 
     birthdateObject: DateObject;
     entry_dateObject: DateObject;
@@ -84,7 +86,9 @@ class Animal {
             animal.reserved,
             animal.need_icad_duplicate,
             animal.current_host_family_id,
-            animal.current_host_family_referent_id
+            animal.current_host_family_referent_id,
+            animal.contract_sent,
+            animal.album_created
         );
     }
 
@@ -123,7 +127,9 @@ class Animal {
         reserved?: boolean,
         need_icad_duplicate?: string,
         current_host_family_id?: string,
-        current_host_family_referent_id?: number
+        current_host_family_referent_id?: number,
+        contract_sent?: boolean,
+        album_created?: boolean
     ) {
         this.id = id;
         this.name = name;
@@ -160,6 +166,8 @@ class Animal {
         this.need_icad_duplicate = need_icad_duplicate;
         this.current_host_family_id = current_host_family_id;
         this.current_host_family_referent_id = current_host_family_referent_id;
+        this.contract_sent = contract_sent;
+        this.album_created = album_created;
 
         this.birthdateObject = new DateObject();
         this.entry_dateObject = new DateObject();
