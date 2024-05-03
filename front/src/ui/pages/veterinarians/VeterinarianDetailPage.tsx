@@ -106,9 +106,9 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({
                 setGeocodeFound(null);
                 Geocode.getCoordinatesFromAddress(veterinarian.address)
                     .then((coordinates) => {
-                        if (coordinates !== null && coordinates.length > 1) {
-                            veterinarian.latitude = coordinates[1];
-                            veterinarian.longitude = coordinates[0];
+                        if (coordinates !== null) {
+                            veterinarian.latitude = coordinates.lat;
+                            veterinarian.longitude = coordinates.lng;
                         } else {
                             console.warn("Can't get coordinates for address");
                             veterinarian.latitude = undefined;
@@ -119,7 +119,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({
 
                         saveIfNeeded();
                     })
-                    .catch((err) => {
+                    .catch((err: Error) => {
                         console.error(err);
                         setIsGeocoding(false);
                         setGeocodeFound(false);

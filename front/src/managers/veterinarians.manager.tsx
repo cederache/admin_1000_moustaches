@@ -2,7 +2,7 @@ import Veterinarian from "../logic/entities/Veterinarian";
 import VeterinarianDTO from "../logic/dto/VeterinarianDTO";
 import fetchWithAuth from "../middleware/fetch-middleware";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 class VeterinariansManager {
     static dateFields = [];

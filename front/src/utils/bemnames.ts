@@ -1,8 +1,8 @@
 import classNames from "classnames";
 
-export const createBEM = (namespace) => {
+export const createBEM = (namespace: string | undefined) => {
     return {
-        create: (blockName) => {
+        create: (blockName: string) => {
             let block = blockName;
 
             if (typeof namespace === "string") {
@@ -10,13 +10,13 @@ export const createBEM = (namespace) => {
             }
 
             return {
-                b: (...more) => {
+                b: (...more: (string | undefined)[]) => {
                     return classNames(block, more);
                 },
-                e: (className, ...more) => {
+                e: (className: string, ...more: (string | undefined)[]) => {
                     return classNames(`${block}__${className}`, more);
                 },
-                m: (className, ...more) => {
+                m: (className: string, ...more: (string | undefined)[]) => {
                     return classNames(`${block}--${className}`, more);
                 },
             };

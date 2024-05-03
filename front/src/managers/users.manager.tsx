@@ -4,7 +4,7 @@ import User from "../logic/entities/User";
 import UserDTO from "../logic/dto/UserDTO";
 import fetchWithAuth from "../middleware/fetch-middleware";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 class UsersManager {
     static dateFields = [];

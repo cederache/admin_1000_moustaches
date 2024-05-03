@@ -9,7 +9,7 @@ const Footer = () => {
         <Navbar>
             <Nav navbar>
                 <NavItem>
-                    ⓒ 2022 -{" "}
+                    ⓒ 2024 -{" "}
                     <SourceLink link="https://1000moustaches.fr">
                         1000 moustaches
                     </SourceLink>

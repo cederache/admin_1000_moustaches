@@ -30,7 +30,7 @@ const UserDetailPage = React.lazy(() =>
 );
 
 const getBasename = () => {
-    return `/${process.env.PUBLIC_URL.split("/").pop()}`;
+    return `/${import.meta.env.VITE_PUBLIC_URL?.split("/").pop()}`;
 };
 
 class App extends React.Component {

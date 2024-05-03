@@ -19,7 +19,7 @@ import L from "leaflet";
 // User
 export const UserIcon = L.icon({
     iconUrl: userIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [100, 100],
     iconAnchor: [50, 50],
 });
@@ -53,43 +53,43 @@ export const GreenIcon = L.icon({
 // Animals
 export const CatIcon = L.icon({
     iconUrl: catIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });
 export const KittenIcon = L.icon({
     iconUrl: kittenIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });
 export const DogIcon = L.icon({
     iconUrl: dogIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });
 export const KittenFeedingIcon = L.icon({
     iconUrl: kittenFeedingIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });
 export const PuppyIcon = L.icon({
     iconUrl: puppyIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });
 export const RabbitIcon = L.icon({
     iconUrl: rabbitIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });
 export const NACIcon = L.icon({
     iconUrl: rabbitIcon,
-    shadowUrl: null,
+    shadowUrl: undefined,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
 });

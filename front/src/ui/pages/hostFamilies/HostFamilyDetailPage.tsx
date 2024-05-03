@@ -210,9 +210,9 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({
                 setGeocodeFound(null);
                 Geocode.getCoordinatesFromAddress(hostFamily.address)
                     .then((coordinates) => {
-                        if (coordinates !== null && coordinates.length > 1) {
-                            hostFamily.latitude = coordinates[1];
-                            hostFamily.longitude = coordinates[0];
+                        if (coordinates !== null) {
+                            hostFamily.latitude = coordinates.lat;
+                            hostFamily.longitude = coordinates.lng;
                         } else {
                             console.warn("Can't get coordinates for address");
                             hostFamily.latitude = undefined;
