@@ -46,11 +46,11 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
     const [filterBroadcastable, setFilterBroadcastable] = useState<
         boolean | null
     >(null);
-    const [filterReserved, setFilterReserved] = useState<boolean | undefined>();
-    const [filterAdopted, setFilterAdopted] = useState<boolean | undefined>();
-    const [filterDead, setFilterDead] = useState<number>(0);
-    const [filterSpecies, setFilterSpecies] = useState<Species | undefined>();
-    const [filterReferent, setFilterReferent] = useState<User | undefined>();
+    const [filterReserved, setFilterReserved] = useState<boolean | null>(null);
+    const [filterAdopted, setFilterAdopted] = useState<boolean | null>(null);
+    const [filterDead, setFilterDead] = useState<boolean | null>(false);
+    const [filterSpecies, setFilterSpecies] = useState<Species | null>(null);
+    const [filterReferent, setFilterReferent] = useState<User | null>(null);
 
     const [notificationSystem, setNotificationSystem] =
         useState<NotificationSystem | null>(null);
@@ -109,7 +109,8 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
         setReferents([]);
         return UsersManager.getAllReferents()
             .then((referents) => {
-                return sortBy(referents, "display_name") as User[];
+                console.log("referents", referents);
+                return sortBy(referents, "displayName") as User[];
             })
             .then(setReferents)
             .catch((err) => {
@@ -160,25 +161,25 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                     animal.name
                         ?.toLowerCase()
                         .includes(searchText.toLowerCase()) &&
-                    (filterBroadcastable === undefined
+                    (filterBroadcastable === null
                         ? true
                         : animal.broadcastable === filterBroadcastable) &&
-                    (filterReserved === undefined
+                    (filterReserved === null
                         ? true
                         : animal.reserved === filterReserved) &&
-                    (filterAdopted === undefined
+                    (filterAdopted === null
                         ? true
                         : animal.adopted === filterAdopted) &&
-                    (filterSpecies === undefined
+                    (filterSpecies === null
                         ? true
                         : animal.species_id === filterSpecies?.id) &&
-                    (filterReferent === undefined
+                    (filterReferent === null
                         ? true
                         : animal.current_host_family_referent_id ===
                           filterReferent?.id) &&
-                    (filterDead === undefined
+                    (filterDead === null
                         ? true
-                        : filterDead === 0
+                        : filterDead === false
                         ? animal.death_date === undefined
                         : animal.death_date !== undefined)
                 );
@@ -245,11 +246,11 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filterBroadcastable}
-                                        values={[1, 0, undefined]}
+                                        values={[true, false, null]}
                                         valueDisplayName={(value) =>
-                                            value === undefined
+                                            value === null
                                                 ? "Tous"
-                                                : value === 1
+                                                : value === true
                                                 ? "Diffusable"
                                                 : "Non diffusable"
                                         }
@@ -266,11 +267,11 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filterReserved}
-                                        values={[1, 0, undefined]}
+                                        values={[true, false, null]}
                                         valueDisplayName={(value) =>
-                                            value === undefined
+                                            value === null
                                                 ? "Tous"
-                                                : value === 1
+                                                : value === true
                                                 ? "Réservé·e"
                                                 : "Non réservé·es"
                                         }
@@ -287,11 +288,11 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filterAdopted}
-                                        values={[1, 0, undefined]}
+                                        values={[true, false, null]}
                                         valueDisplayName={(value) =>
-                                            value === undefined
+                                            value === null
                                                 ? "Tous"
-                                                : value === 1
+                                                : value === true
                                                 ? "Adopté·e"
                                                 : "Non adopté·es"
                                         }
@@ -308,11 +309,11 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filterDead}
-                                        values={[1, 0, undefined]}
+                                        values={[true, false, null]}
                                         valueDisplayName={(value) =>
-                                            value === undefined
+                                            value === null
                                                 ? "Tous"
-                                                : value === 1
+                                                : value === true
                                                 ? "Décédé·e"
                                                 : "Vivant·e"
                                         }
@@ -333,9 +334,9 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                                 aSpecies.id ===
                                                 filterSpecies?.id
                                         )}
-                                        values={[...species, undefined]}
+                                        values={[...species, null]}
                                         valueDisplayName={(aSpecies) =>
-                                            aSpecies === undefined
+                                            aSpecies === null
                                                 ? "Toutes"
                                                 : aSpecies?.name
                                         }
@@ -356,11 +357,11 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                                 referent.id ===
                                                 filterReferent?.id
                                         )}
-                                        values={[...referents, undefined]}
+                                        values={[...referents, null]}
                                         valueDisplayName={(referent) =>
-                                            referent === undefined
+                                            referent === null
                                                 ? "Tous·tes"
-                                                : referent?.display_name
+                                                : referent?.displayName
                                         }
                                         valueActiveCheck={(referent) =>
                                             referent?.id === filterReferent?.id

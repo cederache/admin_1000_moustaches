@@ -23,6 +23,9 @@ class AnimalsManager {
     };
 
     static formatForServer = (animal: Animal): Animal => {
+        if (animal.death_date === "") {
+            animal.death_date = undefined;
+        }
         return animal;
     };
 

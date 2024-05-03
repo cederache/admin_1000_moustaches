@@ -180,7 +180,7 @@ class Animal {
         this.setBirthdate(this.birthdate);
         this.setEntryDate(this.entry_date);
         this.setExitDate(this.exit_date);
-        this.setDeathDate(this.exit_date);
+        this.setDeathDate(this.death_date);
         this.setFirstVaccinationDate(this.first_vaccination_date);
         this.setSecondVaccinationDate(this.second_vaccination_date);
         this.setAntiParasiticDate(this.anti_parasitic_date);

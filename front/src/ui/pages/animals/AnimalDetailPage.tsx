@@ -122,6 +122,22 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
             return Promise.resolve(null);
         }
         return AnimalsManager.getById(id)
+            .then((animal) => {
+                if (species.length === 0) {
+                    return animal;
+                }
+                let specie = species.find((sp) => sp.id === animal.species_id);
+                if (specie !== undefined) {
+                    animal.setSpecies(specie);
+                } else {
+                    console.warn(
+                        "Can't find species for animal",
+                        animal,
+                        species
+                    );
+                }
+                return animal;
+            })
             .then(setAnimal)
             .catch((err) => {
                 console.error(err);
@@ -228,6 +244,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
         refresh();
     }, []);
 
+    // Auto select first species for new animal
     useEffect(() => {
         if (
             animalId === "new" &&
@@ -241,6 +258,17 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
             });
         }
     }, [animalId, animal, species]);
+
+    useEffect(() => {
+        if (animal !== null && species.length > 0) {
+            let specie = species.find((sp) => sp.id === animal.species_id);
+            if (specie !== undefined) {
+                animal.setSpecies(specie);
+            } else {
+                console.warn("Can't find species for animal", animal, species);
+            }
+        }
+    }, [species, animal]);
 
     const save = () => {
         setIsEditing(false);
