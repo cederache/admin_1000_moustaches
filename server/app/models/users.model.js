@@ -84,7 +84,7 @@ Users.getAll = (name, result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -118,11 +118,11 @@ Users.updateById = (id, user, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -144,11 +144,11 @@ Users.remove = (id, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -167,7 +167,7 @@ Users.removeAll = (result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 

@@ -90,7 +90,7 @@ Species.getAll = (name, result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -124,11 +124,11 @@ Species.updateById = (id, species, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -150,11 +150,11 @@ Species.remove = (id, result) => {
         connection.end();
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
 
-        if (res.affectedRows == 0) {
+        if (res.affectedRows === 0) {
           // not found Animal with the id
           result({ kind: "not_found" }, null);
           return;
@@ -173,7 +173,7 @@ Species.removeAll = (result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 

@@ -1,25 +1,26 @@
 module.exports = (app) => {
   const species = require("../controllers/species.controller.js");
+  const { checkIfAuthenticated } = require("../auth/auth-middleware.js");
 
   var router = require("express").Router();
 
   // Create a new Species
-  router.post("/", species.create);
+  router.post("/", checkIfAuthenticated, species.create);
 
   // Retrieve all Species
-  router.get("/", species.findAll);
+  router.get("/", checkIfAuthenticated, species.findAll);
 
   // Retrieve a single Species with id
-  router.get("/:id", species.findOne);
+  router.get("/:id", checkIfAuthenticated, species.findOne);
 
   // Update a Species with id
-  router.put("/:id", species.update);
+  router.put("/:id", checkIfAuthenticated, species.update);
 
   // Delete a Species with id
-  router.delete("/:id", species.delete);
+  router.delete("/:id", checkIfAuthenticated, species.delete);
 
   // Delete all Species
-  router.delete("/", species.deleteAll);
+  router.delete("/", checkIfAuthenticated, species.deleteAll);
 
   app.use("/species", router);
 };

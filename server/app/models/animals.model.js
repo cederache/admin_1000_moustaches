@@ -19,7 +19,7 @@ const fields = [
   "exit_infos",
   "death_date",
   "death_reason",
-  "sterilisation_date",
+  "sterilised",
   "first_vaccination_date",
   "second_vaccination_date",
   "fiv_negative",
@@ -29,6 +29,14 @@ const fields = [
   "adopted",
   "broadcastable",
   "bookable",
+  "need_external_access",
+  "transferor",
+  "anti_parasitic_date",
+  "transfer_certificate",
+  "reserved",
+  "need_icad_duplicate",
+  "contract_sent",
+  "album_created",
 ];
 
 // constructor
@@ -60,31 +68,31 @@ Animals.create = (newEntity, result) => {
   });
 
   sql.connect((connection) =>
-    connection.query(
-      `INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`,
-      fieldsData,
-      (err, res) => {
-        connection.end();
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
-        }
-
-        console.log(`created ${tableName}: `, {
-          id: res.insertId,
-          ...newEntity,
-        });
-        result(null, { id: res.insertId, ...newEntity });
+    connection.query(`INSERT INTO ${tableName}(${fieldsRequest}) VALUES(${fieldsDataRequest})`, fieldsData, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      console.log(`created ${tableName}: `, {
+        id: res.insertId,
+        ...newEntity,
+      });
+      result(null, { id: res.insertId, ...newEntity });
+    })
   );
 };
 
 Animals.findById = (id, result) => {
   sql.connect((connection) =>
     connection.query(
-      `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id WHERE a.id = ${id}`,
+      `SELECT a.*, s.name as species, hf.id as current_host_family_id, hf.referent_id as current_host_family_referent_id
+      FROM ${tableName} a
+      JOIN Species s ON a.species_id = s.id
+      LEFT JOIN AnimalsToHostFamilies athf ON athf.animal_id = a.id
+      LEFT JOIN HostFamilies hf ON hf.id = athf.host_family_id WHERE a.id = ${id}`,
       (err, res) => {
         connection.end();
         if (err) {
@@ -107,7 +115,11 @@ Animals.findById = (id, result) => {
 };
 
 Animals.getAll = (name, result) => {
-  let query = `SELECT a.*, s.name as species FROM ${tableName} a JOIN Species s ON a.species_id = s.id`;
+  let query = `SELECT a.*, s.name as species, hf.id as current_host_family_id, hf.referent_id as current_host_family_referent_id
+  FROM ${tableName} a
+  JOIN Species s ON a.species_id = s.id
+  LEFT JOIN AnimalsToHostFamilies athf ON athf.animal_id = a.id
+  LEFT JOIN HostFamilies hf ON hf.id = athf.host_family_id`;
 
   if (name) {
     query += ` WHERE name LIKE '%${name}%'`;
@@ -118,7 +130,7 @@ Animals.getAll = (name, result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
@@ -145,53 +157,67 @@ Animals.updateById = (id, animal, result) => {
   fieldsData.push(id);
 
   sql.connect((connection) =>
-    connection.query(
-      `UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`,
-      fieldsData,
-      (err, res) => {
-        connection.end();
-        if (err) {
-          console.log("error: ", err);
-          result(null, err);
-          return;
-        }
-
-        if (res.affectedRows == 0) {
-          // not found Animal with the id
-          result({ kind: "not_found" }, null);
-          return;
-        }
-
-        console.log(`updated ${tableName}: `, { id: id, ...animal });
-        result(null, { id: id, ...animal });
+    connection.query(`UPDATE ${tableName} SET ${fieldsRequest} WHERE id = ?`, fieldsData, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log(`updated ${tableName}: `, { id: id, ...animal });
+      result(null, { id: id, ...animal });
+    })
+  );
+};
+
+Animals.resetContractSent = (id, result) => {
+  sql.connect((connection) =>
+    connection.query(`UPDATE ${tableName} SET contract_sent = 0 WHERE id = ?`, id, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log(`reset contract_sent for ${tableName} with id: `, id);
+      result(null, res);
+    })
   );
 };
 
 Animals.remove = (id, result) => {
   sql.connect((connection) =>
-    connection.query(
-      `DELETE FROM ${tableName} WHERE id = ?`,
-      id,
-      (err, res) => {
-        connection.end();
-        if (err) {
-          console.log("error: ", err);
-          result(null, err);
-          return;
-        }
-
-        if (res.affectedRows == 0) {
-          // not found Animal with the id
-          result({ kind: "not_found" }, null);
-          return;
-        }
-
-        console.log(`deleted ${tableName} with id: `, id);
-        result(null, res);
+    connection.query(`DELETE FROM ${tableName} WHERE id = ?`, id, (err, res) => {
+      connection.end();
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
       }
-    )
+
+      if (res.affectedRows === 0) {
+        // not found Animal with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log(`deleted ${tableName} with id: `, id);
+      result(null, res);
+    })
   );
 };
 
@@ -201,7 +227,7 @@ Animals.removeAll = (result) => {
       connection.end();
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
 
