@@ -25,7 +25,6 @@
         "react-dom": "^17",
         "react-ga": "^2.5.7",
         "react-icons": "^4.4.0",
-        "react-infinite-calendar": "^2.3.1",
         "react-leaflet": "^3",
         "react-loading-icons": "1.1.0",
         "react-notification-system": "^0.2.17",
