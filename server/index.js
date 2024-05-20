@@ -5,12 +5,10 @@ const functions = require("firebase-functions");
 const { glob } = require("glob");
 const path = require("path");
 require("firebase-functions/logger/compat");
-const IP = require("ip");
 
 const app = express();
 
 app.use(cors());
-app.options("*", cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());

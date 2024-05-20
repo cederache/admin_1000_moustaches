@@ -13,9 +13,7 @@ exports.create = (req, res) => {
     (err, data) => {
       if (err)
         res.status(500).send({
-          message:
-            err.message ||
-            "Some error occurred while creating hostFamilyToHostFamilyKinds.",
+          message: err.message || "Some error occurred while creating hostFamilyToHostFamilyKinds.",
         });
       else res.send(data);
     }
@@ -29,9 +27,7 @@ exports.findAll = (req, res) => {
   HostFamilyToHostFamilyKinds.getAll(name, (err, data) => {
     if (err)
       res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving hostFamilyToHostFamilyKinds.",
+        message: err.message || "Some error occurred while retrieving hostFamilyToHostFamilyKinds.",
       });
     else res.send(data);
   });
@@ -41,37 +37,27 @@ exports.findAll = (req, res) => {
 exports.findAllWithHostFamilyKindId = (req, res) => {
   const hostFamilyKindId = req.params.id;
 
-  HostFamilyToHostFamilyKinds.getAllWithHostFamilyKindId(
-    hostFamilyKindId,
-    (err, data) => {
-      if (err)
-        res.status(500).send({
-          message:
-            err.message ||
-            "Some error occurred while retrieving host families with host family kind id.",
-        });
-      else res.send(data);
-    }
-  );
+  HostFamilyToHostFamilyKinds.getAllWithHostFamilyKindId(hostFamilyKindId, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving host families with host family kind id.",
+      });
+    else res.send(data);
+  });
 };
 
 // Retrieve all HostFamilyKinds from the database (with condition).
 exports.findAllWithHostFamilyId = (req, res) => {
   const hostFamilyId = req.params.id;
 
-  HostFamilyToHostFamilyKinds.getAllWithHostFamilyId(
-    hostFamilyId,
-    (err, data) => {
-      console.log("findAllWithHostFamilyId", data);
-      if (err)
-        res.status(500).send({
-          message:
-            err.message ||
-            "Some error occurred while retrieving host family kind with host family id.",
-        });
-      else res.send(data);
-    }
-  );
+  HostFamilyToHostFamilyKinds.getAllWithHostFamilyId(hostFamilyId, (err, data) => {
+    console.log("findAllWithHostFamilyId", data);
+    if (err)
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving host family kind with host family id.",
+      });
+    else res.send(data);
+  });
 };
 
 // Find a single HostFamilyToHostFamilyKinds with a id
@@ -81,9 +67,7 @@ exports.findOne = (req, res) => {
   HostFamilyToHostFamilyKinds.findById(id, (err, data) => {
     if (err) {
       res.status(500).send({
-        message:
-          err.message ||
-          `Some error occurred while retrieving hostFamilyToHostFamilyKinds with id ${id}.`,
+        message: err.message || `Some error occurred while retrieving hostFamilyToHostFamilyKinds with id ${id}.`,
       });
     } else res.send(data);
   });
@@ -99,18 +83,13 @@ exports.delete = (req, res) => {
   const kindId = req.params.kindId;
   const hostFamilyId = req.params.hostFamilyId;
 
-  HostFamilyToHostFamilyKinds.remove(
-    { host_family_kind_id: kindId, host_family_id: hostFamilyId },
-    (err, data) => {
-      if (err) {
-        res.status(500).send({
-          message:
-            err.message ||
-            `Some error occurred while deleting hostFamilyToHostFamilyKinds with ids ${kindId} ${hostFamilyId}.`,
-        });
-      } else res.send(data);
-    }
-  );
+  HostFamilyToHostFamilyKinds.remove({ host_family_kind_id: kindId, host_family_id: hostFamilyId }, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || `Some error occurred while deleting hostFamilyToHostFamilyKinds with ids ${kindId} ${hostFamilyId}.`,
+      });
+    } else res.send(data);
+  });
 };
 
 // Delete all HostFamilyToHostFamilyKinds from the database.
