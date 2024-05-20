@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-debug": "firebase emulators:start --only functions --debug",
-    "start": "firebase emulators:start --only functions",
-    "deploy": "firebase deploy --only functions"
+    "start-debug": "npx firebase emulators:start --only functions --debug",
+    "start": "npx firebase emulators:start --only functions",
+    "deploy": "npx firebase deploy --only functions"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "express": "^4.18.1",
     "firebase-admin": "^10.3.0",
     "firebase-functions": "^4.0.2",
+    "firebase-tools": "^13.9.0",
     "glob": "^8.0.3",
     "helmet": "^6.0.0",
     "ip": "^1.1.8",
