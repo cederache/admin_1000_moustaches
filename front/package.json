@@ -23,15 +23,12 @@
         "react-component-queries": "^2.3.0",
         "react-d3-map": "^0.8.3",
         "react-dom": "^17",
-        "react-ga": "^2.5.7",
         "react-icons": "^4.4.0",
         "react-leaflet": "^3",
         "react-loading-icons": "1.1.0",
         "react-notification-system": "^0.2.17",
         "react-router": "^6.0.0",
         "react-router-dom": "^5.0.0",
-        "react-simple-maps": "^0.12.1",
-        "react-sizeme": "^2.5.2",
         "react-websitecarbon-badge": "^1.0.4",
         "reactstrap": "^9",
         "sass": "^1.55.0",
@@ -68,5 +65,15 @@
         ">0.2%",
         "not dead",
         "not op_mini all"
-    ]
+    ],
+    "overrides": {
+        "react-component-queries": {
+            "react": ">=17",
+            "react-dom": ">=17"
+        },
+        "react-notification-system": {
+            "react": ">=17",
+            "react-dom": ">=17"
+        }
+    }
 }
