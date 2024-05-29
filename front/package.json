@@ -11,7 +11,6 @@
         "@vitejs/plugin-react-swc": "^3.6.0",
         "bootstrap": "^5.1.0",
         "classnames": "^2.2.6",
-        "cross-env": "^7.0.3",
         "d3-geo": "^1.11.3",
         "faker": "^4.1.0",
         "firebase": "^9.13.0",
@@ -42,6 +41,7 @@
     "devDependencies": {
         "@types/leaflet": "^1.9.8",
         "@types/react-router-dom": "^5.3.3",
+        "cross-env": "^7.0.3",
         "serve": "^10.1.2",
         "stylelint": "^9.3.0",
         "stylelint-config-recommended-scss": "^3.2.0",
@@ -51,7 +51,7 @@
         "ts-prune": "^0.10.3"
     },
     "scripts": {
-        "start": "NODE_PATH=./src vite",
+        "start": "cross-env NODE_PATH=./src vite",
         "build": "NODE_PATH=./src tsc && vite build && cp _headers dist/_headers",
         "serve": "NODE_PATH=./src vite preview",
         "deploy": "npm run build && firebase deploy --only hosting"

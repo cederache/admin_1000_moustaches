@@ -95,6 +95,17 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
         }
     };
 
+    const [openBehaviour, setOpenBehaviour] = useState("");
+
+    const toggleBehaviour = (id: string) => {
+        if (openBehaviour === id) {
+            setOpenBehaviour("");
+        } else {
+            setOpenBehaviour(id);
+        }
+    };
+
+
     const [openExit, setOpenExit] = useState("");
 
     const toggleExit = (id: string) => {
@@ -831,7 +842,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                         >
                             <AccordionItem>
                                 <AccordionHeader targetId="1">
-                                    Santé / Comportement
+                                    Santé
                                 </AccordionHeader>
                                 <AccordionBody accordionId="1">
                                     <Row>
@@ -1002,9 +1013,25 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             />
                                         </Col>
                                     </Row>
+                                   
+                                </AccordionBody>
+                            </AccordionItem>
+                        </Accordion>
+                        <Accordion
+                            className="pb-3"
+                            open={openBehaviour}
+                            {...{
+                                toggle: toggleBehaviour,
+                            }}
+                        >
+                            <AccordionItem>
+                                <AccordionHeader targetId="1">
+                                    Comportement
+                                </AccordionHeader>
+                                <AccordionBody accordionId="1">
                                     <Row>
                                         <Col xs={12}>
-                                            <Label>Comportement</Label>
+                                            <Label>Caractère</Label>
                                             <Input
                                                 type="textarea"
                                                 value={animal.behaviour || ""}
@@ -1019,9 +1046,121 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             />
                                         </Col>
                                     </Row>
+                                    <Row>
+                                        <Col xs={6} md={3}>
+                                            <Label>Besoin congénère</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
+                                                value={
+                                                    animal.need_friend ?? null
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        need_friend:
+                                                            newValue ??
+                                                            undefined,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={6} md={3}>
+                                            <Label>Attitude</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
+                                                value={
+                                                    animal.sterilised ?? null
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        sterilised:
+                                                            newValue ??
+                                                            undefined,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={6} md={3}>
+                                            <Label>OK chats</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
+                                                value={
+                                                    animal.cats_ok ?? null
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        cats_ok:
+                                                            newValue ??
+                                                            undefined,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={6} md={3}>
+                                            <Label>OK chiens</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
+                                                value={
+                                                    animal.dogs_ok ?? null
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        dogs_ok:
+                                                            newValue ??
+                                                            undefined,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={6} md={3}>
+                                            <Label>OK enfants</Label>
+                                            <BooleanNullableDropdown
+                                                withNewLine={true}
+                                                value={
+                                                    animal.kids_ok ?? null
+                                                }
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        kids_ok:
+                                                            newValue ??
+                                                            undefined,
+                                                    });
+                                                }}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>Particularité</Label>
+                                            <Input
+                                                type="textarea"
+                                                value={animal.behavior_particularity || ""}
+                                                disabled={!isEditing}
+                                                onChange={(evt) =>
+                                                    setAnimal({
+                                                        ...animal,
+                                                        behavior_particularity:
+                                                            evt.target.value,
+                                                    })
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
                                 </AccordionBody>
                             </AccordionItem>
                         </Accordion>
+
                         <Accordion
                             className="pb-3"
                             open={openExit}

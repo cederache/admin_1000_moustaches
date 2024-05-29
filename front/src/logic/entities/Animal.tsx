@@ -26,6 +26,12 @@ class Animal {
     felv_negative?: boolean;
     health_issues?: string;
     behaviour?: string;
+    need_friend?: boolean;
+    posture?: string;
+    cats_ok?:boolean;
+    dogs_ok?:boolean;
+    kids_ok?:string;
+    particularity?:string;
     adopted?: boolean;
     broadcastable?: boolean;
     bookable?: boolean;
@@ -76,6 +82,12 @@ class Animal {
             animal.felv_negative,
             animal.health_issues,
             animal.behaviour,
+            animal.need_friend,
+            animal.posture,
+            animal.cats_ok,
+            animal.dogs_ok,
+            animal.kids_ok,
+            animal.particularity,
             animal.adopted,
             animal.broadcastable,
             animal.bookable,
@@ -117,6 +129,12 @@ class Animal {
         felv_negative?: boolean,
         health_issues?: string,
         behaviour?: string,
+        need_friend?:boolean,
+        posture?:string,
+        cats_ok?:boolean,
+        dogs_ok?:boolean,
+        kids_ok?:boolean,
+        particularity?:string,
         adopted?: boolean,
         broadcastable?: boolean,
         bookable?: boolean,
