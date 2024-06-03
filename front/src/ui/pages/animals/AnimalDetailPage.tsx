@@ -1052,13 +1052,13 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
                                                 value={
-                                                    animal.need_friend ?? null
+                                                    animal.need_friends ?? null
                                                 }
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setAnimal({
                                                         ...animal,
-                                                        need_friend:
+                                                        need_friends:
                                                             newValue ??
                                                             undefined,
                                                     });
@@ -1067,20 +1067,46 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                         </Col>
                                         <Col xs={6} md={3}>
                                             <Label>Attitude</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={
-                                                    animal.sterilised ?? null
-                                                }
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setAnimal({
-                                                        ...animal,
-                                                        sterilised:
-                                                            newValue ??
-                                                            undefined,
-                                                    });
-                                                }}
+                                            <NullableDropdown
+                                            withNewLine={true}
+                                            color={
+                                            animal.posture === null ||
+                                            animal.posture === undefined
+                                            ? "fearfull"
+                                            : animal.posture===
+                                              "shy"
+                                            ? "info"
+                                            : animal.posture ===
+                                              "sociable"
+                                            ? "success"
+                                            : "danger"
+                                    }
+                                    value={animal.posture}
+                                    values={["nsp", "fearfull", "shy","sociable"]}
+                                    valueDisplayName={(value) =>
+                                        value === null || value === undefined
+                                            ? "NSP"
+                                            : value === "fearfull"
+                                            ? "Craintif"
+                                            : value === "shy"
+                                            ? "Peureux"
+                                            : value === "sociable"
+                                            ? "Sociable"
+                                            : ""
+                                    }
+                                    valueActiveCheck={(value) =>
+                                        animal.posture === value
+                                    }
+                                    key={"posture"}
+                                    disabled={!isEditing}
+                                    onChange={(newPosture) => {
+                                        setAnimal({
+                                            ...animal,
+                                            posture:
+                                                newPosture,
+                                        });
+                                    }}
+
                                             />
                                         </Col>
                                     </Row>

@@ -26,12 +26,12 @@ class Animal {
     felv_negative?: boolean;
     health_issues?: string;
     behaviour?: string;
-    need_friend?: boolean;
+    need_friends?: boolean;
     posture?: string;
     cats_ok?:boolean;
     dogs_ok?:boolean;
-    kids_ok?:string;
-    particularity?:string;
+    kids_ok?:boolean;
+    behavior_particularity?:string;
     adopted?: boolean;
     broadcastable?: boolean;
     bookable?: boolean;
@@ -82,12 +82,12 @@ class Animal {
             animal.felv_negative,
             animal.health_issues,
             animal.behaviour,
-            animal.need_friend,
+            animal.need_friends,
             animal.posture,
             animal.cats_ok,
             animal.dogs_ok,
             animal.kids_ok,
-            animal.particularity,
+            animal.behavior_particularity,
             animal.adopted,
             animal.broadcastable,
             animal.bookable,
@@ -129,12 +129,12 @@ class Animal {
         felv_negative?: boolean,
         health_issues?: string,
         behaviour?: string,
-        need_friend?:boolean,
+        need_friends?:boolean,
         posture?:string,
         cats_ok?:boolean,
         dogs_ok?:boolean,
         kids_ok?:boolean,
-        particularity?:string,
+        behavior_particularity?:string,
         adopted?: boolean,
         broadcastable?: boolean,
         bookable?: boolean,
@@ -173,6 +173,12 @@ class Animal {
         this.felv_negative = felv_negative;
         this.health_issues = health_issues;
         this.behaviour = behaviour;
+        this.need_friends = need_friends;
+        this.posture = posture;
+        this.cats_ok = cats_ok;
+        this.dogs_ok = dogs_ok;
+        this.kids_ok = kids_ok;
+        this.behavior_particularity = behavior_particularity;
         this.adopted = adopted;
         this.broadcastable = broadcastable;
         this.bookable = bookable;
