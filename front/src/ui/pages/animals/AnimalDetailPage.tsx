@@ -105,7 +105,6 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
         }
     };
 
-
     const [openExit, setOpenExit] = useState("");
 
     const toggleExit = (id: string) => {
@@ -1013,7 +1012,6 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             />
                                         </Col>
                                     </Row>
-                                   
                                 </AccordionBody>
                             </AccordionItem>
                         </Accordion>
@@ -1068,45 +1066,49 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                         <Col xs={6} md={3}>
                                             <Label>Attitude</Label>
                                             <NullableDropdown
-                                            withNewLine={true}
-                                            color={
-                                            animal.posture === null ||
-                                            animal.posture === undefined
-                                            ? "fearfull"
-                                            : animal.posture===
-                                              "shy"
-                                            ? "info"
-                                            : animal.posture ===
-                                              "sociable"
-                                            ? "success"
-                                            : "danger"
-                                    }
-                                    value={animal.posture}
-                                    values={["nsp", "fearfull", "shy","sociable"]}
-                                    valueDisplayName={(value) =>
-                                        value === null || value === undefined
-                                            ? "NSP"
-                                            : value === "fearfull"
-                                            ? "Craintif"
-                                            : value === "shy"
-                                            ? "Peureux"
-                                            : value === "sociable"
-                                            ? "Sociable"
-                                            : ""
-                                    }
-                                    valueActiveCheck={(value) =>
-                                        animal.posture === value
-                                    }
-                                    key={"posture"}
-                                    disabled={!isEditing}
-                                    onChange={(newPosture) => {
-                                        setAnimal({
-                                            ...animal,
-                                            posture:
-                                                newPosture,
-                                        });
-                                    }}
-
+                                                withNewLine={true}
+                                                color={
+                                                    animal.posture === null ||
+                                                    animal.posture === undefined
+                                                        ? "fearfull"
+                                                        : animal.posture ===
+                                                          "shy"
+                                                        ? "info"
+                                                        : animal.posture ===
+                                                          "sociable"
+                                                        ? "success"
+                                                        : "danger"
+                                                }
+                                                value={animal.posture}
+                                                values={[
+                                                    "nsp",
+                                                    "fearfull",
+                                                    "shy",
+                                                    "sociable",
+                                                ]}
+                                                valueDisplayName={(value) =>
+                                                    value === null ||
+                                                    value === undefined
+                                                        ? "NSP"
+                                                        : value === "fearfull"
+                                                        ? "Craintif"
+                                                        : value === "shy"
+                                                        ? "Peureux"
+                                                        : value === "sociable"
+                                                        ? "Sociable"
+                                                        : ""
+                                                }
+                                                valueActiveCheck={(value) =>
+                                                    animal.posture === value
+                                                }
+                                                key={"posture"}
+                                                disabled={!isEditing}
+                                                onChange={(newPosture) => {
+                                                    setAnimal({
+                                                        ...animal,
+                                                        posture: newPosture,
+                                                    });
+                                                }}
                                             />
                                         </Col>
                                     </Row>
@@ -1115,9 +1117,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             <Label>OK chats</Label>
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
-                                                value={
-                                                    animal.cats_ok ?? null
-                                                }
+                                                value={animal.cats_ok ?? null}
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setAnimal({
@@ -1133,9 +1133,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             <Label>OK chiens</Label>
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
-                                                value={
-                                                    animal.dogs_ok ?? null
-                                                }
+                                                value={animal.dogs_ok ?? null}
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setAnimal({
@@ -1151,9 +1149,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             <Label>OK enfants</Label>
                                             <BooleanNullableDropdown
                                                 withNewLine={true}
-                                                value={
-                                                    animal.kids_ok ?? null
-                                                }
+                                                value={animal.kids_ok ?? null}
                                                 disabled={!isEditing}
                                                 onChange={(newValue) => {
                                                     setAnimal({
@@ -1171,7 +1167,10 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ match, ...props }) => {
                                             <Label>Particularité</Label>
                                             <Input
                                                 type="textarea"
-                                                value={animal.behavior_particularity || ""}
+                                                value={
+                                                    animal.behavior_particularity ||
+                                                    ""
+                                                }
                                                 disabled={!isEditing}
                                                 onChange={(evt) =>
                                                     setAnimal({

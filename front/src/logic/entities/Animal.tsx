@@ -28,10 +28,10 @@ class Animal {
     behaviour?: string;
     need_friends?: boolean;
     posture?: string;
-    cats_ok?:boolean;
-    dogs_ok?:boolean;
-    kids_ok?:boolean;
-    behavior_particularity?:string;
+    cats_ok?: boolean;
+    dogs_ok?: boolean;
+    kids_ok?: boolean;
+    behavior_particularity?: string;
     adopted?: boolean;
     broadcastable?: boolean;
     bookable?: boolean;
@@ -129,12 +129,12 @@ class Animal {
         felv_negative?: boolean,
         health_issues?: string,
         behaviour?: string,
-        need_friends?:boolean,
-        posture?:string,
-        cats_ok?:boolean,
-        dogs_ok?:boolean,
-        kids_ok?:boolean,
-        behavior_particularity?:string,
+        need_friends?: boolean,
+        posture?: string,
+        cats_ok?: boolean,
+        dogs_ok?: boolean,
+        kids_ok?: boolean,
+        behavior_particularity?: string,
         adopted?: boolean,
         broadcastable?: boolean,
         bookable?: boolean,
