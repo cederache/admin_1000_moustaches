@@ -25,6 +25,12 @@ class AnimalDTO {
     felv_negative?: boolean;
     health_issues?: string;
     behaviour?: string;
+    need_friends?: boolean;
+    posture?: string;
+    cats_ok?: boolean;
+    dogs_ok?: boolean;
+    kids_ok?: boolean;
+    behavior_particularity?: string;
     adopted?: boolean;
     broadcastable?: boolean;
     bookable?: boolean;
@@ -66,6 +72,12 @@ class AnimalDTO {
         this.felv_negative = animal.felv_negative === null ? undefined : animal.felv_negative === 1;
         this.health_issues = animal.health_issues;
         this.behaviour = animal.behaviour;
+        this.need_friends = animal.need_friends === null ? undefined : animal.need_friends === 1;
+        this.posture = animal.posture;
+        this.cats_ok = animal.cats_ok === null ? undefined : animal.cats_ok === 1;
+        this.dogs_ok = animal.dogs_ok === null ? undefined : animal.dogs_ok === 1;
+        this.kids_ok = animal.kids_ok === null ? undefined : animal.kids_ok === 1;
+        this.behavior_particularity = animal.behavior_particularity;
         this.adopted = animal.adopted === null ? undefined : animal.adopted === 1;
         this.broadcastable = animal.broadcastable === null ? undefined : animal.broadcastable === 1;
         this.bookable = animal.bookable === null ? undefined : animal.bookable === 1;
@@ -107,6 +119,12 @@ class AnimalDTO {
             this.felv_negative,
             this.health_issues,
             this.behaviour,
+            this.need_friends,
+            this.posture,
+            this.cats_ok,
+            this.dogs_ok,
+            this.kids_ok,
+            this.behavior_particularity,
             this.adopted,
             this.broadcastable,
             this.bookable,
