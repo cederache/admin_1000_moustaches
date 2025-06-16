@@ -7,3 +7,5 @@ firebase-service-account.json
 .env.local
 .env.production
 node_modules
+front/.env
+server/.env

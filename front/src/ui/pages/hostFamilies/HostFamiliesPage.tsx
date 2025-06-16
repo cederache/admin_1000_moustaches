@@ -19,7 +19,7 @@ import NotificationSystem from "react-notification-system";
 import HostFamily from "../../../logic/entities/HostFamily";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import User from "../../../logic/entities/User";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -121,8 +121,14 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
     const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const mapRef = useRef<L.Map | null>(null);
 
+    const [searchParams] = useSearchParams();
+    const kinds = searchParams.getAll("kinds");
+    const kindsIds = kinds != null ? kinds.map((kind) => parseInt(kind)) : undefined;
+    const isAvailableStr = searchParams.get("isAvailable");
+    const isAvailable = isAvailableStr == "true" ? true : isAvailableStr == "false" ? false : undefined;
+
     const getAllHostFamilies = () => {
-        return HostFamiliesManager.getAll()
+        return HostFamiliesManager.getAll({ kinds: kindsIds, isAvailable })
             .then((hostFamilies) => {
                 return sortBy(hostFamilies || [], "id") as HostFamily[];
             })

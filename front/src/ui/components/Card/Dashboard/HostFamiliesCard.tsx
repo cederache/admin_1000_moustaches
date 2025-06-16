@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardBody, CardTitle, CardText, Row, Col } from "reactstrap";
+import { Card, CardBody, CardTitle, CardText, Row, Col, Button } from "reactstrap";
 import SpeciesCounts from "../../../../logic/entities/SpeciesCounts";
 import { PiCatFill, PiDogFill } from "react-icons/pi";
 import { PiRabbitFill } from "react-icons/pi";
 import { MdPestControlRodent } from "react-icons/md";
 import { SPECIES_ID } from "../../../../utils/constants";
+import { useNavigate } from "react-router-dom";
+import HostFamilyKindsManager from "../../../../managers/hostFamilyKinds.manager";
 
 // pagePermissions[navItem.ressourceName]?.can_read)
-const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | null }) => {
+const HostFamiliesCard = ({ title, datas }: { title: string; datas: SpeciesCounts | null }) => {
+    const navigate = useNavigate();
+    const handleGoToHostFamilies = async (speciesId?: number) => {
+        const hostFamilyKinds = await HostFamilyKindsManager.getAll();
+        const filteredKinds = hostFamilyKinds.filter((hfk) => hfk.species.id == speciesId);
+        var searchParams: String[] = [];
+        filteredKinds.forEach((kind) => {
+            searchParams.push(`kinds=${kind.id}`);
+        });
+        searchParams.push(`isAvailable=true`);
+        const url = speciesId ? `/hostfamilies?${searchParams.join("&")}` : "/hostfamilies?isAvailable=true";
+        navigate(url);
+    };
     const [countDog, setCountDog] = useState<number | undefined>(undefined);
     const [countRabbit, setCountRabbit] = useState<number | undefined>(undefined);
     const [countCat, setCountCat] = useState<number | undefined>(undefined);
@@ -20,9 +34,7 @@ const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | n
         setCountOther(datas?.species.find((specie) => specie.id === SPECIES_ID.OTHER)?.count);
     }, [datas]);
 
-    // if (pagePermissions[navItem.ressourceName]?.can_read != true) {
-    //     return null
-    // }
+    const buttonStyle: React.CSSProperties = { width: "100%", padding: "16px" };
 
     return (
         <Card body className="text-center" xs="auto">
@@ -31,36 +43,36 @@ const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | n
             </CardBody>
             <Row className="justify-content-center">
                 <Col className="d-flex align-items-center" xs="4">
-                    <Card body style={{ borderColor: "#43ABC9" }}>
+                    <Button onClick={() => handleGoToHostFamilies()} style={buttonStyle}>
                         <CardTitle> Total </CardTitle>
                         <CardText className="fs-1">{datas?.total}</CardText>
-                    </Card>
+                    </Button>
                 </Col>
                 <Col xs="4">
-                    <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
+                    <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.DOG)} className="mb-3" style={buttonStyle}>
                         <PiDogFill size={35} />
-                        <CardText className="fs-4"> {countDog ?? "-"} </CardText>
-                    </Card>
+                        <CardText className="fs-4"> {countDog ?? "-"}</CardText>
+                    </Button>
                     <br />
-                    <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
+                    <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.RABBIT)} style={buttonStyle}>
                         <PiRabbitFill size={35} />
                         <CardText className="fs-4"> {countRabbit ?? "-"} </CardText>
-                    </Card>
+                    </Button>
                 </Col>
                 <Col xs="4">
-                    <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
+                    <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.CAT)} className="mb-3" style={buttonStyle}>
                         <PiCatFill size={35} />
                         <CardText className="fs-4"> {countCat ?? "-"} </CardText>
-                    </Card>
+                    </Button>
                     <br />
-                    <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
+                    <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.OTHER)} style={buttonStyle}>
                         <MdPestControlRodent size={35} />
-                        <CardText className="fs-4"> {countOther ?? "-"} </CardText>
-                    </Card>
+                        <CardText className="fs-4"> {countOther ?? "-"}</CardText>
+                    </Button>
                 </Col>
             </Row>
         </Card>
     );
 };
 
-export default AnimalsCard;
+export default HostFamiliesCard;

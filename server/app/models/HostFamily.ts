@@ -91,6 +91,9 @@ export class HostFamily {
   @Column({ nullable: true, default: () => "NULL" })
   situation: string;
 
+  @Column({ nullable: true, default: () => "TRUE" })
+  isAvailable: boolean;
+
   @ManyToMany(() => HostFamilyKind, (hostFamily) => hostFamily.hostFamilies)
   @JoinTable()
   hostFamilyKinds: HostFamilyKind[];

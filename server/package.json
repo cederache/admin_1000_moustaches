@@ -14,7 +14,7 @@
     "serve": "firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "cross-env TS_NODE=true && npm run serve",
-    "start:dev": "cross-env TS_NODE=true && npm run serve",
+    "start:dev": "npm run build:dev && cross-env TS_NODE=true && npm run serve",
     "dev": "concurrently \"npm:watch\" \"npm:serve\"",
     "deploy": "rm -rf dist && export NODE_ENV=production && npm run build:prod && firebase deploy --only functions",
     "logs": "firebase functions:log",
