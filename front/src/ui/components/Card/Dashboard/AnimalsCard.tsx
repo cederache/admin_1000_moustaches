@@ -20,6 +20,10 @@ const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | n
         setCountOther(datas?.species.find((specie) => specie.id === SPECIES_ID.OTHER)?.count);
     }, [datas]);
 
+    // if (pagePermissions[navItem.ressourceName]?.can_read != true) {
+    //     return null
+    // }
+
     return (
         <Card body className="text-center" xs="auto">
             <CardBody>

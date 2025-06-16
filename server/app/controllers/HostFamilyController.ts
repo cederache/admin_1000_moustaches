@@ -13,7 +13,6 @@ export class HostFamilyController {
   async getAllHostFamilies(
     { kinds, isAvailable }: GetAllParams = { kinds: [] }
   ) {
-    console.log("isAvailable", isAvailable);
     return await this.hostFamilyRepository.find({
       relations: {
         hostFamilyKinds: true,

@@ -13,7 +13,6 @@ const HostFamiliesCard = ({ title, datas }: { title: string; datas: SpeciesCount
     const navigate = useNavigate();
     const handleGoToHostFamilies = async (speciesId?: number) => {
         const hostFamilyKinds = await HostFamilyKindsManager.getAll();
-        console.log("hostFamilyKinds", hostFamilyKinds);
         const filteredKinds = hostFamilyKinds.filter((hfk) => hfk.species.id == speciesId);
         var searchParams: String[] = [];
         filteredKinds.forEach((kind) => {

@@ -18,7 +18,6 @@ const HostFamiliesAvailable = () => {
             });
     }, []);
 
-    console.log("host families available", hostFamiliesAvailableData);
     return <HostFamiliesCard title="Nombre de familles d'accueil disponibles" datas={hostFamiliesAvailableData} />;
 };
 export default HostFamiliesAvailable;
