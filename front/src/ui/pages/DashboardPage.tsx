@@ -32,17 +32,11 @@ const DashboardPage: FC = () => {
                 } as CustomBreadcrumbItem,
             ]}
         >
-            <Row>
-                <Col sm={{ size: 4 }}>
-                    <AnimalsNonAdopted />
-                </Col>
-                <Col sm={{ size: 4 }}>
-                    <AnimalsAdopted />
-                </Col>
-                <Col sm={{ size: 4 }}>
-                    <HostFamiliesAvailable />
-                </Col>
-            </Row>
+            <div className="d-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
+                <AnimalsNonAdopted />
+                <AnimalsAdopted />
+                <HostFamiliesAvailable />
+            </div>
         </Page>
     );
 };
