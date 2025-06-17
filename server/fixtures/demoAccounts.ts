@@ -20,19 +20,36 @@ export const createDemoAccounts = async (dataSource: DataSource) => {
   const teams = await dataSource.getRepository(Team).find();
   const adminTeam = teams.find(team => team.name === "Admin");
   const adoptionTeam = teams.find(team => team.name === "Adoption");
+  const pecTeam = teams.find(team => team.name === "Pickup");
+  const comTeam = teams.find(team => team.name === "Communication");
 
   // Create demo user account linked to team
   const demoAccounts = [
     {
       name: "Admin",
       firstname: "Admin",
-      email: "admin@example.com",
+      email: "testadmin@example.com",
       teams: [adminTeam],
     }, {
-      name: 'Adoption',
-      firstname: 'Pole',
-      email: 'pole-adoption@example.com',
+      name: 'ADO',
+      firstname: 'Lécent',
+      email: 'testado@example.com',
       teams: [adoptionTeam],
+    }, {
+      name: 'PEC',
+      firstname: 'Citron',
+      email: 'testpec@example.com',
+      teams: [pecTeam],
+    }, {
+      name: 'COM',
+      firstname: 'Issert',
+      email: 'testcom@example.com',
+      teams: [comTeam],
+    }, {
+      name: 'COM PEC',
+      firstname: 'Able',
+      email: 'testcompec@example.com',
+      teams: [comTeam, pecTeam],
     }
   ];
 
