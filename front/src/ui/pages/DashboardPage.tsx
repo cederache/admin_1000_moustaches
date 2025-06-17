@@ -6,19 +6,45 @@ import PermissionsManager from "../../managers/permissions.manager";
 import Permissions from "../../logic/entities/Permissions";
 import AnimalsNonAdopted from "../components/Card/Dashboard/AnimalsNonAdopted";
 import AnimalsAdopted from "../components/Card/Dashboard/AnimalsAdopted";
-import HostFamiliesCard from "../components/Card/Dashboard/HostFamiliesCard";
 import HostFamiliesAvailable from "../components/Card/Dashboard/HostFamiliesAvailable";
+import useGetPermissions from "../../hooks/useGetPermissions";
 
 type PagePermissions = {
-    canReadPets?: boolean;
-    canReadVets?: boolean;
-    petPermission?: Permissions;
+    // canReadPets?: boolean;
+    // canReadVets?: boolean;
+    cardAnimalsNonAdopted?: Permissions;
+    cardAnimalsAdopted?: Permissions;
+    cardHFAvailabe?: Permissions;
 };
+
+interface Cards {
+    ressourceName: string;
+    component: React.ComponentType;
+}
+
+const cardItems: Cards[] = [
+    {
+        ressourceName: "card_animals_non_adopted",
+        component: AnimalsNonAdopted,
+    },
+    {
+        ressourceName: "card_animals_adopted",
+        component: AnimalsAdopted,
+    },
+    {
+        ressourceName: "card_host_families_available",
+        component: HostFamiliesAvailable,
+    },
+];
 
 const DashboardPage: FC = () => {
     const handleAnimalsClick = (): void => {
         window.location.href = "/animals";
     };
+    const permissionsName: string[] = cardItems
+        .map((item) => item?.ressourceName) //Récupère toutes les ressourceName de cardItems et si il n'y en a pas met undefined
+        .filter((name) => name !== undefined) as string[]; //Filtre pour ne pas avoir dans les résultats les undefined.
+    const pagePermissions = useGetPermissions(permissionsName);
 
     return (
         <Page
@@ -33,9 +59,12 @@ const DashboardPage: FC = () => {
             ]}
         >
             <div className="d-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
-                <AnimalsNonAdopted />
-                <AnimalsAdopted />
-                <HostFamiliesAvailable />
+                {cardItems.map((cardItem, index) => {
+                    if (cardItem.ressourceName === undefined || (cardItem.ressourceName !== undefined && pagePermissions[cardItem.ressourceName]?.can_read)) {
+                        const Component = cardItem.component;
+                        return <Component key={index} />;
+                    }
+                })}
             </div>
         </Page>
     );
