@@ -58,7 +58,15 @@ const DashboardPage: FC = () => {
                 } as CustomBreadcrumbItem,
             ]}
         >
-            <div className="d-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
+            <div
+                className="d-grid"
+                style={{
+                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 450px))",
+                    gap: "1rem",
+                    maxWidth: "1400px",
+                    margin: "0 auto",
+                }}
+            >
                 {cardItems.map((cardItem, index) => {
                     if (cardItem.ressourceName === undefined || (cardItem.ressourceName !== undefined && pagePermissions[cardItem.ressourceName]?.can_read)) {
                         const Component = cardItem.component;
