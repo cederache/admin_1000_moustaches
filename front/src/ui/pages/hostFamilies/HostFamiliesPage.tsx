@@ -20,6 +20,7 @@ import HostFamily from "../../../logic/entities/HostFamily";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import User from "../../../logic/entities/User";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import useGetPermissions from "../../../hooks/useGetPermissions";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -117,6 +118,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
     );
 
     const navigate = useNavigate();
+    const pagePermissions = useGetPermissions(["hf_list"]);
 
     const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const mapRef = useRef<L.Map | null>(null);
@@ -352,9 +354,11 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     />
                 </Col>
                 <Col xs={"auto"}>
-                    <Button onClick={createHostFamily} color={"success"}>
-                        <MdAddBox />
-                    </Button>
+                    {pagePermissions["hf_list"]?.can_create && (
+                        <Button onClick={createHostFamily} color={"success"}>
+                            <MdAddBox />
+                        </Button>
+                    )}
                     <Button className="ms-2" onClick={getAllHostFamilies}>
                         <MdRefresh />
                     </Button>

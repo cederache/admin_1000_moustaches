@@ -13,6 +13,7 @@ import Veterinarian from "../../../logic/entities/Veterinarian";
 import NotificationSystem from "react-notification-system";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import { useNavigate } from "react-router-dom";
+import useGetPermissions from "../../../hooks/useGetPermissions";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -53,6 +54,8 @@ namespace FilterType {
     }
 }
 
+const VET_LIST_RESOURCE = "vet_list";
+
 const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [veterinarians, setVeterinarians] = useState<Veterinarian[]>([]);
@@ -71,6 +74,9 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
     );
 
     const navigate = useNavigate();
+
+    const pagePermissions = useGetPermissions(["vet_list"]);
+    console.log(pagePermissions);
 
     const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
@@ -186,9 +192,11 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                     />
                 </Col>
                 <Col xs={"auto"}>
-                    <Button title="Créer un vétérinaire" className="ms-2" onClick={createVeterinarian} color={"success"}>
-                        <MdAddBox />
-                    </Button>
+                    {pagePermissions["vet_list"]?.can_create && (
+                        <Button title="Créer un vétérinaire" className="ms-2" onClick={createVeterinarian} color={"success"}>
+                            <MdAddBox />
+                        </Button>
+                    )}
                     <Button title="Rafraîchir les données" className="ms-2" onClick={getAllVeterinarians}>
                         <MdRefresh />
                     </Button>
