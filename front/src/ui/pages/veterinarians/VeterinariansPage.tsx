@@ -76,7 +76,6 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
     const navigate = useNavigate();
 
     const pagePermissions = useGetPermissions(["vet_list"]);
-    console.log(pagePermissions);
 
     const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const [mapRef, setMapRef] = useState<L.Map | null>(null);

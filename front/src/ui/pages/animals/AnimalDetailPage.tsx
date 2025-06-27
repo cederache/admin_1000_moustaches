@@ -400,11 +400,20 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <MdDelete />
                             </Button>
                         )}
-                        {!isEditing && (
-                            <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
-                                <MdOutlineModeEdit />
-                            </Button>
-                        )}
+                        {!isEditing &&
+                            (pagePermissions["pet_info"].can_update ||
+                                pagePermissions["pet_pickup"].can_update ||
+                                pagePermissions["pet_health"].can_update ||
+                                pagePermissions["pet_behavior"].can_update ||
+                                pagePermissions["pet_diffusion"].can_update ||
+                                pagePermissions["pet_exit"].can_update ||
+                                pagePermissions["pet_death"].can_update ||
+                                pagePermissions["pet_hist_veto"].can_update ||
+                                pagePermissions["pet_hist_hf"].can_update) && (
+                                <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
+                                    <MdOutlineModeEdit />
+                                </Button>
+                            )}
                         {isEditing && (
                             <Button className="ms-2" color="success" onClick={() => save()}>
                                 <MdSave />
@@ -430,7 +439,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     <Label>Nom</Label>
                                     <Input
                                         value={data.animal.name || ""}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                         onChange={(evt) =>
                                             setData((previousData) => {
                                                 return {
@@ -452,7 +461,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.broadcastable ?? null}
-                                    disabled={!isEditing || data.animal.adopted}
+                                    disabled={!isEditing || data.animal.adopted || !pagePermissions["pet_info"]?.can_update}
                                     onChange={(newValue) =>
                                         setData((previousData) => {
                                             return {
@@ -471,7 +480,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.bookable ?? null}
-                                    disabled={!isEditing || data.animal.adopted}
+                                    disabled={!isEditing || data.animal.adopted || !pagePermissions["pet_info"]?.can_update}
                                     onChange={(newValue) =>
                                         setData((previousData) => {
                                             return {
@@ -490,7 +499,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.reserved ?? null}
-                                    disabled={!isEditing || data.animal.adopted}
+                                    disabled={!isEditing || data.animal.adopted || !pagePermissions["pet_info"]?.can_update}
                                     onChange={(newValue) =>
                                         setData((previousData) => {
                                             return {
@@ -530,7 +539,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     }
                                     valueActiveCheck={(value) => data.animal?.needIcadDuplicate === value}
                                     key={"needIcadDuplicate"}
-                                    disabled={!isEditing || data.animal.adopted}
+                                    disabled={!isEditing || data.animal.adopted || !pagePermissions["pet_info"]?.can_update}
                                     onChange={(newNeedIcadDuplicate) => {
                                         setData((previousData) => {
                                             return {
@@ -549,7 +558,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.adopted ?? null}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                     onChange={(newValue) =>
                                         setData((previousData) => {
                                             return {
@@ -568,7 +577,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.albumCreated ?? null}
-                                    disabled={!isEditing || data.animal.adopted}
+                                    disabled={!isEditing || data.animal.adopted || !pagePermissions["pet_info"]?.can_update}
                                     onChange={(newValue) =>
                                         setData((previousData) => {
                                             return {
@@ -587,7 +596,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.contractSent ?? null}
-                                    disabled={!isEditing || data.animal.adopted}
+                                    disabled={!isEditing || data.animal.adopted || !pagePermissions["pet_info"]?.can_update}
                                     onChange={(newValue) =>
                                         setData((previousData) => {
                                             return {
@@ -623,7 +632,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                         <Label>ICAD</Label>
                                                         <Input
                                                             value={data.animal.icad || ""}
-                                                            disabled={!isEditing}
+                                                            disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                                             onChange={(evt) =>
                                                                 setData((previousData) => {
                                                                     return {
@@ -644,7 +653,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                         <Dropdown
                                                             withNewLine={true}
                                                             color={"primary"}
-                                                            disabled={!isEditing}
+                                                            disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                                             value={{
                                                                 id: data.animal.species?.id,
                                                                 name: data.animal.species?.name,
@@ -671,7 +680,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                         <NullableDropdown
                                                             withNewLine={true}
                                                             color={"primary"}
-                                                            disabled={!isEditing}
+                                                            disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                                             value={
                                                                 data.animal.sexe === undefined || data.animal.sexe === null
                                                                     ? null
@@ -700,7 +709,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                         <Label>Race</Label>
                                                         <Input
                                                             value={data.animal.race || ""}
-                                                            disabled={!isEditing}
+                                                            disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                                             onChange={(evt) =>
                                                                 setData((previousData) => {
                                                                     return {
@@ -723,7 +732,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="date"
                                                     value={data.animal.birthdate}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -742,7 +751,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.distinctiveSigns || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_info"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -778,7 +787,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="date"
                                                     value={data.animal.entryDate}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_pickup"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -797,7 +806,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.placeOfCare || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_pickup"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -818,7 +827,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.reasonForCare || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_pickup"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -837,7 +846,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.careInfos || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_pickup"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -858,7 +867,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.transferor || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_pickup"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -894,7 +903,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="date"
                                                     value={data.animal.firstVaccinationDate}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -913,7 +922,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="date"
                                                     value={data.animal.secondVaccinationDate}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -934,7 +943,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={data.animal.sterilised ?? null}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                     onChange={(newValue) => {
                                                         setData((previousData) => {
                                                             return {
@@ -955,7 +964,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                         <BooleanNullableDropdown
                                                             withNewLine={true}
                                                             value={data.animal.needExternalAccess ?? null}
-                                                            disabled={!isEditing}
+                                                            disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                             onChange={(newValue) => {
                                                                 setData((previousData) => {
                                                                     return {
@@ -974,7 +983,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                         <BooleanNullableDropdown
                                                             withNewLine={true}
                                                             value={data.animal.fivNegative ?? null}
-                                                            disabled={!isEditing}
+                                                            disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                             onChange={(newValue) => {
                                                                 setData((previousData) => {
                                                                     return {
@@ -993,7 +1002,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                         <BooleanNullableDropdown
                                                             withNewLine={true}
                                                             value={data.animal.felvNegative ?? null}
-                                                            disabled={!isEditing}
+                                                            disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                             onChange={(newValue) => {
                                                                 setData((previousData) => {
                                                                     return {
@@ -1016,7 +1025,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="date"
                                                     value={data.animal.antiParasiticDate}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -1037,7 +1046,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.healthIssues || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_health"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -1073,7 +1082,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.behaviour || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_behavior"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -1094,7 +1103,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={data.animal.needFriends ?? null}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_behavior"]?.can_update}
                                                     onChange={(newValue) => {
                                                         setData((previousData) => {
                                                             return {
@@ -1136,7 +1145,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                     }
                                                     valueActiveCheck={(value) => data.animal?.posture === value}
                                                     key={"posture"}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_behavior"]?.can_update}
                                                     onChange={(newPosture) => {
                                                         setData((previousData) => {
                                                             return {
@@ -1157,7 +1166,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={data.animal.catsOk ?? null}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_behavior"]?.can_update}
                                                     onChange={(newValue) => {
                                                         setData((previousData) => {
                                                             return {
@@ -1176,7 +1185,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={data.animal.dogsOk ?? null}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_behavior"]?.can_update}
                                                     onChange={(newValue) => {
                                                         setData((previousData) => {
                                                             return {
@@ -1195,7 +1204,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={data.animal.kidsOk ?? null}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_behavior"]?.can_update}
                                                     onChange={(newValue) => {
                                                         setData((previousData) => {
                                                             return {
@@ -1216,7 +1225,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.behaviorParticularity || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_behavior"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -1253,7 +1262,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={data.animal.transferCertificate ?? null}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_exit"]?.can_update}
                                                     onChange={(newValue) => {
                                                         setData((previousData) => {
                                                             return {
@@ -1272,7 +1281,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="date"
                                                     value={data.animal.exitDate}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_exit"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -1291,7 +1300,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.exitReason || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_exit"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -1327,7 +1336,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="date"
                                                     value={data.animal.deathDate}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_death"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {
@@ -1346,7 +1355,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={data.animal.deathReason || ""}
-                                                    disabled={!isEditing}
+                                                    disabled={!isEditing || !pagePermissions["pet_death"]?.can_update}
                                                     onChange={(evt) =>
                                                         setData((previousData) => {
                                                             return {

@@ -9,6 +9,7 @@ import HostFamily from "../../../logic/entities/HostFamily";
 import NotificationSystem from "react-notification-system";
 import { useNavigate } from "react-router-dom";
 import Animal from "../../../logic/entities/Animal";
+import useGetPermissions from "../../../hooks/useGetPermissions";
 
 interface HostFamiliesHistoryProps {
     animal: Animal;
@@ -20,6 +21,8 @@ interface HostFamiliesHistoryProps {
 
 const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilies, animalToHostFamilies, notificationSystem, shouldRefresh, ...props }) => {
     const navigate = useNavigate();
+
+    const pagePermissions = useGetPermissions(["pet_hist_hf"]);
 
     const [modalAnimalToHostFamily, setModalAnimalToHostFamily] = useState<AnimalToHostFamily | null>(null);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
@@ -63,21 +66,23 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilie
                             <h3>Historique des Familles d'Accueil</h3>
                         </Col>
                         <Col xs={"auto"}>
-                            <Button
-                                color="primary"
-                                onClick={() => {
-                                    if (!animal.id) {
-                                        notificationSystem?.addNotification({
-                                            message: "Sauvegardez d'abord l'animal avant de lui attribuer une famille d'accueil",
-                                            level: "warning",
-                                        });
-                                        return;
-                                    }
-                                    setModalAnimalToHostFamily(AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined));
-                                }}
-                            >
-                                <MdAddBox />
-                            </Button>
+                            {pagePermissions["pet_hist_hf"]?.can_create && (
+                                <Button
+                                    color="primary"
+                                    onClick={() => {
+                                        if (!animal.id) {
+                                            notificationSystem?.addNotification({
+                                                message: "Sauvegardez d'abord l'animal avant de lui attribuer une famille d'accueil",
+                                                level: "warning",
+                                            });
+                                            return;
+                                        }
+                                        setModalAnimalToHostFamily(AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined));
+                                    }}
+                                >
+                                    <MdAddBox />
+                                </Button>
+                            )}
                         </Col>
                     </Row>
                 </CardHeader>
