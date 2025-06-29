@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { SpeciesController } from '../controllers/SpeciesController'
-import { checkIfAuthenticated } from '../auth/auth-middleware'
+import { checkIfAuthenticated } from '../middlewares/auth-middleware'
 
 const router = Router()
 const speciesController = new SpeciesController()
