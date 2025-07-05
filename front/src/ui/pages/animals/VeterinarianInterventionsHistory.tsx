@@ -6,6 +6,8 @@ import VeterinarianInterventionModal from "./VeterinarianInterventionModal";
 import VeterinarianIntervention from "../../../logic/entities/VeterinarianIntervention";
 import NotificationSystem from "react-notification-system";
 import Animal from "../../../logic/entities/Animal";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface VeterinarianInterventionsHistoryProps {
     animal: Animal;
@@ -44,6 +46,8 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
             });
     };
 
+    const pagePermissions = useGetPermissions([Ressource.PET_HIST_VETO]);
+
     return (
         <>
             <Card>
@@ -53,21 +57,23 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                             <h3>Historique des interventions vétérinaires</h3>
                         </Col>
                         <Col xs={"auto"}>
-                            <Button
-                                color="primary"
-                                onClick={() => {
-                                    if (!animal.id) {
-                                        notificationSystem?.addNotification({
-                                            message: "Sauvegardez d'abord l'animal avant d'enregistrer une intervention vétérinaire",
-                                            level: "warning",
-                                        });
-                                        return;
-                                    }
-                                    setModalVeterinarianIntervention(VeterinarianInterventionsManager.createVeterinarianIntervention());
-                                }}
-                            >
-                                <MdAddBox />
-                            </Button>
+                            {pagePermissions[Ressource.PET_HIST_VETO]?.can_create && (
+                                <Button
+                                    color="primary"
+                                    onClick={() => {
+                                        if (!animal.id) {
+                                            notificationSystem?.addNotification({
+                                                message: "Sauvegardez d'abord l'animal avant d'enregistrer une intervention vétérinaire",
+                                                level: "warning",
+                                            });
+                                            return;
+                                        }
+                                        setModalVeterinarianIntervention(VeterinarianInterventionsManager.createVeterinarianIntervention());
+                                    }}
+                                >
+                                    <MdAddBox />
+                                </Button>
+                            )}
                         </Col>
                     </Row>
                 </CardHeader>
