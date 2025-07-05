@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import { PermissionController } from '../controllers/PermissionController';
+import { Ressource } from '../types/ressource';
 
 const permissionController = new PermissionController();
 export enum Method { GET, POST, PUT, DELETE }
 
-export const checkIfPermitted = (ressource: string, method: Method) => {
-
+export const checkIfPermitted = (ressource: Ressource, method: Method) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         let userId = req.authUser?.id;
         if (!userId) {
@@ -38,6 +38,5 @@ export const checkIfPermitted = (ressource: string, method: Method) => {
                 };
         }
         next();
-
     }
 };
