@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { HostFamilyController } from "../controllers/HostFamilyController";
-import { checkIfAuthenticated } from "../auth/auth-middleware";
+import { checkIfAuthenticated, getAuthUser } from "../middlewares/auth-middleware";
+import { checkIfPermitted, Method } from "../middlewares/permission-middleware";
+import { Ressource } from "../types/ressource";
 
 const router = Router();
 const hostFamilyController = new HostFamilyController();
 
-router.get("/", checkIfAuthenticated, async (req, res) => {
+router.get("/", checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.HF_LIST, Method.GET), async (req, res) => {
   const kindsParam = req.query.kinds;
 
   let kinds: string[] = [];
@@ -21,8 +23,8 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
     isAvailableParam == "true"
       ? true
       : isAvailableParam == "false"
-      ? false
-      : undefined;
+        ? false
+        : undefined;
 
   const hostFamilies = await hostFamilyController.getAllHostFamilies({
     kinds,
@@ -31,7 +33,7 @@ router.get("/", checkIfAuthenticated, async (req, res) => {
   res.json(hostFamilies);
 });
 
-router.get("/:id", checkIfAuthenticated, async (req, res) => {
+router.get("/:id", checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.HF_LIST, Method.GET), async (req, res) => {
   const hostFamily = await hostFamilyController.getHostFamilyById(
     parseInt(req.params.id)
   );
@@ -41,12 +43,12 @@ router.get("/:id", checkIfAuthenticated, async (req, res) => {
   res.json(hostFamily);
 });
 
-router.post("/", checkIfAuthenticated, async (req, res) => {
+router.post("/", checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.HF_LIST, Method.POST), async (req, res) => {
   const newHostFamily = await hostFamilyController.createHostFamily(req.body);
   res.status(201).json(newHostFamily);
 });
 
-router.put("/:id", checkIfAuthenticated, async (req, res) => {
+router.put("/:id", checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.HF_CONTACT, Method.PUT), async (req, res) => {
   const updatedHostFamily = await hostFamilyController.updateHostFamily(
     parseInt(req.params.id),
     req.body
@@ -57,7 +59,7 @@ router.put("/:id", checkIfAuthenticated, async (req, res) => {
   res.json(updatedHostFamily);
 });
 
-router.delete("/:id", checkIfAuthenticated, async (req, res) => {
+router.delete("/:id", checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.HF_LIST, Method.DELETE), async (req, res) => {
   await hostFamilyController.deleteHostFamily(parseInt(req.params.id));
   res.status(204).send();
 });

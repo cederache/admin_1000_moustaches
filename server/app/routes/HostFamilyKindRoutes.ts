@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { HostFamilyKindController } from '../controllers/HostFamilyKindController'
-import { checkIfAuthenticated } from '../auth/auth-middleware'
+import { checkIfAuthenticated } from '../middlewares/auth-middleware'
 
 const router = Router()
 const hostFamilyKindController = new HostFamilyKindController()

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { AnimalsCountController } from '../controllers/AnimalsCountController'
-import { checkIfAuthenticated } from '../auth/auth-middleware'
+import { checkIfAuthenticated } from '../middlewares/auth-middleware'
 
 const router = Router()
 const animalsCountController = new AnimalsCountController()

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { UserController } from '../controllers/UserController'
-import { checkIfAuthenticated, getAuthUser } from '../auth/auth-middleware'
+import { checkIfAuthenticated, getAuthUser } from '../middlewares/auth-middleware'
 
 const router = Router()
 const userController = new UserController()

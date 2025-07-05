@@ -1,26 +1,3 @@
-class Permissions {
-    ressource_name: Ressource;
-    can_create: boolean;
-    can_read: boolean;
-    can_update: boolean;
-    can_delete: boolean;
-
-    constructor(
-        ressource_name: string,
-        can_create: boolean,
-        can_read: boolean,
-        can_update: boolean,
-        can_delete: boolean
-    ) {
-        this.ressource_name = Object.values(Ressource).map(r => r.toString()).includes(ressource_name) ? ressource_name as Ressource : Ressource.UNKNOWN;
-        this.can_create = can_create;
-        this.can_read = can_read;
-        this.can_update = can_update;
-        this.can_delete = can_delete;
-    }
-
-}
-
 export enum Ressource {
     PET_LIST = "pet_list",
     PET_INFO = "pet_info",
@@ -45,5 +22,3 @@ export enum Ressource {
     USER_LIST = "user_list",
     UNKNOWN = "unknown"
 }
-
-export default Permissions;
