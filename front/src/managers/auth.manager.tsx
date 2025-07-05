@@ -7,8 +7,6 @@ import PermissionsManager from "./permissions.manager";
 class AuthManager {
     static savePermissions = async () => {
         return PermissionsManager.getAll().then((permissions) => {
-            console.log("récupération des permissions", permissions);
-
             sessionStorage.setItem("permissions", JSON.stringify(permissions));
         });
     };

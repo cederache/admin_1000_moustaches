@@ -11,6 +11,8 @@ import NotificationSystem from "react-notification-system";
 import Veterinarian from "../../../logic/entities/Veterinarian";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import { useNavigate, useParams } from "react-router-dom";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface VeterinarianDetailPageProps {
     [key: string]: any;
@@ -31,6 +33,8 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
     const [shouldSave, setShouldSave] = useState(false);
 
     const navigate = useNavigate();
+
+    const pagePermissions = useGetPermissions([Ressource.VET_INFO]);
 
     const getVeterinarian = () => {
         if (veterinarian !== null) {
@@ -204,7 +208,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 <MdDelete />
                             </Button>
                         )}
-                        {!isEditing && (
+                        {!isEditing && pagePermissions[Ressource.VET_INFO].can_update && (
                             <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
                                 <MdOutlineModeEdit />
                             </Button>

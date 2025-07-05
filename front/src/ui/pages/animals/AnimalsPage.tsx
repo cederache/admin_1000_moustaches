@@ -15,6 +15,8 @@ import User from "../../../logic/entities/User";
 import HostFamily from "../../../logic/entities/HostFamily";
 import NotificationSystem from "react-notification-system";
 import { useNavigate } from "react-router-dom";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 class Filter {
     value: any;
@@ -104,6 +106,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
 
     const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
 
+    const pagePermissions = useGetPermissions([Ressource.PET_LIST]);
     const navigate = useNavigate();
 
     const getSpecies = () => {
@@ -234,9 +237,11 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                     />
                 </Col>
                 <Col xs={"auto"}>
-                    <Button onClick={createAnimal} color={"success"}>
-                        <MdAddBox />
-                    </Button>
+                    {pagePermissions[Ressource.PET_LIST]?.can_create && (
+                        <Button onClick={createAnimal} color={"success"}>
+                            <MdAddBox />
+                        </Button>
+                    )}
                     <Button className="ms-2" onClick={getAllAnimals}>
                         <MdRefresh />
                     </Button>

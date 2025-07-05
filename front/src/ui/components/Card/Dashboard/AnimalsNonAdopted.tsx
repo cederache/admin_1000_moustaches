@@ -15,8 +15,6 @@ const AnimalsNonAdopted = () => {
                 console.error("Erreur lors du chargement des données:", err);
             });
     }, []);
-
-    console.log("animalsData", animalsNonAdoptedData);
     return <AnimalsCard title="Nombre d'animaux présents dans l'association" datas={animalsNonAdoptedData} />;
 };
 export default AnimalsNonAdopted;

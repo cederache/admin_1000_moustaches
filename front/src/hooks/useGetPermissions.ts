@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Permissions from "../logic/entities/Permissions";
+import Permissions, { Ressource } from "../logic/entities/Permissions";
 
 //Récupère les permissions stockées lorsque l'utilisateurice se connecte
 const getPermissions = (): Permissions[] | null => {
@@ -7,7 +7,7 @@ const getPermissions = (): Permissions[] | null => {
     return permissions ? JSON.parse(permissions) : null;
 };
 
-const useGetPermissions = (ressources: string[]) => {
+const useGetPermissions = (ressources: Ressource[]) => {
     //Record<K, T> est un type générique qui permet de définir un objet dont les clés sont de type K et les valeurs sont de type T.
     const [permissionsRecord, setPermissionsRecord] = useState<Record<string, Permissions>>({});
 

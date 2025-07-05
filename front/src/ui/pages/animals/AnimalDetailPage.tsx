@@ -20,6 +20,8 @@ import HostFamily from "../../../logic/entities/HostFamily";
 import VeterinarianIntervention from "../../../logic/entities/VeterinarianIntervention";
 import Animal from "../../../logic/entities/Animal";
 import { useNavigate, useParams } from "react-router-dom";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface AnimalDetailPageProps {
     [key: string]: any;
@@ -58,6 +60,18 @@ class AnimalDetailPageAccordionState {
     }
 }
 
+const permissionsName: Ressource[] = [
+    Ressource.PET_INFO,
+    Ressource.PET_PICKUP,
+    Ressource.PET_HEALTH,
+    Ressource.PET_BEHAVIOR,
+    Ressource.PET_DIFFUSION,
+    Ressource.PET_EXIT,
+    Ressource.PET_DEATH,
+    Ressource.PET_HIST_VETO,
+    Ressource.PET_HIST_HF,
+];
+
 const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     const { id: paramAnimalId } = useParams();
     const animalId = paramAnimalId ?? "new";
@@ -68,6 +82,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
 
     const navigate = useNavigate();
+    const pagePermissions = useGetPermissions(permissionsName);
 
     // Accordions
     const [accordions, setAccordions] = useState<AnimalDetailPageAccordionState[]>(
@@ -566,778 +581,794 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                         </Row>
-                        <Accordion
-                            className="pb-3"
-                            open={accordions.find((a) => a.type === AnimalDetailPageAccordion.INFO)?.id ?? ""}
-                            {...{
-                                toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.INFO, id),
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Informations</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Photo</Label>
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Row>
-                                                <Col xs={12}>
-                                                    <Label>ICAD</Label>
-                                                    <Input
-                                                        value={data.animal.icad || ""}
-                                                        disabled={!isEditing}
-                                                        onChange={(evt) =>
-                                                            setData((previousData) => {
-                                                                return {
-                                                                    ...previousData,
-                                                                    animal: {
-                                                                        ...previousData.animal!,
-                                                                        icad: evt.target.value,
-                                                                    },
-                                                                };
-                                                            })
-                                                        }
-                                                    />
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col xs={6}>
-                                                    <Label>Espèce</Label>
-                                                    <Dropdown
-                                                        withNewLine={true}
-                                                        color={"primary"}
-                                                        disabled={!isEditing}
-                                                        value={{
-                                                            id: data.animal.species?.id,
-                                                            name: data.animal.species?.name,
-                                                        }}
-                                                        values={data.species}
-                                                        valueDisplayName={(aSpecies) => aSpecies.name}
-                                                        valueActiveCheck={(aSpecies) => aSpecies.id === data.animal?.species?.id}
-                                                        key={"species"}
-                                                        onChange={(newSpecies) =>
-                                                            setData((previousData) => {
-                                                                return {
-                                                                    ...previousData,
-                                                                    animal: {
-                                                                        ...previousData.animal!,
-                                                                        species: newSpecies,
-                                                                    },
-                                                                };
-                                                            })
-                                                        }
-                                                    />
-                                                </Col>
-                                                <Col xs={6}>
-                                                    <Label>Sexe</Label>
-                                                    <NullableDropdown
-                                                        withNewLine={true}
-                                                        color={"primary"}
-                                                        disabled={!isEditing}
-                                                        value={
-                                                            data.animal.sexe === undefined || data.animal.sexe === null
-                                                                ? null
-                                                                : data.sexes.find((aSexe) => aSexe.key === data.animal?.sexe)
-                                                        }
-                                                        values={data.sexes}
-                                                        valueDisplayName={(aSexe) => aSexe.value}
-                                                        valueActiveCheck={(aSexe) => aSexe.key === data.animal?.sexe}
-                                                        key={"sexes"}
-                                                        onChange={(newSexe) =>
-                                                            setData((previousData) => {
-                                                                return {
-                                                                    ...previousData,
-                                                                    animal: {
-                                                                        ...previousData.animal!,
-                                                                        sexe: newSexe?.key,
-                                                                    },
-                                                                };
-                                                            })
-                                                        }
-                                                    />
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col xs={6}>
-                                                    <Label>Race</Label>
-                                                    <Input
-                                                        value={data.animal.race || ""}
-                                                        disabled={!isEditing}
-                                                        onChange={(evt) =>
-                                                            setData((previousData) => {
-                                                                return {
-                                                                    ...previousData,
-                                                                    animal: {
-                                                                        ...previousData.animal!,
-                                                                        race: evt.target.value,
-                                                                    },
-                                                                };
-                                                            })
-                                                        }
-                                                    />
-                                                </Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Date de naissance</Label>
-                                            <Input
-                                                type="date"
-                                                value={data.animal.birthdate}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                birthdate: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Label>Signes distinctifs</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.distinctiveSigns || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                distinctiveSigns: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
-                        <Accordion
-                            className="pb-3"
-                            open={accordions.find((a) => a.type === AnimalDetailPageAccordion.PEC)?.id ?? ""}
-                            {...{
-                                toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.PEC, id),
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Prise en charge</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Date de PEC</Label>
-                                            <Input
-                                                type="date"
-                                                value={data.animal.entryDate}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                entryDate: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Label>Lieu de PEC</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.placeOfCare || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                placeOfCare: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Raisons de PEC</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.reasonForCare || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                reasonForCare: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Label>Informations de PEC</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.careInfos || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                careInfos: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Cédant</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.transferor || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                transferor: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
-                        <Accordion
-                            className="pb-3"
-                            open={accordions.find((a) => a.type === AnimalDetailPageAccordion.HEALTH)?.id ?? ""}
-                            {...{
-                                toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.HEALTH, id),
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Santé</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Primo vaccination</Label>
-                                            <Input
-                                                type="date"
-                                                value={data.animal.firstVaccinationDate}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                firstVaccinationDate: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Label>Rappel de vaccin</Label>
-                                            <Input
-                                                type="date"
-                                                value={data.animal.secondVaccinationDate}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                secondVaccinationDate: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6} md={3}>
-                                            <Label>Stérilisé·e</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={data.animal.sterilised ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                sterilised: newValue ?? undefined,
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        {data.animal.species?.id === SPECIES_ID.CAT && (
-                                            <>
-                                                <Col xs={6} md={3}>
-                                                    <Label>Extérieur obligatoire</Label>
-                                                    <BooleanNullableDropdown
-                                                        withNewLine={true}
-                                                        value={data.animal.needExternalAccess ?? null}
-                                                        disabled={!isEditing}
-                                                        onChange={(newValue) => {
-                                                            setData((previousData) => {
-                                                                return {
-                                                                    ...previousData,
-                                                                    animal: {
-                                                                        ...previousData.animal!,
-                                                                        needExternalAccess: newValue ?? undefined,
-                                                                    },
-                                                                };
-                                                            });
-                                                        }}
-                                                    />
-                                                </Col>
-                                                <Col xs={6} md={3}>
-                                                    <Label>Négatif FIV</Label>
-                                                    <BooleanNullableDropdown
-                                                        withNewLine={true}
-                                                        value={data.animal.fivNegative ?? null}
-                                                        disabled={!isEditing}
-                                                        onChange={(newValue) => {
-                                                            setData((previousData) => {
-                                                                return {
-                                                                    ...previousData,
-                                                                    animal: {
-                                                                        ...previousData.animal!,
-                                                                        fivNegative: newValue ?? undefined,
-                                                                    },
-                                                                };
-                                                            });
-                                                        }}
-                                                    />
-                                                </Col>
-                                                <Col xs={6} md={3}>
-                                                    <Label>Négatif FELV</Label>
-                                                    <BooleanNullableDropdown
-                                                        withNewLine={true}
-                                                        value={data.animal.felvNegative ?? null}
-                                                        disabled={!isEditing}
-                                                        onChange={(newValue) => {
-                                                            setData((previousData) => {
-                                                                return {
-                                                                    ...previousData,
-                                                                    animal: {
-                                                                        ...previousData.animal!,
-                                                                        felv_negative: newValue ?? undefined,
-                                                                    },
-                                                                };
-                                                            });
-                                                        }}
-                                                    />
-                                                </Col>
-                                            </>
-                                        )}
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Date des anti-parasitaires</Label>
-                                            <Input
-                                                type="date"
-                                                value={data.animal.antiParasiticDate}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                antiParasiticDate: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Particularité de santé</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.healthIssues || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                healthIssues: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
-                        <Accordion
-                            className="pb-3"
-                            open={accordions.find((a) => a.type === AnimalDetailPageAccordion.BEHAVIOUR)?.id ?? ""}
-                            {...{
-                                toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.BEHAVIOUR, id),
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Comportement</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Caractère</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.behaviour || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                behaviour: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6} md={3}>
-                                            <Label>Besoin congénère</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={data.animal.needFriends ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                needFriends: newValue ?? undefined,
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={6} md={3}>
-                                            <Label>Attitude</Label>
-                                            <NullableDropdown
-                                                withNewLine={true}
-                                                color={
-                                                    data.animal.posture === null || data.animal.posture === undefined
-                                                        ? "fearfull"
-                                                        : data.animal.posture === "shy"
-                                                        ? "info"
-                                                        : data.animal.posture === "sociable"
-                                                        ? "success"
-                                                        : "danger"
-                                                }
-                                                value={data.animal.posture}
-                                                values={["nsp", "fearfull", "shy", "sociable"]}
-                                                valueDisplayName={(value) =>
-                                                    value === null || value === undefined
-                                                        ? "NSP"
-                                                        : value === "fearfull"
-                                                        ? "Craintif"
-                                                        : value === "shy"
-                                                        ? "Peureux"
-                                                        : value === "sociable"
-                                                        ? "Sociable"
-                                                        : ""
-                                                }
-                                                valueActiveCheck={(value) => data.animal?.posture === value}
-                                                key={"posture"}
-                                                disabled={!isEditing}
-                                                onChange={(newPosture) => {
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                posture: newPosture,
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6} md={3}>
-                                            <Label>OK chats</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={data.animal.catsOk ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                catsOk: newValue ?? undefined,
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={6} md={3}>
-                                            <Label>OK chiens</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={data.animal.dogsOk ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                dogs_ok: newValue ?? undefined,
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={6} md={3}>
-                                            <Label>OK enfants</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={data.animal.kidsOk ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                kidsOk: newValue ?? undefined,
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Particularité</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.behaviorParticularity || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                behaviorParticularity: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
+                        {pagePermissions[Ressource.PET_INFO].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={accordions.find((a) => a.type === AnimalDetailPageAccordion.INFO)?.id ?? ""}
+                                {...{
+                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.INFO, id),
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Informations</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Photo</Label>
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Row>
+                                                    <Col xs={12}>
+                                                        <Label>ICAD</Label>
+                                                        <Input
+                                                            value={data.animal.icad || ""}
+                                                            disabled={!isEditing}
+                                                            onChange={(evt) =>
+                                                                setData((previousData) => {
+                                                                    return {
+                                                                        ...previousData,
+                                                                        animal: {
+                                                                            ...previousData.animal!,
+                                                                            icad: evt.target.value,
+                                                                        },
+                                                                    };
+                                                                })
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col xs={6}>
+                                                        <Label>Espèce</Label>
+                                                        <Dropdown
+                                                            withNewLine={true}
+                                                            color={"primary"}
+                                                            disabled={!isEditing}
+                                                            value={{
+                                                                id: data.animal.species?.id,
+                                                                name: data.animal.species?.name,
+                                                            }}
+                                                            values={data.species}
+                                                            valueDisplayName={(aSpecies) => aSpecies.name}
+                                                            valueActiveCheck={(aSpecies) => aSpecies.id === data.animal?.species?.id}
+                                                            key={"species"}
+                                                            onChange={(newSpecies) =>
+                                                                setData((previousData) => {
+                                                                    return {
+                                                                        ...previousData,
+                                                                        animal: {
+                                                                            ...previousData.animal!,
+                                                                            species: newSpecies,
+                                                                        },
+                                                                    };
+                                                                })
+                                                            }
+                                                        />
+                                                    </Col>
+                                                    <Col xs={6}>
+                                                        <Label>Sexe</Label>
+                                                        <NullableDropdown
+                                                            withNewLine={true}
+                                                            color={"primary"}
+                                                            disabled={!isEditing}
+                                                            value={
+                                                                data.animal.sexe === undefined || data.animal.sexe === null
+                                                                    ? null
+                                                                    : data.sexes.find((aSexe) => aSexe.key === data.animal?.sexe)
+                                                            }
+                                                            values={data.sexes}
+                                                            valueDisplayName={(aSexe) => aSexe.value}
+                                                            valueActiveCheck={(aSexe) => aSexe.key === data.animal?.sexe}
+                                                            key={"sexes"}
+                                                            onChange={(newSexe) =>
+                                                                setData((previousData) => {
+                                                                    return {
+                                                                        ...previousData,
+                                                                        animal: {
+                                                                            ...previousData.animal!,
+                                                                            sexe: newSexe?.key,
+                                                                        },
+                                                                    };
+                                                                })
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col xs={6}>
+                                                        <Label>Race</Label>
+                                                        <Input
+                                                            value={data.animal.race || ""}
+                                                            disabled={!isEditing}
+                                                            onChange={(evt) =>
+                                                                setData((previousData) => {
+                                                                    return {
+                                                                        ...previousData,
+                                                                        animal: {
+                                                                            ...previousData.animal!,
+                                                                            race: evt.target.value,
+                                                                        },
+                                                                    };
+                                                                })
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Date de naissance</Label>
+                                                <Input
+                                                    type="date"
+                                                    value={data.animal.birthdate}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    birthdate: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Label>Signes distinctifs</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.distinctiveSigns || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    distinctiveSigns: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
+                        {pagePermissions[Ressource.PET_PICKUP].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={accordions.find((a) => a.type === AnimalDetailPageAccordion.PEC)?.id ?? ""}
+                                {...{
+                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.PEC, id),
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Prise en charge</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Date de PEC</Label>
+                                                <Input
+                                                    type="date"
+                                                    value={data.animal.entryDate}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    entryDate: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Label>Lieu de PEC</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.placeOfCare || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    placeOfCare: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Raisons de PEC</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.reasonForCare || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    reasonForCare: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Label>Informations de PEC</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.careInfos || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    careInfos: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Cédant</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.transferor || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    transferor: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
+                        {pagePermissions[Ressource.PET_HEALTH].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={accordions.find((a) => a.type === AnimalDetailPageAccordion.HEALTH)?.id ?? ""}
+                                {...{
+                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.HEALTH, id),
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Santé</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Primo vaccination</Label>
+                                                <Input
+                                                    type="date"
+                                                    value={data.animal.firstVaccinationDate}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    firstVaccinationDate: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Label>Rappel de vaccin</Label>
+                                                <Input
+                                                    type="date"
+                                                    value={data.animal.secondVaccinationDate}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    secondVaccinationDate: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={6} md={3}>
+                                                <Label>Stérilisé·e</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={data.animal.sterilised ?? null}
+                                                    disabled={!isEditing}
+                                                    onChange={(newValue) => {
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    sterilised: newValue ?? undefined,
+                                                                },
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            {data.animal.species?.id === SPECIES_ID.CAT && (
+                                                <>
+                                                    <Col xs={6} md={3}>
+                                                        <Label>Extérieur obligatoire</Label>
+                                                        <BooleanNullableDropdown
+                                                            withNewLine={true}
+                                                            value={data.animal.needExternalAccess ?? null}
+                                                            disabled={!isEditing}
+                                                            onChange={(newValue) => {
+                                                                setData((previousData) => {
+                                                                    return {
+                                                                        ...previousData,
+                                                                        animal: {
+                                                                            ...previousData.animal!,
+                                                                            needExternalAccess: newValue ?? undefined,
+                                                                        },
+                                                                    };
+                                                                });
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                    <Col xs={6} md={3}>
+                                                        <Label>Négatif FIV</Label>
+                                                        <BooleanNullableDropdown
+                                                            withNewLine={true}
+                                                            value={data.animal.fivNegative ?? null}
+                                                            disabled={!isEditing}
+                                                            onChange={(newValue) => {
+                                                                setData((previousData) => {
+                                                                    return {
+                                                                        ...previousData,
+                                                                        animal: {
+                                                                            ...previousData.animal!,
+                                                                            fivNegative: newValue ?? undefined,
+                                                                        },
+                                                                    };
+                                                                });
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                    <Col xs={6} md={3}>
+                                                        <Label>Négatif FELV</Label>
+                                                        <BooleanNullableDropdown
+                                                            withNewLine={true}
+                                                            value={data.animal.felvNegative ?? null}
+                                                            disabled={!isEditing}
+                                                            onChange={(newValue) => {
+                                                                setData((previousData) => {
+                                                                    return {
+                                                                        ...previousData,
+                                                                        animal: {
+                                                                            ...previousData.animal!,
+                                                                            felv_negative: newValue ?? undefined,
+                                                                        },
+                                                                    };
+                                                                });
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                </>
+                                            )}
+                                        </Row>
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Date des anti-parasitaires</Label>
+                                                <Input
+                                                    type="date"
+                                                    value={data.animal.antiParasiticDate}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    antiParasiticDate: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Particularité de santé</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.healthIssues || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    healthIssues: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
+                        {pagePermissions[Ressource.PET_BEHAVIOR].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={accordions.find((a) => a.type === AnimalDetailPageAccordion.BEHAVIOUR)?.id ?? ""}
+                                {...{
+                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.BEHAVIOUR, id),
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Comportement</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Caractère</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.behaviour || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    behaviour: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={6} md={3}>
+                                                <Label>Besoin congénère</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={data.animal.needFriends ?? null}
+                                                    disabled={!isEditing}
+                                                    onChange={(newValue) => {
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    needFriends: newValue ?? undefined,
+                                                                },
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={6} md={3}>
+                                                <Label>Attitude</Label>
+                                                <NullableDropdown
+                                                    withNewLine={true}
+                                                    color={
+                                                        data.animal.posture === null || data.animal.posture === undefined
+                                                            ? "fearfull"
+                                                            : data.animal.posture === "shy"
+                                                            ? "info"
+                                                            : data.animal.posture === "sociable"
+                                                            ? "success"
+                                                            : "danger"
+                                                    }
+                                                    value={data.animal.posture}
+                                                    values={["nsp", "fearfull", "shy", "sociable"]}
+                                                    valueDisplayName={(value) =>
+                                                        value === null || value === undefined
+                                                            ? "NSP"
+                                                            : value === "fearfull"
+                                                            ? "Craintif"
+                                                            : value === "shy"
+                                                            ? "Peureux"
+                                                            : value === "sociable"
+                                                            ? "Sociable"
+                                                            : ""
+                                                    }
+                                                    valueActiveCheck={(value) => data.animal?.posture === value}
+                                                    key={"posture"}
+                                                    disabled={!isEditing}
+                                                    onChange={(newPosture) => {
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    posture: newPosture,
+                                                                },
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={6} md={3}>
+                                                <Label>OK chats</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={data.animal.catsOk ?? null}
+                                                    disabled={!isEditing}
+                                                    onChange={(newValue) => {
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    catsOk: newValue ?? undefined,
+                                                                },
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={6} md={3}>
+                                                <Label>OK chiens</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={data.animal.dogsOk ?? null}
+                                                    disabled={!isEditing}
+                                                    onChange={(newValue) => {
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    dogs_ok: newValue ?? undefined,
+                                                                },
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={6} md={3}>
+                                                <Label>OK enfants</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={data.animal.kidsOk ?? null}
+                                                    disabled={!isEditing}
+                                                    onChange={(newValue) => {
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    kidsOk: newValue ?? undefined,
+                                                                },
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Particularité</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.behaviorParticularity || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    behaviorParticularity: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
 
-                        <Accordion
-                            className="pb-3"
-                            open={accordions.find((a) => a.type === AnimalDetailPageAccordion.EXIT)?.id ?? ""}
-                            {...{
-                                toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.EXIT, id),
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Sortie</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={6} md={4}>
-                                            <Label>Certificat de cession</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={data.animal.transferCertificate ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                transferCertificate: newValue ?? undefined,
-                                                            },
-                                                        };
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={6} md={8}>
-                                            <Label>Date de sortie</Label>
-                                            <Input
-                                                type="date"
-                                                value={data.animal.exitDate}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                exitDate: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                        <Col xs={12}>
-                                            <Label>Raison de sortie</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.exitReason || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                exitReason: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
-                        <Accordion
-                            className="pb-3"
-                            open={accordions.find((a) => a.type === AnimalDetailPageAccordion.DEATH)?.id ?? ""}
-                            {...{
-                                toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.DEATH, id),
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Décès</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Date de décès</Label>
-                                            <Input
-                                                type="date"
-                                                value={data.animal.deathDate}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                deathDate: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Label>Raison du décès</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={data.animal.deathReason || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setData((previousData) => {
-                                                        return {
-                                                            ...previousData,
-                                                            animal: {
-                                                                ...previousData.animal!,
-                                                                deathReason: evt.target.value,
-                                                            },
-                                                        };
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
+                        {pagePermissions[Ressource.PET_EXIT].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={accordions.find((a) => a.type === AnimalDetailPageAccordion.EXIT)?.id ?? ""}
+                                {...{
+                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.EXIT, id),
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Sortie</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={6} md={4}>
+                                                <Label>Certificat de cession</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={data.animal.transferCertificate ?? null}
+                                                    disabled={!isEditing}
+                                                    onChange={(newValue) => {
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    transferCertificate: newValue ?? undefined,
+                                                                },
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={6} md={8}>
+                                                <Label>Date de sortie</Label>
+                                                <Input
+                                                    type="date"
+                                                    value={data.animal.exitDate}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    exitDate: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col xs={12}>
+                                                <Label>Raison de sortie</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.exitReason || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    exitReason: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
+                        {pagePermissions[Ressource.PET_DEATH].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={accordions.find((a) => a.type === AnimalDetailPageAccordion.DEATH)?.id ?? ""}
+                                {...{
+                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.DEATH, id),
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Décès</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Date de décès</Label>
+                                                <Input
+                                                    type="date"
+                                                    value={data.animal.deathDate}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    deathDate: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Label>Raison du décès</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={data.animal.deathReason || ""}
+                                                    disabled={!isEditing}
+                                                    onChange={(evt) =>
+                                                        setData((previousData) => {
+                                                            return {
+                                                                ...previousData,
+                                                                animal: {
+                                                                    ...previousData.animal!,
+                                                                    deathReason: evt.target.value,
+                                                                },
+                                                            };
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
                     </CardBody>
                 </Card>
                 <br />
-                <VeterinarianInterventionsHistory
-                    animal={data.animal}
-                    veterinarianInterventions={data.animal?.veterinarianInterventions ?? []}
-                    notificationSystem={notificationSystem}
-                    shouldRefresh={getVeterinarianInterventions}
-                    {...props}
-                />
+                {pagePermissions[Ressource.PET_HIST_VETO].can_read && (
+                    <VeterinarianInterventionsHistory
+                        animal={data.animal}
+                        veterinarianInterventions={data.animal?.veterinarianInterventions ?? []}
+                        notificationSystem={notificationSystem}
+                        shouldRefresh={getVeterinarianInterventions}
+                        {...props}
+                    />
+                )}
                 <br />
-                <HostFamiliesHistory
-                    animal={data.animal}
-                    hostFamilies={data.hostFamilies}
-                    animalToHostFamilies={data.animal?.hostFamilyRelations ?? []}
-                    notificationSystem={notificationSystem}
-                    shouldRefresh={() => {
-                        getAnimalToHostFamilies()?.then(getAnimal);
-                    }}
-                    {...props}
-                />
+                {pagePermissions[Ressource.PET_HIST_HF].can_read && (
+                    <HostFamiliesHistory
+                        animal={data.animal}
+                        hostFamilies={data.hostFamilies}
+                        animalToHostFamilies={data.animal?.hostFamilyRelations ?? []}
+                        notificationSystem={notificationSystem}
+                        shouldRefresh={() => {
+                            getAnimalToHostFamilies()?.then(getAnimal);
+                        }}
+                        {...props}
+                    />
+                )}
             </div>
         );
     }
