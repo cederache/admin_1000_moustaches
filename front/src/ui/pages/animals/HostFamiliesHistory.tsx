@@ -10,6 +10,7 @@ import NotificationSystem from "react-notification-system";
 import { useNavigate } from "react-router-dom";
 import Animal from "../../../logic/entities/Animal";
 import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface HostFamiliesHistoryProps {
     animal: Animal;
@@ -22,7 +23,7 @@ interface HostFamiliesHistoryProps {
 const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilies, animalToHostFamilies, notificationSystem, shouldRefresh, ...props }) => {
     const navigate = useNavigate();
 
-    const pagePermissions = useGetPermissions(["pet_hist_hf"]);
+    const pagePermissions = useGetPermissions([Ressource.PET_HIST_HF]);
 
     const [modalAnimalToHostFamily, setModalAnimalToHostFamily] = useState<AnimalToHostFamily | null>(null);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
@@ -66,7 +67,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilie
                             <h3>Historique des Familles d'Accueil</h3>
                         </Col>
                         <Col xs={"auto"}>
-                            {pagePermissions["pet_hist_hf"]?.can_create && (
+                            {pagePermissions[Ressource.PET_HIST_HF]?.can_create && (
                                 <Button
                                     color="primary"
                                     onClick={() => {

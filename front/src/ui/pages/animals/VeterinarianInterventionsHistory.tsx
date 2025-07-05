@@ -7,6 +7,7 @@ import VeterinarianIntervention from "../../../logic/entities/VeterinarianInterv
 import NotificationSystem from "react-notification-system";
 import Animal from "../../../logic/entities/Animal";
 import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface VeterinarianInterventionsHistoryProps {
     animal: Animal;
@@ -45,7 +46,7 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
             });
     };
 
-    const pagePermissions = useGetPermissions(["pet_hist_veto"]);
+    const pagePermissions = useGetPermissions([Ressource.PET_HIST_VETO]);
 
     return (
         <>
@@ -56,7 +57,7 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                             <h3>Historique des interventions vétérinaires</h3>
                         </Col>
                         <Col xs={"auto"}>
-                            {pagePermissions["pet_hist_veto"]?.can_create && (
+                            {pagePermissions[Ressource.PET_HIST_VETO]?.can_create && (
                                 <Button
                                     color="primary"
                                     onClick={() => {
