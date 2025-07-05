@@ -24,7 +24,6 @@ import Geocode from "../../../utils/geocode";
 import SourceLink from "../../components/SourceLink";
 import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
 import Switch from "../../components/Switch";
-import Dropdown from "../../components/Dropdown";
 import NullableDropdown from "../../components/NullableDropdown";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
@@ -35,28 +34,17 @@ import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import { useNavigate, useParams } from "react-router-dom";
 import { RiZzzFill } from "react-icons/ri";
 import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface HostFamilyDetailPageProps {
     [key: string]: any;
 }
 
-interface AccordionHF {
-    ressourceName: string;
-}
-
-const accordionsHF: AccordionHF[] = [
-    {
-        ressourceName: "hf_contact",
-    },
-    {
-        ressourceName: "hf_address",
-    },
-    {
-        ressourceName: "hf_host",
-    },
-    {
-        ressourceName: "hf_hist_pets",
-    },
+const permissionsName: Ressource[] = [
+    Ressource.HF_CONTACT,
+    Ressource.HF_ADDRESS,
+    Ressource.HF_HOST,
+    Ressource.HF_HIST_PETS
 ];
 
 const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
@@ -80,8 +68,6 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
     const [openHostInfo, setOpenHostInfo] = useState<string>("");
 
     const navigate = useNavigate();
-
-    const permissionsName: string[] = accordionsHF.map((item) => item?.ressourceName).filter((name) => name !== undefined) as string[];
     const pagePermissions = useGetPermissions(permissionsName);
 
     const getHostFamily = () => {
@@ -350,10 +336,10 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                             </Button>
                         )}
                         {!isEditing &&
-                            (pagePermissions["hf_contact"].can_update ||
-                                pagePermissions["hf_address"].can_update ||
-                                pagePermissions["hf_host"].can_update ||
-                                pagePermissions["hf_hist_pets"].can_update) && (
+                            (pagePermissions[Ressource.HF_CONTACT].can_update ||
+                                pagePermissions[Ressource.HF_ADDRESS].can_update ||
+                                pagePermissions[Ressource.HF_HOST].can_update ||
+                                pagePermissions[Ressource.HF_HIST_PETS].can_update) && (
                                 <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
                                     <MdOutlineModeEdit />
                                 </Button>
@@ -393,7 +379,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                             id="break"
                                             key="break"
                                             isOn={!hostFamily.onBreak}
-                                            disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                            disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                             handleToggle={() => {
                                                 setHostFamily({
                                                     ...hostFamily,
@@ -416,7 +402,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                     id="membership"
                                     key="membership"
                                     isOn={hostFamily.membershipUpToDate}
-                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     handleToggle={() => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -433,7 +419,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                             <Col xs={"auto"}>
                                 <NullableDropdown
                                     color={"primary"}
-                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     value={referents.find((usr) => usr.id === hostFamily.referent?.id)}
                                     values={referents}
                                     valueDisplayName={(usr) => (usr === undefined ? "Aucun·e" : `${usr?.firstname} ${usr?.name}`)}
@@ -457,7 +443,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                     id="temporary"
                                     key="temporary"
                                     isOn={hostFamily.isTemporary}
-                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     handleToggle={() => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -473,7 +459,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={hostFamily.driverLicense ?? null}
-                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -487,7 +473,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={hostFamily.hasVehicule ?? null}
-                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -503,7 +489,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.situation || ""}
-                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -513,7 +499,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                         </Row>
-                        {pagePermissions["hf_contact"].can_read && (
+                        {pagePermissions[Ressource.HF_CONTACT].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={openContactInfo}
@@ -532,7 +518,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                     <Label>Prénom</Label>
                                                     <Input
                                                         value={hostFamily.firstname || ""}
-                                                        disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                                        disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                                         onChange={(evt) =>
                                                             setHostFamily({
                                                                 ...hostFamily,
@@ -545,7 +531,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                     <Label>Nom</Label>
                                                     <Input
                                                         value={hostFamily.name || ""}
-                                                        disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                                        disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                                         onChange={(evt) =>
                                                             setHostFamily({
                                                                 ...hostFamily,
@@ -559,7 +545,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                         <Row>
                                             <Col xs={6}>
                                                 <Label>Téléphone</Label>
-                                                {isEditing && pagePermissions["hf_contact"].can_update && (
+                                                {isEditing && pagePermissions[Ressource.HF_CONTACT].can_update && (
                                                     <Input
                                                         type="tel"
                                                         value={hostFamily.phone || ""}
@@ -579,7 +565,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="email"
                                                     value={hostFamily.mail || ""}
-                                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -594,7 +580,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Label>Pseudo</Label>
                                                 <Input
                                                     value={hostFamily.socialNetworkAlias || ""}
-                                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -617,7 +603,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={hostFamily.address}
-                                                    disabled={!isEditing || !pagePermissions["hf_contact"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -636,7 +622,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["hf_address"].can_read && (
+                        {pagePermissions[Ressource.HF_ADDRESS].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={openHomeInfo}
@@ -654,7 +640,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Label>Nombre d'enfant</Label>
                                                 <Input
                                                     value={hostFamily.nbChildren?.toString() || ""}
-                                                    disabled={!isEditing || !pagePermissions["hf_address"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
                                                     onChange={(evt) => {
                                                         let nbChildren: number | undefined = parseInt(evt.target.value);
                                                         if (isNaN(nbChildren)) {
@@ -672,7 +658,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={hostFamily.childrenInfos || ""}
-                                                    disabled={!isEditing || !pagePermissions["hf_address"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -688,7 +674,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={hostFamily.animalsInfos || ""}
-                                                    disabled={!isEditing || !pagePermissions["hf_address"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -704,7 +690,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={hostFamily.observations || ""}
-                                                    disabled={!isEditing || !pagePermissions["hf_address"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -720,7 +706,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Input
                                                     type="textarea"
                                                     value={hostFamily.housingInformations || ""}
-                                                    disabled={!isEditing || !pagePermissions["hf_address"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -734,7 +720,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["hf_host"].can_read && (
+                        {pagePermissions[Ressource.HF_HOST].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={openHostInfo}
@@ -782,7 +768,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                                                     }
                                                                                 }
                                                                             }}
-                                                                            disabled={!isEditing || !pagePermissions["hf_host"].can_update}
+                                                                            disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
                                                                         />
                                                                         {hfk.name}
                                                                     </Label>
@@ -799,7 +785,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={hostFamily.canProvideVeterinaryCare ?? null}
-                                                    disabled={!isEditing || !pagePermissions["hf_host"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
                                                     onChange={(newValue) => {
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -813,7 +799,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={hostFamily.canProvideSociabilisation ?? null}
-                                                    disabled={!isEditing || !pagePermissions["hf_host"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
                                                     onChange={(newValue) => {
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -827,7 +813,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={hostFamily.canHostDisableAnimal ?? null}
-                                                    disabled={!isEditing || !pagePermissions["hf_host"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
                                                     onChange={(newValue) => {
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -841,7 +827,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <BooleanNullableDropdown
                                                     withNewLine={true}
                                                     value={hostFamily.canProvideNightCare ?? null}
-                                                    disabled={!isEditing || !pagePermissions["hf_host"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
                                                     onChange={(newValue) => {
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -863,14 +849,14 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                         value === null || value === undefined
                                                             ? "NSP"
                                                             : value === "yes_short"
-                                                            ? "Oui, qqs jours"
-                                                            : value === "yes_long"
-                                                            ? "Oui, ok long terme"
-                                                            : "Non"
+                                                                ? "Oui, qqs jours"
+                                                                : value === "yes_long"
+                                                                    ? "Oui, ok long terme"
+                                                                    : "Non"
                                                     }
                                                     valueActiveCheck={(value) => hostFamily.canIsolate === value}
                                                     key={"can_isolate"}
-                                                    disabled={!isEditing || !pagePermissions["hf_host"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
                                                     onChange={(newCanIsolate) => {
                                                         setHostFamily({
                                                             ...hostFamily,
@@ -885,7 +871,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                 <Label>Conditions d'accueil (nb animaux, ...)</Label>
                                                 <Input
                                                     type="textarea"
-                                                    disabled={!isEditing || !pagePermissions["hf_host"].can_update}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
                                                     value={hostFamily.hostConditions || ""}
                                                     onChange={(evt) => {
                                                         setHostFamily({
@@ -905,7 +891,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
 
                 <br />
 
-                {hostFamilyId !== "new" && pagePermissions["hf_hist_pets"].can_read && (
+                {hostFamilyId !== "new" && pagePermissions[Ressource.HF_HIST_PETS].can_read && (
                     <Card>
                         <CardHeader>
                             <h3>Historique des animaux</h3>

@@ -7,13 +7,14 @@ import { Nav, Navbar, NavItem, NavLink as BSNavLink } from "reactstrap";
 import bn from "../../../utils/bemnames";
 import { WebsiteCarbonBadge } from "react-websitecarbon-badge";
 import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface SidebarItem {
     to: string;
     name: string;
     exact: boolean;
     Icon: React.ComponentType<{ className?: string; size?: number }>;
-    ressourceName?: string;
+    ressourceName?: Ressource;
 }
 
 const navItems: SidebarItem[] = [
@@ -28,37 +29,37 @@ const navItems: SidebarItem[] = [
         name: "Animaux",
         exact: false,
         Icon: MdPets,
-        ressourceName: "pet_list",
+        ressourceName: Ressource.PET_LIST,
     },
     {
         to: "/veterinarians",
         name: "Vétérinaires",
         exact: false,
         Icon: MdHealthAndSafety,
-        ressourceName: "vet_list",
+        ressourceName: Ressource.VET_LIST,
     },
     {
         to: "/hostFamilies",
         name: "Familles d'Accueil",
         exact: false,
         Icon: MdHomeFilled,
-        ressourceName: "hf_list",
+        ressourceName: Ressource.HF_LIST,
     },
     {
         to: "/users",
         name: "Utilisateur·ice·s",
         exact: false,
         Icon: MdPeople,
-        ressourceName: "user_list",
+        ressourceName: Ressource.USER_LIST,
     },
 ];
 
 const bem = bn.create("sidebar");
 
 const Sidebar: React.FC = () => {
-    const permissionsName: string[] = navItems
+    const permissionsName: Ressource[] = navItems
         .map((item) => item?.ressourceName) //Récupère toutes les ressourceName de navItems et si il n'y en a pas met undefined
-        .filter((name) => name !== undefined) as string[]; //Filtre pour ne pas avoir dans les résultats les undefined.
+        .filter((name) => name !== undefined) as Ressource[]; //Filtre pour ne pas avoir dans les résultats les undefined.
     const pagePermissions = useGetPermissions(permissionsName);
 
     return (
