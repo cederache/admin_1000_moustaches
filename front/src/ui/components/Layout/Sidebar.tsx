@@ -91,7 +91,7 @@ const Sidebar: React.FC = () => {
                         }
                     })}
                 </Nav>
-                <WebsiteCarbonBadge lang="fr" url="https://admin-1000-moustaches.web.app/hostFamilies" />
+                {/* <WebsiteCarbonBadge lang="fr" url="https://admin-1000-moustaches.web.app/hostFamilies" /> */}
             </div>
         </aside>
     );
