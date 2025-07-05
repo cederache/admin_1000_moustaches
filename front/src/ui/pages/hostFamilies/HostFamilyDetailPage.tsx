@@ -24,7 +24,6 @@ import Geocode from "../../../utils/geocode";
 import SourceLink from "../../components/SourceLink";
 import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
 import Switch from "../../components/Switch";
-import Dropdown from "../../components/Dropdown";
 import NullableDropdown from "../../components/NullableDropdown";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
@@ -35,28 +34,17 @@ import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import { useNavigate, useParams } from "react-router-dom";
 import { RiZzzFill } from "react-icons/ri";
 import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface HostFamilyDetailPageProps {
     [key: string]: any;
 }
 
-interface AccordionHF {
-    ressourceName: string;
-}
-
-const accordionsHF: AccordionHF[] = [
-    {
-        ressourceName: "hf_contact",
-    },
-    {
-        ressourceName: "hf_address",
-    },
-    {
-        ressourceName: "hf_host",
-    },
-    {
-        ressourceName: "hf_hist_pets",
-    },
+const permissionsName: Ressource[] = [
+    Ressource.HF_CONTACT,
+    Ressource.HF_ADDRESS,
+    Ressource.HF_HOST,
+    Ressource.HF_HIST_PETS
 ];
 
 const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
@@ -80,8 +68,6 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
     const [openHostInfo, setOpenHostInfo] = useState<string>("");
 
     const navigate = useNavigate();
-
-    const permissionsName: string[] = accordionsHF.map((item) => item?.ressourceName).filter((name) => name !== undefined) as string[];
     const pagePermissions = useGetPermissions(permissionsName);
 
     const getHostFamily = () => {
@@ -513,7 +499,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                         </Row>
-                        {pagePermissions["hf_contact"].can_read && (
+                        {pagePermissions[Ressource.HF_CONTACT].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={openContactInfo}
@@ -636,7 +622,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["hf_address"].can_read && (
+                        {pagePermissions[Ressource.HF_ADDRESS].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={openHomeInfo}
@@ -734,7 +720,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["hf_host"].can_read && (
+                        {pagePermissions[Ressource.HF_HOST].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={openHostInfo}
@@ -863,10 +849,10 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                                         value === null || value === undefined
                                                             ? "NSP"
                                                             : value === "yes_short"
-                                                            ? "Oui, qqs jours"
-                                                            : value === "yes_long"
-                                                            ? "Oui, ok long terme"
-                                                            : "Non"
+                                                                ? "Oui, qqs jours"
+                                                                : value === "yes_long"
+                                                                    ? "Oui, ok long terme"
+                                                                    : "Non"
                                                     }
                                                     valueActiveCheck={(value) => hostFamily.canIsolate === value}
                                                     key={"can_isolate"}
@@ -905,7 +891,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
 
                 <br />
 
-                {hostFamilyId !== "new" && pagePermissions["hf_hist_pets"].can_read && (
+                {hostFamilyId !== "new" && pagePermissions[Ressource.HF_HIST_PETS].can_read && (
                     <Card>
                         <CardHeader>
                             <h3>Historique des animaux</h3>

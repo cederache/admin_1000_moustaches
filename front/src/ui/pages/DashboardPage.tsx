@@ -1,49 +1,35 @@
-import React, { FC, useEffect, useState } from "react";
-import { Button, Col, Row } from "reactstrap";
+import React, { FC } from "react";
 import Page, { CustomBreadcrumbItem } from "../components/Page";
-import logo from "../../assets/img/logo/Logo1000Moustaches.png";
-import PermissionsManager from "../../managers/permissions.manager";
-import Permissions from "../../logic/entities/Permissions";
+import { Ressource } from "../../logic/entities/Permissions";
 import AnimalsNonAdopted from "../components/Card/Dashboard/AnimalsNonAdopted";
 import AnimalsAdopted from "../components/Card/Dashboard/AnimalsAdopted";
 import HostFamiliesAvailable from "../components/Card/Dashboard/HostFamiliesAvailable";
 import useGetPermissions from "../../hooks/useGetPermissions";
 
-type PagePermissions = {
-    // canReadPets?: boolean;
-    // canReadVets?: boolean;
-    cardAnimalsNonAdopted?: Permissions;
-    cardAnimalsAdopted?: Permissions;
-    cardHFAvailabe?: Permissions;
-};
-
 interface Cards {
-    ressourceName: string;
+    ressourceName: Ressource;
     component: React.ComponentType;
 }
 
 const cardItems: Cards[] = [
     {
-        ressourceName: "card_animals_non_adopted",
+        ressourceName: Ressource.CARD_ANIMALS_NON_ADOPTED,
         component: AnimalsNonAdopted,
     },
     {
-        ressourceName: "card_animals_adopted",
+        ressourceName: Ressource.CARD_ANIMALS_ADOPTED,
         component: AnimalsAdopted,
     },
     {
-        ressourceName: "card_host_families_available",
+        ressourceName: Ressource.CARD_HOST_FAMILIES_AVAILABLE,
         component: HostFamiliesAvailable,
     },
 ];
 
 const DashboardPage: FC = () => {
-    const handleAnimalsClick = (): void => {
-        window.location.href = "/animals";
-    };
-    const permissionsName: string[] = cardItems
+    const permissionsName: Ressource[] = cardItems
         .map((item) => item?.ressourceName) //Récupère toutes les ressourceName de cardItems et si il n'y en a pas met undefined
-        .filter((name) => name !== undefined) as string[]; //Filtre pour ne pas avoir dans les résultats les undefined.
+        .filter((name) => name !== undefined) as Ressource[]; //Filtre pour ne pas avoir dans les résultats les undefined.
     const pagePermissions = useGetPermissions(permissionsName);
 
     return (

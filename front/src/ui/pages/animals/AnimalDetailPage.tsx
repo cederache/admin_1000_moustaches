@@ -21,6 +21,7 @@ import VeterinarianIntervention from "../../../logic/entities/VeterinarianInterv
 import Animal from "../../../logic/entities/Animal";
 import { useNavigate, useParams } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface AnimalDetailPageProps {
     [key: string]: any;
@@ -58,39 +59,19 @@ class AnimalDetailPageAccordionState {
         this.id = id;
     }
 }
-interface AccordionAnimal {
-    ressourceName: string;
-}
 
-const accordionsAnimals: AccordionAnimal[] = [
-    {
-        ressourceName: "pet_info",
-    },
-    {
-        ressourceName: "pet_pickup",
-    },
-    {
-        ressourceName: "pet_health",
-    },
-    {
-        ressourceName: "pet_behavior",
-    },
-    {
-        ressourceName: "pet_diffusion",
-    },
-    {
-        ressourceName: "pet_exit",
-    },
-    {
-        ressourceName: "pet_death",
-    },
-    {
-        ressourceName: "pet_hist_veto",
-    },
-    {
-        ressourceName: "pet_hist_hf",
-    },
+const permissionsName: Ressource[] = [
+    Ressource.PET_INFO,
+    Ressource.PET_PICKUP,
+    Ressource.PET_HEALTH,
+    Ressource.PET_BEHAVIOR,
+    Ressource.PET_DIFFUSION,
+    Ressource.PET_EXIT,
+    Ressource.PET_DEATH,
+    Ressource.PET_HIST_VETO,
+    Ressource.PET_HIST_HF,
 ];
+
 const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     const { id: paramAnimalId } = useParams();
     const animalId = paramAnimalId ?? "new";
@@ -101,8 +82,6 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
 
     const navigate = useNavigate();
-
-    const permissionsName: string[] = accordionsAnimals.map((item) => item?.ressourceName).filter((name) => name !== undefined) as string[];
     const pagePermissions = useGetPermissions(permissionsName);
 
     // Accordions
@@ -611,7 +590,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                         </Row>
-                        {pagePermissions["pet_info"].can_read && (
+                        {pagePermissions[Ressource.PET_INFO].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.INFO)?.id ?? ""}
@@ -770,7 +749,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["pet_pickup"].can_read && (
+                        {pagePermissions[Ressource.PET_PICKUP].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.PEC)?.id ?? ""}
@@ -886,7 +865,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["pet_health"].can_read && (
+                        {pagePermissions[Ressource.PET_HEALTH].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.HEALTH)?.id ?? ""}
@@ -1065,7 +1044,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["pet_behavior"].can_read && (
+                        {pagePermissions[Ressource.PET_BEHAVIOR].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.BEHAVIOUR)?.id ?? ""}
@@ -1245,7 +1224,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             </Accordion>
                         )}
 
-                        {pagePermissions["pet_exit"].can_read && (
+                        {pagePermissions[Ressource.PET_EXIT].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.EXIT)?.id ?? ""}
@@ -1319,7 +1298,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 </AccordionItem>
                             </Accordion>
                         )}
-                        {pagePermissions["pet_death"].can_read && (
+                        {pagePermissions[Ressource.PET_DEATH].can_read && (
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.DEATH)?.id ?? ""}
@@ -1377,7 +1356,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                     </CardBody>
                 </Card>
                 <br />
-                {pagePermissions["pet_hist_veto"].can_read && (
+                {pagePermissions[Ressource.PET_HIST_VETO].can_read && (
                     <VeterinarianInterventionsHistory
                         animal={data.animal}
                         veterinarianInterventions={data.animal?.veterinarianInterventions ?? []}
@@ -1387,7 +1366,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                     />
                 )}
                 <br />
-                {pagePermissions["pet_hist_hf"].can_read && (
+                {pagePermissions[Ressource.PET_HIST_HF].can_read && (
                     <HostFamiliesHistory
                         animal={data.animal}
                         hostFamilies={data.hostFamilies}
