@@ -15,25 +15,6 @@ export const getAuthToken = (req: Request, res: Response, next: NextFunction) =>
   next();
 };
 
-// Check if authenticated user (from Firebase) exist in database
-export const getAuthUser = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.authEmail) {
-    return res
-      .status(401)
-      .send({ error: "You are not authorized to make this request" });
-  }
-  const userController = new UserController()
-  const user = await userController.getUserByEmail(req.authEmail);
-  if (!user) {
-    return res
-      .status(404)
-      .send({ error: "User not found" });
-  }
-  // Add database user in req
-  req.authUser = user;
-  next();
-};
-
 // Verify authToken validity with Firebase
 export const checkIfAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   getAuthToken(req, res, async () => {
@@ -60,3 +41,24 @@ export const checkIfAuthenticated = (req: Request, res: Response, next: NextFunc
     }
   });
 };
+
+// Check if authenticated user (from Firebase) exist in database
+export const getAuthUser = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.authEmail) {
+    return res
+      .status(401)
+      .send({ error: "You are not authorized to make this request" });
+  }
+  const userController = new UserController()
+  const user = await userController.getUserByEmail(req.authEmail);
+  if (!user) {
+    return res
+      .status(404)
+      .send({ error: "User not found" });
+  }
+  // Add database user in req
+  req.authUser = user;
+  next();
+};
+
+
