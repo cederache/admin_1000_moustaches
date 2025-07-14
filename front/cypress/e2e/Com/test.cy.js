@@ -9,6 +9,6 @@ describe('Pole Communication - Dashboard', () => {
   it("Should not show other cards", () => {
     cy.login('testcom@example.com', 'testcom');
 
-    cy.get('.card-title').contains('Nombre d\'animaux présents dans l\'association BIS')
+    cy.get('.card-title').contains('Nombre d\'animaux présents dans l\'association BIS').should('not.exist')
   })
 })

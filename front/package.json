@@ -55,7 +55,7 @@
     "build": "NODE_PATH=./src tsc && vite build && cp _headers dist/_headers",
     "serve": "NODE_PATH=./src vite preview",
     "deploy": "export NODE_ENV=production && npm run build && firebase deploy --only hosting",
-    "test": "echo \"No tests yet - passing automatically\" && exit 0"
+    "test": "npx cypress run"
   },
   "eslintConfig": {
     "extends": [
