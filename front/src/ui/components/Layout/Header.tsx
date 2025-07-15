@@ -31,8 +31,9 @@ const Header: React.FC = () => {
     return (
         <Navbar light expand className={bem.b("bg-white")}>
             <Nav navbar className="mr-2">
-                <Button outline onClick={handleSidebarControlButton}>
-                    <MdClearAll size={25} />
+                <Button outline onClick={handleSidebarControlButton} >
+                    Menu
+                    <MdClearAll size={25} aria-label="logo menu burger" role="img" />
                 </Button>
             </Nav>
 

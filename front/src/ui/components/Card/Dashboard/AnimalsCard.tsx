@@ -32,30 +32,30 @@ const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | n
             <Row className="justify-content-center">
                 <Col className="d-flex align-items-center" xs="4">
                     <Card body style={{ borderColor: "#43ABC9" }}>
-                        <CardTitle> Total </CardTitle>
+                        <CardTitle className="fs-3"> Total </CardTitle>
                         <CardText className="fs-1">{datas?.total}</CardText>
                     </Card>
                 </Col>
                 <Col xs="4">
                     <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
-                        <PiDogFill size={35} />
-                        <CardText className="fs-4"> {countDog ?? "-"} </CardText>
+                        <PiDogFill size={35} aria-label="logo chien" role="img" />
+                        <CardText className="fs-2" > {countDog ?? "-"} </CardText>
                     </Card>
                     <br />
                     <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
-                        <PiRabbitFill size={35} />
-                        <CardText className="fs-4"> {countRabbit ?? "-"} </CardText>
+                        <PiRabbitFill size={35} aria-label="logo lapin" role="img" />
+                        <CardText className="fs-2"> {countRabbit ?? "-"} </CardText>
                     </Card>
                 </Col>
                 <Col xs="4">
                     <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
-                        <PiCatFill size={35} />
-                        <CardText className="fs-4"> {countCat ?? "-"} </CardText>
+                        <PiCatFill size={35} aria-label="logo chat" role="img" />
+                        <CardText className="fs-2"> {countCat ?? "-"} </CardText>
                     </Card>
                     <br />
                     <Card body style={{ borderColor: "#43ABC9" }} className="align-items-center">
-                        <MdPestControlRodent size={35} />
-                        <CardText className="fs-4"> {countOther ?? "-"} </CardText>
+                        <MdPestControlRodent size={35} aria-label="logo souris" role="img" />
+                        <CardText className="fs-2"> {countOther ?? "-"} </CardText>
                     </Card>
                 </Col>
             </Row>
