@@ -15,7 +15,7 @@
     background-size: cover;
     transition: left 0.1s ease-in;
 
-    + .cr-content {
+    +.cr-content {
         transition: margin 0.1s ease-in;
     }
 
@@ -38,7 +38,7 @@
 
     &::after {
         z-index: 3;
-        background: #43abc9;
+        background: #72c7d5;
         opacity: 1;
     }
 
@@ -93,7 +93,7 @@
         left: 0;
         transition: left 0.2s ease-in;
 
-        + .cr-content {
+        +.cr-content {
             margin: 0 0 0 $cr-sidebar-width;
             transition: margin 0.2s ease-in;
         }
@@ -113,7 +113,7 @@
             // @include media-breakpoint-down(md) {
             //   padding: .5rem;
             // }
-            color: white;
+            color: black;
 
             &:hover {
                 background: rgba(white, 0.15);
