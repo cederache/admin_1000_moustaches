@@ -8,6 +8,7 @@ import bn from "../../../utils/bemnames";
 import { WebsiteCarbonBadge } from "react-websitecarbon-badge";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
+import PrivacyPolicy from "../../pages/PrivacyPolicy";
 
 interface SidebarItem {
     to: string;
@@ -77,35 +78,51 @@ const Sidebar: React.FC = () => {
     return (
         <aside className={bem.b()}>
             <div className={bem.e("background")} />
-            <div className={bem.e("content")}>
-                <Navbar>
-                    <SourceLink className="navbar-brand justify-content-center" link="https://1000moustaches.fr">
-                        <img src={Logo1000Moustaches} height="100" alt="logo de 1000 Moustaches" />
-                    </SourceLink>
-                </Navbar>
-                <Nav vertical>
-                    {navItems.map((navItem, index) => {
-                        if (navItem.ressourceName === undefined || (navItem.ressourceName !== undefined && pagePermissions[navItem.ressourceName]?.can_read)) {
-                            return (
-                                <NavItem key={index} className={bem.e("nav-item")}>
-                                    <BSNavLink
-                                        id={`navItem-${navItem.id}-${index}`}
-                                        className="text-uppercase"
-                                        tag={NavLink}
-                                        to={navItem.to}
-                                        end={navItem.exact}
-                                    >
-                                        <navItem.Icon className={bem.e("nav-item-icon")} role="img" aria-label={navItem.alt} />
-                                        <span>{navItem.name}</span>
-                                    </BSNavLink>
-                                </NavItem>
-                            );
-                        }
-                    })}
-                </Nav>
+            <div className={`${bem.e("content")} d-flex flex-column justify-content-between h-100`}>
+                <div>
+                    <Navbar>
+                        <SourceLink className="navbar-brand justify-content-center" link="https://1000moustaches.fr">
+                            <img src={Logo1000Moustaches} height="100" alt="logo de 1000 Moustaches" />
+                        </SourceLink>
+                    </Navbar>
+                    <Nav vertical>
+                        {navItems.map((navItem, index) => {
+                            if (navItem.ressourceName === undefined || (navItem.ressourceName !== undefined && pagePermissions[navItem.ressourceName]?.can_read)) {
+                                return (
+                                    <NavItem key={index} className={bem.e("nav-item")}>
+                                        <BSNavLink
+                                            id={`navItem-${navItem.id}-${index}`}
+                                            className="text-uppercase"
+                                            tag={NavLink}
+                                            to={navItem.to}
+                                            end={navItem.exact}
+                                        >
+                                            <navItem.Icon className={bem.e("nav-item-icon")} role="img" aria-label={navItem.alt} />
+                                            <span>{navItem.name}</span>
+                                        </BSNavLink>
+                                    </NavItem>
+                                );
+                            }
+                        })}
+                    </Nav>
+                </div>
+                <NavItem>
+                    <BSNavLink
+                        id="privacy-policy"
+                        tag={NavLink}
+                        to="/privacypolicy"
+                        end="false"
+                        className="text-black align-self-end ms-4"
+                    >
+                        <span>ⓒ Mentions légales</span>
+                    </BSNavLink>
+                </NavItem>
+
+
+
                 {/* <WebsiteCarbonBadge lang="fr" url="https://admin-1000-moustaches.web.app/hostFamilies" /> */}
             </div>
-        </aside>
+        </aside >
     );
 };
 
