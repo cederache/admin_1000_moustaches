@@ -14,7 +14,7 @@ interface SidebarItem {
     name: string;
     id: string;
     exact: boolean;
-    Icon: React.ComponentType<{ className?: string; size?: number }>;
+    Icon: React.ComponentType<{ className?: string; size?: number, role: string }>;
     ressourceName?: Ressource;
     alt: string;
 }
@@ -94,9 +94,8 @@ const Sidebar: React.FC = () => {
                                         tag={NavLink}
                                         to={navItem.to}
                                         end={navItem.exact}
-                                        alt={navItem.alt}
                                     >
-                                        <navItem.Icon className={bem.e("nav-item-icon")} />
+                                        <navItem.Icon className={bem.e("nav-item-icon")} role="img" aria-label={navItem.alt} />
                                         <span>{navItem.name}</span>
                                     </BSNavLink>
                                 </NavItem>
