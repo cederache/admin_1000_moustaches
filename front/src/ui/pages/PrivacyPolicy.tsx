@@ -91,13 +91,14 @@ const PrivacyPolicy = () => {
                                 <h2 className="h3 text-primary border-bottom border-primary pb-2 mb-4">
                                     2. Hébergement du site
                                 </h2>
-                                <Card className="bg-light border-0">
-                                    <CardBody>
-                                        <p><strong>Hébergeur :</strong> <span className="text-danger fw-bold">[Nom de l'hébergeur]</span></p>
-                                        <p><strong>Adresse :</strong> <span className="text-danger fw-bold">[Adresse de l'hébergeur]</span></p>
-                                        <p className="mb-0"><strong>Téléphone :</strong> <span className="text-danger fw-bold">[Téléphone de l'hébergeur]</span></p>
-                                    </CardBody>
-                                </Card>
+                                <p className="text-justify">
+                                    Ce site utilise le service tiers Firebase pour son hébergement.
+                                    Veuillez noter que Firebase applique sa propre politique de confidentialité concernant le traitement des données.
+                                </p>
+                                <p className="text-justify">
+                                    Vous pouvez consulter la politique de confidentialité de Firebase via le lien suivant :
+                                </p>
+                                <a href='https://firebase.google.com/support/privacy' target='_blank'> Firebase </a>
                             </section>
 
                             <section className="mb-5">
