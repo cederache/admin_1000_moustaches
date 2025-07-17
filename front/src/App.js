@@ -126,6 +126,14 @@ const App = () => {
                         </React.Suspense>
                     }
                 />
+                <Route
+                    path="/privacypolicylogin"
+                    element={
+                        <React.Suspense fallback={<PageSpinner />}>
+                            <LayoutRoute layout={EmptyLayout} component={PrivacyPolicy} />
+                        </React.Suspense>
+                    }
+                />
             </Routes>
         </BrowserRouter>
     );

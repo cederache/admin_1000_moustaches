@@ -106,17 +106,19 @@ const Sidebar: React.FC = () => {
                         })}
                     </Nav>
                 </div>
-                <NavItem>
-                    <BSNavLink
-                        id="privacy-policy"
-                        tag={NavLink}
-                        to="/privacypolicy"
-                        end="false"
-                        className="text-black align-self-end ms-4"
-                    >
-                        <span>ⓒ Mentions légales</span>
-                    </BSNavLink>
-                </NavItem>
+                <Nav>
+                    <NavItem>
+                        <BSNavLink
+                            id="privacy-policy"
+                            tag={NavLink}
+                            to="/privacypolicy"
+                            end="false"
+                            className="text-black align-self-end"
+                        >
+                            <span>ⓒ Mentions légales</span>
+                        </BSNavLink>
+                    </NavItem>
+                </Nav>
 
 
 

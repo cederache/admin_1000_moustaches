@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { useState, FC, ReactElement, ReactNode, useEffect } from "react";
-import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink, } from "reactstrap";
 import logo from "../../assets/img/logo/Logo1000Moustaches.png";
 import UsersManager from "../../managers/users.manager";
 import SourceLink from "./SourceLink";
@@ -49,7 +49,7 @@ const AuthForm: FC<AuthFormProps> = ({
     confirmPasswordLabel,
     confirmPasswordInputProps,
     children,
-    onLogoClick = () => {},
+    onLogoClick = () => { },
     ...props
 }): ReactElement => {
     const [username, setUsername] = useState("");
@@ -209,7 +209,19 @@ const AuthForm: FC<AuthFormProps> = ({
                 )}
 
                 {children}
+
+                <div className="text-center mt-3">
+                    <NavLink
+                        id="privacy-policy"
+                        href="/privacypolicylogin"
+                        target="_blank"
+                        className="text-black text-decoration-none small"
+                    >
+                        ⓒ Mentions légales
+                    </NavLink>
+                </div>
             </Form>
+
 
             <NotificationSystem
                 ref={(notificationSystem) => {
