@@ -6,6 +6,7 @@ import { PiRabbitFill } from "react-icons/pi";
 import { MdPestControlRodent } from "react-icons/md";
 import { SPECIES_ID } from "../../../../utils/constants";
 
+
 // pagePermissions[navItem.ressourceName]?.can_read)
 const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | null }) => {
     const [countDog, setCountDog] = useState<number | undefined>(undefined);
@@ -31,29 +32,29 @@ const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | n
             </CardBody>
             <Row className="justify-content-center">
                 <Col className="d-flex align-items-center" xs="4">
-                    <Card body style={{ borderColor: "#1F8599" }}>
+                    <Card body className="cardBorder">
                         <CardTitle className="fs-3"> Total </CardTitle>
                         <CardText className="fs-1">{datas?.total}</CardText>
                     </Card>
                 </Col>
                 <Col xs="4">
-                    <Card body style={{ borderColor: "#1F8599" }} className="align-items-center">
+                    <Card body className="cardBorder align-items-center">
                         <PiDogFill size={35} aria-label="logo chien" role="img" />
                         <CardText className="fs-2" > {countDog ?? "-"} </CardText>
                     </Card>
                     <br />
-                    <Card body style={{ borderColor: "#1F8599" }} className="align-items-center">
+                    <Card body className="cardBorder align-items-center">
                         <PiRabbitFill size={35} aria-label="logo lapin" role="img" />
                         <CardText className="fs-2"> {countRabbit ?? "-"} </CardText>
                     </Card>
                 </Col>
                 <Col xs="4">
-                    <Card body style={{ borderColor: "#1F8599" }} className="align-items-center">
+                    <Card body className="cardBorder align-items-center">
                         <PiCatFill size={35} aria-label="logo chat" role="img" />
                         <CardText className="fs-2"> {countCat ?? "-"} </CardText>
                     </Card>
                     <br />
-                    <Card body style={{ borderColor: "#1F8599" }} className="align-items-center">
+                    <Card body className="cardBorder align-items-center">
                         <MdPestControlRodent size={35} aria-label="logo souris" role="img" />
                         <CardText className="fs-2"> {countOther ?? "-"} </CardText>
                     </Card>

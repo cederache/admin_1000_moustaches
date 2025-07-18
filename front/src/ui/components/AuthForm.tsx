@@ -197,7 +197,7 @@ const AuthForm: FC<AuthFormProps> = ({
                         Mot de passe oublié ?
                     </Label>
                 )}
-                <Button size="lg" className="bg-gradient-theme-left border-0" block onClick={handleSubmit}>
+                <Button type="submit" size="lg" className="bg-gradient-theme-left border-0" block onClick={handleSubmit}>
                     {renderButtonText()}
                 </Button>
 

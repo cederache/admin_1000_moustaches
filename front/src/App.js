@@ -6,7 +6,6 @@ import PageSpinner from "./ui/components/PageSpinner";
 import "./ui/styles/reduction.scss";
 import { Routes } from "react-router";
 
-
 const AuthPage = React.lazy(() => import("./ui/pages/AuthPage"));
 const DashboardPage = React.lazy(() => import("./ui/pages/DashboardPage"));
 const AnimalsPage = React.lazy(() => import("./ui/pages/animals/AnimalsPage"));
@@ -18,6 +17,7 @@ const HostFamilyDetailPage = React.lazy(() => import("./ui/pages/hostFamilies/Ho
 const UsersPage = React.lazy(() => import("./ui/pages/users/UsersPage"));
 const UserDetailPage = React.lazy(() => import("./ui/pages/users/UserDetailPage"));
 const PrivacyPolicy = React.lazy(() => import("./ui/pages/PrivacyPolicy"));
+
 const App = () => {
     return (
         <BrowserRouter>
