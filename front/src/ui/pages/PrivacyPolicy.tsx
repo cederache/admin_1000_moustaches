@@ -31,7 +31,7 @@ const PrivacyPolicy = () => {
                                     <i className="fas fa-lock me-2"></i>
                                     Accès restreint
                                 </h6>
-                                <span className="text-black">L'accès à ce site est strictement limité aux bénévoles autorisés de l'association.
+                                <span className="text-black">L'accès à ce site est strictement limité aux bénévoles autorisé·es de l'association.
                                     Les droits d'accès sont différenciés selon le rôle et les responsabilités de chaque bénévole.</span>
                             </Alert>
 
@@ -78,7 +78,7 @@ const PrivacyPolicy = () => {
                                                     </ListGroupItem>
                                                     <ListGroupItem className="bg-transparent px-0">
                                                         <strong>Responsable de la publication :</strong><br />
-                                                        Madame Voisin Lola
+                                                        Mme Voisin Lola
                                                     </ListGroupItem>
                                                 </ListGroup>
                                             </Col>

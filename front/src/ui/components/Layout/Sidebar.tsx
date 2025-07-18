@@ -1,14 +1,12 @@
 import React from "react";
 import Logo1000Moustaches from "../../../assets/img/logo/Logo1000Moustaches.png";
 import SourceLink from "../SourceLink";
-import { MdDashboard, MdPets, MdHealthAndSafety, MdHomeFilled, MdPeople } from "react-icons/md";
+import { MdDashboard, MdPets, MdHealthAndSafety, MdHomeFilled, MdPeople, MdOutlineFileOpen } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import { Nav, Navbar, NavItem, NavLink as BSNavLink } from "reactstrap";
 import bn from "../../../utils/bemnames";
-import { WebsiteCarbonBadge } from "react-websitecarbon-badge";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
-import PrivacyPolicy from "../../pages/PrivacyPolicy";
 
 interface SidebarItem {
     to: string;
@@ -115,7 +113,8 @@ const Sidebar: React.FC = () => {
                             end="false"
                             className="text-black align-self-end"
                         >
-                            <span>ⓒ Mentions légales</span>
+                            <MdOutlineFileOpen className="me-2" />
+                            Mentions légales
                         </BSNavLink>
                     </NavItem>
                 </Nav>

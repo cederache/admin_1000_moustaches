@@ -1,11 +1,11 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { useState, FC, ReactElement, ReactNode, useEffect } from "react";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { useState, FC, ReactElement, ReactNode } from "react";
 import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink, } from "reactstrap";
 import logo from "../../assets/img/logo/Logo1000Moustaches.png";
 import UsersManager from "../../managers/users.manager";
 import SourceLink from "./SourceLink";
-import PermissionsManager from "../../managers/permissions.manager";
 import Permissions from "../../logic/entities/Permissions";
+import { MdOutlineFileOpen } from "react-icons/md";
 
 import NotificationSystem from "react-notification-system";
 import { auth } from "../../firebase-config";
@@ -217,7 +217,8 @@ const AuthForm: FC<AuthFormProps> = ({
                         target="_blank"
                         className="text-black text-decoration-none small"
                     >
-                        ⓒ Mentions légales
+                        <MdOutlineFileOpen className="me-2" />
+                        Mentions légales
                     </NavLink>
                 </div>
             </Form>
