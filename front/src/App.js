@@ -16,6 +16,7 @@ const HostFamiliesPage = React.lazy(() => import("./ui/pages/hostFamilies/HostFa
 const HostFamilyDetailPage = React.lazy(() => import("./ui/pages/hostFamilies/HostFamilyDetailPage"));
 const UsersPage = React.lazy(() => import("./ui/pages/users/UsersPage"));
 const UserDetailPage = React.lazy(() => import("./ui/pages/users/UserDetailPage"));
+const PrivacyPolicy = React.lazy(() => import("./ui/pages/PrivacyPolicy"));
 
 const App = () => {
     return (
@@ -114,6 +115,22 @@ const App = () => {
                     element={
                         <React.Suspense fallback={<PageSpinner />}>
                             <LayoutRoute isPrivate layout={MainLayout} component={UserDetailPage} />
+                        </React.Suspense>
+                    }
+                />
+                <Route
+                    path="/privacypolicy"
+                    element={
+                        <React.Suspense fallback={<PageSpinner />}>
+                            <LayoutRoute isPrivate layout={MainLayout} component={PrivacyPolicy} />
+                        </React.Suspense>
+                    }
+                />
+                <Route
+                    path="/privacypolicylogin"
+                    element={
+                        <React.Suspense fallback={<PageSpinner />}>
+                            <LayoutRoute layout={EmptyLayout} component={PrivacyPolicy} />
                         </React.Suspense>
                     }
                 />

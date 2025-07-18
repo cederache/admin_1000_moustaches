@@ -44,30 +44,30 @@ const HostFamiliesCard = ({ title, datas }: { title: string; datas: SpeciesCount
             <Row className="justify-content-center">
                 <Col className="d-flex align-items-center" xs="4">
                     <Button onClick={() => handleGoToHostFamilies()} style={buttonStyle}>
-                        <CardTitle> Total </CardTitle>
+                        <CardTitle className="fs-3"> Total </CardTitle>
                         <CardText className="fs-1">{datas?.total}</CardText>
                     </Button>
                 </Col>
                 <Col xs="4">
                     <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.DOG)} className="mb-3" style={buttonStyle}>
-                        <PiDogFill size={35} />
-                        <CardText className="fs-4"> {countDog ?? "-"}</CardText>
+                        <PiDogFill size={35} aria-label="logo chien" role="img" />
+                        <CardText className="fs-2"> {countDog ?? "-"}</CardText>
                     </Button>
                     <br />
                     <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.RABBIT)} style={buttonStyle}>
-                        <PiRabbitFill size={35} />
-                        <CardText className="fs-4"> {countRabbit ?? "-"} </CardText>
+                        <PiRabbitFill size={35} aria-label="logo lapin" role="img" />
+                        <CardText className="fs-2"> {countRabbit ?? "-"} </CardText>
                     </Button>
                 </Col>
                 <Col xs="4">
                     <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.CAT)} className="mb-3" style={buttonStyle}>
-                        <PiCatFill size={35} />
-                        <CardText className="fs-4"> {countCat ?? "-"} </CardText>
+                        <PiCatFill size={35} aria-label="logo chat" role="img" />
+                        <CardText className="fs-2"> {countCat ?? "-"} </CardText>
                     </Button>
                     <br />
                     <Button onClick={() => handleGoToHostFamilies(SPECIES_ID.OTHER)} style={buttonStyle}>
-                        <MdPestControlRodent size={35} />
-                        <CardText className="fs-4"> {countOther ?? "-"}</CardText>
+                        <MdPestControlRodent size={35} aria-label="logo souris" role="img" />
+                        <CardText className="fs-2"> {countOther ?? "-"}</CardText>
                     </Button>
                 </Col>
             </Row>

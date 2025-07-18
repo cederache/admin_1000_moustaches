@@ -1,11 +1,11 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { useState, FC, ReactElement, ReactNode, useEffect } from "react";
-import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { useState, FC, ReactElement, ReactNode } from "react";
+import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink, } from "reactstrap";
 import logo from "../../assets/img/logo/Logo1000Moustaches.png";
 import UsersManager from "../../managers/users.manager";
 import SourceLink from "./SourceLink";
-import PermissionsManager from "../../managers/permissions.manager";
 import Permissions from "../../logic/entities/Permissions";
+import { MdOutlineFileOpen } from "react-icons/md";
 
 import NotificationSystem from "react-notification-system";
 import { auth } from "../../firebase-config";
@@ -49,7 +49,7 @@ const AuthForm: FC<AuthFormProps> = ({
     confirmPasswordLabel,
     confirmPasswordInputProps,
     children,
-    onLogoClick = () => {},
+    onLogoClick = () => { },
     ...props
 }): ReactElement => {
     const [username, setUsername] = useState("");
@@ -197,7 +197,7 @@ const AuthForm: FC<AuthFormProps> = ({
                         Mot de passe oublié ?
                     </Label>
                 )}
-                <Button size="lg" className="bg-gradient-theme-left border-0" block onClick={handleSubmit}>
+                <Button type="submit" size="lg" className="bg-gradient-theme-left border-0" block onClick={handleSubmit}>
                     {renderButtonText()}
                 </Button>
 
@@ -209,7 +209,20 @@ const AuthForm: FC<AuthFormProps> = ({
                 )}
 
                 {children}
+
+                <div className="text-center mt-3">
+                    <NavLink
+                        id="privacy-policy"
+                        href="/privacypolicylogin"
+                        target="_blank"
+                        className="text-black text-decoration-none small"
+                    >
+                        <MdOutlineFileOpen className="me-2" />
+                        Mentions légales
+                    </NavLink>
+                </div>
             </Form>
+
 
             <NotificationSystem
                 ref={(notificationSystem) => {
