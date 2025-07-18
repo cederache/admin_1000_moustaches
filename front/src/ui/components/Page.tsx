@@ -47,7 +47,7 @@ const Page: FC<PageProps> = ({ title, breadcrumbs, className, children, notifica
             </div>
             <div className={bem.e("header")}>
                 {title && typeof title === "string" ? (
-                    <Typography tag="p" type="h1" className={bem.e("title")}>
+                    <Typography tag="h1" type="h1" className={bem.e("title")}>
                         {title}
                     </Typography>
                 ) : (

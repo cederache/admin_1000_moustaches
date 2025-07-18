@@ -12,45 +12,57 @@ import { Ressource } from "../../../logic/entities/Permissions";
 interface SidebarItem {
     to: string;
     name: string;
+    id: string;
     exact: boolean;
-    Icon: React.ComponentType<{ className?: string; size?: number }>;
+    Icon: React.ComponentType<{ className?: string; size?: number, role: string }>;
     ressourceName?: Ressource;
+    alt: string;
 }
 
 const navItems: SidebarItem[] = [
     {
         to: "/",
         name: "Dashboard",
+        id: "dashboard",
         exact: true,
         Icon: MdDashboard,
+        alt: "logo Dashboard"
     },
     {
         to: "/animals",
         name: "Animaux",
+        id: "animaux",
         exact: false,
         Icon: MdPets,
         ressourceName: Ressource.PET_LIST,
+        alt: "logo animaux"
     },
     {
         to: "/veterinarians",
         name: "Vétérinaires",
+        id: "vet",
         exact: false,
         Icon: MdHealthAndSafety,
         ressourceName: Ressource.VET_LIST,
+        alt: "logo vétérinaire"
     },
     {
         to: "/hostFamilies",
         name: "Familles d'Accueil",
+        id: "FA",
         exact: false,
         Icon: MdHomeFilled,
         ressourceName: Ressource.HF_LIST,
+        alt: "logo famille d'accueil"
     },
     {
         to: "/users",
         name: "Utilisateur·ice·s",
+        id: "utilisateur",
         exact: false,
         Icon: MdPeople,
         ressourceName: Ressource.USER_LIST,
+        alt: "logo Utilisateur·ice·s"
     },
 ];
 
@@ -68,7 +80,7 @@ const Sidebar: React.FC = () => {
             <div className={bem.e("content")}>
                 <Navbar>
                     <SourceLink className="navbar-brand justify-content-center" link="https://1000moustaches.fr">
-                        <img src={Logo1000Moustaches} height="100" alt="1000 Moustaches" />
+                        <img src={Logo1000Moustaches} height="100" alt="logo de 1000 Moustaches" />
                     </SourceLink>
                 </Navbar>
                 <Nav vertical>
@@ -77,13 +89,13 @@ const Sidebar: React.FC = () => {
                             return (
                                 <NavItem key={index} className={bem.e("nav-item")}>
                                     <BSNavLink
-                                        id={`navItem-${navItem.name}-${index}`}
+                                        id={`navItem-${navItem.id}-${index}`}
                                         className="text-uppercase"
                                         tag={NavLink}
                                         to={navItem.to}
                                         end={navItem.exact}
                                     >
-                                        <navItem.Icon className={bem.e("nav-item-icon")} />
+                                        <navItem.Icon className={bem.e("nav-item-icon")} role="img" aria-label={navItem.alt} />
                                         <span>{navItem.name}</span>
                                     </BSNavLink>
                                 </NavItem>
@@ -91,7 +103,6 @@ const Sidebar: React.FC = () => {
                         }
                     })}
                 </Nav>
-                <WebsiteCarbonBadge lang="fr" url="https://admin-1000-moustaches.web.app/hostFamilies" />
             </div>
         </aside>
     );

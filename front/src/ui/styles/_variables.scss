@@ -13,19 +13,23 @@
 // $white: #fff;
 
 $primary: #06758c;
-$secondary: #43abc9;
+$secondary: #1E8194;
+$tertiary: #72c7d5;
 $success: #45b649;
 $danger: #f85032;
 $warning: #f4af00;
 $info: #00c9ff;
+$text: black;
 
 $theme-colors: (
     "primary": $primary,
     "secondary": $secondary,
+    "tertiary": $tertiary,
     "success": $success,
     "danger": $danger,
     "warning": $warning,
     "info": $info,
+    "text": $text
 );
 
 $enable-gradients: true;
@@ -38,6 +42,6 @@ $card-cap-bg: #fff;
 $cr-sidebar-width: 224px;
 
 :root {
-    --bs-link-color: #06758c !important;
-    --bs-link-hover-color: #43abc9 !important;
+    --bs-link-color: #{$primary} !important;
+    --bs-link-hover-color: #{$text} !important;
 }
