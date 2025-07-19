@@ -9,12 +9,11 @@ import { useLoggedUser } from "../../../hooks/useLoggedUser";
 const bem = bn.create("header");
 
 const Header: React.FC = () => {
-    const { loggedUser, setLoggedUser } = useLoggedUser();
+    const { loggedUser } = useLoggedUser();
     const [isOpenUserCardPopover, setIsOpenUserCardPopover] = useState<boolean>(false);
 
     const logout = async (): Promise<void> => {
         await AuthManager.logout();
-        setLoggedUser(null);
         window.location.href = "/login";
     };
 

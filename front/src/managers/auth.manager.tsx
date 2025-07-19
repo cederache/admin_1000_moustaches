@@ -36,8 +36,8 @@ class AuthManager {
 
     static async logout(): Promise<void> {
         await signOut(auth);
-        // Clear user from sessionStorage
-        sessionStorage.removeItem("User");
+        // Clear sessionStorage
+        sessionStorage.clear();
     }
 }
 
