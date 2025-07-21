@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { PermissionController } from "../controllers/PermissionController";
 import { checkIfAuthenticated, getAuthUser } from "../middlewares/auth-middleware";
-import { error } from "console";
 
 const router = Router();
 const permissionController = new PermissionController();
