@@ -25,7 +25,7 @@
     "dev:fixtures": "cross-env TS_NODE=true && ts-node ./fixtures/index.ts",
     "schema:sync": "npm run typeorm schema:sync -- -d app/config/database.ts",
     "schema:log": "npm run typeorm schema:log -- -d app/config/database.ts",
-    "test": "echo \"No tests yet - passing automatically\" && exit 0"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -51,6 +51,7 @@
     "@types/cors": "^2.8.17",
     "@types/estree": "^1.0.7",
     "@types/express": "^4.17.17",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
@@ -58,8 +59,10 @@
     "eslint-config-google": "^0.14.0",
     "firebase-functions-test": "^0.2.0",
     "firebase-tools": "^14.4.0",
+    "jest": "^30.0.5",
     "nodemon": "^2.0.20",
+    "ts-jest": "^29.4.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.3"
   }
 }
