@@ -16,6 +16,7 @@ import { createAnimals } from "./animals";
 import { createHostFamilies } from "./hostFamilies";
 import { createVeterinarians } from "./veterinarians";
 import { createDemoAccounts } from "./demoAccounts";
+import { createAnimalHostFamilies } from "./animalsToHostFamilies";
 
 const loadFixtures = async () => {
   try {
@@ -27,6 +28,7 @@ const loadFixtures = async () => {
     await createHostFamilies(AppDataSource);
     await createVeterinarians(AppDataSource);
     await createDemoAccounts(AppDataSource);
+    await createAnimalHostFamilies(AppDataSource);
     // TODO: Add other fixtures here
 
     console.log("Fixtures loaded successfully!");
