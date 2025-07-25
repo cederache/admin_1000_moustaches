@@ -9,3 +9,5 @@ firebase-service-account.json
 node_modules
 front/.env
 server/.env
+
+front/cypress/screenshots

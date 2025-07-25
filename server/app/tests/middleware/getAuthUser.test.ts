@@ -27,7 +27,7 @@ describe('function getauthUser from auth middleware', () => {
         jest.clearAllMocks(); // Nettoie entre chaque test
     });
 
-    it('should return error 401 if not authmail', async () => {
+    it('should return error 401 if not authEmail', async () => {
         // Given
         const middleware = getAuthUser;
         const req = {
@@ -63,7 +63,7 @@ describe('function getauthUser from auth middleware', () => {
         expect(next).not.toHaveBeenCalled();
     });
 
-    it('should return error authUser', async () => {
+    it('should return authUser', async () => {
 
         const userFounded: User = {
             id: 1,

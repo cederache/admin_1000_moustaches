@@ -24,7 +24,7 @@ describe('function checkIfPermitted from permission middleware', () => {
         jest.clearAllMocks(); // Nettoie entre chaque test
     });
 
-    it('should return error 401 if any user is connected', async () => {
+    it('should return error 401 if no user is connected', async () => {
         // Given
         const middleware = checkIfPermitted(RessourceEnum.CARD_ANIMALS_ADOPTED, Method.GET);
         const req = { authUser: null } as Request;

@@ -57,4 +57,6 @@ describe('function checkIfAuthenticated from auth middleware', () => {
         expect(next).not.toHaveBeenCalled();
     });
 
+    // We can't test the success case because we can't mock Firebase functionality
+
 });

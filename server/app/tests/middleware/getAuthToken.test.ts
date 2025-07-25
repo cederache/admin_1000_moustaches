@@ -48,4 +48,23 @@ describe('function getAuthtoken from auth middleware', () => {
         expect(req.authToken).toBe(undefined);
         expect(next).toHaveBeenCalled();
     })
+
+    it('should return No token found with authorization undefined', async () => {
+        // Given
+        const res = mockRes();
+        const req = {
+            headers: {
+                authorization: undefined
+            },
+            authToken: ''
+        }
+        const next = jest.fn();
+
+        // When
+        getAuthToken(req as Request, res, next)
+
+        // Then
+        expect(req.authToken).toBe(undefined);
+        expect(next).toHaveBeenCalled();
+    })
 })
