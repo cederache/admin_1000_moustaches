@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - main
+      - feature/ci
     paths:
       - "front/**"
       - ".github/workflows/front.yml"
@@ -19,7 +20,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/'))
+    if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')) || startsWith(github.head_ref, 'feature/ci')
     defaults:
       run:
         working-directory: ./front
@@ -37,6 +38,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # Setup db
+      # Wait for X seconds
+      # Setup server
+      # Wait for X seconds
+      # Run db migrations
+      # Wait for X seconds
+      # Run front
+      # Wait for X seconds
 
       - name: Run tests
         run: npm test

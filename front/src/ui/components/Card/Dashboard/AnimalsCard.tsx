@@ -6,8 +6,6 @@ import { PiRabbitFill } from "react-icons/pi";
 import { MdPestControlRodent } from "react-icons/md";
 import { SPECIES_ID } from "../../../../utils/constants";
 
-
-// pagePermissions[navItem.ressourceName]?.can_read)
 const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | null }) => {
     const [countDog, setCountDog] = useState<number | undefined>(undefined);
     const [countRabbit, setCountRabbit] = useState<number | undefined>(undefined);
@@ -20,10 +18,6 @@ const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | n
         setCountCat(datas?.species.find((specie) => specie.id === SPECIES_ID.CAT)?.count);
         setCountOther(datas?.species.find((specie) => specie.id === SPECIES_ID.OTHER)?.count);
     }, [datas]);
-
-    // if (pagePermissions[navItem.ressourceName]?.can_read != true) {
-    //     return null
-    // }
 
     return (
         <Card body className="text-center" xs="auto">
