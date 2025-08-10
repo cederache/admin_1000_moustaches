@@ -16,6 +16,14 @@ const router = Router();
 
 // Health check endpoint
 router.get("/health", (req, res) => {
+  /* #swagger.tags = ['Health']
+     #swagger.summary = 'Health check'
+     #swagger.description = 'Check if the API server is running and healthy'
+     #swagger.responses[200] = {
+       description: 'Server is healthy',
+       schema: { $ref: '#/components/schemas/HealthResponse' }
+     }
+  */
   res.status(200).json({
     status: "OK",
     timestamp: new Date().toISOString(),

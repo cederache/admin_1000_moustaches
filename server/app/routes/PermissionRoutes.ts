@@ -6,6 +6,23 @@ const router = Router();
 const permissionController = new PermissionController();
 
 router.get("/", checkIfAuthenticated, getAuthUser, async (req, res) => {
+  /* #swagger.tags = ['Permissions']
+     #swagger.summary = 'Get current user permissions'
+     #swagger.description = 'Retrieve all permissions for the currently authenticated user'
+     #swagger.responses[200] = {
+       description: 'List of user permissions',
+       content: {
+         'application/json': {
+           schema: {
+             type: 'array',
+             items: { $ref: '#/components/schemas/Permission' }
+           }
+         }
+       }
+     }
+     #swagger.responses[401] = { description: "Unauthorized" }
+     #swagger.responses[404] = { description: "Not Found" }
+  */
   let userId = req.authUser.id;
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });
