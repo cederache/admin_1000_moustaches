@@ -6,8 +6,6 @@ import { PiRabbitFill } from "react-icons/pi";
 import { MdPestControlRodent } from "react-icons/md";
 import { SPECIES_ID } from "../../../../utils/constants";
 
-
-// pagePermissions[navItem.ressourceName]?.can_read)
 const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | null }) => {
     const [countDog, setCountDog] = useState<number | undefined>(undefined);
     const [countRabbit, setCountRabbit] = useState<number | undefined>(undefined);
