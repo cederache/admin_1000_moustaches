@@ -15,7 +15,7 @@ export class Animal {
     @ManyToOne(() => Species, species => species.animals)
     species: Species
 
-    @Column()
+    @Column({ nullable: true, default: () => 'NULL' })
     icad: string
 
     @Column({ nullable: true, default: () => 'NULL' })
