@@ -8,7 +8,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebase-config";
 import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import User from "../../../logic/entities/User";
 import { useNavigate } from "react-router-dom";
 
@@ -20,8 +20,6 @@ const UsersPage: FC<UsersPageProps> = () => {
     const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
     const [searchText, setSearchText] = useState("");
     const [loggedUser, setLoggedUser] = useState<User | null>(null);
-
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
 
     const navigate = useNavigate();
 
@@ -36,10 +34,7 @@ const UsersPage: FC<UsersPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -89,9 +84,6 @@ const UsersPage: FC<UsersPageProps> = () => {
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
         >
             <Row>
                 <Col>

@@ -29,6 +29,7 @@ class HostFamily {
     membershipUpToDate?: boolean;
     isTemporary?: boolean;
     situation?: string;
+    isAvailable?: boolean;
 
     referent?: User;
     hostFamilyKinds?: HostFamilyKind[];
@@ -65,6 +66,7 @@ class HostFamily {
             hf.isTemporary,
             hf.situation,
             hf.referent,
+            hf.isAvailable,
             hf.hostFamilyKinds,
             hf.animalToHostFamilies
         );
@@ -98,6 +100,7 @@ class HostFamily {
         isTemporary?: boolean,
         situation?: string,
         referent?: User,
+        isAvailable?: boolean,
         hostFamilyKinds?: HostFamilyKind[],
         animalToHostFamilies?: AnimalToHostFamily[]
     ) {
@@ -127,6 +130,7 @@ class HostFamily {
         this.membershipUpToDate = membershipUpToDate;
         this.isTemporary = isTemporary;
         this.situation = situation;
+        this.isAvailable = isAvailable;
 
         this.referent = referent;
         this.hostFamilyKinds = hostFamilyKinds ?? [];

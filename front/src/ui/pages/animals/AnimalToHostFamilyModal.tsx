@@ -4,7 +4,7 @@ import NullableDropdown from "../../components/NullableDropdown";
 import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import HostFamily from "../../../logic/entities/HostFamily";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 
 interface AnimalToHostFamilyModalProps {
     hostFamilies: HostFamily[];
@@ -12,7 +12,6 @@ interface AnimalToHostFamilyModalProps {
     currentAnimalToHostFamily: AnimalToHostFamily;
     show: boolean;
     handleClose: (close: boolean) => void;
-    notificationSystem?: NotificationSystem;
 }
 
 const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
@@ -21,7 +20,6 @@ const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
     currentAnimalToHostFamily,
     show,
     handleClose,
-    notificationSystem,
     ...props
 }) => {
     const [animalToHostFamily, setAnimalToHostFamily] = useState<AnimalToHostFamily>(athf);
@@ -33,34 +31,22 @@ const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
         if (modification) {
             AnimalsToHostFamiliesManager.update(animalToHostFamily)
                 .then((_) => {
-                    notificationSystem?.addNotification({
-                        message: "Lien Animal / Famille d'accueil modifié",
-                        level: "success",
-                    });
+                    toast.success("Lien Animal / Famille d'accueil modifié");
                     handleClose(true);
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la modification des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la modification des données\n${err}`);
                 });
         } else {
             AnimalsToHostFamiliesManager.create(animalToHostFamily)
                 .then((_) => {
-                    notificationSystem?.addNotification({
-                        message: "Lien Animal / Famille d'accueil créé",
-                        level: "success",
-                    });
+                    toast.success("Lien Animal / Famille d'accueil créé");
                     handleClose(true);
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
                 });
         }
         return;

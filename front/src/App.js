@@ -5,6 +5,7 @@ import { EmptyLayout, LayoutRoute, MainLayout } from "./ui/components/Layout";
 import PageSpinner from "./ui/components/PageSpinner";
 import "./ui/styles/reduction.scss";
 import { Routes } from "react-router";
+import { Toaster } from "react-hot-toast";
 
 const AuthPage = React.lazy(() => import("./ui/pages/AuthPage"));
 const DashboardPage = React.lazy(() => import("./ui/pages/DashboardPage"));
@@ -16,10 +17,31 @@ const HostFamiliesPage = React.lazy(() => import("./ui/pages/hostFamilies/HostFa
 const HostFamilyDetailPage = React.lazy(() => import("./ui/pages/hostFamilies/HostFamilyDetailPage"));
 const UsersPage = React.lazy(() => import("./ui/pages/users/UsersPage"));
 const UserDetailPage = React.lazy(() => import("./ui/pages/users/UserDetailPage"));
+const PrivacyPolicy = React.lazy(() => import("./ui/pages/PrivacyPolicy"));
 
 const App = () => {
     return (
         <BrowserRouter>
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#363636',
+                        color: '#fff',
+                    },
+                    success: {
+                        style: {
+                            background: '#28a745',
+                        },
+                    },
+                    error: {
+                        style: {
+                            background: '#dc3545',
+                        },
+                    },
+                }}
+            />
             <Routes>
                 <Route
                     exact
@@ -114,6 +136,22 @@ const App = () => {
                     element={
                         <React.Suspense fallback={<PageSpinner />}>
                             <LayoutRoute isPrivate layout={MainLayout} component={UserDetailPage} />
+                        </React.Suspense>
+                    }
+                />
+                <Route
+                    path="/privacypolicy"
+                    element={
+                        <React.Suspense fallback={<PageSpinner />}>
+                            <LayoutRoute isPrivate layout={MainLayout} component={PrivacyPolicy} />
+                        </React.Suspense>
+                    }
+                />
+                <Route
+                    path="/privacypolicylogin"
+                    element={
+                        <React.Suspense fallback={<PageSpinner />}>
+                            <LayoutRoute layout={EmptyLayout} component={PrivacyPolicy} />
                         </React.Suspense>
                     }
                 />

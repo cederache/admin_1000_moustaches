@@ -4,20 +4,20 @@ import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap"
 import VeterinarianInterventionsManager from "../../../managers/veterinarianInterventions.manager";
 import VeterinarianInterventionModal from "./VeterinarianInterventionModal";
 import VeterinarianIntervention from "../../../logic/entities/VeterinarianIntervention";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import Animal from "../../../logic/entities/Animal";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface VeterinarianInterventionsHistoryProps {
     animal: Animal;
     veterinarianInterventions: VeterinarianIntervention[];
-    notificationSystem?: NotificationSystem;
     shouldRefresh: () => void;
 }
 
 const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps> = ({
     animal,
     veterinarianInterventions,
-    notificationSystem,
     shouldRefresh,
 }) => {
     const [modalVeterinarianIntervention, setModalVeterinarianIntervention] = useState<VeterinarianIntervention | null>(null);
@@ -29,20 +29,16 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
     const deleteVeterinarianIntervention = (veterinarianIntervention: VeterinarianIntervention) => {
         VeterinarianInterventionsManager.delete(veterinarianIntervention)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Intervention vétérinaire supprimée",
-                    level: "success",
-                });
+                toast.success("Intervention vétérinaire supprimée");
                 shouldRefresh();
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
     };
+
+    const pagePermissions = useGetPermissions([Ressource.PET_HIST_VETO]);
 
     return (
         <>
@@ -53,26 +49,25 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                             <h3>Historique des interventions vétérinaires</h3>
                         </Col>
                         <Col xs={"auto"}>
-                            <Button
-                                color="primary"
-                                onClick={() => {
-                                    if (!animal.id) {
-                                        notificationSystem?.addNotification({
-                                            message: "Sauvegardez d'abord l'animal avant d'enregistrer une intervention vétérinaire",
-                                            level: "warning",
-                                        });
-                                        return;
-                                    }
-                                    setModalVeterinarianIntervention(VeterinarianInterventionsManager.createVeterinarianIntervention());
-                                }}
-                            >
-                                <MdAddBox />
-                            </Button>
+                            {pagePermissions[Ressource.PET_HIST_VETO]?.can_create && (
+                                <Button
+                                    color="primary"
+                                    onClick={() => {
+                                        if (!animal.id) {
+                                            toast.error("Sauvegardez d'abord l'animal avant d'enregistrer une intervention vétérinaire");
+                                            return;
+                                        }
+                                        setModalVeterinarianIntervention(VeterinarianInterventionsManager.createVeterinarianIntervention());
+                                    }}
+                                >
+                                    <MdAddBox />
+                                </Button>
+                            )}
                         </Col>
                     </Row>
                 </CardHeader>
                 <CardBody className="table-responsive">
-                    <Table {...{ striped: true }}>
+                    <Table striped>
                         <thead>
                             <tr>
                                 <th scope="col">Date</th>
@@ -125,7 +120,6 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                             shouldRefresh();
                         }
                     }}
-                    notificationSystem={notificationSystem}
                 />
             )}
         </>

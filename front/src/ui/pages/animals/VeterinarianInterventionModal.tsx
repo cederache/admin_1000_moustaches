@@ -7,7 +7,7 @@ import VeterinarianInterventionsManager from "../../../managers/veterinarianInte
 import VeterinariansManager from "../../../managers/veterinarians.manager";
 import VeterinarianIntervention from "../../../logic/entities/VeterinarianIntervention";
 import Veterinarian from "../../../logic/entities/Veterinarian";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import Animal from "../../../logic/entities/Animal";
 
 interface VeterinarianInterventionModalProps {
@@ -15,7 +15,6 @@ interface VeterinarianInterventionModalProps {
     veterinarianIntervention: VeterinarianIntervention;
     show: boolean;
     handleClose: (close: boolean) => void;
-    notificationSystem?: NotificationSystem;
 }
 
 const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
@@ -23,7 +22,6 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
     veterinarianIntervention: vetInter,
     show,
     handleClose,
-    notificationSystem,
     ...props
 }) => {
     const [veterinarianIntervention, setVeterinarianIntervention] = useState<VeterinarianIntervention>(vetInter);
@@ -36,10 +34,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
             .then(setVeterinarians)
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -57,19 +52,13 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                 animalId: animal.id,
             })
                 .then((_) => {
-                    notificationSystem?.addNotification({
-                        message: "Intervention vétérinaire créée",
-                        level: "success",
-                    });
+                    toast.success("Intervention vétérinaire créée");
                     handleClose(true);
                 })
                 .catch((err) => {
                     console.error(err);
                     setIsEditing(true);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
                 });
             return;
         }
@@ -77,37 +66,25 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
         // Send new data to API
         VeterinarianInterventionsManager.update(veterinarianIntervention)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Intervention vétérinaire mise à jour",
-                    level: "success",
-                });
+                toast.success("Intervention vétérinaire mise à jour");
                 handleClose(true);
             })
             .catch((err) => {
                 console.error(err);
                 setIsEditing(true);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
             });
     };
 
     const deleteVetInter = () => {
         VeterinarianInterventionsManager.delete(veterinarianIntervention)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Intervention Vétérinaire supprimée",
-                    level: "success",
-                });
+                toast.success("Intervention Vétérinaire supprimée");
                 handleClose(true);
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
     };
 

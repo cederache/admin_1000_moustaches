@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { UserController } from '../controllers';
-import admin from './firebase-service';
+import admin from '../auth/firebase-service';
 
 export const getAuthToken = (req: Request, res: Response, next: NextFunction) => {
   if (

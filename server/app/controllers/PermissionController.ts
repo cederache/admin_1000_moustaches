@@ -34,4 +34,38 @@ export class PermissionController {
 
     return permissions;
   }
+
+  async getCurrentUserPermissionsWithRessource(userId: number, ressource: string) {
+    const permissions = await this.permissionRepository.find({
+      select: {
+        create: true,
+        read: true,
+        update: true,
+        delete: true,
+        ressource: {
+          name: true,
+        },
+      },
+      relations: {
+        team: false,
+        ressource: true,
+      },
+      where: {
+        team: {
+          users: {
+            id: userId,
+          },
+        },
+        ressource: {
+          name: ressource
+        }
+      },
+    });
+
+    if (permissions.length === 0) {
+      return [];
+    }
+
+    return permissions;
+  }
 }

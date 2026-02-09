@@ -9,12 +9,11 @@ import { useLoggedUser } from "../../../hooks/useLoggedUser";
 const bem = bn.create("header");
 
 const Header: React.FC = () => {
-    const { loggedUser, setLoggedUser } = useLoggedUser();
+    const { loggedUser } = useLoggedUser();
     const [isOpenUserCardPopover, setIsOpenUserCardPopover] = useState<boolean>(false);
 
     const logout = async (): Promise<void> => {
         await AuthManager.logout();
-        setLoggedUser(null);
         window.location.href = "/login";
     };
 
@@ -30,17 +29,15 @@ const Header: React.FC = () => {
 
     return (
         <Navbar light expand className={bem.b("bg-white")}>
-            <Nav navbar className="mr-2">
-                <Button outline onClick={handleSidebarControlButton}>
-                    <MdClearAll size={25} />
-                </Button>
-            </Nav>
+            <Button outline onClick={handleSidebarControlButton} >
+                Menu
+                <MdClearAll size={25} aria-label="logo menu burger" role="img" />
+            </Button>
 
             <Nav navbar className={bem.e("nav-right")}>
                 <NavItem>
-                    <NavLink id="Popover2">
-                        <Button onClick={toggleUserCardPopover}>{loggedUser?.displayName || loggedUser?.email}</Button>
-                    </NavLink>
+                    <Button id="Popover2" onClick={toggleUserCardPopover}>{loggedUser?.displayName || loggedUser?.email}</Button>
+
                     <Popover
                         placement="bottom-end"
                         isOpen={isOpenUserCardPopover}

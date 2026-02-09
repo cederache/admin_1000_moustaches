@@ -24,20 +24,28 @@ import Geocode from "../../../utils/geocode";
 import SourceLink from "../../components/SourceLink";
 import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
 import Switch from "../../components/Switch";
-import Dropdown from "../../components/Dropdown";
 import NullableDropdown from "../../components/NullableDropdown";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import HostFamily from "../../../logic/entities/HostFamily";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import User from "../../../logic/entities/User";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import { useNavigate, useParams } from "react-router-dom";
 import { RiZzzFill } from "react-icons/ri";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface HostFamilyDetailPageProps {
     [key: string]: any;
 }
+
+const permissionsName: Ressource[] = [
+    Ressource.HF_CONTACT,
+    Ressource.HF_ADDRESS,
+    Ressource.HF_HOST,
+    Ressource.HF_HIST_PETS
+];
 
 const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
     let { id: paramHostFamilyId } = useParams();
@@ -47,8 +55,6 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
     const [referents, setReferents] = useState<User[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
-
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
 
     const [geocodeFound, setGeocodeFound] = useState<boolean | null>(null);
     const [previousAddress, setPreviousAddress] = useState<string | null>(null);
@@ -60,6 +66,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
     const [openHostInfo, setOpenHostInfo] = useState<string>("");
 
     const navigate = useNavigate();
+    const pagePermissions = useGetPermissions(permissionsName);
 
     const getHostFamily = () => {
         setHostFamily(null);
@@ -71,10 +78,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
             .then((hostFamily) => setHostFamily(hostFamily))
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -92,10 +96,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
             )
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -105,10 +106,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
             .then(setReferents)
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -198,35 +196,23 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
         setIsEditing(false);
         if (hostFamilyId === "new") {
             if (hostFamily.firstname === undefined) {
-                notificationSystem?.addNotification({
-                    message: "Le prénom est obligatoire",
-                    level: "error",
-                });
+                toast.error("Le prénom est obligatoire");
                 setIsEditing(true);
                 return;
             } else if (hostFamily.name === undefined) {
-                notificationSystem?.addNotification({
-                    message: "Le nom est obligatoire",
-                    level: "error",
-                });
+                toast.error("Le nom est obligatoire");
                 setIsEditing(true);
                 return;
             }
             // Send new data to API
             HostFamiliesManager.create(hostFamily)
                 .then((updatedHostFamily) => {
-                    notificationSystem?.addNotification({
-                        message: "Famille d'Accueil créée",
-                        level: "success",
-                    });
+                    toast.success("Famille d'Accueil créée");
                     navigate(`/hostFamilies/${updatedHostFamily.id}`);
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
                     setIsEditing(true);
                 });
             return;
@@ -236,18 +222,12 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
         HostFamiliesManager.update(hostFamily)
             .then(() => {
                 getHostFamily();
-                notificationSystem?.addNotification({
-                    message: "Famille d'Accueil mis à jour",
-                    level: "success",
-                });
+                toast.success("Famille d'Accueil mis à jour");
             })
             .catch((err) => {
                 console.error(err);
                 getHostFamily();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
             });
     };
 
@@ -257,19 +237,13 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
         }
         HostFamiliesManager.delete(hostFamily)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Famille d'Accueil supprimée",
-                    level: "success",
-                });
+                toast.success("Famille d'Accueil supprimée");
                 navigate("/hostFamilies");
             })
             .catch((err) => {
                 console.error(err);
                 getHostFamily();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
     };
 
@@ -326,11 +300,15 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 <MdDelete />
                             </Button>
                         )}
-                        {!isEditing && (
-                            <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
-                                <MdOutlineModeEdit />
-                            </Button>
-                        )}
+                        {!isEditing &&
+                            (pagePermissions[Ressource.HF_CONTACT].can_update ||
+                                pagePermissions[Ressource.HF_ADDRESS].can_update ||
+                                pagePermissions[Ressource.HF_HOST].can_update ||
+                                pagePermissions[Ressource.HF_HIST_PETS].can_update) && (
+                                <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
+                                    <MdOutlineModeEdit />
+                                </Button>
+                            )}
                         {isEditing && (
                             <Button className="ms-2" color="success" onClick={() => save()}>
                                 <MdSave />
@@ -366,7 +344,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                             id="break"
                                             key="break"
                                             isOn={!hostFamily.onBreak}
-                                            disabled={!isEditing}
+                                            disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                             handleToggle={() => {
                                                 setHostFamily({
                                                     ...hostFamily,
@@ -389,7 +367,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                     id="membership"
                                     key="membership"
                                     isOn={hostFamily.membershipUpToDate}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     handleToggle={() => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -406,7 +384,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                             <Col xs={"auto"}>
                                 <NullableDropdown
                                     color={"primary"}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     value={referents.find((usr) => usr.id === hostFamily.referent?.id)}
                                     values={referents}
                                     valueDisplayName={(usr) => (usr === undefined ? "Aucun·e" : `${usr?.firstname} ${usr?.name}`)}
@@ -430,7 +408,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                     id="temporary"
                                     key="temporary"
                                     isOn={hostFamily.isTemporary}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     handleToggle={() => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -446,7 +424,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={hostFamily.driverLicense ?? null}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -460,7 +438,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={hostFamily.hasVehicule ?? null}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     onChange={(newValue) => {
                                         setHostFamily({
                                             ...hostFamily,
@@ -476,7 +454,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 <Input
                                     type="textarea"
                                     value={hostFamily.situation || ""}
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                     onChange={(evt) =>
                                         setHostFamily({
                                             ...hostFamily,
@@ -486,391 +464,399 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                         </Row>
-                        <Accordion
-                            className="pb-3"
-                            open={openContactInfo}
-                            // Workaround to pass the toggle function to the AccordionHeader component
-                            // https://github.com/reactstrap/reactstrap/issues/2165
-                            {...{
-                                toggle: toggleContactInfo,
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Information de contact</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    {hostFamilyId === "new" && isEditing && (
+                        {pagePermissions[Ressource.HF_CONTACT].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={openContactInfo}
+                                // Workaround to pass the toggle function to the AccordionHeader component
+                                // https://github.com/reactstrap/reactstrap/issues/2165
+                                {...{
+                                    toggle: toggleContactInfo,
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Information de contact</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        {hostFamilyId === "new" && isEditing && (
+                                            <Row>
+                                                <Col xs={6}>
+                                                    <Label>Prénom</Label>
+                                                    <Input
+                                                        value={hostFamily.firstname || ""}
+                                                        disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
+                                                        onChange={(evt) =>
+                                                            setHostFamily({
+                                                                ...hostFamily,
+                                                                firstname: evt.target.value,
+                                                            })
+                                                        }
+                                                    />
+                                                </Col>
+                                                <Col xs={6}>
+                                                    <Label>Nom</Label>
+                                                    <Input
+                                                        value={hostFamily.name || ""}
+                                                        disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
+                                                        onChange={(evt) =>
+                                                            setHostFamily({
+                                                                ...hostFamily,
+                                                                name: evt.target.value,
+                                                            })
+                                                        }
+                                                    />
+                                                </Col>
+                                            </Row>
+                                        )}
                                         <Row>
                                             <Col xs={6}>
-                                                <Label>Prénom</Label>
-                                                <Input
-                                                    value={hostFamily.firstname || ""}
-                                                    disabled={!isEditing}
-                                                    onChange={(evt) =>
-                                                        setHostFamily({
-                                                            ...hostFamily,
-                                                            firstname: evt.target.value,
-                                                        })
-                                                    }
-                                                />
+                                                <Label>Téléphone</Label>
+                                                {isEditing && pagePermissions[Ressource.HF_CONTACT].can_update && (
+                                                    <Input
+                                                        type="tel"
+                                                        value={hostFamily.phone || ""}
+                                                        disabled={false}
+                                                        onChange={(evt) =>
+                                                            setHostFamily({
+                                                                ...hostFamily,
+                                                                phone: evt.target.value,
+                                                            })
+                                                        }
+                                                    />
+                                                )}
+                                                {!isEditing && <Input type="tel" value={formattedPhone()} disabled={true} />}
                                             </Col>
                                             <Col xs={6}>
-                                                <Label>Nom</Label>
+                                                <Label>E-mail</Label>
                                                 <Input
-                                                    value={hostFamily.name || ""}
-                                                    disabled={!isEditing}
+                                                    type="email"
+                                                    value={hostFamily.mail || ""}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
-                                                            name: evt.target.value,
+                                                            mail: evt.target.value,
                                                         })
                                                     }
                                                 />
                                             </Col>
                                         </Row>
-                                    )}
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Téléphone</Label>
-                                            {isEditing && (
+                                        <Row>
+                                            <Col xs={6}>
+                                                <Label>Pseudo</Label>
                                                 <Input
-                                                    type="tel"
-                                                    value={hostFamily.phone || ""}
-                                                    disabled={false}
+                                                    value={hostFamily.socialNetworkAlias || ""}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
                                                     onChange={(evt) =>
                                                         setHostFamily({
                                                             ...hostFamily,
-                                                            phone: evt.target.value,
+                                                            socialNetworkAlias: evt.target.value,
                                                         })
                                                     }
                                                 />
-                                            )}
-                                            {!isEditing && <Input type="tel" value={formattedPhone()} disabled={true} />}
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Label>E-mail</Label>
-                                            <Input
-                                                type="email"
-                                                value={hostFamily.mail || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        mail: evt.target.value,
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6}>
-                                            <Label>Pseudo</Label>
-                                            <Input
-                                                value={hostFamily.socialNetworkAlias || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        socialNetworkAlias: evt.target.value,
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                        <Col xs={6}>
-                                            <Label>
-                                                {hostFamily.address !== undefined && (
-                                                    <SourceLink link={`https://www.google.com/maps/place/${hostFamily.address}`}>
-                                                        <span>
-                                                            Adresse <MdDirections />
-                                                        </span>
-                                                    </SourceLink>
-                                                )}
-                                                {hostFamily.address === undefined && <span>Adresse</span>}
-                                            </Label>
-                                            <Input
-                                                type="textarea"
-                                                value={hostFamily.address}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        address: evt.target.value,
-                                                    })
-                                                }
-                                            />
-                                            {geocodeFound !== null && (
-                                                <p className={geocodeFound === true ? "text-success" : "text-danger"}>
-                                                    <small>{geocodeFound === true ? "Adresse valide" : "Adresse non trouvée"}</small>
-                                                </p>
-                                            )}
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
-                        <Accordion
-                            className="pb-3"
-                            open={openHomeInfo}
-                            // Workaround to pass the toggle function to the AccordionHeader component
-                            // https://github.com/reactstrap/reactstrap/issues/2165
-                            {...{
-                                toggle: toggleHomeInfo,
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Information sur le foyer</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={4}>
-                                            <Label>Nombre d'enfant</Label>
-                                            <Input
-                                                value={hostFamily.nbChildren?.toString() || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) => {
-                                                    let nbChildren: number | undefined = parseInt(evt.target.value);
-                                                    if (isNaN(nbChildren)) {
-                                                        nbChildren = undefined;
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Label>
+                                                    {hostFamily.address !== undefined && (
+                                                        <SourceLink link={`https://www.google.com/maps/place/${hostFamily.address}`}>
+                                                            <span>
+                                                                Adresse <MdDirections />
+                                                            </span>
+                                                        </SourceLink>
+                                                    )}
+                                                    {hostFamily.address === undefined && <span>Adresse</span>}
+                                                </Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={hostFamily.address}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_CONTACT].can_update}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            address: evt.target.value,
+                                                        })
                                                     }
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        nbChildren: nbChildren,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={8}>
-                                            <Label>Informations enfant(s)</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={hostFamily.childrenInfos || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        childrenInfos: evt.target.value,
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Informations animaux</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={hostFamily.animalsInfos || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        animalsInfos: evt.target.value,
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Observations</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={hostFamily.observations || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        observations: evt.target.value,
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Informations sur le logement</Label>
-                                            <Input
-                                                type="textarea"
-                                                value={hostFamily.housingInformations || ""}
-                                                disabled={!isEditing}
-                                                onChange={(evt) =>
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        housingInformations: evt.target.value,
-                                                    })
-                                                }
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
-                        <Accordion
-                            className="pb-3"
-                            open={openHostInfo}
-                            // Workaround to pass the toggle function to the AccordionHeader component
-                            // https://github.com/reactstrap/reactstrap/issues/2165
-                            {...{
-                                toggle: toggleHostInfo,
-                            }}
-                        >
-                            <AccordionItem>
-                                <AccordionHeader targetId="1">Information sur l'accueil</AccordionHeader>
-                                <AccordionBody accordionId="1">
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Type de Famille d'Accueil</Label>
-                                            <FormGroup check>
-                                                {hostFamilyKinds.map((hfk) => {
-                                                    return (
-                                                        <Row>
-                                                            <Col>
-                                                                <Label check>
-                                                                    <Input
-                                                                        type="checkbox"
-                                                                        id={hfk.id + ""}
-                                                                        defaultChecked={
-                                                                            (hostFamily.hostFamilyKinds?.filter((hfthfk) => hfthfk.id === hfk.id).length ?? 0) >
-                                                                            0
-                                                                        }
-                                                                        onChange={(evt) => {
-                                                                            if (evt.target.checked === true) {
-                                                                                // Create link
-                                                                                const index = hostFamily?.hostFamilyKinds?.indexOf(hfk, 0);
-                                                                                if (index === -1) {
-                                                                                    hostFamily.hostFamilyKinds = [
-                                                                                        ...(hostFamily?.hostFamilyKinds ?? []),
-                                                                                        ...[hfk],
-                                                                                    ];
-                                                                                }
-                                                                            } else {
-                                                                                // Delete link
-                                                                                const index = hostFamily?.hostFamilyKinds?.indexOf(hfk, 0);
-                                                                                if (index !== undefined && index > -1) {
-                                                                                    hostFamily.hostFamilyKinds = hostFamily?.hostFamilyKinds ?? [];
-                                                                                    hostFamily?.hostFamilyKinds?.splice(index, 1);
-                                                                                }
+                                                />
+                                                {geocodeFound !== null && (
+                                                    <p className={geocodeFound === true ? "text-success" : "text-danger"}>
+                                                        <small>{geocodeFound === true ? "Adresse valide" : "Adresse non trouvée"}</small>
+                                                    </p>
+                                                )}
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
+                        {pagePermissions[Ressource.HF_ADDRESS].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={openHomeInfo}
+                                // Workaround to pass the toggle function to the AccordionHeader component
+                                // https://github.com/reactstrap/reactstrap/issues/2165
+                                {...{
+                                    toggle: toggleHomeInfo,
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Information sur le foyer</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={4}>
+                                                <Label>Nombre d'enfant</Label>
+                                                <Input
+                                                    value={hostFamily.nbChildren?.toString() || ""}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
+                                                    onChange={(evt) => {
+                                                        let nbChildren: number | undefined = parseInt(evt.target.value);
+                                                        if (isNaN(nbChildren)) {
+                                                            nbChildren = undefined;
+                                                        }
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            nbChildren: nbChildren,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={8}>
+                                                <Label>Informations enfant(s)</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={hostFamily.childrenInfos || ""}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            childrenInfos: evt.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Informations animaux</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={hostFamily.animalsInfos || ""}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            animalsInfos: evt.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Observations</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={hostFamily.observations || ""}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            observations: evt.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Informations sur le logement</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    value={hostFamily.housingInformations || ""}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_ADDRESS].can_update}
+                                                    onChange={(evt) =>
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            housingInformations: evt.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
+                        {pagePermissions[Ressource.HF_HOST].can_read && (
+                            <Accordion
+                                className="pb-3"
+                                open={openHostInfo}
+                                // Workaround to pass the toggle function to the AccordionHeader component
+                                // https://github.com/reactstrap/reactstrap/issues/2165
+                                {...{
+                                    toggle: toggleHostInfo,
+                                }}
+                            >
+                                <AccordionItem>
+                                    <AccordionHeader targetId="1">Information sur l'accueil</AccordionHeader>
+                                    <AccordionBody accordionId="1">
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Type de Famille d'Accueil</Label>
+                                                <FormGroup check>
+                                                    {hostFamilyKinds.map((hfk) => {
+                                                        return (
+                                                            <Row>
+                                                                <Col>
+                                                                    <Label check>
+                                                                        <Input
+                                                                            type="checkbox"
+                                                                            id={hfk.id + ""}
+                                                                            defaultChecked={
+                                                                                (hostFamily.hostFamilyKinds?.filter((hfthfk) => hfthfk.id === hfk.id).length ??
+                                                                                    0) > 0
                                                                             }
-                                                                        }}
-                                                                        disabled={!isEditing}
-                                                                    />
-                                                                    {hfk.name}
-                                                                </Label>
-                                                            </Col>
-                                                        </Row>
-                                                    );
-                                                })}
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={4} lg={3}>
-                                            <Label>Peut donner soins véto</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={hostFamily.canProvideVeterinaryCare ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        canProvideVeterinaryCare: newValue ?? undefined,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={4} lg={3}>
-                                            <Label>Peut sociabiliser</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={hostFamily.canProvideSociabilisation ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        canProvideSociabilisation: newValue ?? undefined,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={4} lg={3}>
-                                            <Label>Peut accueillir des animaux handicapés</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={hostFamily.canHostDisableAnimal ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        canHostDisableAnimal: newValue ?? undefined,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={4} lg={3}>
-                                            <Label>Peut donner des soins de nuit</Label>
-                                            <BooleanNullableDropdown
-                                                withNewLine={true}
-                                                value={hostFamily.canProvideNightCare ?? null}
-                                                disabled={!isEditing}
-                                                onChange={(newValue) => {
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        canProvideNightCare: newValue ?? undefined,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                        <Col xs={4} lg={3}>
-                                            <Label>Peut isoler</Label>
-                                            <NullableDropdown
-                                                withNewLine={true}
-                                                color={hostFamily.canIsolate === undefined ? "warning" : hostFamily.canIsolate === true ? "success" : "danger"}
-                                                value={hostFamily.canIsolate}
-                                                values={["no", "yes_short", "yes_long"]}
-                                                valueDisplayName={(value) =>
-                                                    value === null || value === undefined
-                                                        ? "NSP"
-                                                        : value === "yes_short"
-                                                        ? "Oui, qqs jours"
-                                                        : value === "yes_long"
-                                                        ? "Oui, ok long terme"
-                                                        : "Non"
-                                                }
-                                                valueActiveCheck={(value) => hostFamily.canIsolate === value}
-                                                key={"can_isolate"}
-                                                disabled={!isEditing}
-                                                onChange={(newCanIsolate) => {
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        canIsolate: newCanIsolate,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <Label>Conditions d'accueil (nb animaux, ...)</Label>
-                                            <Input
-                                                type="textarea"
-                                                disabled={!isEditing}
-                                                value={hostFamily.hostConditions || ""}
-                                                onChange={(evt) => {
-                                                    setHostFamily({
-                                                        ...hostFamily,
-                                                        hostConditions: evt.target.value,
-                                                    });
-                                                }}
-                                            />
-                                        </Col>
-                                    </Row>
-                                </AccordionBody>
-                            </AccordionItem>
-                        </Accordion>
+                                                                            onChange={(evt) => {
+                                                                                if (evt.target.checked === true) {
+                                                                                    // Create link
+                                                                                    const index = hostFamily?.hostFamilyKinds?.indexOf(hfk, 0);
+                                                                                    if (index === -1) {
+                                                                                        hostFamily.hostFamilyKinds = [
+                                                                                            ...(hostFamily?.hostFamilyKinds ?? []),
+                                                                                            ...[hfk],
+                                                                                        ];
+                                                                                    }
+                                                                                } else {
+                                                                                    // Delete link
+                                                                                    const index = hostFamily?.hostFamilyKinds?.indexOf(hfk, 0);
+                                                                                    if (index !== undefined && index > -1) {
+                                                                                        hostFamily.hostFamilyKinds = hostFamily?.hostFamilyKinds ?? [];
+                                                                                        hostFamily?.hostFamilyKinds?.splice(index, 1);
+                                                                                    }
+                                                                                }
+                                                                            }}
+                                                                            disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
+                                                                        />
+                                                                        {hfk.name}
+                                                                    </Label>
+                                                                </Col>
+                                                            </Row>
+                                                        );
+                                                    })}
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={4} lg={3}>
+                                                <Label>Peut donner soins véto</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={hostFamily.canProvideVeterinaryCare ?? null}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
+                                                    onChange={(newValue) => {
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            canProvideVeterinaryCare: newValue ?? undefined,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={4} lg={3}>
+                                                <Label>Peut sociabiliser</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={hostFamily.canProvideSociabilisation ?? null}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
+                                                    onChange={(newValue) => {
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            canProvideSociabilisation: newValue ?? undefined,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={4} lg={3}>
+                                                <Label>Peut accueillir des animaux handicapés</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={hostFamily.canHostDisableAnimal ?? null}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
+                                                    onChange={(newValue) => {
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            canHostDisableAnimal: newValue ?? undefined,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={4} lg={3}>
+                                                <Label>Peut donner des soins de nuit</Label>
+                                                <BooleanNullableDropdown
+                                                    withNewLine={true}
+                                                    value={hostFamily.canProvideNightCare ?? null}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
+                                                    onChange={(newValue) => {
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            canProvideNightCare: newValue ?? undefined,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                            <Col xs={4} lg={3}>
+                                                <Label>Peut isoler</Label>
+                                                <NullableDropdown
+                                                    withNewLine={true}
+                                                    color={
+                                                        hostFamily.canIsolate === undefined ? "warning" : hostFamily.canIsolate === true ? "success" : "danger"
+                                                    }
+                                                    value={hostFamily.canIsolate}
+                                                    values={["no", "yes_short", "yes_long"]}
+                                                    valueDisplayName={(value) =>
+                                                        value === null || value === undefined
+                                                            ? "NSP"
+                                                            : value === "yes_short"
+                                                                ? "Oui, qqs jours"
+                                                                : value === "yes_long"
+                                                                    ? "Oui, ok long terme"
+                                                                    : "Non"
+                                                    }
+                                                    valueActiveCheck={(value) => hostFamily.canIsolate === value}
+                                                    key={"can_isolate"}
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
+                                                    onChange={(newCanIsolate) => {
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            canIsolate: newCanIsolate,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <Label>Conditions d'accueil (nb animaux, ...)</Label>
+                                                <Input
+                                                    type="textarea"
+                                                    disabled={!isEditing || !pagePermissions[Ressource.HF_HOST].can_update}
+                                                    value={hostFamily.hostConditions || ""}
+                                                    onChange={(evt) => {
+                                                        setHostFamily({
+                                                            ...hostFamily,
+                                                            hostConditions: evt.target.value,
+                                                        });
+                                                    }}
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </AccordionBody>
+                                </AccordionItem>
+                            </Accordion>
+                        )}
                     </CardBody>
                 </Card>
 
                 <br />
 
-                {hostFamilyId !== "new" && (
+                {hostFamilyId !== "new" && pagePermissions[Ressource.HF_HIST_PETS].can_read && (
                     <Card>
                         <CardHeader>
                             <h3>Historique des animaux</h3>
@@ -922,9 +908,6 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                         active: true,
                     } as CustomBreadcrumbItem,
                 ]}
-                notificationSystemCallback={(notifSystem) => {
-                    setNotificationSystem(notifSystem);
-                }}
             >
                 {content}
 

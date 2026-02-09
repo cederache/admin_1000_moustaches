@@ -1,5 +1,10 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
+import * as dotenv from "dotenv";
+import path from "path";
+
+// Load environment variables from .env file in the server directory
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 console.log("Will initialize database with the following config:", {
   host: process.env.DB_HOST,

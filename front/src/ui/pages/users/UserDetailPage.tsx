@@ -5,7 +5,7 @@ import { MdDelete, MdOutlineModeEdit, MdRefresh, MdSave } from "react-icons/md";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import Switch from "../../components/Switch";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import User from "../../../logic/entities/User";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLoggedUser, setLoggedUser } from "../../../hooks/useLoggedUser";
@@ -20,7 +20,6 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const [shouldSave, setShouldSave] = useState<boolean>(false);
 
     const { loggedUser } = useLoggedUser();
@@ -39,10 +38,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
             .then(setUser)
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -84,19 +80,13 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
             // Send new data to API
             UsersManager.create(user)
                 .then((updatedUser) => {
-                    notificationSystem?.addNotification({
-                        message: "Utilisateur·ice créé",
-                        level: "success",
-                    });
+                    toast.success("Utilisateur·ice créé");
                     navigate(`/users/${updatedUser.id}`);
                     setUser(updatedUser);
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
                 });
             return;
         }
@@ -105,10 +95,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
         UsersManager.update(user)
             .then(() => {
                 getUser();
-                notificationSystem?.addNotification({
-                    message: "Utilisateur·ice mis à jour",
-                    level: "success",
-                });
+                toast.success("Utilisateur·ice mis à jour");
 
                 if (parseInt(userId) === loggedUser?.id) {
                     setLoggedUser(user);
@@ -117,10 +104,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
             .catch((err) => {
                 console.error(err);
                 getUser();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
             });
     };
 
@@ -130,19 +114,13 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
         }
         UsersManager.delete(user)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Utilisateur·ice supprimé",
-                    level: "success",
-                });
+                toast.success("Utilisateur·ice supprimé");
                 navigate("/users");
             })
             .catch((err) => {
                 console.error(err);
                 getUser();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
     };
 
@@ -272,9 +250,6 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
         >
             {content}
 

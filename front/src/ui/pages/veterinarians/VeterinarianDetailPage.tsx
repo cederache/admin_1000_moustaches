@@ -7,10 +7,12 @@ import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
 import PriceLevelDropdown from "../../components/PriceLevelDropdown";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import Geocode from "../../../utils/geocode";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import Veterinarian from "../../../logic/entities/Veterinarian";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import { useNavigate, useParams } from "react-router-dom";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 interface VeterinarianDetailPageProps {
     [key: string]: any;
@@ -23,14 +25,14 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
-
     const [geocodeFound, setGeocodeFound] = useState<boolean | null>(null);
     const [previousAddress, setPreviousAddress] = useState<string | null>(null);
     const [isGeocoding, setIsGeocoding] = useState(false);
     const [shouldSave, setShouldSave] = useState(false);
 
     const navigate = useNavigate();
+
+    const pagePermissions = useGetPermissions([Ressource.VET_INFO]);
 
     const getVeterinarian = () => {
         if (veterinarian !== null) {
@@ -45,10 +47,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 });
         } else {
             console.error("Can't get veterianrian with non number id");
@@ -131,19 +130,13 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
             // Send new data to API
             VeterinariansManager.create(veterinarian)
                 .then((updatedVeterinarian) => {
-                    notificationSystem?.addNotification({
-                        message: "Vétérinaire créé",
-                        level: "success",
-                    });
+                    toast.success("Vétérinaire créé");
                     navigate(`/veterinarians/${updatedVeterinarian.id}`);
                     // setVeterinarian(updatedVeterinarian);
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
                 });
             return;
         }
@@ -152,18 +145,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
         VeterinariansManager.update(veterinarian)
             .then(() => {
                 getVeterinarian();
-                notificationSystem?.addNotification({
-                    message: "Vétérinaire mis à jour",
-                    level: "success",
-                });
+                toast.success("Vétérinaire mis à jour");
             })
             .catch((err) => {
                 console.error(err);
                 getVeterinarian();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
             });
     };
 
@@ -173,19 +160,13 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
         }
         VeterinariansManager.delete(veterinarian)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Vétérinaire supprimé",
-                    level: "success",
-                });
+                toast.success("Vétérinaire supprimé");
                 navigate("/veterinarians");
             })
             .catch((err) => {
                 console.error(err);
                 getVeterinarian();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
     };
 
@@ -204,7 +185,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 <MdDelete />
                             </Button>
                         )}
-                        {!isEditing && (
+                        {!isEditing && pagePermissions[Ressource.VET_INFO].can_update && (
                             <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
                                 <MdOutlineModeEdit />
                             </Button>
@@ -406,9 +387,6 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                 } as CustomBreadcrumbItem,
                 { name: "Vétérinaire", active: true } as CustomBreadcrumbItem,
             ]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
         >
             {content}
 

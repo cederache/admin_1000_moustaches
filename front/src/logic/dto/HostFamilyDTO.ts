@@ -30,6 +30,7 @@ class HostFamilyDTO {
     membershipUpToDate: boolean;
     isTemporary: boolean;
     situation?: string;
+    isAvailable?: boolean;
 
     referent?: UserDTO;
     hostFamilyKinds?: HostFamilyKindDTO[];
@@ -62,6 +63,7 @@ class HostFamilyDTO {
         this.membershipUpToDate = hostFamily.membershipUpToDate;
         this.isTemporary = hostFamily.isTemporary;
         this.situation = hostFamily.situation;
+        this.isAvailable = hostFamily.isAvailable;
 
         this.referent = !!hostFamily.referent ? new UserDTO(hostFamily.referent) : undefined;
         this.hostFamilyKinds = hostFamily.hostFamilyKinds?.map((hostFamilyKind: any) => new HostFamilyKindDTO(hostFamilyKind));
@@ -98,8 +100,9 @@ class HostFamilyDTO {
             this.situation,
 
             this.referent?.toEntity(),
+            this.isAvailable,
             this.hostFamilyKinds?.map((hostFamilyKind) => hostFamilyKind.toEntity()),
-            this.animalRelations?.map((animalRelation) => animalRelation.toEntity()),
+            this.animalRelations?.map((animalRelation) => animalRelation.toEntity())
         );
     }
 }

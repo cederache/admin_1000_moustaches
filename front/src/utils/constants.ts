@@ -15,25 +15,6 @@
 //     KITTEN: 13,
 // };
 
-// export const NOTIFICATION_SYSTEM_STYLE: NotificationSystem.Style = {
-//     NotificationItem: {
-//         DefaultStyle: {
-//             display: "flex",
-//             justifyContent: "space-between",
-//             alignItems: "center",
-
-//             borderRadius: "4px",
-//             fontSize: "14px",
-//         },
-
-//         success: {
-//             borderTop: 0,
-//             backgroundColor: "#45b649",
-//             WebkitBoxShadow: 0,
-//             MozBoxShadow: 0,
-//             boxShadow: 0,
-//         },
-
 import { Style } from "react-notification-system";
 
 export const SPECIES_ID = {

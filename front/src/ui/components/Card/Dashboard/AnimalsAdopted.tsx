@@ -16,7 +16,6 @@ const AnimalsAdopted = () => {
             });
     }, []);
 
-    console.log("animalsData", animalsAdoptedData);
     return <AnimalsCard title="Nombre d'animaux adoptés" datas={animalsAdoptedData} />;
 };
 export default AnimalsAdopted;

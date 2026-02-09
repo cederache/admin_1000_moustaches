@@ -20,7 +20,7 @@ class AnimalsAdoptedManager {
         });
       })
       .then((data) => {
-        // Transformer les propriétés avec majuscules en propriétés avec minuscules
+
         return new SpeciesCountsDTO(data).toEntity();
       });
   };

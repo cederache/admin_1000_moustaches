@@ -1,6 +1,6 @@
 {
   "name": "admin-1000-moustaches",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "engines": {
     "node": "20"
@@ -8,10 +8,12 @@
   "scripts": {
     "start": "docker compose --env-file .env.local up --build",
     "start:fresh": "docker compose --env-file .env.local down -v && docker compose --env-file .env.local up --build",
+    "start:fresh:database-only": "docker compose --env-file .env.local down -v && docker compose --env-file .env.local up --build database",
     "start:fresh:detached": "docker compose --env-file .env.local down -v && docker compose --env-file .env.local up -d --build",
     "start:fresh:fixtures": "npm run start:fresh:detached && npm run docker:fixtures && docker compose logs -f",
-    "docker:fixtures": "docker exec admin_1000_moustaches-server-1 /bin/sh -c 'cd server && npm run dev:fixtures'",
-    "set-version": "node -e \"const fs=require('fs');const v=process.argv[1];['./package.json','./front/package.json','./server/package.json'].forEach(f=>{const pkg=JSON.parse(fs.readFileSync(f));pkg.version=v;fs.writeFileSync(f,JSON.stringify(pkg,null,2)+'\\n');});console.log('Version updated to '+v+' in all package.json files');\""
+    "docker:fixtures": "docker exec -it admin_1000_moustaches-server-1 //bin//sh -c \"cd server && npm run dev:fixtures\"",
+    "set-version": "node -e \"const fs=require('fs');const v=process.argv[1];['./package.json','./front/package.json','./server/package.json'].forEach(f=>{const pkg=JSON.parse(fs.readFileSync(f));pkg.version=v;fs.writeFileSync(f,JSON.stringify(pkg,null,2)+'\\n');});console.log('Version updated to '+v+' in all package.json files');\"",
+    "restart:docker": "docker compose --env-file .env.local up --build"
   },
   "keywords": [],
   "author": "",

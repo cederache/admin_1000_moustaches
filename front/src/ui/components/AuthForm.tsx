@@ -1,16 +1,15 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { useState, FC, ReactElement, ReactNode, useEffect } from "react";
-import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+import { useState, FC, ReactElement, ReactNode } from "react";
+import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink, } from "reactstrap";
 import logo from "../../assets/img/logo/Logo1000Moustaches.png";
 import UsersManager from "../../managers/users.manager";
 import SourceLink from "./SourceLink";
-import PermissionsManager from "../../managers/permissions.manager";
 import Permissions from "../../logic/entities/Permissions";
+import { MdOutlineFileOpen } from "react-icons/md";
 
-import NotificationSystem from "react-notification-system";
 import { auth } from "../../firebase-config";
-import { NOTIFICATION_SYSTEM_STYLE } from "../../utils/constants";
 import AuthManager from "../../managers/auth.manager";
+import toast from "react-hot-toast";
 
 type PagePermissions = {
     permission?: Permissions;
@@ -49,7 +48,7 @@ const AuthForm: FC<AuthFormProps> = ({
     confirmPasswordLabel,
     confirmPasswordInputProps,
     children,
-    onLogoClick = () => {},
+    onLogoClick = () => { },
     ...props
 }): ReactElement => {
     const [username, setUsername] = useState("");
@@ -59,7 +58,6 @@ const AuthForm: FC<AuthFormProps> = ({
 
     const [pagePermissions, setPagePermissions] = useState<PagePermissions>({});
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
 
     let isLogin = () => {
         return authState === AuthFormState.LOGIN;
@@ -82,18 +80,12 @@ const AuthForm: FC<AuthFormProps> = ({
     let handleForgotPassword = () => {
         sendPasswordResetEmail(auth, username)
             .then((response) => {
-                notificationSystem?.addNotification({
-                    message: `Un mail a été envoyé l'adresse ${username} pour réinitialiser le mot de passe`,
-                    level: "success",
-                });
+                toast.success(`Un mail a été envoyé l'adresse ${username} pour réinitialiser le mot de passe`);
                 setShowForgotPasswordModal(false);
             })
             .catch((error) => {
                 console.error(error);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la réinitialisation du mot de passe. Veillez réessayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la réinitialisation du mot de passe. Veillez réessayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`);
                 setShowForgotPasswordModal(false);
             });
     };
@@ -102,30 +94,20 @@ const AuthForm: FC<AuthFormProps> = ({
         if (isLogin()) {
             AuthManager.login(username, password)
                 .then(() => {
-                    notificationSystem?.addNotification({
-                        message: "Connexion réussie.\nBienvenue",
-                        level: "success",
-                    });
+                    toast.success("Connexion réussie.\nBienvenue");
                     window.location.href = "/";
                 })
                 .catch((error) => {
                     console.error("Error for login");
                     console.error(error);
-                    notificationSystem?.addNotification({
-                        message:
-                            "Connexion impossible. Merci de vérifier l'email et le mot de passe.\nEn cas de problème, merci de contacter le service informatique.",
-                        level: "error",
-                    });
+                    toast.error("Connexion impossible. Merci de vérifier l'email et le mot de passe.\nEn cas de problème, merci de contacter le service informatique.");
                 });
         } else {
             if (confirmPassword === password) {
                 // Check if user is prepared in database
                 UsersManager.getAll().then((users) => {
                     if (users.find((usr) => usr.email === username) === null) {
-                        notificationSystem?.addNotification({
-                            message: "Le compte doit être préparé avec cet e-mail. Merci de contacter un administrateur.",
-                            level: "warning",
-                        });
+                        toast.error("Le compte doit être préparé avec cet e-mail. Merci de contacter un administrateur.");
                         return;
                     } else {
                         createUserWithEmailAndPassword(auth, username, password)
@@ -136,18 +118,12 @@ const AuthForm: FC<AuthFormProps> = ({
                             .catch((error) => {
                                 console.error("Error for create user");
                                 console.error(error);
-                                notificationSystem?.addNotification({
-                                    message: `Une erreur s'est produite pendant la création de l'utilisateur·ice. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`,
-                                    level: "error",
-                                });
+                                toast.error(`Une erreur s'est produite pendant la création de l'utilisateur·ice. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`);
                             });
                     }
                 });
             } else {
-                notificationSystem?.addNotification({
-                    message: "La confirmation de mot de passe n'est pas bonne",
-                    level: "warning",
-                });
+                toast.error("La confirmation de mot de passe n'est pas bonne");
             }
         }
     };
@@ -197,7 +173,7 @@ const AuthForm: FC<AuthFormProps> = ({
                         Mot de passe oublié ?
                     </Label>
                 )}
-                <Button size="lg" className="bg-gradient-theme-left border-0" block onClick={handleSubmit}>
+                <Button type="submit" size="lg" className="bg-gradient-theme-left border-0" block onClick={handleSubmit}>
                     {renderButtonText()}
                 </Button>
 
@@ -209,14 +185,21 @@ const AuthForm: FC<AuthFormProps> = ({
                 )}
 
                 {children}
+
+                <div className="text-center mt-3">
+                    <NavLink
+                        id="privacy-policy"
+                        href="/privacypolicylogin"
+                        target="_blank"
+                        className="text-black text-decoration-none small"
+                    >
+                        <MdOutlineFileOpen className="me-2" />
+                        Mentions légales
+                    </NavLink>
+                </div>
             </Form>
 
-            <NotificationSystem
-                ref={(notificationSystem) => {
-                    setNotificationSystem(notificationSystem === null ? undefined : notificationSystem);
-                }}
-                style={NOTIFICATION_SYSTEM_STYLE}
-            />
+
 
             <Modal isOpen={showForgotPasswordModal} {...props}>
                 <ModalHeader>

@@ -1,6 +1,9 @@
 // @ts-ignore
+import { HostFamilyKind } from "../dist/app/models/HostFamilyKind";
+// @ts-ignore
 import { HostFamily } from "../dist/app/models/HostFamily";
 // Used for dev (to get the typed entity)
+//import { HostFamilyKind } from "../app/models/HostFamilyKind";
 //import { HostFamily } from "../app/models/HostFamily";
 import { DataSource } from "typeorm";
 
@@ -27,7 +30,9 @@ const createHostFamily = (
   onBreak: boolean,
   membershipUpToDate: boolean,
   isTemporary: boolean,
-  situation: string
+  situation: string,
+  isAvailable: boolean,
+  hostFamilyKinds: HostFamilyKind[]
 ) => {
   const hostFamily = new HostFamily();
   hostFamily.name = name;
@@ -53,11 +58,17 @@ const createHostFamily = (
   hostFamily.membershipUpToDate = membershipUpToDate;
   hostFamily.isTemporary = isTemporary;
   hostFamily.situation = situation;
-
+  hostFamily.isAvailable = isAvailable;
+  hostFamily.hostFamilyKinds = hostFamilyKinds;
   return hostFamily;
 };
 
 export const createHostFamilies = async (dataSource: DataSource) => {
+  const hostFamilyKinds = await dataSource.getRepository(HostFamilyKind).find();
+  const hostFamilyKindsMap = new Map(
+    hostFamilyKinds.map((kind) => [kind.name, kind])
+  );
+
   const hostfamilies = [
     {
       name: "Martin",
@@ -83,6 +94,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: true,
       isTemporary: false,
       situation: "En couple avec enfants",
+      hostFamilyKinds: ["Chats"],
+      isAvailable: true,
     },
     {
       name: "Dubois",
@@ -108,6 +121,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: false,
       isTemporary: true,
       situation: "Célibataire, en colocation",
+      hostFamilyKinds: ["Chats", "Chatons + Maman"],
+      isAvailable: true,
     },
     {
       name: "Leclerc",
@@ -133,6 +148,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: true,
       isTemporary: false,
       situation: "En couple",
+      hostFamilyKinds: ["Chiens"],
+      isAvailable: false,
     },
     {
       name: "Bernard",
@@ -158,6 +175,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: false,
       isTemporary: true,
       situation: "Étudiant",
+      hostFamilyKinds: ["Chatons + Maman", "Chatons biberonnage"],
+      isAvailable: true,
     },
     {
       name: "Petit",
@@ -183,6 +202,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: true,
       isTemporary: false,
       situation: "Famille nombreuse",
+      hostFamilyKinds: ["Chiens", "Chiots"],
+      isAvailable: true,
     },
     {
       name: "Girard",
@@ -208,6 +229,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: true,
       isTemporary: false,
       situation: "Retraité",
+      hostFamilyKinds: ["Lapins", "Hamsters"],
+      isAvailable: true,
     },
     {
       name: "Marchand",
@@ -233,6 +256,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: true,
       isTemporary: true,
       situation: "Mère célibataire",
+      hostFamilyKinds: ["Rats"],
+      isAvailable: true,
     },
     {
       name: "Benoît",
@@ -258,6 +283,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: true,
       isTemporary: false,
       situation: "Célibataire, travaille à distance",
+      hostFamilyKinds: ["Chats", "Chatons + Maman", "Chatons"],
+      isAvailable: false,
     },
     {
       name: "Lambert",
@@ -283,6 +310,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: false,
       isTemporary: true,
       situation: "Étudiante",
+      hostFamilyKinds: ["Hamsters", "Rats"],
+      isAvailable: false,
     },
     {
       name: "Moreau",
@@ -308,6 +337,8 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       membershipUpToDate: true,
       isTemporary: false,
       situation: "En couple sans enfants",
+      hostFamilyKinds: ["Chats", "Chatons + Maman", "Chatons"],
+      isAvailable: true,
     },
   ];
 
@@ -335,7 +366,11 @@ export const createHostFamilies = async (dataSource: DataSource) => {
       hostFamily.onBreak,
       hostFamily.membershipUpToDate,
       hostFamily.isTemporary,
-      hostFamily.situation
+      hostFamily.situation,
+      hostFamily.isAvailable,
+      hostFamily.hostFamilyKinds
+        .map((kind) => hostFamilyKindsMap.get(kind))
+        .filter((kind) => kind !== undefined) as HostFamilyKind[]
     );
   });
 

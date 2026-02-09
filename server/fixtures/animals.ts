@@ -1,7 +1,10 @@
 // @ts-ignore
 import { Animal } from "../dist/app/models/Animal";
+// @ts-ignore
+import { Species } from "../dist/app/models/Species";
 // Used for dev (to get the typed entity)
 //import { Animal } from "../app/models/Animal";
+//import { Species } from "../app/models/Species";
 import { DataSource } from "typeorm";
 
 const createAnimal = (
@@ -18,7 +21,7 @@ const createAnimal = (
   isAdopted: boolean,
   isBroadcastable: boolean,
   isBookable: boolean,
-  speciesId: number
+  species: Species
 ) => {
   const animal = new Animal();
   animal.name = name;
@@ -34,11 +37,21 @@ const createAnimal = (
   animal.adopted = isAdopted;
   animal.broadcastable = isBroadcastable;
   animal.bookable = isBookable;
-  animal.speciesId = speciesId;
+  animal.species = species;
   return animal;
 };
 
 export const createAnimals = async (dataSource: DataSource) => {
+  // First, get the species from the database
+  const speciesRepository = dataSource.getRepository(Species);
+  const allSpecies = await speciesRepository.find();
+
+  // Create a map for easy species lookup
+  const speciesMap = new Map();
+  allSpecies.forEach(species => {
+    speciesMap.set(species.id, species);
+  });
+
   const animals = [
     {
       name: "Milo",
@@ -491,6 +504,11 @@ export const createAnimals = async (dataSource: DataSource) => {
   ];
 
   const animalsToSave = animals.map((animal) => {
+    const species = speciesMap.get(animal.speciesId);
+    if (!species) {
+      throw new Error(`Species with ID ${animal.speciesId} not found`);
+    }
+
     return createAnimal(
       animal.name,
       animal.icad,
@@ -505,7 +523,7 @@ export const createAnimals = async (dataSource: DataSource) => {
       animal.isAdopted,
       animal.isBroadcastable,
       animal.isBookable,
-      animal.speciesId
+      species
     );
   });
 

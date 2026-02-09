@@ -15,19 +15,15 @@ import UsersManager from "../../../managers/users.manager";
 import Dropdown from "../../components/Dropdown";
 import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import HostFamily from "../../../logic/entities/HostFamily";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import User from "../../../logic/entities/User";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import useGetPermissions from "../../../hooks/useGetPermissions";
+import { Ressource } from "../../../logic/entities/Permissions";
 
 L.Marker.prototype.options.icon = BlueIcon;
-
-interface SwitchFilter {
-    activated: boolean;
-    name: string;
-    check: (hostFamily: any) => boolean;
-}
 
 interface HostFamiliesPageProps {
     [key: string]: any;
@@ -117,21 +113,24 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
     );
 
     const navigate = useNavigate();
+    const pagePermissions = useGetPermissions([Ressource.HF_LIST]);
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const mapRef = useRef<L.Map | null>(null);
 
+    const [searchParams] = useSearchParams();
+    const kinds = searchParams.getAll("kinds");
+    const kindsIds = kinds != null ? kinds.map((kind) => parseInt(kind)) : undefined;
+    const isAvailableStr = searchParams.get("isAvailable");
+    const isAvailable = isAvailableStr == "true" ? true : isAvailableStr == "false" ? false : undefined;
+
     const getAllHostFamilies = () => {
-        return HostFamiliesManager.getAll()
+        return HostFamiliesManager.getAll({ kinds: kindsIds, isAvailable })
             .then((hostFamilies) => {
                 return sortBy(hostFamilies || [], "id") as HostFamily[];
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as HostFamily[];
             });
     };
@@ -143,10 +142,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as HostFamilyKind[];
             });
     };
@@ -158,10 +154,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as User[];
             });
     };
@@ -330,9 +323,6 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
         >
             <Row>
                 <Col>
@@ -346,9 +336,11 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     />
                 </Col>
                 <Col xs={"auto"}>
-                    <Button onClick={createHostFamily} color={"success"}>
-                        <MdAddBox />
-                    </Button>
+                    {pagePermissions[Ressource.HF_LIST]?.can_create && (
+                        <Button onClick={createHostFamily} color={"success"}>
+                            <MdAddBox />
+                        </Button>
+                    )}
                     <Button className="ms-2" onClick={getAllHostFamilies}>
                         <MdRefresh />
                     </Button>

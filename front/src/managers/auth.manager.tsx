@@ -7,8 +7,6 @@ import PermissionsManager from "./permissions.manager";
 class AuthManager {
     static savePermissions = async () => {
         return PermissionsManager.getAll().then((permissions) => {
-            console.log("récupération des permissions", permissions);
-
             sessionStorage.setItem("permissions", JSON.stringify(permissions));
         });
     };
@@ -38,8 +36,8 @@ class AuthManager {
 
     static async logout(): Promise<void> {
         await signOut(auth);
-        // Clear user from sessionStorage
-        sessionStorage.removeItem("User");
+        // Clear sessionStorage
+        sessionStorage.clear();
     }
 }
 
