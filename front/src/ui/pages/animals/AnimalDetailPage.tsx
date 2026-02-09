@@ -28,7 +28,9 @@ interface AnimalDetailPageProps {
 }
 
 class AnimalDetailPageData {
-    animal?: Animal;
+    // null when not found
+    // undefined when is loading
+    animal?: Animal | null;
     species: Species[];
     sexes: Sexe[];
     hostFamilies: HostFamily[];
@@ -252,7 +254,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
 
     const save = () => {
         setIsEditing(false);
-        if (data.animal === undefined) {
+        if (data.animal === undefined || data.animal === null) {
             return;
         }
         if (animalId === "new") {
@@ -308,7 +310,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     };
 
     const deleteA = () => {
-        if (data.animal === undefined) {
+        if (data.animal === undefined || data.animal === null) {
             return;
         }
         AnimalsManager.delete(data.animal)
@@ -325,9 +327,9 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
 
     let content = <div>Chargement...</div>;
 
-    if (data.animal === undefined) {
+    if (data.animal === null) {
         content = <div>Animal non trouvé</div>;
-    } else if (data.animal === null) {
+    } else if (data.animal === undefined) {
         content = <div>Chargement...</div>;
     } else {
         content = (
