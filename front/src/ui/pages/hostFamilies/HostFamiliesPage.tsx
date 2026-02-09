@@ -15,7 +15,7 @@ import UsersManager from "../../../managers/users.manager";
 import Dropdown from "../../components/Dropdown";
 import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import HostFamily from "../../../logic/entities/HostFamily";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import User from "../../../logic/entities/User";
@@ -115,7 +115,6 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
     const navigate = useNavigate();
     const pagePermissions = useGetPermissions([Ressource.HF_LIST]);
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const mapRef = useRef<L.Map | null>(null);
 
     const [searchParams] = useSearchParams();
@@ -131,10 +130,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as HostFamily[];
             });
     };
@@ -146,10 +142,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as HostFamilyKind[];
             });
     };
@@ -161,10 +154,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as User[];
             });
     };
@@ -333,9 +323,6 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
         >
             <Row>
                 <Col>

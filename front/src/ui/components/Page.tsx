@@ -5,8 +5,6 @@ import { Breadcrumb, BreadcrumbItem } from "reactstrap";
 
 import Typography from "./Typography";
 
-import NotificationSystem from "react-notification-system";
-import { NOTIFICATION_SYSTEM_STYLE } from "../../utils/constants";
 
 const bem = bn.create("page");
 
@@ -21,11 +19,10 @@ interface PageProps {
     breadcrumbs?: CustomBreadcrumbItem[];
     className?: string;
     children?: ReactNode;
-    notificationSystemCallback?: (notificationSystem?: NotificationSystem) => void;
     [key: string]: any;
 }
 
-const Page: FC<PageProps> = ({ title, breadcrumbs, className, children, notificationSystemCallback, ...restProps }): ReactElement => {
+const Page: FC<PageProps> = ({ title, breadcrumbs, className, children, ...restProps }): ReactElement => {
     const classes = bem.b("px-3", className);
 
     return (
@@ -56,14 +53,6 @@ const Page: FC<PageProps> = ({ title, breadcrumbs, className, children, notifica
             </div>
             {children}
 
-            <NotificationSystem
-                ref={(notificationSystem) => {
-                    if (!!notificationSystemCallback && typeof notificationSystemCallback === "function") {
-                        notificationSystemCallback(notificationSystem === null ? undefined : notificationSystem);
-                    }
-                }}
-                style={NOTIFICATION_SYSTEM_STYLE}
-            />
         </div>
     );
 };

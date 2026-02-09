@@ -5,6 +5,7 @@ import { EmptyLayout, LayoutRoute, MainLayout } from "./ui/components/Layout";
 import PageSpinner from "./ui/components/PageSpinner";
 import "./ui/styles/reduction.scss";
 import { Routes } from "react-router";
+import { Toaster } from "react-hot-toast";
 
 const AuthPage = React.lazy(() => import("./ui/pages/AuthPage"));
 const DashboardPage = React.lazy(() => import("./ui/pages/DashboardPage"));
@@ -21,6 +22,26 @@ const PrivacyPolicy = React.lazy(() => import("./ui/pages/PrivacyPolicy"));
 const App = () => {
     return (
         <BrowserRouter>
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#363636',
+                        color: '#fff',
+                    },
+                    success: {
+                        style: {
+                            background: '#28a745',
+                        },
+                    },
+                    error: {
+                        style: {
+                            background: '#dc3545',
+                        },
+                    },
+                }}
+            />
             <Routes>
                 <Route
                     exact

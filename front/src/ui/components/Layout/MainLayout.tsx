@@ -1,7 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Content, Footer, Header, Sidebar } from "./index";
-import NotificationSystem from "react-notification-system";
-import { NOTIFICATION_SYSTEM_STYLE } from "../../../utils/constants";
 import { getDeviceConfig } from "../../../utils/breakpoint";
 
 interface MainLayoutProps {
@@ -9,8 +7,6 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-    const notificationSystem = useRef<any>(null);
-
     const isSidebarOpen = (): boolean => {
         return document.querySelector(".cr-sidebar")?.classList.contains("cr-sidebar--open") ?? false;
     };
@@ -58,8 +54,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 {children}
                 <Footer />
             </Content>
-
-            <NotificationSystem ref={notificationSystem} style={NOTIFICATION_SYSTEM_STYLE} />
         </main>
     );
 };

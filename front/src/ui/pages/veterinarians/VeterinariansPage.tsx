@@ -10,7 +10,7 @@ import { BlueIcon, GreenIcon, RedIcon, UserIcon, YellowIcon } from "../../../uti
 import Switch from "../../components/Switch";
 import SortableTable from "../../components/SortableTable";
 import Veterinarian from "../../../logic/entities/Veterinarian";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import { useNavigate } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
@@ -76,7 +76,6 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
 
     const pagePermissions = useGetPermissions([Ressource.VET_LIST]);
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
 
     const getAllVeterinarians = () => {
@@ -90,10 +89,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -174,9 +170,6 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                     to: null,
                 } as CustomBreadcrumbItem,
             ]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
         >
             <Row>
                 <Col>

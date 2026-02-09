@@ -6,7 +6,7 @@ import AnimalToHostFamilyModal from "./AnimalToHostFamilyModal";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import HostFamily from "../../../logic/entities/HostFamily";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Animal from "../../../logic/entities/Animal";
 import useGetPermissions from "../../../hooks/useGetPermissions";
@@ -16,11 +16,10 @@ interface HostFamiliesHistoryProps {
     animal: Animal;
     hostFamilies: HostFamily[];
     animalToHostFamilies: AnimalToHostFamily[];
-    notificationSystem?: NotificationSystem;
     shouldRefresh: () => void;
 }
 
-const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilies, animalToHostFamilies, notificationSystem, shouldRefresh, ...props }) => {
+const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilies, animalToHostFamilies, shouldRefresh, ...props }) => {
     const navigate = useNavigate();
 
     const pagePermissions = useGetPermissions([Ressource.PET_HIST_HF]);
@@ -41,18 +40,12 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilie
         }
         AnimalsToHostFamiliesManager.delete(animalToHostFamilyToDelete)
             .then((updatedAnimalToHostFamily) => {
-                notificationSystem?.addNotification({
-                    message: "Lien Animal / Famille d'accueil supprimé",
-                    level: "success",
-                });
+                toast.success("Lien Animal / Famille d'accueil supprimé");
                 shouldRefresh();
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
         setAnimalToHostFamilyToDelete(null);
         return;
@@ -72,10 +65,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilie
                                     color="primary"
                                     onClick={() => {
                                         if (!animal.id) {
-                                            notificationSystem?.addNotification({
-                                                message: "Sauvegardez d'abord l'animal avant de lui attribuer une famille d'accueil",
-                                                level: "warning",
-                                            });
+                                            toast.error("Sauvegardez d'abord l'animal avant de lui attribuer une famille d'accueil");
                                             return;
                                         }
                                         setModalAnimalToHostFamily(AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined));
@@ -88,7 +78,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilie
                     </Row>
                 </CardHeader>
                 <CardBody className="table-responsive">
-                    <Table {...{ striped: true }}>
+                    <Table striped>
                         <thead>
                             <tr>
                                 <th scope="col">Prénom Nom</th>
@@ -151,7 +141,6 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, hostFamilie
                             shouldRefresh();
                         }
                     }}
-                    notificationSystem={notificationSystem}
                 />
             )}
 

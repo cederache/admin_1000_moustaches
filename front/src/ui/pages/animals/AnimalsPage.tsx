@@ -13,7 +13,7 @@ import Animal from "../../../logic/entities/Animal";
 import Species from "../../../logic/entities/Species";
 import User from "../../../logic/entities/User";
 import HostFamily from "../../../logic/entities/HostFamily";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
@@ -104,8 +104,6 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             .filter((f) => f !== null) as Filter[]
     );
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
-
     const pagePermissions = useGetPermissions([Ressource.PET_LIST]);
     const navigate = useNavigate();
 
@@ -116,10 +114,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as Species[];
             });
     };
@@ -131,10 +126,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as Sexe[];
             });
     };
@@ -146,10 +138,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as Animal[];
             });
     };
@@ -161,10 +150,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as User[];
             });
     };
@@ -176,10 +162,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as HostFamily[];
             });
     };
@@ -221,9 +204,6 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             className="AnimalsPage"
             title="Liste des Animaux"
             breadcrumbs={[{ name: "Animaux", active: true } as CustomBreadcrumbItem]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
         >
             <Row>
                 <Col>

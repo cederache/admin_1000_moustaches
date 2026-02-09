@@ -28,7 +28,7 @@ import NullableDropdown from "../../components/NullableDropdown";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import HostFamily from "../../../logic/entities/HostFamily";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import User from "../../../logic/entities/User";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import { useNavigate, useParams } from "react-router-dom";
@@ -56,8 +56,6 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
-
     const [geocodeFound, setGeocodeFound] = useState<boolean | null>(null);
     const [previousAddress, setPreviousAddress] = useState<string | null>(null);
     const [isGeocoding, setIsGeocoding] = useState(false);
@@ -80,10 +78,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
             .then((hostFamily) => setHostFamily(hostFamily))
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -101,10 +96,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
             )
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -114,10 +106,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
             .then(setReferents)
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             });
     };
 
@@ -207,35 +196,23 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
         setIsEditing(false);
         if (hostFamilyId === "new") {
             if (hostFamily.firstname === undefined) {
-                notificationSystem?.addNotification({
-                    message: "Le prénom est obligatoire",
-                    level: "error",
-                });
+                toast.error("Le prénom est obligatoire");
                 setIsEditing(true);
                 return;
             } else if (hostFamily.name === undefined) {
-                notificationSystem?.addNotification({
-                    message: "Le nom est obligatoire",
-                    level: "error",
-                });
+                toast.error("Le nom est obligatoire");
                 setIsEditing(true);
                 return;
             }
             // Send new data to API
             HostFamiliesManager.create(hostFamily)
                 .then((updatedHostFamily) => {
-                    notificationSystem?.addNotification({
-                        message: "Famille d'Accueil créée",
-                        level: "success",
-                    });
+                    toast.success("Famille d'Accueil créée");
                     navigate(`/hostFamilies/${updatedHostFamily.id}`);
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
                     setIsEditing(true);
                 });
             return;
@@ -245,18 +222,12 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
         HostFamiliesManager.update(hostFamily)
             .then(() => {
                 getHostFamily();
-                notificationSystem?.addNotification({
-                    message: "Famille d'Accueil mis à jour",
-                    level: "success",
-                });
+                toast.success("Famille d'Accueil mis à jour");
             })
             .catch((err) => {
                 console.error(err);
                 getHostFamily();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
             });
     };
 
@@ -266,19 +237,13 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
         }
         HostFamiliesManager.delete(hostFamily)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Famille d'Accueil supprimée",
-                    level: "success",
-                });
+                toast.success("Famille d'Accueil supprimée");
                 navigate("/hostFamilies");
             })
             .catch((err) => {
                 console.error(err);
                 getHostFamily();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
     };
 
@@ -943,9 +908,6 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = ({ props }) => {
                         active: true,
                     } as CustomBreadcrumbItem,
                 ]}
-                notificationSystemCallback={(notifSystem) => {
-                    setNotificationSystem(notifSystem);
-                }}
             >
                 {content}
 

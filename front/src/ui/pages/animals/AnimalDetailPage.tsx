@@ -13,7 +13,7 @@ import Dropdown from "../../components/Dropdown";
 import NullableDropdown from "../../components/NullableDropdown";
 import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import NotificationSystem from "react-notification-system";
+import toast from "react-hot-toast";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import Species from "../../../logic/entities/Species";
 import HostFamily from "../../../logic/entities/HostFamily";
@@ -79,7 +79,6 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
 
-    const [notificationSystem, setNotificationSystem] = useState<NotificationSystem | undefined>(undefined);
 
     const navigate = useNavigate();
     const pagePermissions = useGetPermissions(permissionsName);
@@ -116,10 +115,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
         }
         return AnimalsManager.getById(id).catch((err) => {
             console.error(err);
-            notificationSystem?.addNotification({
-                message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                level: "error",
-            });
+            toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
             return undefined;
         });
     };
@@ -133,10 +129,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             .then((animalToHostFamilies) => animalToHostFamilies.sort((a, b) => new Date(b.entryDate ?? "").getTime() - new Date(a.entryDate ?? "").getTime()))
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as AnimalToHostFamily[];
             });
     };
@@ -146,10 +139,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             .then((species) => species.sort((a, b) => a.name.localeCompare(b.name)))
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as Species[];
             });
     };
@@ -159,10 +149,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             .then((sexes) => sexes.sort((a, b) => a.value.localeCompare(b.value)))
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as Sexe[];
             });
     };
@@ -176,10 +163,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             .then((interventions) => interventions.sort((a, b) => new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()))
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as VeterinarianIntervention[];
             });
     };
@@ -189,10 +173,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             .then((hostFamilies) => hostFamilies.sort((a, b) => a.name?.localeCompare(b.name ?? "") ?? 0))
             .catch((err) => {
                 console.error(err);
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la récupération des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
                 return [] as HostFamily[];
             });
     };
@@ -214,10 +195,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                     getAnimal().then((animal) => {
                         if (animal === undefined) {
                             console.error("Animal not found");
-                            notificationSystem?.addNotification({
-                                message: "Animal non trouvé",
-                                level: "error",
-                            });
+                            toast.error("Animal non trouvé");
                             return;
                         }
                         setData((previousData) => {
@@ -281,10 +259,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             // Send new data to API
             AnimalsManager.create(data.animal)
                 .then((updatedAnimal) => {
-                    notificationSystem?.addNotification({
-                        message: "Animal créé",
-                        level: "success",
-                    });
+                    toast.success("Animal créé");
                     navigate(`/animals/${updatedAnimal.id}`);
                     setData((previousData) => {
                         return {
@@ -295,10 +270,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                 })
                 .catch((err) => {
                     console.error(err);
-                    notificationSystem?.addNotification({
-                        message: `Une erreur s'est produite pendant la création des données\n${err}`,
-                        level: "error",
-                    });
+                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
                 });
             return;
         }
@@ -326,18 +298,12 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             });
                     }
                 });
-                notificationSystem?.addNotification({
-                    message: "Animal mis à jour",
-                    level: "success",
-                });
+                toast.success("Animal mis à jour");
             })
             .catch((err) => {
                 console.error(err);
                 getAnimal();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la mise à jour des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
             });
     };
 
@@ -347,19 +313,13 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
         }
         AnimalsManager.delete(data.animal)
             .then(() => {
-                notificationSystem?.addNotification({
-                    message: "Animal supprimé",
-                    level: "success",
-                });
+                toast.success("Animal supprimé");
                 navigate("/animals");
             })
             .catch((err) => {
                 console.error(err);
                 getAnimal();
-                notificationSystem?.addNotification({
-                    message: `Une erreur s'est produite pendant la suppression des données\n${err}`,
-                    level: "error",
-                });
+                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
             });
     };
 
@@ -594,9 +554,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.INFO)?.id ?? ""}
-                                {...{
-                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.INFO, id),
-                                }}
+                                toggle={(id: string) => toggleAccordion(AnimalDetailPageAccordion.INFO, id)}
                             >
                                 <AccordionItem>
                                     <AccordionHeader targetId="1">Informations</AccordionHeader>
@@ -753,9 +711,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.PEC)?.id ?? ""}
-                                {...{
-                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.PEC, id),
-                                }}
+                                toggle={(id: string) => toggleAccordion(AnimalDetailPageAccordion.PEC, id)}
                             >
                                 <AccordionItem>
                                     <AccordionHeader targetId="1">Prise en charge</AccordionHeader>
@@ -869,9 +825,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.HEALTH)?.id ?? ""}
-                                {...{
-                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.HEALTH, id),
-                                }}
+                                toggle={(id: string) => toggleAccordion(AnimalDetailPageAccordion.HEALTH, id)}
                             >
                                 <AccordionItem>
                                     <AccordionHeader targetId="1">Santé</AccordionHeader>
@@ -1048,9 +1002,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.BEHAVIOUR)?.id ?? ""}
-                                {...{
-                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.BEHAVIOUR, id),
-                                }}
+                                toggle={(id: string) => toggleAccordion(AnimalDetailPageAccordion.BEHAVIOUR, id)}
                             >
                                 <AccordionItem>
                                     <AccordionHeader targetId="1">Comportement</AccordionHeader>
@@ -1228,9 +1180,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.EXIT)?.id ?? ""}
-                                {...{
-                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.EXIT, id),
-                                }}
+                                toggle={(id: string) => toggleAccordion(AnimalDetailPageAccordion.EXIT, id)}
                             >
                                 <AccordionItem>
                                     <AccordionHeader targetId="1">Sortie</AccordionHeader>
@@ -1302,9 +1252,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             <Accordion
                                 className="pb-3"
                                 open={accordions.find((a) => a.type === AnimalDetailPageAccordion.DEATH)?.id ?? ""}
-                                {...{
-                                    toggle: (id: string) => toggleAccordion(AnimalDetailPageAccordion.DEATH, id),
-                                }}
+                                toggle={(id: string) => toggleAccordion(AnimalDetailPageAccordion.DEATH, id)}
                             >
                                 <AccordionItem>
                                     <AccordionHeader targetId="1">Décès</AccordionHeader>
@@ -1360,7 +1308,6 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                     <VeterinarianInterventionsHistory
                         animal={data.animal}
                         veterinarianInterventions={data.animal?.veterinarianInterventions ?? []}
-                        notificationSystem={notificationSystem}
                         shouldRefresh={getVeterinarianInterventions}
                         {...props}
                     />
@@ -1371,7 +1318,6 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                         animal={data.animal}
                         hostFamilies={data.hostFamilies}
                         animalToHostFamilies={data.animal?.hostFamilyRelations ?? []}
-                        notificationSystem={notificationSystem}
                         shouldRefresh={() => {
                             getAnimalToHostFamilies()?.then(getAnimal);
                         }}
@@ -1386,10 +1332,10 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
         <Page
             className="AnimalPage"
             title="Détail de l'animal"
-            breadcrumbs={[{ name: "Animaux", to: "/animals" } as CustomBreadcrumbItem, { name: "Animal", active: true } as CustomBreadcrumbItem]}
-            notificationSystemCallback={(notifSystem) => {
-                setNotificationSystem(notifSystem);
-            }}
+            breadcrumbs={[
+                { name: "Animaux", to: "/animals", active: false } as CustomBreadcrumbItem,
+                { name: "Animal", active: true, to: null } as CustomBreadcrumbItem
+            ]}
         >
             {content}
 
