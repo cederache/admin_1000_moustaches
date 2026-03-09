@@ -1,15 +1,11 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardBody } from "reactstrap";
 import HostFamiliesManager from "../../../managers/hostFamilies.manager";
 import Geocode from "../../../utils/geocode";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
-import UsersManager from "../../../managers/users.manager";
-import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
 import HostFamily from "../../../logic/entities/HostFamily";
-import User from "../../../logic/entities/User";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
@@ -21,6 +17,12 @@ import HostFamilyContactAccordion from "./HostFamilyContactAccordion";
 import HostFamilyHomeAccordion from "./HostFamilyHomeAccordion";
 import HostFamilyHostAccordion from "./HostFamilyHostAccordion";
 import HostFamilyAnimalsHistory from "./HostFamilyAnimalsHistory";
+import { useHostFamily } from "../../../hooks/hostFamilies/useHostFamily";
+import { useHostFamilyKinds } from "../../../hooks/hostFamilies/useHostFamilyKinds";
+import { useReferents } from "../../../hooks/users/useReferents";
+import { useCreateHostFamily } from "../../../hooks/hostFamilies/useCreateHostFamily";
+import { useUpdateHostFamily } from "../../../hooks/hostFamilies/useUpdateHostFamily";
+import { useDeleteHostFamily } from "../../../hooks/hostFamilies/useDeleteHostFamily";
 
 interface HostFamilyDetailPageProps {
     [key: string]: any;
@@ -37,11 +39,12 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
     const { t } = useTranslation();
     const { id: paramHostFamilyId } = useParams();
     const hostFamilyId = paramHostFamilyId ?? "new";
-    const [hostFamily, setHostFamily] = useState<HostFamily | null>(null);
-    const [hostFamilyKinds, setHostFamilyKinds] = useState<HostFamilyKind[]>([]);
-    const [referents, setReferents] = useState<User[]>([]);
+    const numericId = hostFamilyId === "new" ? null : parseInt(hostFamilyId, 10);
+    const validId = numericId != null && !Number.isNaN(numericId) ? numericId : null;
+
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false);
+    const [formHostFamily, setFormHostFamily] = useState<HostFamily | null>(null);
 
     const [geocodeFound, setGeocodeFound] = useState<boolean | null>(null);
     const [previousAddress, setPreviousAddress] = useState<string | null>(null);
@@ -55,100 +58,95 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
     const navigate = useNavigate();
     const pagePermissions = useGetPermissions(permissionsName);
 
+    const { data: hostFamily, isPending: isHostFamilyPending, isError: isHostFamilyError, refetch: refetchHostFamily } = useHostFamily(validId);
+    const { data: hostFamilyKindsData, isPending: isHostFamilyKindsPending, refetch: refetchHostFamilyKinds } = useHostFamilyKinds();
+    const { data: referentsData, isPending: isReferentsPending, refetch: refetchReferents } = useReferents();
+
+    const { mutate: createHostFamilyMutation, isPending: isCreatePending } = useCreateHostFamily();
+    const { mutate: updateHostFamilyMutation, isPending: isUpdatePending } = useUpdateHostFamily();
+    const { mutate: deleteHostFamilyMutation, isPending: isDeletePending } = useDeleteHostFamily();
+
+    const hostFamilyKinds = useMemo(
+        () => (hostFamilyKindsData ? [...hostFamilyKindsData].sort((a, b) => a.name.localeCompare(b.name)) : []),
+        [hostFamilyKindsData]
+    );
+    const referents = referentsData ?? [];
+
+    const isNewHostFamily = hostFamilyId === "new";
+
     const onHostFamilyChange = (updates: Partial<HostFamily>) => {
-        if (hostFamily) {
-            setHostFamily({ ...hostFamily, ...updates });
+        const target = isNewHostFamily ? formHostFamily : formHostFamily ?? hostFamily;
+        if (target) {
+            const next = { ...target, ...updates };
+            if (isNewHostFamily) setFormHostFamily(next);
+            else setFormHostFamily(next);
         }
     };
 
-    const getHostFamily = () => {
-        setHostFamily(null);
-        const id = parseInt(hostFamilyId, 10);
-        if (isNaN(id)) return;
-        return HostFamiliesManager.getById(id)
-            .then(setHostFamily)
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            });
-    };
+    useEffect(() => {
+        if (isNewHostFamily && formHostFamily === null) {
+            setFormHostFamily(HostFamiliesManager.createHostFamily());
+            setIsEditing(true);
+            setOpenContactInfo("1");
+            setOpenHomeInfo("1");
+            setOpenHostInfo("1");
+        }
+    }, [isNewHostFamily]);
 
-    const getHostFamilyKinds = () => {
-        setHostFamilyKinds([]);
-        return HostFamilyKindsManager.getAll()
-            .then((hfk) =>
-                setHostFamilyKinds(
-                    hfk.sort((a, b) => {
-                        if (a.name < b.name) return -1;
-                        if (a.name > b.name) return 1;
-                        return 0;
-                    })
-                )
-            )
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            });
-    };
+    useEffect(() => {
+        if (!isNewHostFamily && hostFamily) {
+            setFormHostFamily(null);
+        }
+    }, [isNewHostFamily, hostFamily?.id]);
 
-    const getReferents = () => {
-        setReferents([]);
-        return UsersManager.getAllReferents()
-            .then(setReferents)
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            });
-    };
-
-    const refresh = () => {
+    const handleRefresh = () => {
         if (hostFamilyId !== "new") {
-            getHostFamily()?.then(getReferents).then(getHostFamilyKinds);
+            refetchHostFamily();
+            refetchReferents();
+            refetchHostFamilyKinds();
         } else {
             setOpenContactInfo("1");
             setOpenHomeInfo("1");
             setOpenHostInfo("1");
-            getReferents()
-                .then(getHostFamilyKinds)
-                .then(() => {
-                    setHostFamily(HostFamiliesManager.createHostFamily());
-                    setIsEditing(true);
-                });
+            setFormHostFamily(HostFamiliesManager.createHostFamily());
+            setIsEditing(true);
+        }
+    };
+
+    const handleStartEditing = () => {
+        if (hostFamily) {
+            setFormHostFamily({ ...hostFamily });
+            setIsEditing(true);
         }
     };
 
     useEffect(() => {
-        refresh();
-    }, []);
-
-    useEffect(() => {
-        if (hostFamily !== null && previousAddress !== hostFamily.address) {
-            setPreviousAddress(hostFamily.address ?? null);
-            if (hostFamily.address && hostFamily.address.length > 10) {
+        const hf = isNewHostFamily ? formHostFamily : hostFamily;
+        if (hf !== null && hf !== undefined && previousAddress !== hf.address) {
+            setPreviousAddress(hf.address ?? null);
+            if (hf.address && hf.address.length > 10) {
                 setIsGeocoding(true);
                 setGeocodeFound(null);
-                Geocode.getCoordinatesFromAddress(hostFamily.address)
+                Geocode.getCoordinatesFromAddress(hf.address)
                     .then((coordinates) => {
                         if (coordinates !== null) {
-                            hostFamily.latitude = coordinates.lat;
-                            hostFamily.longitude = coordinates.lng;
+                            onHostFamilyChange({ latitude: coordinates.lat, longitude: coordinates.lng });
                         } else {
-                            hostFamily.latitude = undefined;
-                            hostFamily.longitude = undefined;
+                            onHostFamilyChange({ latitude: undefined, longitude: undefined });
                         }
                         setIsGeocoding(false);
                         setGeocodeFound(true);
-                        saveIfNeeded();
+                        setShouldSave(true);
                     })
                     .catch((err) => {
                         console.error(err);
                         setIsGeocoding(false);
                         setGeocodeFound(false);
-                        saveIfNeeded();
+                        setShouldSave(true);
                     });
             }
         }
-    }, [hostFamily]);
+    }, [isNewHostFamily ? formHostFamily?.address : hostFamily?.address]);
 
     useEffect(() => {
         if (!isGeocoding && shouldSave) {
@@ -166,69 +164,75 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
     };
 
     const saveIfNeeded = () => {
-        if (!shouldSave || hostFamily === null) return;
+        const hfToSave = isNewHostFamily ? formHostFamily : formHostFamily ?? hostFamily;
+        if (!shouldSave || hfToSave == null) return;
         setShouldSave(false);
         setIsEditing(false);
 
-        if (hostFamilyId === "new") {
-            if (hostFamily.firstname === undefined) {
+        if (isNewHostFamily) {
+            if (hfToSave.firstname === undefined) {
                 toast.error(t("hostFamilies.validation.firstNameRequired"));
                 setIsEditing(true);
                 return;
             }
-            if (hostFamily.name === undefined) {
+            if (hfToSave.name === undefined) {
                 toast.error(t("hostFamilies.validation.lastNameRequired"));
                 setIsEditing(true);
                 return;
             }
-            HostFamiliesManager.create(hostFamily)
-                .then((updatedHostFamily) => {
+            createHostFamilyMutation(hfToSave, {
+                onSuccess: (updatedHostFamily) => {
                     toast.success(t("hostFamilies.message.hostFamilyCreated"));
                     navigate(`/hostFamilies/${updatedHostFamily.id}`);
-                })
-                .catch((err) => {
+                },
+                onError: (err) => {
                     console.error(err);
                     toast.error(`${t("common.errorCreate")}\n${err}`);
                     setIsEditing(true);
-                });
+                },
+            });
             return;
         }
 
-        HostFamiliesManager.update(hostFamily)
-            .then(() => {
-                getHostFamily();
+        updateHostFamilyMutation(hfToSave, {
+            onSuccess: () => {
+                refetchHostFamily();
                 toast.success(t("hostFamilies.message.hostFamilyUpdated"));
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
-                getHostFamily();
+                refetchHostFamily();
                 toast.error(`${t("common.errorUpdate")}\n${err}`);
-            });
+            },
+        });
     };
 
     const deleteHF = () => {
-        if (hostFamily === null) return;
-        HostFamiliesManager.delete(hostFamily)
-            .then(() => {
+        const hfToDelete = isNewHostFamily ? formHostFamily : hostFamily;
+        if (hfToDelete == null) return;
+        deleteHostFamilyMutation(hfToDelete, {
+            onSuccess: () => {
                 toast.success(t("hostFamilies.message.hostFamilyDeleted"));
                 navigate("/hostFamilies");
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
-                getHostFamily();
+                refetchHostFamily();
                 toast.error(`${t("common.errorDelete")}\n${err}`);
-            });
+            },
+        });
     };
 
     const formattedPhone = (): string | undefined => {
-        if (!hostFamily?.phone) return hostFamily?.phone;
-        const cleaned = String(hostFamily.phone).replace(/\D/g, "");
+        const hf = isNewHostFamily ? formHostFamily : hostFamily;
+        if (!hf?.phone) return hf?.phone;
+        const cleaned = String(hf.phone).replace(/\D/g, "");
         const match = cleaned.match(/^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/);
         if (match) {
             match.shift();
             return match.join(".");
         }
-        return hostFamily?.phone;
+        return hf?.phone;
     };
 
     const canEdit =
@@ -237,38 +241,107 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
         pagePermissions[Ressource.HF_HOST].can_update ||
         pagePermissions[Ressource.HF_HIST_PETS].can_update;
 
+    const displayHostFamily = isNewHostFamily ? formHostFamily : (isEditing ? formHostFamily : hostFamily) ?? hostFamily;
+
     let content = <div>{t("common.loading")}</div>;
 
-    if (hostFamily === undefined) {
+    if (isNewHostFamily) {
+        if (formHostFamily) {
+            content = (
+                <div>
+                    <HostFamilyDetailPageActions
+                        hostFamilyId={hostFamilyId}
+                        isEditing={isEditing}
+                        canEdit={canEdit}
+                        onEdit={() => setIsEditing(true)}
+                        onSave={save}
+                        onRefresh={handleRefresh}
+                        onDelete={() => setShowDeleteConfirmationModal(true)}
+                    />
+                    <br />
+                    <Card>
+                        <HostFamilyDetailHeader
+                            hostFamilyId={hostFamilyId}
+                            hostFamily={formHostFamily}
+                            isEditing={isEditing}
+                            canUpdateContact={!!pagePermissions[Ressource.HF_CONTACT]?.can_update}
+                            onHostFamilyChange={onHostFamilyChange}
+                        />
+                        <CardBody>
+                            <HostFamilyDetailSummary
+                                hostFamily={formHostFamily}
+                                referents={referents}
+                                isEditing={isEditing}
+                                canUpdateContact={!!pagePermissions[Ressource.HF_CONTACT]?.can_update}
+                                onHostFamilyChange={onHostFamilyChange}
+                            />
+                            {pagePermissions[Ressource.HF_CONTACT].can_read && (
+                                <HostFamilyContactAccordion
+                                    hostFamilyId={hostFamilyId}
+                                    hostFamily={formHostFamily}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.HF_CONTACT]?.can_update}
+                                    openId={openContactInfo}
+                                    onToggle={(id) => setOpenContactInfo(openContactInfo === id ? "" : id)}
+                                    onHostFamilyChange={onHostFamilyChange}
+                                    formattedPhone={formattedPhone()}
+                                    geocodeFound={geocodeFound}
+                                />
+                            )}
+                            {pagePermissions[Ressource.HF_ADDRESS].can_read && (
+                                <HostFamilyHomeAccordion
+                                    hostFamily={formHostFamily}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.HF_ADDRESS]?.can_update}
+                                    openId={openHomeInfo}
+                                    onToggle={(id) => setOpenHomeInfo(openHomeInfo === id ? "" : id)}
+                                    onHostFamilyChange={onHostFamilyChange}
+                                />
+                            )}
+                            {pagePermissions[Ressource.HF_HOST].can_read && (
+                                <HostFamilyHostAccordion
+                                    hostFamily={formHostFamily}
+                                    hostFamilyKinds={hostFamilyKinds}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.HF_HOST]?.can_update}
+                                    openId={openHostInfo}
+                                    onToggle={(id) => setOpenHostInfo(openHostInfo === id ? "" : id)}
+                                    onHostFamilyChange={onHostFamilyChange}
+                                />
+                            )}
+                        </CardBody>
+                    </Card>
+                </div>
+            );
+        }
+    } else if (isHostFamilyPending && !hostFamily) {
+        content = <div>{t("common.loading")}</div>;
+    } else if (isHostFamilyError || (hostFamily === undefined && !isHostFamilyPending)) {
         content = <div>{t("hostFamilies.hostFamilyNotFound")}</div>;
-    } else if (hostFamily === null) {
-        content = <div>Chargement...</div>;
-    } else {
+    } else if (displayHostFamily) {
         content = (
             <div>
                 <HostFamilyDetailPageActions
                     hostFamilyId={hostFamilyId}
                     isEditing={isEditing}
                     canEdit={canEdit}
-                    onEdit={() => setIsEditing(true)}
+                    onEdit={handleStartEditing}
                     onSave={save}
-                    onRefresh={refresh}
+                    onRefresh={handleRefresh}
                     onDelete={() => setShowDeleteConfirmationModal(true)}
                 />
-
                 <br />
-
                 <Card>
                     <HostFamilyDetailHeader
                         hostFamilyId={hostFamilyId}
-                        hostFamily={hostFamily}
+                        hostFamily={displayHostFamily}
                         isEditing={isEditing}
                         canUpdateContact={!!pagePermissions[Ressource.HF_CONTACT]?.can_update}
                         onHostFamilyChange={onHostFamilyChange}
                     />
                     <CardBody>
                         <HostFamilyDetailSummary
-                            hostFamily={hostFamily}
+                            hostFamily={displayHostFamily}
                             referents={referents}
                             isEditing={isEditing}
                             canUpdateContact={!!pagePermissions[Ressource.HF_CONTACT]?.can_update}
@@ -277,7 +350,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
                         {pagePermissions[Ressource.HF_CONTACT].can_read && (
                             <HostFamilyContactAccordion
                                 hostFamilyId={hostFamilyId}
-                                hostFamily={hostFamily}
+                                hostFamily={displayHostFamily}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.HF_CONTACT]?.can_update}
                                 openId={openContactInfo}
@@ -289,7 +362,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
                         )}
                         {pagePermissions[Ressource.HF_ADDRESS].can_read && (
                             <HostFamilyHomeAccordion
-                                hostFamily={hostFamily}
+                                hostFamily={displayHostFamily}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.HF_ADDRESS]?.can_update}
                                 openId={openHomeInfo}
@@ -299,7 +372,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
                         )}
                         {pagePermissions[Ressource.HF_HOST].can_read && (
                             <HostFamilyHostAccordion
-                                hostFamily={hostFamily}
+                                hostFamily={displayHostFamily}
                                 hostFamilyKinds={hostFamilyKinds}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.HF_HOST]?.can_update}
@@ -310,9 +383,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
                         )}
                     </CardBody>
                 </Card>
-
                 <br />
-
                 {hostFamilyId !== "new" && pagePermissions[Ressource.HF_HIST_PETS].can_read && (
                     <HostFamilyAnimalsHistory hostFamilyId={hostFamilyId} />
                 )}

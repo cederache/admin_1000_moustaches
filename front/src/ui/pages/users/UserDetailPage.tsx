@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Col, Input, Label, Row } from "reactstrap";
-import UsersManager from "../../../managers/users.manager";
 import { MdDelete, MdOutlineModeEdit, MdRefresh, MdSave } from "react-icons/md";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import Switch from "../../components/Switch";
@@ -10,6 +9,10 @@ import toast from "react-hot-toast";
 import User from "../../../logic/entities/User";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLoggedUser, setLoggedUser } from "../../../hooks/useLoggedUser";
+import { useUser } from "../../../hooks/users/useUser";
+import { useCreateUser } from "../../../hooks/users/useCreateUser";
+import { useUpdateUser } from "../../../hooks/users/useUpdateUser";
+import { useDeleteUser } from "../../../hooks/users/useDeleteUser";
 
 interface UserDetailPageProps {
     [key: string]: any;
@@ -17,132 +20,185 @@ interface UserDetailPageProps {
 
 const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
     const { t } = useTranslation();
-    let { id: paramUserId } = useParams();
+    const { id: paramUserId } = useParams();
     const userId = paramUserId ?? "new";
-    const [user, setUser] = useState<User | null>(null);
+    const numericId = userId === "new" ? null : parseInt(userId, 10);
+    const validId = numericId != null && !Number.isNaN(numericId) ? numericId : null;
+
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
-    const [shouldSave, setShouldSave] = useState<boolean>(false);
+    const [formUser, setFormUser] = useState<User | null>(null);
 
     const { loggedUser } = useLoggedUser();
-
     const navigate = useNavigate();
 
-    const getUser = () => {
-        if (user !== null) {
-            setUser(null);
-        }
-        let id = parseInt(userId);
-        if (isNaN(id)) {
-            return;
-        }
-        UsersManager.getById(id)
-            .then(setUser)
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            });
-    };
+    const { data: user, isPending: isUserPending, isError: isUserError, refetch: refetchUser } = useUser(validId);
+    const createUserMutation = useCreateUser();
+    const updateUserMutation = useUpdateUser();
+    const deleteUserMutation = useDeleteUser();
 
-    const refresh = () => {
-        if (userId !== "new") {
-            getUser();
-        } else {
-            setUser(UsersManager.createUser());
+    const isNewUser = userId === "new";
+
+    // For "new" user: initialize form with empty user
+    useEffect(() => {
+        if (isNewUser && formUser === null) {
+            setFormUser(new User(-1, "", "", "", false));
+            setIsEditing(true);
+        }
+    }, [isNewUser]);
+
+    // When entering edit mode for existing user, copy query data to form
+    const handleStartEditing = () => {
+        if (user) {
+            setFormUser({ ...user });
             setIsEditing(true);
         }
     };
 
-    useEffect(() => {
-        refresh();
-    }, []);
-
-    useEffect(() => {
-        if (shouldSave) {
-            saveIfNeeded();
+    const handleRefresh = () => {
+        if (isNewUser) {
+            setFormUser(new User(-1, "", "", "", false));
+            setIsEditing(true);
+        } else {
+            refetchUser();
         }
-    }, [shouldSave]);
-
-    const save = () => {
-        setIsEditing(false);
-        setShouldSave(true);
     };
 
-    const saveIfNeeded = () => {
-        if (shouldSave === false) {
-            return;
-        }
+    const save = () => {
+        const userToSave = isNewUser ? formUser : formUser ?? user;
+        if (userToSave == null) return;
 
-        if (user === null) {
-            return;
-        }
+        setIsEditing(false);
 
-        setShouldSave(false);
-        if (userId === "new") {
-            // Send new data to API
-            UsersManager.create(user)
-                .then((updatedUser) => {
+        if (isNewUser) {
+            createUserMutation.mutate(userToSave, {
+                onSuccess: (updatedUser) => {
                     toast.success(t("users.message.userCreated"));
                     navigate(`/users/${updatedUser.id}`);
-                    setUser(updatedUser);
-                })
-                .catch((err) => {
+                },
+                onError: (err) => {
                     console.error(err);
                     toast.error(`${t("common.errorCreate")}\n${err}`);
-                });
-            return;
-        }
-
-        // Send new data to API
-        UsersManager.update(user)
-            .then(() => {
-                getUser();
-                toast.success(t("users.message.userUpdated"));
-
-                if (parseInt(userId) === loggedUser?.id) {
-                    setLoggedUser(user);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-                getUser();
-                toast.error(`${t("common.errorUpdate")}\n${err}`);
+                },
             });
+        } else {
+            updateUserMutation.mutate(userToSave, {
+                onSuccess: (updatedUser) => {
+                    toast.success(t("users.message.userUpdated"));
+                    if (loggedUser?.id === updatedUser.id) {
+                        setLoggedUser(updatedUser);
+                    }
+                },
+                onError: (err) => {
+                    console.error(err);
+                    toast.error(`${t("common.errorUpdate")}\n${err}`);
+                },
+            });
+        }
     };
 
     const deleteV = () => {
-        if (user === null) {
-            return;
-        }
-        UsersManager.delete(user)
-            .then(() => {
+        const userToDelete = isNewUser ? formUser : user;
+        if (userToDelete == null) return;
+
+        deleteUserMutation.mutate(userToDelete, {
+            onSuccess: () => {
                 toast.success(t("users.message.userDeleted"));
                 navigate("/users");
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
-                getUser();
                 toast.error(`${t("common.errorDelete")}\n${err}`);
-            });
+            },
+        });
     };
 
+    const displayUser = isNewUser ? formUser : (isEditing ? formUser : user) ?? user;
+
     let content = <div>{t("common.loading")}</div>;
-    if (user === undefined) {
-        content = <div>{t("users.userNotFound")}</div>;
-    } else if (user === null) {
+
+    if (isNewUser) {
+        if (formUser) {
+            content = (
+                <div>
+                    <Row className={"justify-content-end"}>
+                        <Col xs={"auto"}>
+                            <Button className="ms-2" color="success" onClick={save}>
+                                <MdSave />
+                            </Button>
+                            <Button className="ms-2" onClick={handleRefresh}>
+                                <MdRefresh />
+                            </Button>
+                        </Col>
+                    </Row>
+                    <br />
+                    <Card>
+                        <CardHeader>
+                            <h2>{t("users.newUser")}</h2>
+                        </CardHeader>
+                        <CardBody>
+                            <Row>
+                                <Col xs={6}>
+                                    <Label>{t("users.formFirstname")}</Label>
+                                    <Input
+                                        value={formUser.firstname || ""}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormUser({ ...formUser, firstname: evt.target.value })}
+                                    />
+                                </Col>
+                                <Col xs={6}>
+                                    <Label>{t("users.formLastname")}</Label>
+                                    <Input
+                                        value={formUser.name || ""}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormUser({ ...formUser, name: evt.target.value })}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={12}>
+                                    <Label>{t("users.formEmail")}</Label>
+                                    <Input
+                                        value={formUser.email}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormUser({ ...formUser, email: evt.target.value })}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <Label>{t("users.formIsReferent")}</Label>
+                                </Col>
+                                <Col xs={"auto"}>
+                                    <Switch
+                                        id={"is_referent"}
+                                        isOn={formUser.isReferent}
+                                        disabled={!isEditing}
+                                        handleToggle={() => setFormUser({ ...formUser, isReferent: !formUser.isReferent })}
+                                    />
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </div>
+            );
+        }
+    } else if (isUserPending && !user) {
         content = <div>{t("common.loading")}</div>;
-    } else {
+    } else if (isUserError || (user === undefined && !isUserPending)) {
+        content = <div>{t("users.userNotFound")}</div>;
+    } else if (displayUser) {
         content = (
             <div>
                 <Row className={"justify-content-end"}>
                     <Col xs={"auto"}>
-                        {userId !== "new" && isEditing && (
+                        {isEditing && (
                             <Button color="danger" onClick={() => setShowDeleteConfirmationModal(true)}>
                                 <MdDelete />
                             </Button>
                         )}
                         {!isEditing && (
-                            <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
+                            <Button className="ms-2" color="primary" onClick={handleStartEditing}>
                                 <MdOutlineModeEdit />
                             </Button>
                         )}
@@ -151,7 +207,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                                 <MdSave />
                             </Button>
                         )}
-                        <Button className="ms-2" onClick={refresh}>
+                        <Button className="ms-2" onClick={handleRefresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
@@ -161,39 +217,32 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
 
                 <Card>
                     <CardHeader>
-                        {userId === "new" && <h2>{t("users.newUser")}</h2>}
-                        {userId !== "new" && (
-                            <h2>
-                                {user.firstname} {user.name}
-                            </h2>
-                        )}
+                        <h2>
+                            {displayUser.firstname} {displayUser.name}
+                        </h2>
                     </CardHeader>
                     <CardBody>
-                        {(userId === "new" || isEditing) && (
+                        {(isEditing || isNewUser) && (
                             <Row>
                                 <Col xs={6}>
                                     <Label>{t("users.formFirstname")}</Label>
                                     <Input
-                                        value={user.firstname || ""}
+                                        value={displayUser.firstname || ""}
                                         disabled={!isEditing}
                                         onChange={(evt) =>
-                                            setUser({
-                                                ...user,
-                                                firstname: evt.target.value,
-                                            })
+                                            setFormUser(
+                                                formUser ? { ...formUser, firstname: evt.target.value } : { ...displayUser, firstname: evt.target.value }
+                                            )
                                         }
                                     />
                                 </Col>
                                 <Col xs={6}>
                                     <Label>{t("users.formLastname")}</Label>
                                     <Input
-                                        value={user.name || ""}
+                                        value={displayUser.name || ""}
                                         disabled={!isEditing}
                                         onChange={(evt) =>
-                                            setUser({
-                                                ...user,
-                                                name: evt.target.value,
-                                            })
+                                            setFormUser(formUser ? { ...formUser, name: evt.target.value } : { ...displayUser, name: evt.target.value })
                                         }
                                     />
                                 </Col>
@@ -203,13 +252,10 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                             <Col xs={12}>
                                 <Label>{t("users.formEmail")}</Label>
                                 <Input
-                                    value={user.email}
+                                    value={displayUser.email}
                                     disabled={!isEditing}
                                     onChange={(evt) =>
-                                        setUser({
-                                            ...user,
-                                            email: evt.target.value,
-                                        })
+                                        setFormUser(formUser ? { ...formUser, email: evt.target.value } : { ...displayUser, email: evt.target.value })
                                     }
                                 />
                             </Col>
@@ -221,14 +267,15 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                             <Col xs={"auto"}>
                                 <Switch
                                     id={"is_referent"}
-                                    isOn={user.isReferent}
+                                    isOn={displayUser.isReferent}
                                     disabled={!isEditing}
-                                    handleToggle={() => {
-                                        setUser({
-                                            ...user,
-                                            isReferent: !user.isReferent,
-                                        });
-                                    }}
+                                    handleToggle={() =>
+                                        setFormUser(
+                                            formUser
+                                                ? { ...formUser, isReferent: !formUser.isReferent }
+                                                : { ...displayUser, isReferent: !displayUser.isReferent }
+                                        )
+                                    }
                                 />
                             </Col>
                         </Row>

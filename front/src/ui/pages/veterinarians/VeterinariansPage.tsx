@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, Col, Input, Label, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
-import VeterinariansManager from "../../../managers/veterinarians.manager";
 import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
 import { sortBy } from "../../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -11,11 +10,11 @@ import { BlueIcon, GreenIcon, RedIcon, UserIcon, YellowIcon } from "../../../uti
 import Switch from "../../components/Switch";
 import SortableTable from "../../components/SortableTable";
 import Veterinarian from "../../../logic/entities/Veterinarian";
-import toast from "react-hot-toast";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import { useNavigate } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
+import { useVeterinarians } from "../../../hooks/veterinarians/useVeterinarians";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -58,9 +57,16 @@ namespace FilterType {
 
 const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
     const { t } = useTranslation();
-    const [isLoading, setIsLoading] = useState(false);
-    const [veterinarians, setVeterinarians] = useState<Veterinarian[]>([]);
-    const [filteredVeterinarians, setFilteredVeterinarians] = useState<Veterinarian[]>([]);
+    const navigate = useNavigate();
+    const pagePermissions = useGetPermissions([Ressource.VET_LIST]);
+
+    const { data: veterinariansData, isPending: isVeterinariansPending, isError: isVeterinariansError, refetch: refetchVeterinarians } = useVeterinarians();
+
+    const veterinarians = useMemo(
+        () => (veterinariansData ? sortBy([...veterinariansData], "name") : []),
+        [veterinariansData]
+    );
+
     const [searchText, setSearchText] = useState("");
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState<Position | null>(null);
@@ -68,52 +74,26 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
         Object.values(FilterType)
             .map((ft) => {
                 if (typeof ft !== "string") return null;
-                var filterType = ft as FilterType;
+                const filterType = ft as FilterType;
                 return new Filter(null, filterType);
             })
-            .filter((f) => f !== null) as Filter[]
+            .filter((f): f is Filter => f !== null)
     );
-
-    const navigate = useNavigate();
-
-    const pagePermissions = useGetPermissions([Ressource.VET_LIST]);
 
     const [mapRef, setMapRef] = useState<L.Map | null>(null);
 
-    const getAllVeterinarians = () => {
-        return VeterinariansManager.getAll()
-            .then((veterinarians) => {
-                return sortBy(veterinarians || [], "name");
-            })
-            .then((veterinarians) => {
-                setVeterinarians(veterinarians);
-                setFilteredVeterinarians(veterinarians);
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            });
-    };
-
-    useEffect(() => {
-        setIsLoading(true);
-        getAllVeterinarians().then(() => {
-            setIsLoading(false);
-        });
-    }, []);
-
-    useEffect(() => {
-        setFilteredVeterinarians(
+    const filteredVeterinarians = useMemo(
+        () =>
             veterinarians.filter(
                 (veterinarian) =>
                     filters.every((f) => (f.value === true ? f.check(veterinarian) === true : true)) &&
                     (veterinarian.name ?? "").toLowerCase().includes(searchText.toLowerCase())
-            )
-        );
-    }, [searchText, filters]);
+            ),
+        [veterinarians, searchText, filters]
+    );
 
     useEffect(() => {
-        if (mapRef !== null && mapRef !== null) {
+        if (mapRef != null && showMap) {
             mapRef.invalidateSize();
             mapRef.locate().on("locationfound", function (e) {
                 setUserPosition(e.latlng);
@@ -122,15 +102,15 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
     }, [mapRef, showMap]);
 
     useEffect(() => {
-        if (mapRef !== null && mapRef !== null) {
-            let latLngs = filteredVeterinarians
-                .filter((vet) => vet.latitude !== null && vet.longitude !== null)
+        if (mapRef != null) {
+            const latLngs = filteredVeterinarians
+                .filter((vet) => vet.latitude != null && vet.longitude != null)
                 .map((vet) => [vet.latitude, vet.longitude]) as [number, number][];
             if (latLngs.length > 0) {
-                if (userPosition !== null) {
-                    latLngs.push([userPosition.lat, userPosition.lng] as [number, number]);
+                if (userPosition != null) {
+                    latLngs.push([userPosition.lat, userPosition.lng]);
                 }
-                var bounds = new L.LatLngBounds(latLngs);
+                const bounds = new L.LatLngBounds(latLngs);
                 mapRef.fitBounds(bounds);
             }
         }
@@ -179,18 +159,16 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                         name="name"
                         placeholder={t("veterinarians.searchPlaceholder")}
                         value={searchText}
-                        onChange={(e) => {
-                            setSearchText(e.target.value);
-                        }}
+                        onChange={(e) => setSearchText(e.target.value)}
                     />
                 </Col>
-                <Col xs={"auto"}>
+                <Col xs="auto">
                     {pagePermissions[Ressource.VET_LIST]?.can_create && (
-                        <Button title={t("veterinarians.createButton")} className="ms-2" onClick={createVeterinarian} color={"success"}>
+                        <Button title={t("veterinarians.createButton")} className="ms-2" onClick={createVeterinarian} color="success">
                             <MdAddBox />
                         </Button>
                     )}
-                    <Button title={t("common.refresh")} className="ms-2" onClick={getAllVeterinarians}>
+                    <Button title={t("common.refresh")} className="ms-2" onClick={() => refetchVeterinarians()}>
                         <MdRefresh />
                     </Button>
                 </Col>
@@ -198,31 +176,26 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
             <Card>
                 <CardBody>
                     <Row>
-                        <Col xs={"auto"} className="mb-0 border-end">
+                        <Col xs="auto" className="mb-0 border-end">
                             <MdFilterAlt />
                         </Col>
-                        {filters.map((filter) => {
-                            return (
-                                <Col key={filter.type} className="mb-0">
-                                    <Label>{t("veterinarians.filter.emergencies")}</Label>
-                                    <Switch
-                                        id={filter.type}
-                                        isOn={filter.value === true}
-                                        disabled={false}
-                                        handleToggle={() => {
-                                            setFilters((prevFilters) => {
-                                                return prevFilters.map((f) => {
-                                                    if (f.type === filter.type) {
-                                                        return new Filter(!f.value, f.type);
-                                                    }
-                                                    return f;
-                                                });
-                                            });
-                                        }}
-                                    />
-                                </Col>
-                            );
-                        })}
+                        {filters.map((filter) => (
+                            <Col key={filter.type} className="mb-0">
+                                <Label>{t("veterinarians.filter.emergencies")}</Label>
+                                <Switch
+                                    id={filter.type}
+                                    isOn={filter.value === true}
+                                    disabled={false}
+                                    handleToggle={() => {
+                                        setFilters((prevFilters) =>
+                                            prevFilters.map((f) =>
+                                                f.type === filter.type ? new Filter(!f.value, f.type) : f
+                                            )
+                                        );
+                                    }}
+                                />
+                            </Col>
+                        ))}
                     </Row>
                 </CardBody>
             </Card>
@@ -249,25 +222,10 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                 <Col xs={12} className="table-responsive">
                                     <SortableTable
                                         columns={[
-                                            {
-                                                key: "name",
-                                                value: t("veterinarians.table.name"),
-                                                isMain: true,
-                                            },
-                                            {
-                                                key: "mail",
-                                                value: t("veterinarians.table.email"),
-                                                isMain: false,
-                                            },
-                                            {
-                                                key: "phone",
-                                                value: t("veterinarians.table.phone"),
-                                                isMain: false,
-                                            },
-                                            {
-                                                key: "price",
-                                                value: t("veterinarians.table.price"),
-                                            },
+                                            { key: "name", value: t("veterinarians.table.name"), isMain: true },
+                                            { key: "mail", value: t("veterinarians.table.email"), isMain: false },
+                                            { key: "phone", value: t("veterinarians.table.phone"), isMain: false },
+                                            { key: "price", value: t("veterinarians.table.price") },
                                             {
                                                 key: "veterinarianDetail",
                                                 value: t("veterinarians.table.veterinarianSheet"),
@@ -275,20 +233,18 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                                 sortable: false,
                                             },
                                         ]}
-                                        values={filteredVeterinarians.map((vet) => {
-                                            return {
-                                                name: vet.name,
-                                                mail: vet.mail,
-                                                phone: vet.phone,
-                                                price: vet.priceLevelText,
-                                                veterinarianDetail: (
-                                                    <Button title={t("common.seeDetail")} color="info" onClick={() => showDetail(vet)}>
-                                                        <MdAssignment />
-                                                    </Button>
-                                                ),
-                                            };
-                                        })}
-                                        isLoading={isLoading}
+                                        values={filteredVeterinarians.map((vet) => ({
+                                            name: vet.name,
+                                            mail: vet.mail,
+                                            phone: vet.phone,
+                                            price: vet.priceLevelText,
+                                            veterinarianDetail: (
+                                                <Button title={t("common.seeDetail")} color="info" onClick={() => showDetail(vet)}>
+                                                    <MdAssignment />
+                                                </Button>
+                                            ),
+                                        }))}
+                                        isLoading={isVeterinariansPending}
                                     />
                                 </Col>
                             </Row>
@@ -298,66 +254,57 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                 <Col xs={12}>
                                     <MapContainer
                                         ref={(map) => {
-                                            if (map) {
-                                                setMapRef(map);
-                                            }
+                                            if (map) setMapRef(map);
                                         }}
                                         center={[47.207959, -1.549425]}
                                         zoom={12}
                                         scrollWheelZoom={false}
-                                        style={{
-                                            height: "400px",
-                                            width: "100%",
-                                        }}
+                                        style={{ height: "400px", width: "100%" }}
                                     >
                                         <TileLayer
                                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                         />
                                         {filteredVeterinarians
-                                            .filter((vet) => {
-                                                return vet.latitude !== null && vet.longitude !== null;
-                                            })
-                                            .map((veterinarian) => {
-                                                return (
-                                                    <Marker
-                                                        title={veterinarian.name}
-                                                        key={veterinarian.id}
-                                                        position={[veterinarian.latitude!, veterinarian.longitude!]}
-                                                        icon={priceMarkerIcon(veterinarian)}
-                                                        pane="markerPane"
-                                                    >
-                                                        <Popup>
-                                                            <div className="text-center">
-                                                                {veterinarian.name}
-                                                                <br />
-                                                                <span title={veterinarian.priceLevelTooltip ?? ""}>{veterinarian.priceLevelText}</span>
-                                                                <br />
-                                                                <div className="pt-2">
-                                                                    <Button
-                                                                        title={t("common.seeDetail")}
-                                                                        color="primary"
-                                                                        onClick={() => {
-                                                                            showDetail(veterinarian);
-                                                                        }}
-                                                                    >
-                                                                        <MdAssignment />
-                                                                    </Button>
-                                                                </div>
+                                            .filter((vet) => vet.latitude != null && vet.longitude != null)
+                                            .map((veterinarian) => (
+                                                <Marker
+                                                    title={veterinarian.name}
+                                                    key={veterinarian.id}
+                                                    position={[veterinarian.latitude!, veterinarian.longitude!]}
+                                                    icon={priceMarkerIcon(veterinarian)}
+                                                    pane="markerPane"
+                                                >
+                                                    <Popup>
+                                                        <div className="text-center">
+                                                            {veterinarian.name}
+                                                            <br />
+                                                            <span title={veterinarian.priceLevelTooltip ?? ""}>
+                                                                {veterinarian.priceLevelText}
+                                                            </span>
+                                                            <br />
+                                                            <div className="pt-2">
+                                                                <Button
+                                                                    title={t("common.seeDetail")}
+                                                                    color="primary"
+                                                                    onClick={() => showDetail(veterinarian)}
+                                                                >
+                                                                    <MdAssignment />
+                                                                </Button>
                                                             </div>
-                                                        </Popup>
-                                                    </Marker>
-                                                );
-                                            })}
-                                        {userPosition !== null && (
+                                                        </div>
+                                                    </Popup>
+                                                </Marker>
+                                            ))}
+                                        {userPosition != null && (
                                             <Marker
                                                 title={t("common.myPosition")}
-                                                key={"user_position"}
+                                                key="user_position"
                                                 position={[userPosition.lat, userPosition.lng]}
                                                 icon={UserIcon}
                                                 interactive={false}
                                                 pane="overlayPane"
-                                            ></Marker>
+                                            />
                                         )}
                                     </MapContainer>
                                 </Col>

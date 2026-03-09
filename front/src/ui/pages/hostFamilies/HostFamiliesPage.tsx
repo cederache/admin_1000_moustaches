@@ -1,8 +1,6 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Col, Input, Row, Nav, NavItem, NavLink, TabContent, TabPane, Label, Card, CardBody } from "reactstrap";
-import HostFamiliesManager from "../../../managers/hostFamilies.manager";
-import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
 import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt, MdOutlineThumbUp } from "react-icons/md";
 import { RiZzzFill } from "react-icons/ri";
 import { sortBy } from "../../../utils/sort";
@@ -12,18 +10,18 @@ import "leaflet/dist/leaflet.css";
 import { HOST_FAMILY_KIND_ID } from "../../../utils/constants";
 import { BlueIcon, CatIcon, DogIcon, KittenFeedingIcon, KittenIcon, PuppyIcon, UserIcon, NACIcon } from "../../../utils/mapIcons";
 import Switch from "../../components/Switch";
-import UsersManager from "../../../managers/users.manager";
 import Dropdown from "../../components/Dropdown";
 import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import toast from "react-hot-toast";
 import HostFamily from "../../../logic/entities/HostFamily";
-import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
-import User from "../../../logic/entities/User";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
+import { useHostFamilies } from "../../../hooks/hostFamilies/useHostFamilies";
+import { useHostFamilyKinds } from "../../../hooks/hostFamilies/useHostFamilyKinds";
+import { useReferents } from "../../../hooks/users/useReferents";
 
+// Leaflet icon fix
 L.Marker.prototype.options.icon = BlueIcon;
 
 interface HostFamiliesPageProps {
@@ -83,24 +81,41 @@ namespace FilterType {
     }
 }
 
-class HostFamiliesPageData {
-    hostFamilies: HostFamily[];
-    hostFamilyKinds: HostFamilyKind[];
-    referents: User[];
-
-    constructor() {
-        this.hostFamilies = [];
-        this.hostFamilyKinds = [];
-        this.referents = [];
-    }
-}
-
 const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
     const { t } = useTranslation();
-    const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState<HostFamiliesPageData>(new HostFamiliesPageData());
+    const navigate = useNavigate();
+    const pagePermissions = useGetPermissions([Ressource.HF_LIST]);
+    const mapRef = useRef<L.Map | null>(null);
 
-    const [filteredHostFamilies, setFilteredHostFamilies] = useState<HostFamily[]>([]);
+    const [searchParams] = useSearchParams();
+    const kinds = searchParams.getAll("kinds");
+    const kindsIds = kinds != null ? kinds.map((kind) => parseInt(kind)) : undefined;
+    const isAvailableStr = searchParams.get("isAvailable");
+    const isAvailable = isAvailableStr == "true" ? true : isAvailableStr == "false" ? false : undefined;
+
+    const {
+        data: hostFamiliesData,
+        isPending: isHostFamiliesPending,
+        isError: isHostFamiliesError,
+        refetch: refetchHostFamilies,
+    } = useHostFamilies({
+        kinds: kindsIds,
+        isAvailable,
+    });
+    const {
+        data: hostFamilyKindsData,
+        isPending: isHostFamilyKindsPending,
+        isError: isHostFamilyKindsError,
+        refetch: refetchHostFamilyKinds,
+    } = useHostFamilyKinds();
+    const { data: referentsData, isPending: isReferentsPending, isError: isReferentsError, refetch: refetchReferents } = useReferents();
+
+    const hostFamilies = useMemo(() => (hostFamiliesData ? sortBy([...hostFamiliesData], "id") : []), [hostFamiliesData]);
+    const hostFamilyKinds = useMemo(() => (hostFamilyKindsData ? sortBy([...hostFamilyKindsData], "name") : []), [hostFamilyKindsData]);
+    const referents = useMemo(() => (referentsData ? sortBy([...referentsData], "displayName") : []), [referentsData]);
+
+    const isLoading = isHostFamiliesPending || isHostFamilyKindsPending || isReferentsPending;
+
     const [searchText, setSearchText] = useState("");
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState<any | null>(null);
@@ -114,68 +129,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             .filter((f) => f !== null) as Filter[]
     );
 
-    const navigate = useNavigate();
-    const pagePermissions = useGetPermissions([Ressource.HF_LIST]);
-
-    const mapRef = useRef<L.Map | null>(null);
-
-    const [searchParams] = useSearchParams();
-    const kinds = searchParams.getAll("kinds");
-    const kindsIds = kinds != null ? kinds.map((kind) => parseInt(kind)) : undefined;
-    const isAvailableStr = searchParams.get("isAvailable");
-    const isAvailable = isAvailableStr == "true" ? true : isAvailableStr == "false" ? false : undefined;
-
-    const getAllHostFamilies = () => {
-        return HostFamiliesManager.getAll({ kinds: kindsIds, isAvailable })
-            .then((hostFamilies) => {
-                return sortBy(hostFamilies || [], "id") as HostFamily[];
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-                return [] as HostFamily[];
-            });
-    };
-
-    const getHostFamilyKinds = () => {
-        return HostFamilyKindsManager.getAll()
-            .then((hostFamilyKinds) => {
-                return sortBy(hostFamilyKinds || [], "name");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-                return [] as HostFamilyKind[];
-            });
-    };
-
-    const getReferents = () => {
-        return UsersManager.getAllReferents()
-            .then((referents) => {
-                return sortBy(referents || [], "displayName");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-                return [] as User[];
-            });
-    };
-
-    useEffect(() => {
-        setIsLoading(true);
-        Promise.all([getHostFamilyKinds(), getAllHostFamilies(), getReferents()]).then(([hostFamilyKinds, hostFamilies, referents]) => {
-            setData({
-                hostFamilies,
-                hostFamilyKinds,
-                referents,
-            });
-            setIsLoading(false);
-        });
-    }, []);
-
-    useEffect(() => {
-        setFilteredHostFamilies(data.hostFamilies.filter((hf) => filters.every((f) => f.check(hf))));
-    }, [data, searchText, filters]);
+    const filteredHostFamiliesList = useMemo(() => hostFamilies.filter((hf) => filters.every((f) => f.check(hf))), [hostFamilies, filters]);
 
     useEffect(() => {
         const map = mapRef.current;
@@ -199,8 +153,14 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
         setShowMap(!showMap);
     };
 
+    const refetchAll = () => {
+        refetchHostFamilies();
+        refetchHostFamilyKinds();
+        refetchReferents();
+    };
+
     const hostFamilyKindNameForId = (id: number | undefined | null) => {
-        return data.hostFamilyKinds.find((hfk) => hfk.id === id)?.name;
+        return hostFamilyKinds.find((hfk) => hfk.id === id)?.name;
     };
 
     const iconForHostFamilyKind = (host_family_kind_id: number | undefined | null) => {
@@ -232,7 +192,9 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             case FilterType.MEMBERSHIP_LATE:
                 return (
                     <Col key={filter.type} className="mb-0">
-                        <Label>{filter.type === FilterType.MEMBERSHIP_LATE ? t("hostFamilies.filter.membershipLate") : t("hostFamilies.filter.hasVehicule")}</Label>
+                        <Label>
+                            {filter.type === FilterType.MEMBERSHIP_LATE ? t("hostFamilies.filter.membershipLate") : t("hostFamilies.filter.hasVehicule")}
+                        </Label>
                         <br />
                         <Switch
                             disabled={isLoading}
@@ -253,7 +215,13 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                             color={"primary"}
                             value={filter.value}
                             values={[true, false, null]}
-                            valueDisplayName={(onBreak: boolean | null) => (onBreak === null ? t("hostFamilies.filter.statusAll") : onBreak === true ? t("hostFamilies.filter.statusPaused") : t("hostFamilies.filter.statusActive"))}
+                            valueDisplayName={(onBreak: boolean | null) =>
+                                onBreak === null
+                                    ? t("hostFamilies.filter.statusAll")
+                                    : onBreak === true
+                                    ? t("hostFamilies.filter.statusPaused")
+                                    : t("hostFamilies.filter.statusActive")
+                            }
                             valueActiveCheck={(onBreak: boolean | null) => onBreak === filter.value}
                             key={"onBreak"}
                             onChange={(newBreak) => setFilters((previous) => previous.map((f) => (f.type === filter.type ? new Filter(newBreak, f.type) : f)))}
@@ -267,8 +235,8 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                         <Dropdown
                             withNewLine={true}
                             color={"primary"}
-                            value={data.referents.find((usr) => usr.id === filter.value)}
-                            values={[...data.referents, undefined]}
+                            value={referents.find((usr) => usr.id === filter.value)}
+                            values={[...referents, undefined]}
                             valueDisplayName={(usr) => (usr === undefined ? "-" : `${usr?.name} ${usr?.firstname}`)}
                             valueActiveCheck={(usr) => usr?.id === filter.value}
                             key={"referents"}
@@ -285,8 +253,8 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                         <Dropdown
                             withNewLine={true}
                             color={"primary"}
-                            value={data.hostFamilyKinds.find((hfk) => hfk.id === filter.value)}
-                            values={[...data.hostFamilyKinds, null]}
+                            value={hostFamilyKinds.find((hfk) => hfk.id === filter.value)}
+                            values={[...hostFamilyKinds, null]}
                             valueDisplayName={(hfk) => (hfk === null ? "-" : hfk?.name ?? "")}
                             valueActiveCheck={(hfk) => hfk?.id === filter.value}
                             key={"hostFamilyKind"}
@@ -303,7 +271,13 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                             color={"primary"}
                             value={filter.value}
                             values={[true, false, null]}
-                            valueDisplayName={(temporary) => (temporary === null ? t("hostFamilies.filter.statusAll") : temporary === true ? t("hostFamilies.filter.temporaryYes") : t("hostFamilies.filter.temporaryNo"))}
+                            valueDisplayName={(temporary) =>
+                                temporary === null
+                                    ? t("hostFamilies.filter.statusAll")
+                                    : temporary === true
+                                    ? t("hostFamilies.filter.temporaryYes")
+                                    : t("hostFamilies.filter.temporaryNo")
+                            }
                             valueActiveCheck={(temporary) => temporary === filter.value}
                             key={"temporay"}
                             onChange={(newTemporary) =>
@@ -332,9 +306,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                         name="hostFamily"
                         placeholder={t("hostFamilies.searchPlaceholder")}
                         value={searchText}
-                        onChange={(e) => {
-                            setSearchText(e.target.value);
-                        }}
+                        onChange={(e) => setSearchText(e.target.value)}
                     />
                 </Col>
                 <Col xs={"auto"}>
@@ -343,7 +315,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                             <MdAddBox />
                         </Button>
                     )}
-                    <Button className="ms-2" onClick={getAllHostFamilies}>
+                    <Button className="ms-2" onClick={refetchAll}>
                         <MdRefresh />
                     </Button>
                 </Col>
@@ -411,19 +383,17 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                                 sortable: false,
                                             },
                                         ]}
-                                        values={filteredHostFamilies.map((hostFamily) => {
-                                            return {
-                                                status: hostFamily.onBreak ? <RiZzzFill /> : <MdOutlineThumbUp />,
-                                                name: hostFamily.displayName,
-                                                phone: hostFamily.phone,
-                                                situation: hostFamily.situation,
-                                                hostFamilyDetail: (
-                                                    <Button color="info" onClick={() => showDetail(hostFamily)}>
-                                                        <MdAssignment />
-                                                    </Button>
-                                                ),
-                                            };
-                                        })}
+                                        values={filteredHostFamiliesList.map((hostFamily) => ({
+                                            status: hostFamily.onBreak ? <RiZzzFill /> : <MdOutlineThumbUp />,
+                                            name: hostFamily.displayName,
+                                            phone: hostFamily.phone,
+                                            situation: hostFamily.situation,
+                                            hostFamilyDetail: (
+                                                <Button color="info" onClick={() => showDetail(hostFamily)}>
+                                                    <MdAssignment />
+                                                </Button>
+                                            ),
+                                        }))}
                                         isLoading={isLoading}
                                     />
                                 </Col>
@@ -446,10 +416,8 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                         />
-                                        {filteredHostFamilies
-                                            .filter((hf) => {
-                                                return hf.latitude !== null && hf.longitude !== null;
-                                            })
+                                        {filteredHostFamiliesList
+                                            .filter((hf) => hf.latitude !== null && hf.longitude !== null)
                                             .map((hostFamily) => {
                                                 var hostFamilyKind = (hostFamily.hostFamilyKinds?.length ?? 0) > 0 ? hostFamily.hostFamilyKinds![0] : null;
                                                 return (
@@ -474,9 +442,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                                                     <Button
                                                                         title={t("common.seeDetail")}
                                                                         color="primary"
-                                                                        onClick={() => {
-                                                                            showDetail(hostFamily);
-                                                                        }}
+                                                                        onClick={() => showDetail(hostFamily)}
                                                                     >
                                                                         <MdAssignment />
                                                                     </Button>
@@ -494,7 +460,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                                 icon={UserIcon}
                                                 interactive={false}
                                                 pane="overlayPane"
-                                            ></Marker>
+                                            />
                                         )}
                                     </MapContainer>
                                 </Col>

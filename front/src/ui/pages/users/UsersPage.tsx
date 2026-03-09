@@ -1,48 +1,34 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Col, Input, Row } from "reactstrap";
-import UsersManager from "../../../managers/users.manager";
 import { MdRefresh, MdAddBox, MdAssignment } from "react-icons/md";
 import { FaUserAlt } from "react-icons/fa";
-import { sortBy } from "../../../utils/sort";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebase-config";
+import { sortBy } from "../../../utils/sort";
 import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import toast from "react-hot-toast";
 import User from "../../../logic/entities/User";
 import { useNavigate } from "react-router-dom";
+import { useUsers } from "../../../hooks/users/useUsers";
 
 interface UsersPageProps {}
 
 const UsersPage: FC<UsersPageProps> = () => {
     const { t } = useTranslation();
-    const [isLoading, setIsLoading] = useState(false);
-    const [users, setUsers] = useState<any[]>([]);
-    const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
+    const navigate = useNavigate();
     const [searchText, setSearchText] = useState("");
     const [loggedUser, setLoggedUser] = useState<User | null>(null);
 
-    const navigate = useNavigate();
+    const { data: users, isPending: isUsersPending, isError: isUsersError, refetch: refetchUsers } = useUsers();
 
-    const getAllUsers = () => {
-        return UsersManager.getAll()
-            .then((users) => {
-                return sortBy(users || [], "name");
-            })
-            .then((users) => {
-                setUsers(users);
-                setFilteredUsers(users);
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            });
-    };
+    const filteredUsers = useMemo(
+        () => users?.filter((user) => (user.name + " " + user.firstname).toLowerCase().includes(searchText.toLowerCase())) ?? [],
+        [users, searchText]
+    );
 
     useEffect(() => {
         onAuthStateChanged(auth, (firebaseUser) => {
-            // Convert Firebase User to User
             if (firebaseUser) {
                 const user = new User();
                 user.email = firebaseUser.email || "";
@@ -53,20 +39,7 @@ const UsersPage: FC<UsersPageProps> = () => {
                 setLoggedUser(null);
             }
         });
-
-        setIsLoading(true);
-        getAllUsers().then(() => {
-            setIsLoading(false);
-        });
     }, []);
-
-    useEffect(() => {
-        setFilteredUsers(
-            users.filter((user) => {
-                return (user.name + " " + user.firstname).toLowerCase().includes(searchText.toLowerCase());
-            })
-        );
-    }, [searchText]);
 
     const showDetail = (user: User) => {
         navigate(`/users/${user.id}`);
@@ -89,20 +62,13 @@ const UsersPage: FC<UsersPageProps> = () => {
         >
             <Row>
                 <Col>
-                    <Input
-                        name="name"
-                        placeholder={t("users.searchPlaceholder")}
-                        value={searchText}
-                        onChange={(e) => {
-                            setSearchText(e.target.value);
-                        }}
-                    />
+                    <Input name="name" placeholder={t("users.searchPlaceholder")} value={searchText} onChange={(e) => setSearchText(e.target.value)} />
                 </Col>
                 <Col xs={"auto"}>
                     <Button title={t("users.createButton")} className="ms-2" onClick={createUser} color={"success"}>
                         <MdAddBox />
                     </Button>
-                    <Button title={t("common.refresh")} className="ms-2" onClick={getAllUsers}>
+                    <Button title={t("common.refresh")} className="ms-2" onClick={() => refetchUsers()}>
                         <MdRefresh />
                     </Button>
                 </Col>
@@ -134,19 +100,17 @@ const UsersPage: FC<UsersPageProps> = () => {
                                         sortable: false,
                                     },
                                 ]}
-                                values={filteredUsers.map((user) => {
-                                    return {
-                                        icon: loggedUser?.email === user.email ? <FaUserAlt /> : <></>,
-                                        name: `${user.firstname} ${user.name}`,
-                                        mail: user.email,
-                                        userDetail: (
-                                            <Button title={t("common.seeDetail")} color="info" onClick={() => showDetail(user)}>
-                                                <MdAssignment />
-                                            </Button>
-                                        ),
-                                    };
-                                })}
-                                isLoading={isLoading}
+                                values={filteredUsers.map((user) => ({
+                                    icon: loggedUser?.email === user.email ? <FaUserAlt /> : <></>,
+                                    name: `${user.firstname} ${user.name}`,
+                                    mail: user.email,
+                                    userDetail: (
+                                        <Button title={t("common.seeDetail")} color="info" onClick={() => showDetail(user)}>
+                                            <MdAssignment />
+                                        </Button>
+                                    ),
+                                }))}
+                                isLoading={isUsersPending}
                             />
                         </Col>
                     </Row>

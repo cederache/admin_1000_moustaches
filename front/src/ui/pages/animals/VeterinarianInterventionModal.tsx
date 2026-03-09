@@ -4,18 +4,19 @@ import { MdDelete, MdOutlineModeEdit } from "react-icons/md";
 import { Button, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import Dropdown from "../../components/Dropdown";
-import VeterinarianInterventionsManager from "../../../managers/veterinarianInterventions.manager";
-import VeterinariansManager from "../../../managers/veterinarians.manager";
 import VeterinarianIntervention from "../../../logic/entities/VeterinarianIntervention";
-import Veterinarian from "../../../logic/entities/Veterinarian";
 import toast from "react-hot-toast";
 import Animal from "../../../logic/entities/Animal";
+import { useVeterinarians } from "../../../hooks/veterinarians/useVeterinarians";
+import { useCreateVeterinarianIntervention } from "../../../hooks/veterinarianInterventions/useCreateVeterinarianIntervention";
+import { useUpdateVeterinarianIntervention } from "../../../hooks/veterinarianInterventions/useUpdateVeterinarianIntervention";
+import { useDeleteVeterinarianIntervention } from "../../../hooks/veterinarianInterventions/useDeleteVeterinarianIntervention";
 
 interface VeterinarianInterventionModalProps {
     animal: Animal;
     veterinarianIntervention: VeterinarianIntervention;
     show: boolean;
-    handleClose: (close: boolean) => void;
+    handleClose: (shouldReload: boolean) => void;
 }
 
 const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
@@ -29,75 +30,73 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
     const [veterinarianIntervention, setVeterinarianIntervention] = useState<VeterinarianIntervention>(vetInter);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
-    const [veterinarians, setVeterinarians] = useState<Veterinarian[]>([]);
 
-    const getVeterinarians = () => {
-        VeterinariansManager.getAll()
-            .then(setVeterinarians)
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            });
-    };
+    const { data: veterinariansData, isPending: isVeterinariansPending, isError: isVeterinariansError } = useVeterinarians();
+    const veterinarians = veterinariansData ?? [];
+
+    const { mutate: createInterventionMutation } = useCreateVeterinarianIntervention();
+    const { mutate: updateInterventionMutation } = useUpdateVeterinarianIntervention();
+    const { mutate: deleteInterventionMutation } = useDeleteVeterinarianIntervention();
 
     useEffect(() => {
-        getVeterinarians();
+        setVeterinarianIntervention(vetInter);
         setIsEditing(vetInter.id === -1);
-    }, []);
+    }, [vetInter.id, vetInter]);
 
     const save = () => {
         setIsEditing(false);
         if (veterinarianIntervention.id === -1) {
-            // Send new data to API
-            VeterinarianInterventionsManager.create({
-                ...veterinarianIntervention,
-                animalId: animal.id,
-            })
-                .then((_) => {
-                    toast.success(t("animals.message.interventionCreated"));
-                    handleClose(true);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    setIsEditing(true);
-                    toast.error(`${t("common.errorCreate")}\n${err}`);
-                });
+            createInterventionMutation(
+                { ...veterinarianIntervention, animalId: animal.id },
+                {
+                    onSuccess: () => {
+                        toast.success(t("animals.message.interventionCreated"));
+                        handleClose(true);
+                    },
+                    onError: (err) => {
+                        console.error(err);
+                        setIsEditing(true);
+                        toast.error(`${t("common.errorCreate")}\n${err}`);
+                    },
+                }
+            );
             return;
         }
 
-        // Send new data to API
-        VeterinarianInterventionsManager.update(veterinarianIntervention)
-            .then(() => {
+        updateInterventionMutation(veterinarianIntervention, {
+            onSuccess: () => {
                 toast.success(t("animals.message.interventionUpdated"));
                 handleClose(true);
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
                 setIsEditing(true);
                 toast.error(`${t("common.errorUpdate")}\n${err}`);
-            });
+            },
+        });
     };
 
     const deleteVetInter = () => {
-        VeterinarianInterventionsManager.delete(veterinarianIntervention)
-            .then(() => {
+        deleteInterventionMutation(veterinarianIntervention, {
+            onSuccess: () => {
                 toast.success(t("animals.message.interventionDeletedAlt"));
                 handleClose(true);
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
                 toast.error(`${t("common.errorDelete")}\n${err}`);
-            });
+            },
+        });
     };
 
     return (
         <Modal isOpen={show} {...props}>
             <ModalHeader closeButton>
-                <Row className={"justify-content-end"}>
+                <Row className="justify-content-end">
                     <Col>
                         <h1>{t("animals.modal.veterinarianInterventionTitle")}</h1>
                     </Col>
-                    <Col xs={"auto"}>
+                    <Col xs="auto">
                         {veterinarianIntervention.id !== -1 && isEditing && (
                             <Button color="danger" onClick={() => setShowDeleteConfirmationModal(true)}>
                                 <MdDelete />
@@ -133,16 +132,18 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                             withNewLine={true}
                             withSearch={true}
                             withSort={true}
-                            color={"primary"}
+                            color="primary"
                             disabled={!isEditing}
                             value={{
                                 id: veterinarianIntervention.veterinarianId,
-                                name: veterinarians.find((vet) => vet.id === veterinarianIntervention.veterinarianId)?.name || "",
+                                name:
+                                    veterinarians.find((vet) => vet.id === veterinarianIntervention.veterinarianId)
+                                        ?.name ?? "",
                             }}
                             values={veterinarians}
                             valueDisplayName={(vet) => vet.name}
                             valueActiveCheck={(vet) => vet.id === veterinarianIntervention.veterinarianId}
-                            key={"veterinarian"}
+                            key="veterinarian"
                             onChange={(newVet) =>
                                 setVeterinarianIntervention({
                                     ...veterinarianIntervention,
@@ -173,9 +174,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                     show={showDeleteConfirmationModal}
                     handleClose={(confirmed) => {
                         setShowDeleteConfirmationModal(false);
-                        if (confirmed) {
-                            deleteVetInter();
-                        }
+                        if (confirmed) deleteVetInter();
                     }}
                     bodyEntityName={t("animals.modal.interventionEntityName")}
                 />

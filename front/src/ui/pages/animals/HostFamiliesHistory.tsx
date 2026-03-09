@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdAddBox, MdAssignment, MdDelete, MdEdit } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
@@ -6,83 +6,74 @@ import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilie
 import AnimalToHostFamilyModal from "./AnimalToHostFamilyModal";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
-import HostFamily from "../../../logic/entities/HostFamily";
-import HostFamiliesManager from "../../../managers/hostFamilies.manager";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Animal from "../../../logic/entities/Animal";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
+import { useAnimalHostFamiliesByAnimal } from "../../../hooks/animalHostFamilies/useAnimalHostFamiliesByAnimal";
+import { useHostFamilies } from "../../../hooks/hostFamilies/useHostFamilies";
+import { useDeleteAnimalToHostFamily } from "../../../hooks/animalHostFamilies/useDeleteAnimalToHostFamily";
 
 interface HostFamiliesHistoryProps {
     animal: Animal;
     isOpen?: boolean;
-    onAnimalUpdated?: () => void;
 }
 
-const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = true, onAnimalUpdated }) => {
+const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = true }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const pagePermissions = useGetPermissions([Ressource.PET_HIST_HF]);
 
-    const [hostFamilies, setHostFamilies] = useState<HostFamily[]>([]);
-    const [animalToHostFamilies, setAnimalToHostFamilies] = useState<AnimalToHostFamily[]>([]);
-    const [loading, setLoading] = useState(false);
+    const animalId = animal?.id ?? null;
+    const { data: athfsData, isPending: isAthfsPending } = useAnimalHostFamiliesByAnimal(animalId);
+    const { data: hostFamiliesData } = useHostFamilies();
+    const { mutate: deleteAthfMutation } = useDeleteAnimalToHostFamily();
+
+    const hostFamilies = useMemo(
+        () => (hostFamiliesData ? [...hostFamiliesData].sort((a, b) => (a.name?.localeCompare(b.name ?? "") ?? 0)) : []),
+        [hostFamiliesData]
+    );
+    const animalToHostFamilies = useMemo(
+        () =>
+            athfsData
+                ? [...athfsData].sort(
+                      (a, b) => new Date(b.entryDate ?? "").getTime() - new Date(a.entryDate ?? "").getTime()
+                  )
+                : [],
+        [athfsData]
+    );
+
     const [modalAnimalToHostFamily, setModalAnimalToHostFamily] = useState<AnimalToHostFamily | null>(null);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
     const [animalToHostFamilyToDelete, setAnimalToHostFamilyToDelete] = useState<AnimalToHostFamily | null>(null);
 
-    const fetchData = () => {
-        if (!animal?.id) return;
-        setLoading(true);
-        Promise.all([
-            HostFamiliesManager.getAll().then((hf) => hf.sort((a, b) => a.name?.localeCompare(b.name ?? "") ?? 0)),
-            HostFamiliesManager.getByAnimalId(animal.id).then((athfs) =>
-                athfs.sort((a, b) => new Date(b.entryDate ?? "").getTime() - new Date(a.entryDate ?? "").getTime())
-            ),
-        ])
-            .then(([hf, athfs]) => {
-                setHostFamilies(hf);
-                setAnimalToHostFamilies(athfs);
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-            })
-            .finally(() => setLoading(false));
-    };
-
-    useEffect(() => {
-        if (isOpen && animal?.id) {
-            fetchData();
-        }
-    }, [isOpen, animal?.id]);
-
-    const shouldRefresh = () => {
-        fetchData();
-        onAnimalUpdated?.();
-    };
-
-    const [currentAnimalToHostFamily] = animalToHostFamilies.filter((athf) => athf.exitDate !== null);
+    const currentAnimalToHostFamily = animalToHostFamilies.find((athf) => !athf.exitDate) ?? null;
 
     const showDetail = (animalToHostFamily: AnimalToHostFamily) => {
         navigate(`/hostFamilies/${animalToHostFamily.hostFamily?.id}`);
     };
 
     const deleteAnimalToHostFamily = (toDelete: AnimalToHostFamily | null) => {
-        if (toDelete === null) {
-            return;
-        }
-        AnimalsToHostFamiliesManager.delete(toDelete)
-            .then(() => {
+        if (toDelete == null) return;
+        deleteAthfMutation(toDelete, {
+            onSuccess: () => {
                 toast.success(t("animals.message.linkDeleted"));
-                shouldRefresh();
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
                 toast.error(`${t("common.errorDelete")}\n${err}`);
-            });
+            },
+        });
     };
+
+    const handleCloseModal = (_shouldReload: boolean) => {
+        setModalAnimalToHostFamily(null);
+    };
+
+    if (!isOpen || !animal?.id) {
+        return null;
+    }
 
     return (
         <>
@@ -92,7 +83,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                         <Col>
                             <h3>{t("animals.history.hostFamiliesTitle")}</h3>
                         </Col>
-                        <Col xs={"auto"}>
+                        <Col xs="auto">
                             {pagePermissions[Ressource.PET_HIST_HF]?.can_create && (
                                 <Button
                                     color="primary"
@@ -101,7 +92,9 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                                             toast.error(t("animals.message.saveAnimalFirst"));
                                             return;
                                         }
-                                        setModalAnimalToHostFamily(AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined));
+                                        setModalAnimalToHostFamily(
+                                            AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined)
+                                        );
                                     }}
                                 >
                                     <MdAddBox />
@@ -122,46 +115,52 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                             </tr>
                         </thead>
                         <tbody>
-                            {loading ? (
+                            {isAthfsPending ? (
                                 <tr>
                                     <td colSpan={5}>{t("common.loading")}</td>
                                 </tr>
                             ) : (
-                            animalToHostFamilies.map((animalToHostFamily, index) => {
-                                var hostFamily = hostFamilies.find((hf) => hf.id === animalToHostFamily.hostFamily?.id);
-                                return (
-                                    <tr>
-                                        <th scope="row">{hostFamily?.displayName}</th>
-                                        <td>{animalToHostFamily.entryDateObject.readable ?? animalToHostFamily.entryDate}</td>
-                                        <td>
-                                            <Button color="info" onClick={() => showDetail(animalToHostFamily)}>
-                                                <MdAssignment />
-                                            </Button>
-                                        </td>
-                                        <td>
-                                            <Button
-                                                color="info"
-                                                onClick={() => {
-                                                    setModalAnimalToHostFamily(animalToHostFamily);
-                                                }}
-                                            >
-                                                <MdEdit />
-                                            </Button>
-                                        </td>
-                                        <td>
-                                            <Button
-                                                color="danger"
-                                                onClick={() => {
-                                                    setAnimalToHostFamilyToDelete(animalToHostFamily);
-                                                    setShowDeleteConfirmationModal(true);
-                                                }}
-                                            >
-                                                <MdDelete />
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                );
-                            })
+                                animalToHostFamilies.map((animalToHostFamily) => {
+                                    const hostFamily = hostFamilies.find(
+                                        (hf) => hf.id === animalToHostFamily.hostFamily?.id
+                                    );
+                                    return (
+                                        <tr key={animalToHostFamily.id ?? `${animalToHostFamily.hostFamily?.id}-${animalToHostFamily.entryDate}`}>
+                                            <th scope="row">{hostFamily?.displayName}</th>
+                                            <td>
+                                                {animalToHostFamily.entryDateObject?.readable ??
+                                                    animalToHostFamily.entryDate}
+                                            </td>
+                                            <td>
+                                                <Button
+                                                    color="info"
+                                                    onClick={() => showDetail(animalToHostFamily)}
+                                                >
+                                                    <MdAssignment />
+                                                </Button>
+                                            </td>
+                                            <td>
+                                                <Button
+                                                    color="info"
+                                                    onClick={() => setModalAnimalToHostFamily(animalToHostFamily)}
+                                                >
+                                                    <MdEdit />
+                                                </Button>
+                                            </td>
+                                            <td>
+                                                <Button
+                                                    color="danger"
+                                                    onClick={() => {
+                                                        setAnimalToHostFamilyToDelete(animalToHostFamily);
+                                                        setShowDeleteConfirmationModal(true);
+                                                    }}
+                                                >
+                                                    <MdDelete />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </Table>
@@ -173,14 +172,8 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                     hostFamilies={hostFamilies}
                     animalToHostFamily={modalAnimalToHostFamily}
                     currentAnimalToHostFamily={currentAnimalToHostFamily}
-                    show={modalAnimalToHostFamily !== null}
-                    handleClose={(shouldReload: boolean) => {
-                        setModalAnimalToHostFamily(null);
-
-                        if (shouldReload) {
-                            shouldRefresh();
-                        }
-                    }}
+                    show={true}
+                    handleClose={handleCloseModal}
                 />
             )}
 

@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.0.7] - UNRELEASED
+
+## Front
+
+- split animals detail page into dedicated components
+- add missing veterinarian interventions route and use it in front
+- split hostFamily detail page into dedicated components
+- fix animals manager to user correct routes
+- extract strings into i18n file
+- fix useGetPermissions now return defaultPermissions while loading
+- improve api calls with tanstack/react-query
+
 ## [0.0.6] - 2026/02/09
 
 ### Front

@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Col, Input, Label, Row } from "reactstrap";
-import AnimalsManager, { Sexe } from "../../../managers/animals.manager";
+import AnimalsManager from "../../../managers/animals.manager";
 import { MdRefresh, MdOutlineModeEdit, MdSave, MdDelete } from "react-icons/md";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
@@ -10,7 +10,6 @@ import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilie
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import toast from "react-hot-toast";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
-import Species from "../../../logic/entities/Species";
 import Animal from "../../../logic/entities/Animal";
 import { useNavigate, useParams } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
@@ -23,23 +22,15 @@ import AnimalHealthAccordion from "./AnimalHealthAccordion";
 import AnimalBehaviourAccordion from "./AnimalBehaviourAccordion";
 import AnimalExitAccordion from "./AnimalExitAccordion";
 import AnimalDeathAccordion from "./AnimalDeathAccordion";
+import { useAnimal } from "../../../hooks/animals/useAnimal";
+import { useSpecies } from "../../../hooks/animals/useSpecies";
+import { useSexes } from "../../../hooks/animals/useSexes";
+import { useCreateAnimal } from "../../../hooks/animals/useCreateAnimal";
+import { useUpdateAnimal } from "../../../hooks/animals/useUpdateAnimal";
+import { useDeleteAnimal } from "../../../hooks/animals/useDeleteAnimal";
 
 interface AnimalDetailPageProps {
     [key: string]: any;
-}
-
-class AnimalDetailPageData {
-    // null when not found
-    // undefined when is loading
-    animal?: Animal | null;
-    species: Species[];
-    sexes: Sexe[];
-
-    constructor() {
-        this.animal = undefined;
-        this.species = [];
-        this.sexes = [];
-    }
 }
 
 enum AnimalDetailPageAccordion {
@@ -77,289 +68,411 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     const { t } = useTranslation();
     const { id: paramAnimalId } = useParams();
     const animalId = paramAnimalId ?? "new";
-    const [data, setData] = useState<AnimalDetailPageData>(new AnimalDetailPageData());
+    const numericId = animalId === "new" ? null : parseInt(animalId, 10);
+    const validId = numericId != null && !Number.isNaN(numericId) ? numericId : null;
+
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
-
+    const [formAnimal, setFormAnimal] = useState<Animal | null>(null);
 
     const navigate = useNavigate();
     const pagePermissions = useGetPermissions(permissionsName);
 
-    // Accordions
+    const { data: animal, isPending: isAnimalPending, isError: isAnimalError, refetch: refetchAnimal } = useAnimal(validId);
+    const { data: speciesData, isPending: isSpeciesPending, refetch: refetchSpecies } = useSpecies();
+    const { data: sexesData, isPending: isSexesPending, refetch: refetchSexes } = useSexes();
+
+    const { mutate: createAnimalMutation } = useCreateAnimal();
+    const { mutate: updateAnimalMutation } = useUpdateAnimal();
+    const { mutate: deleteAnimalMutation } = useDeleteAnimal();
+
+    const species = useMemo(
+        () => (speciesData ? [...speciesData].sort((a, b) => a.name.localeCompare(b.name)) : []),
+        [speciesData]
+    );
+    const sexes = useMemo(
+        () => (sexesData ? [...sexesData].sort((a, b) => a.value.localeCompare(b.value)) : []),
+        [sexesData]
+    );
+
     const [accordions, setAccordions] = useState<AnimalDetailPageAccordionState[]>(
         Object.values(AnimalDetailPageAccordion)
             .map((type) => {
                 if (typeof type !== "string") return null;
-                var accordionType = type as AnimalDetailPageAccordion;
+                const accordionType = type as AnimalDetailPageAccordion;
                 return new AnimalDetailPageAccordionState(accordionType, "");
             })
-            .filter((a) => a !== null) as AnimalDetailPageAccordionState[]
+            .filter((a): a is AnimalDetailPageAccordionState => a !== null)
     );
 
+    const isNewAnimal = animalId === "new";
+
+    useEffect(() => {
+        if (isNewAnimal && formAnimal === null) {
+            setFormAnimal(AnimalsManager.createAnimal());
+            setIsEditing(true);
+            setAccordions((prev) =>
+                prev.map((value) => {
+                    switch (value.type) {
+                        case AnimalDetailPageAccordion.INFO:
+                        case AnimalDetailPageAccordion.PEC:
+                        case AnimalDetailPageAccordion.HEALTH:
+                        case AnimalDetailPageAccordion.BEHAVIOUR:
+                            return new AnimalDetailPageAccordionState(value.type, "1");
+                        case AnimalDetailPageAccordion.EXIT:
+                        case AnimalDetailPageAccordion.DEATH:
+                            return new AnimalDetailPageAccordionState(value.type, "");
+                        default:
+                            return value;
+                    }
+                })
+            );
+        }
+    }, [isNewAnimal]);
+
+    useEffect(() => {
+        if (animalId === "new" && formAnimal != null && species.length > 0 && formAnimal.species === undefined) {
+            setFormAnimal((prev) => (prev ? { ...prev, species: species[0] } : prev));
+        }
+    }, [animalId, formAnimal?.species, species]);
+
     const toggleAccordion = (type: AnimalDetailPageAccordion, id: string) => {
-        let newAccordions = accordions.map((accordion) => {
-            if (accordion.type === type) {
-                if (accordion.id === id) {
-                    accordion.id = "";
-                } else {
-                    accordion.id = id;
-                }
-            }
-            return accordion;
-        });
-        setAccordions(newAccordions);
+        setAccordions((prev) =>
+            prev.map((accordion) => {
+                if (accordion.type !== type) return accordion;
+                return new AnimalDetailPageAccordionState(type, accordion.id === id ? "" : id);
+            })
+        );
     };
 
     const onAnimalChange = (updates: Partial<Animal>) => {
-        setData((prev) => ({
-            ...prev,
-            animal: { ...prev.animal!, ...updates },
-        }));
+        const target = isNewAnimal ? formAnimal : formAnimal ?? animal;
+        if (target) setFormAnimal({ ...target, ...updates });
     };
 
-    const getAnimal = () => {
-        let id = parseInt(animalId);
-        if (isNaN(id)) {
-            return Promise.resolve(undefined);
+    const handleRefresh = () => {
+        if (isNewAnimal) {
+            setFormAnimal(AnimalsManager.createAnimal());
+            setIsEditing(true);
+            setAccordions((prev) =>
+                prev.map((value) => {
+                    switch (value.type) {
+                        case AnimalDetailPageAccordion.INFO:
+                        case AnimalDetailPageAccordion.PEC:
+                        case AnimalDetailPageAccordion.HEALTH:
+                        case AnimalDetailPageAccordion.BEHAVIOUR:
+                            return new AnimalDetailPageAccordionState(value.type, "1");
+                        case AnimalDetailPageAccordion.EXIT:
+                        case AnimalDetailPageAccordion.DEATH:
+                            return new AnimalDetailPageAccordionState(value.type, "");
+                        default:
+                            return value;
+                    }
+                })
+            );
+        } else {
+            refetchAnimal();
+            refetchSpecies();
+            refetchSexes();
         }
-        return AnimalsManager.getById(id).catch((err) => {
-            console.error(err);
-            toast.error(`${t("common.errorFetch")}\n${err}`);
-            return undefined;
+    };
+
+    const save = () => {
+        const animalToSave = isNewAnimal ? formAnimal : formAnimal ?? animal;
+        if (animalToSave == null) return;
+
+        setIsEditing(false);
+
+        if (isNewAnimal) {
+            createAnimalMutation(animalToSave, {
+                onSuccess: (updatedAnimal) => {
+                    toast.success(t("animals.message.animalCreated"));
+                    navigate(`/animals/${updatedAnimal.id}`);
+                },
+                onError: (err) => {
+                    console.error(err);
+                    toast.error(`${t("common.errorCreate")}\n${err}`);
+                },
+            });
+            return;
+        }
+
+        updateAnimalMutation(animalToSave, {
+            onSuccess: () => {
+                const exitOrDeathDate = animalToSave.deathDate || animalToSave.exitDate;
+                if (exitOrDeathDate !== undefined && exitOrDeathDate !== "") {
+                    animalToSave.hostFamilyRelations
+                        ?.filter((athf) => athf.exitDate === undefined)
+                        .forEach((athf) => {
+                            if (
+                                athf.animal?.id == null ||
+                                athf.hostFamily?.id == null
+                            ) return;
+                            AnimalsToHostFamiliesManager.update(
+                                new AnimalToHostFamily(undefined, athf.animal, athf.hostFamily, athf.entryDate, athf.exitDate)
+                            );
+                        });
+                }
+                refetchAnimal();
+                toast.success(t("animals.message.animalUpdated"));
+            },
+            onError: (err) => {
+                console.error(err);
+                refetchAnimal();
+                toast.error(`${t("common.errorUpdate")}\n${err}`);
+            },
         });
     };
 
-    const getSpecies = () => {
-        return AnimalsManager.getSpecies()
-            .then((species) => species.sort((a, b) => a.name.localeCompare(b.name)))
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-                return [] as Species[];
-            });
-    };
-
-    const getSexes = () => {
-        return AnimalsManager.getSexes()
-            .then((sexes) => sexes.sort((a, b) => a.value.localeCompare(b.value)))
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-                return [] as Sexe[];
-            });
-    };
-
-    const refresh = () => {
-        Promise.all([getSpecies(), getSexes()])
-            .then(([species, sexes]) => {
-                setData((previousData) => {
-                    return {
-                        ...previousData,
-                        species,
-                        sexes,
-                    };
-                });
-            })
-            .then(() => {
-                if (animalId !== "new") {
-                    getAnimal().then((animal) => {
-                        if (animal === undefined) {
-                            console.error("Animal not found");
-                            toast.error(t("animals.message.animalNotFound"));
-                            return;
-                        }
-                        setData((previousData) => {
-                            return {
-                                ...previousData,
-                                animal,
-                            };
-                        });
-                    });
-                } else {
-                    setAccordions((previousValues) => {
-                        return previousValues.map((value) => {
-                            switch (value.type) {
-                                case AnimalDetailPageAccordion.INFO:
-                                case AnimalDetailPageAccordion.PEC:
-                                case AnimalDetailPageAccordion.HEALTH:
-                                case AnimalDetailPageAccordion.BEHAVIOUR:
-                                    return new AnimalDetailPageAccordionState(value.type, "1");
-                                case AnimalDetailPageAccordion.EXIT:
-                                case AnimalDetailPageAccordion.DEATH:
-                                    return new AnimalDetailPageAccordionState(value.type, "");
-                            }
-                        });
-                    });
-                    setIsEditing(true);
-                    setData((previousData) => {
-                        return {
-                            ...previousData,
-                            animal: AnimalsManager.createAnimal(),
-                        };
-                    });
-                }
-            });
-    };
-
-    useEffect(() => {
-        refresh();
-    }, []);
-
-    // Auto select first species for new animal
-    useEffect(() => {
-        if (animalId === "new" && data.animal !== undefined && data.species.length > 0 && data.animal?.species === undefined) {
-            setData((previousData) => {
-                return {
-                    ...previousData,
-                    animal: {
-                        ...data.animal!,
-                        species: data.species[0],
-                    },
-                };
-            });
-        }
-    }, [animalId, data.animal, data.species]);
-
-    const save = () => {
-        setIsEditing(false);
-        if (data.animal === undefined || data.animal === null) {
-            return;
-        }
-        if (animalId === "new") {
-            // Send new data to API
-            AnimalsManager.create(data.animal)
-                .then((updatedAnimal) => {
-                    toast.success(t("animals.message.animalCreated"));
-                    navigate(`/animals/${updatedAnimal.id}`);
-                    setData((previousData) => {
-                        return {
-                            ...previousData,
-                            animal: updatedAnimal,
-                        };
-                    });
-                })
-                .catch((err) => {
-                    console.error(err);
-                    toast.error(`${t("common.errorCreate")}\n${err}`);
-                });
-            return;
-        }
-
-        // Send new data to API
-        AnimalsManager.update(data.animal)
-            .then(() => {
-                getAnimal().then(() => {
-                    var exitOrDeathDate = data.animal?.deathDate || data.animal?.exitDate;
-                    if (exitOrDeathDate !== undefined && exitOrDeathDate !== "") {
-                        data.animal?.hostFamilyRelations
-                            ?.filter((athf) => athf.exitDate === undefined)
-                            .forEach((athf) => {
-                                if (
-                                    athf.animal === undefined ||
-                                    athf.animal.id === undefined ||
-                                    athf.hostFamily === undefined ||
-                                    athf.hostFamily.id === undefined
-                                ) {
-                                    return;
-                                }
-                                AnimalsToHostFamiliesManager.update(
-                                    new AnimalToHostFamily(undefined, athf.animal, athf.hostFamily, athf.entryDate, athf.exitDate)
-                                );
-                            });
-                    }
-                });
-                toast.success(t("animals.message.animalUpdated"));
-            })
-            .catch((err) => {
-                console.error(err);
-                getAnimal();
-                toast.error(`${t("common.errorUpdate")}\n${err}`);
-            });
-    };
-
     const deleteA = () => {
-        if (data.animal === undefined || data.animal === null) {
-            return;
-        }
-        AnimalsManager.delete(data.animal)
-            .then(() => {
+        const animalToDelete = isNewAnimal ? formAnimal : animal;
+        if (animalToDelete == null) return;
+        deleteAnimalMutation(animalToDelete, {
+            onSuccess: () => {
                 toast.success(t("animals.message.animalDeleted"));
                 navigate("/animals");
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
-                getAnimal();
+                refetchAnimal();
                 toast.error(`${t("common.errorDelete")}\n${err}`);
-            });
+            },
+        });
     };
+
+    const displayAnimal = isNewAnimal ? formAnimal : (isEditing ? formAnimal : animal) ?? animal;
 
     let content = <div>{t("common.loading")}</div>;
 
-    if (data.animal === null) {
-        content = <div>{t("animals.message.animalNotFound")}</div>;
-    } else if (data.animal === undefined) {
+    if (isNewAnimal) {
+        if (formAnimal) {
+            content = (
+                <div>
+                    <Row className="justify-content-end">
+                        <Col xs="auto">
+                            <Button className="ms-2" color="success" onClick={save}>
+                                <MdSave />
+                            </Button>
+                            <Button className="ms-2" onClick={handleRefresh}>
+                                <MdRefresh />
+                            </Button>
+                        </Col>
+                    </Row>
+                    <br />
+                    <Card>
+                        <CardHeader>
+                            <h2>{t("animals.newAnimal")}</h2>
+                        </CardHeader>
+                        <CardBody>
+                            <Row>
+                                <Col xs={12}>
+                                    <Label>{t("animals.table.name")}</Label>
+                                    <Input
+                                        value={formAnimal.name || ""}
+                                        disabled={!isEditing || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(evt) => onAnimalChange({ name: evt.target.value })}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row className="text-center">
+                                <Col md={4} lg={3}>
+                                    <Label>{t("animals.detail.broadcastable")}</Label>
+                                    <BooleanNullableDropdown
+                                        withNewLine={true}
+                                        value={formAnimal.broadcastable ?? null}
+                                        disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(newValue) => onAnimalChange({ broadcastable: newValue ?? undefined })}
+                                    />
+                                </Col>
+                                <Col md={4} lg={3}>
+                                    <Label>{t("animals.detail.reservable")}</Label>
+                                    <BooleanNullableDropdown
+                                        withNewLine={true}
+                                        value={formAnimal.bookable ?? null}
+                                        disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(newValue) => onAnimalChange({ bookable: newValue ?? undefined })}
+                                    />
+                                </Col>
+                                <Col md={4} lg={3}>
+                                    <Label>{t("animals.detail.reserved")}</Label>
+                                    <BooleanNullableDropdown
+                                        withNewLine={true}
+                                        value={formAnimal.reserved ?? null}
+                                        disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(newValue) => onAnimalChange({ reserved: newValue ?? undefined })}
+                                    />
+                                </Col>
+                                <Col md={4} lg={3}>
+                                    <Label>{t("animals.detail.needIcadDuplicate")}</Label>
+                                    <NullableDropdown
+                                        withNewLine={true}
+                                        color={
+                                            formAnimal.needIcadDuplicate == null ? "warning" :
+                                            formAnimal.needIcadDuplicate === "received" ? "success" :
+                                            formAnimal.needIcadDuplicate === "waiting" ? "info" : "danger"
+                                        }
+                                        value={formAnimal.needIcadDuplicate}
+                                        values={["no", "waiting", "received"]}
+                                        valueDisplayName={(value) =>
+                                            value == null ? t("common.nsp") :
+                                            value === "received" ? t("animals.dropdown.icadReceived") :
+                                            value === "waiting" ? t("animals.dropdown.icadWaiting") : t("animals.dropdown.icadNo")
+                                        }
+                                        valueActiveCheck={(value) => formAnimal.needIcadDuplicate === value}
+                                        key="needIcadDuplicate"
+                                        disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(newNeedIcadDuplicate) => onAnimalChange({ needIcadDuplicate: newNeedIcadDuplicate })}
+                                    />
+                                </Col>
+                                <Col md={4} lg={3}>
+                                    <Label>{t("animals.detail.adopted")}</Label>
+                                    <BooleanNullableDropdown
+                                        withNewLine={true}
+                                        value={formAnimal.adopted ?? null}
+                                        disabled={!isEditing || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(newValue) => onAnimalChange({ adopted: newValue ?? undefined })}
+                                    />
+                                </Col>
+                                <Col md={4} lg={3}>
+                                    <Label>{t("animals.detail.albumCreated")}</Label>
+                                    <BooleanNullableDropdown
+                                        withNewLine={true}
+                                        value={formAnimal.albumCreated ?? null}
+                                        disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(newValue) => onAnimalChange({ albumCreated: newValue ?? undefined })}
+                                    />
+                                </Col>
+                                <Col md={4} lg={3}>
+                                    <Label>{t("animals.detail.contractSent")}</Label>
+                                    <BooleanNullableDropdown
+                                        withNewLine={true}
+                                        value={formAnimal.contractSent ?? null}
+                                        disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                        onChange={(newValue) => onAnimalChange({ contractSent: newValue ?? undefined })}
+                                    />
+                                </Col>
+                            </Row>
+                            {pagePermissions[Ressource.PET_INFO].can_read && (
+                                <AnimalInfoAccordion
+                                    animal={formAnimal}
+                                    species={species}
+                                    sexes={sexes}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.PET_INFO]?.can_update}
+                                    openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.INFO)?.id ?? ""}
+                                    onToggle={(id) => toggleAccordion(AnimalDetailPageAccordion.INFO, id)}
+                                    onAnimalChange={onAnimalChange}
+                                />
+                            )}
+                            {pagePermissions[Ressource.PET_PICKUP].can_read && (
+                                <AnimalPecAccordion
+                                    animal={formAnimal}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.PET_PICKUP]?.can_update}
+                                    openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.PEC)?.id ?? ""}
+                                    onToggle={(id) => toggleAccordion(AnimalDetailPageAccordion.PEC, id)}
+                                    onAnimalChange={onAnimalChange}
+                                />
+                            )}
+                            {pagePermissions[Ressource.PET_HEALTH].can_read && (
+                                <AnimalHealthAccordion
+                                    animal={formAnimal}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.PET_HEALTH]?.can_update}
+                                    openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.HEALTH)?.id ?? ""}
+                                    onToggle={(id) => toggleAccordion(AnimalDetailPageAccordion.HEALTH, id)}
+                                    onAnimalChange={onAnimalChange}
+                                />
+                            )}
+                            {pagePermissions[Ressource.PET_BEHAVIOR].can_read && (
+                                <AnimalBehaviourAccordion
+                                    animal={formAnimal}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.PET_BEHAVIOR]?.can_update}
+                                    openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.BEHAVIOUR)?.id ?? ""}
+                                    onToggle={(id) => toggleAccordion(AnimalDetailPageAccordion.BEHAVIOUR, id)}
+                                    onAnimalChange={onAnimalChange}
+                                />
+                            )}
+                            {pagePermissions[Ressource.PET_EXIT].can_read && (
+                                <AnimalExitAccordion
+                                    animal={formAnimal}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.PET_EXIT]?.can_update}
+                                    openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.EXIT)?.id ?? ""}
+                                    onToggle={(id) => toggleAccordion(AnimalDetailPageAccordion.EXIT, id)}
+                                    onAnimalChange={onAnimalChange}
+                                />
+                            )}
+                            {pagePermissions[Ressource.PET_DEATH].can_read && (
+                                <AnimalDeathAccordion
+                                    animal={formAnimal}
+                                    isEditing={isEditing}
+                                    canUpdate={!!pagePermissions[Ressource.PET_DEATH]?.can_update}
+                                    openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.DEATH)?.id ?? ""}
+                                    onToggle={(id) => toggleAccordion(AnimalDetailPageAccordion.DEATH, id)}
+                                    onAnimalChange={onAnimalChange}
+                                />
+                            )}
+                        </CardBody>
+                    </Card>
+                </div>
+            );
+        }
+    } else if (isAnimalPending && !animal) {
         content = <div>{t("common.loading")}</div>;
-    } else {
+    } else if (isAnimalError || (animal === undefined && !isAnimalPending)) {
+        content = <div>{t("animals.message.animalNotFound")}</div>;
+    } else if (displayAnimal) {
+        const canEditAny =
+            pagePermissions[Ressource.PET_INFO].can_update ||
+            pagePermissions[Ressource.PET_PICKUP].can_update ||
+            pagePermissions[Ressource.PET_HEALTH].can_update ||
+            pagePermissions[Ressource.PET_BEHAVIOR].can_update ||
+            pagePermissions[Ressource.PET_DIFFUSION].can_update ||
+            pagePermissions[Ressource.PET_EXIT].can_update ||
+            pagePermissions[Ressource.PET_DEATH].can_update ||
+            pagePermissions[Ressource.PET_HIST_VETO].can_update ||
+            pagePermissions[Ressource.PET_HIST_HF].can_update;
+
         content = (
             <div>
-                <Row className={"justify-content-end"}>
-                    <Col xs={"auto"}>
+                <Row className="justify-content-end">
+                    <Col xs="auto">
                         {animalId !== "new" && isEditing && (
                             <Button color="danger" onClick={() => setShowDeleteConfirmationModal(true)}>
                                 <MdDelete />
                             </Button>
                         )}
-                        {!isEditing &&
-                            (pagePermissions[Ressource.PET_INFO].can_update ||
-                                pagePermissions[Ressource.PET_PICKUP].can_update ||
-                                pagePermissions[Ressource.PET_HEALTH].can_update ||
-                                pagePermissions[Ressource.PET_BEHAVIOR].can_update ||
-                                pagePermissions[Ressource.PET_DIFFUSION].can_update ||
-                                pagePermissions[Ressource.PET_EXIT].can_update ||
-                                pagePermissions[Ressource.PET_DEATH].can_update ||
-                                pagePermissions[Ressource.PET_HIST_VETO].can_update ||
-                                pagePermissions[Ressource.PET_HIST_HF].can_update) && (
-                                <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
-                                    <MdOutlineModeEdit />
-                                </Button>
-                            )}
+                        {!isEditing && canEditAny && (
+                            <Button className="ms-2" color="primary" onClick={() => { setFormAnimal({ ...displayAnimal }); setIsEditing(true); }}>
+                                <MdOutlineModeEdit />
+                            </Button>
+                        )}
                         {isEditing && (
-                            <Button className="ms-2" color="success" onClick={() => save()}>
+                            <Button className="ms-2" color="success" onClick={save}>
                                 <MdSave />
                             </Button>
                         )}
-                        <Button className="ms-2" onClick={refresh}>
+                        <Button className="ms-2" onClick={handleRefresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
                 </Row>
-
                 <br />
-
                 <Card>
                     <CardHeader>
-                        {animalId === "new" && <h2>{t("animals.newAnimal")}</h2>}
-                        {animalId !== "new" && <h2>{data.animal.name}</h2>}
+                        <h2>{displayAnimal.name}</h2>
                     </CardHeader>
                     <CardBody>
-                        {(animalId === "new" || isEditing === true) && (
+                        {(animalId === "new" || isEditing) && (
                             <Row>
                                 <Col xs={12}>
                                     <Label>{t("animals.table.name")}</Label>
                                     <Input
-                                        value={data.animal.name || ""}
+                                        value={displayAnimal.name || ""}
                                         disabled={!isEditing || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                        onChange={(evt) =>
-                                            setData((previousData) => {
-                                                return {
-                                                    ...previousData,
-                                                    animal: {
-                                                        ...previousData.animal!,
-                                                        name: evt.target.value,
-                                                    },
-                                                };
-                                            })
-                                        }
+                                        onChange={(evt) => onAnimalChange({ name: evt.target.value })}
                                     />
                                 </Col>
                             </Row>
@@ -369,57 +482,27 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <Label>{t("animals.detail.broadcastable")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={data.animal.broadcastable ?? null}
-                                    disabled={!isEditing || data.animal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) =>
-                                        setData((previousData) => {
-                                            return {
-                                                ...previousData,
-                                                animal: {
-                                                    ...previousData.animal!,
-                                                    broadcastable: newValue ?? undefined,
-                                                },
-                                            };
-                                        })
-                                    }
+                                    value={displayAnimal.broadcastable ?? null}
+                                    disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                    onChange={(newValue) => onAnimalChange({ broadcastable: newValue ?? undefined })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
                                 <Label>{t("animals.detail.reservable")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={data.animal.bookable ?? null}
-                                    disabled={!isEditing || data.animal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) =>
-                                        setData((previousData) => {
-                                            return {
-                                                ...previousData,
-                                                animal: {
-                                                    ...previousData.animal!,
-                                                    bookable: newValue ?? undefined,
-                                                },
-                                            };
-                                        })
-                                    }
+                                    value={displayAnimal.bookable ?? null}
+                                    disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                    onChange={(newValue) => onAnimalChange({ bookable: newValue ?? undefined })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
                                 <Label>{t("animals.detail.reserved")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={data.animal.reserved ?? null}
-                                    disabled={!isEditing || data.animal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) =>
-                                        setData((previousData) => {
-                                            return {
-                                                ...previousData,
-                                                animal: {
-                                                    ...previousData.animal!,
-                                                    reserved: newValue ?? undefined,
-                                                },
-                                            };
-                                        })
-                                    }
+                                    value={displayAnimal.reserved ?? null}
+                                    disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                    onChange={(newValue) => onAnimalChange({ reserved: newValue ?? undefined })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
@@ -427,104 +510,56 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <NullableDropdown
                                     withNewLine={true}
                                     color={
-                                        data.animal.needIcadDuplicate === null || data.animal.needIcadDuplicate === undefined
-                                            ? "warning"
-                                            : data.animal.needIcadDuplicate === "received"
-                                            ? "success"
-                                            : data.animal.needIcadDuplicate === "waiting"
-                                            ? "info"
-                                            : "danger"
+                                        displayAnimal.needIcadDuplicate == null ? "warning" :
+                                        displayAnimal.needIcadDuplicate === "received" ? "success" :
+                                        displayAnimal.needIcadDuplicate === "waiting" ? "info" : "danger"
                                     }
-                                    value={data.animal.needIcadDuplicate}
+                                    value={displayAnimal.needIcadDuplicate}
                                     values={["no", "waiting", "received"]}
                                     valueDisplayName={(value) =>
-                                        value === null || value === undefined
-                                            ? t("common.nsp")
-                                            : value === "received"
-                                            ? t("animals.dropdown.icadReceived")
-                                            : value === "waiting"
-                                            ? t("animals.dropdown.icadWaiting")
-                                            : t("animals.dropdown.icadNo")
+                                        value == null ? t("common.nsp") :
+                                        value === "received" ? t("animals.dropdown.icadReceived") :
+                                        value === "waiting" ? t("animals.dropdown.icadWaiting") : t("animals.dropdown.icadNo")
                                     }
-                                    valueActiveCheck={(value) => data.animal?.needIcadDuplicate === value}
-                                    key={"needIcadDuplicate"}
-                                    disabled={!isEditing || data.animal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newNeedIcadDuplicate) => {
-                                        setData((previousData) => {
-                                            return {
-                                                ...previousData,
-                                                animal: {
-                                                    ...previousData.animal!,
-                                                    needIcadDuplicate: newNeedIcadDuplicate,
-                                                },
-                                            };
-                                        });
-                                    }}
+                                    valueActiveCheck={(value) => displayAnimal.needIcadDuplicate === value}
+                                    key="needIcadDuplicate"
+                                    disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                    onChange={(newNeedIcadDuplicate) => onAnimalChange({ needIcadDuplicate: newNeedIcadDuplicate })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
                                 <Label>{t("animals.detail.adopted")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={data.animal.adopted ?? null}
+                                    value={displayAnimal.adopted ?? null}
                                     disabled={!isEditing || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) =>
-                                        setData((previousData) => {
-                                            return {
-                                                ...previousData,
-                                                animal: {
-                                                    ...previousData.animal!,
-                                                    adopted: newValue ?? undefined,
-                                                },
-                                            };
-                                        })
-                                    }
+                                    onChange={(newValue) => onAnimalChange({ adopted: newValue ?? undefined })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
                                 <Label>{t("animals.detail.albumCreated")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={data.animal.albumCreated ?? null}
-                                    disabled={!isEditing || data.animal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) =>
-                                        setData((previousData) => {
-                                            return {
-                                                ...previousData,
-                                                animal: {
-                                                    ...previousData.animal!,
-                                                    albumCreated: newValue ?? undefined,
-                                                },
-                                            };
-                                        })
-                                    }
+                                    value={displayAnimal.albumCreated ?? null}
+                                    disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                    onChange={(newValue) => onAnimalChange({ albumCreated: newValue ?? undefined })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
                                 <Label>{t("animals.detail.contractSent")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
-                                    value={data.animal.contractSent ?? null}
-                                    disabled={!isEditing || data.animal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) =>
-                                        setData((previousData) => {
-                                            return {
-                                                ...previousData,
-                                                animal: {
-                                                    ...previousData.animal!,
-                                                    contractSent: newValue ?? undefined,
-                                                },
-                                            };
-                                        })
-                                    }
+                                    value={displayAnimal.contractSent ?? null}
+                                    disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
+                                    onChange={(newValue) => onAnimalChange({ contractSent: newValue ?? undefined })}
                                 />
                             </Col>
                         </Row>
                         {pagePermissions[Ressource.PET_INFO].can_read && (
                             <AnimalInfoAccordion
-                                animal={data.animal}
-                                species={data.species}
-                                sexes={data.sexes}
+                                animal={displayAnimal}
+                                species={species}
+                                sexes={sexes}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.PET_INFO]?.can_update}
                                 openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.INFO)?.id ?? ""}
@@ -534,7 +569,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                         )}
                         {pagePermissions[Ressource.PET_PICKUP].can_read && (
                             <AnimalPecAccordion
-                                animal={data.animal}
+                                animal={displayAnimal}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.PET_PICKUP]?.can_update}
                                 openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.PEC)?.id ?? ""}
@@ -544,7 +579,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                         )}
                         {pagePermissions[Ressource.PET_HEALTH].can_read && (
                             <AnimalHealthAccordion
-                                animal={data.animal}
+                                animal={displayAnimal}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.PET_HEALTH]?.can_update}
                                 openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.HEALTH)?.id ?? ""}
@@ -554,7 +589,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                         )}
                         {pagePermissions[Ressource.PET_BEHAVIOR].can_read && (
                             <AnimalBehaviourAccordion
-                                animal={data.animal}
+                                animal={displayAnimal}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.PET_BEHAVIOR]?.can_update}
                                 openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.BEHAVIOUR)?.id ?? ""}
@@ -562,10 +597,9 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 onAnimalChange={onAnimalChange}
                             />
                         )}
-
                         {pagePermissions[Ressource.PET_EXIT].can_read && (
                             <AnimalExitAccordion
-                                animal={data.animal}
+                                animal={displayAnimal}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.PET_EXIT]?.can_update}
                                 openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.EXIT)?.id ?? ""}
@@ -575,7 +609,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                         )}
                         {pagePermissions[Ressource.PET_DEATH].can_read && (
                             <AnimalDeathAccordion
-                                animal={data.animal}
+                                animal={displayAnimal}
                                 isEditing={isEditing}
                                 canUpdate={!!pagePermissions[Ressource.PET_DEATH]?.can_update}
                                 openId={accordions.find((a) => a.type === AnimalDetailPageAccordion.DEATH)?.id ?? ""}
@@ -587,18 +621,11 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                 </Card>
                 <br />
                 {pagePermissions[Ressource.PET_HIST_VETO].can_read && (
-                    <VeterinarianInterventionsHistory animal={data.animal} />
+                    <VeterinarianInterventionsHistory animal={displayAnimal} />
                 )}
                 <br />
                 {pagePermissions[Ressource.PET_HIST_HF].can_read && (
-                    <HostFamiliesHistory
-                        animal={data.animal}
-                        onAnimalUpdated={() => {
-                            getAnimal().then((animal) => {
-                                if (animal) setData((prev) => ({ ...prev, animal }));
-                            });
-                        }}
-                    />
+                    <HostFamiliesHistory animal={displayAnimal} />
                 )}
             </div>
         );
@@ -610,18 +637,15 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             title={t("animals.detailTitle")}
             breadcrumbs={[
                 { name: t("animals.breadcrumbList"), to: "/animals", active: false } as CustomBreadcrumbItem,
-                { name: t("animals.breadcrumbDetail"), active: true, to: null } as CustomBreadcrumbItem
+                { name: t("animals.breadcrumbDetail"), active: true, to: null } as CustomBreadcrumbItem,
             ]}
         >
             {content}
-
             <DeleteConfirmationModal
                 show={showDeleteConfirmationModal}
                 handleClose={(confirmed) => {
                     setShowDeleteConfirmationModal(false);
-                    if (confirmed) {
-                        deleteA();
-                    }
+                    if (confirmed) deleteA();
                 }}
                 bodyEntityName={t("animals.entityName")}
             />

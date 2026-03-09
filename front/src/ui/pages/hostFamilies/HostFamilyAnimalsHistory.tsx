@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { MdAssignment } from "react-icons/md";
-import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
 import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
 import { useNavigate } from "react-router-dom";
+import { useAnimalHostFamiliesByHostFamily } from "../../../hooks/animalHostFamilies/useAnimalHostFamiliesByHostFamily";
 
 interface HostFamilyAnimalsHistoryProps {
     hostFamilyId: string;
@@ -13,28 +13,14 @@ interface HostFamilyAnimalsHistoryProps {
 const HostFamilyAnimalsHistory: FC<HostFamilyAnimalsHistoryProps> = ({ hostFamilyId }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [animalToHostFamilies, setAnimalToHostFamilies] = useState<AnimalToHostFamily[]>([]);
-    const [loading, setLoading] = useState(false);
 
-    const fetchData = () => {
-        const id = parseInt(hostFamilyId, 10);
-        if (isNaN(id)) return;
-        setLoading(true);
-        AnimalsToHostFamiliesManager.getByHostFamilyId(id)
-            .then((data) => {
-                setAnimalToHostFamilies(data);
-            })
-            .catch((err) => {
-                console.error(err);
-            })
-            .finally(() => setLoading(false));
-    };
+    const numericId = hostFamilyId === "new" ? null : parseInt(hostFamilyId, 10);
+    const validId = numericId != null && !Number.isNaN(numericId) ? numericId : null;
 
-    useEffect(() => {
-        if (hostFamilyId !== "new") {
-            fetchData();
-        }
-    }, [hostFamilyId]);
+    const { data: animalToHostFamiliesData, isPending: isAthfsPending } =
+        useAnimalHostFamiliesByHostFamily(validId);
+
+    const animalToHostFamilies = animalToHostFamiliesData ?? [];
 
     const showDetail = (animalToHostFamily: AnimalToHostFamily) => {
         navigate(`/animals/${animalToHostFamily.animal?.id}`);
@@ -60,18 +46,21 @@ const HostFamilyAnimalsHistory: FC<HostFamilyAnimalsHistoryProps> = ({ hostFamil
                         </tr>
                     </thead>
                     <tbody>
-                        {loading ? (
+                        {isAthfsPending ? (
                             <tr>
                                 <td colSpan={4}>{t("common.loading")}</td>
                             </tr>
                         ) : (
                             animalToHostFamilies.map((animalToHostFamily) => (
-                                <tr key={animalToHostFamily.animal?.id ?? Math.random()}>
+                                <tr key={animalToHostFamily.animal?.id ?? animalToHostFamily.entryDate}>
                                     <th scope="row">{animalToHostFamily.animal?.name}</th>
                                     <td>{animalToHostFamily.entryDateObject?.readable}</td>
                                     <td>{animalToHostFamily.exitDateObject?.readable}</td>
                                     <td>
-                                        <Button color="info" onClick={() => showDetail(animalToHostFamily)}>
+                                        <Button
+                                            color="info"
+                                            onClick={() => showDetail(animalToHostFamily)}
+                                        >
                                             <MdAssignment />
                                         </Button>
                                     </td>

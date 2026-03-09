@@ -14,6 +14,10 @@ import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import { useNavigate, useParams } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
+import { useVeterinarian } from "../../../hooks/veterinarians/useVeterinarian";
+import { useCreateVeterinarian } from "../../../hooks/veterinarians/useCreateVeterinarian";
+import { useUpdateVeterinarian } from "../../../hooks/veterinarians/useUpdateVeterinarian";
+import { useDeleteVeterinarian } from "../../../hooks/veterinarians/useDeleteVeterinarian";
 
 interface VeterinarianDetailPageProps {
     [key: string]: any;
@@ -23,9 +27,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
     const { t } = useTranslation();
     const { id: paramVetId } = useParams();
     const vetId = paramVetId ?? "new";
-    const [veterinarian, setVeterinarian] = useState<Veterinarian | null>(null);
+    const numericId = vetId === "new" ? null : parseInt(vetId, 10);
+    const validId = numericId != null && !Number.isNaN(numericId) ? numericId : null;
+
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
+    const [formVeterinarian, setFormVeterinarian] = useState<Veterinarian | null>(null);
 
     const [geocodeFound, setGeocodeFound] = useState<boolean | null>(null);
     const [previousAddress, setPreviousAddress] = useState<string | null>(null);
@@ -33,75 +40,65 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
     const [shouldSave, setShouldSave] = useState(false);
 
     const navigate = useNavigate();
-
     const pagePermissions = useGetPermissions([Ressource.VET_INFO]);
 
-    const getVeterinarian = () => {
-        if (veterinarian !== null) {
-            setVeterinarian(null);
+    const { data: veterinarian, isPending: isVeterinarianPending, isError: isVeterinarianError, refetch: refetchVeterinarian } = useVeterinarian(validId);
+    const { mutate: createVeterinarianMutation } = useCreateVeterinarian();
+    const { mutate: updateVeterinarianMutation } = useUpdateVeterinarian();
+    const { mutate: deleteVeterinarianMutation } = useDeleteVeterinarian();
+
+    const isNewVeterinarian = vetId === "new";
+
+    useEffect(() => {
+        if (isNewVeterinarian && formVeterinarian === null) {
+            setFormVeterinarian(VeterinariansManager.createVeterinarian());
+            setIsEditing(true);
         }
-        let id = parseInt(vetId);
-        if (vetId !== "new" && !isNaN(id)) {
-            VeterinariansManager.getById(id)
-                .then((vet) => {
-                    setPreviousAddress(vet.address ?? null);
-                    setVeterinarian(vet);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    toast.error(`${t("common.errorFetch")}\n${err}`);
-                });
+    }, [isNewVeterinarian]);
+
+    const handleRefresh = () => {
+        if (vetId !== "new") {
+            refetchVeterinarian();
         } else {
-            console.error("Can't get veterianrian with non number id");
+            setFormVeterinarian(VeterinariansManager.createVeterinarian());
+            setIsEditing(true);
         }
     };
 
-    const refresh = () => {
-        if (vetId !== "new") {
-            getVeterinarian();
-        } else {
-            setVeterinarian(VeterinariansManager.createVeterinarian());
+    const handleStartEditing = () => {
+        if (veterinarian) {
+            setFormVeterinarian({ ...veterinarian });
             setIsEditing(true);
         }
     };
 
     useEffect(() => {
-        refresh();
-    }, []);
-
-    useEffect(() => {
-        if (veterinarian !== null && previousAddress !== veterinarian.address) {
-            setPreviousAddress(veterinarian.address ?? null);
-
-            if (veterinarian.address !== null && veterinarian.address !== undefined && veterinarian.address.length > 10) {
-                // Geocode address
+        const vet = isNewVeterinarian ? formVeterinarian : formVeterinarian ?? veterinarian;
+        if (vet != null && previousAddress !== vet.address) {
+            setPreviousAddress(vet.address ?? null);
+            if (vet.address != null && vet.address.length > 10) {
                 setIsGeocoding(true);
                 setGeocodeFound(null);
-                Geocode.getCoordinatesFromAddress(veterinarian.address)
+                Geocode.getCoordinatesFromAddress(vet.address)
                     .then((coordinates) => {
-                        if (coordinates !== null) {
-                            veterinarian.latitude = coordinates.lat;
-                            veterinarian.longitude = coordinates.lng;
+                        if (coordinates != null) {
+                            setFormVeterinarian((prev) => (prev ? { ...prev, latitude: coordinates.lat, longitude: coordinates.lng } : prev));
                         } else {
-                            console.warn("Can't get coordinates for address");
-                            veterinarian.latitude = undefined;
-                            veterinarian.longitude = undefined;
+                            setFormVeterinarian((prev) => (prev ? { ...prev, latitude: undefined, longitude: undefined } : prev));
                         }
                         setIsGeocoding(false);
                         setGeocodeFound(true);
-
-                        saveIfNeeded();
+                        setShouldSave(true);
                     })
                     .catch((err: Error) => {
                         console.error(err);
                         setIsGeocoding(false);
                         setGeocodeFound(false);
-
-                        saveIfNeeded();
+                        setShouldSave(true);
                     });
             }
         }
-    }, [veterinarian]);
+    }, [isNewVeterinarian ? formVeterinarian?.address : (formVeterinarian ?? veterinarian)?.address]);
 
     useEffect(() => {
         if (!isGeocoding && shouldSave) {
@@ -119,76 +116,207 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
     };
 
     const saveIfNeeded = () => {
-        if (shouldSave === false) {
-            return;
-        }
-
-        if (veterinarian === null) {
-            return;
-        }
-
+        const vetToSave = isNewVeterinarian ? formVeterinarian : formVeterinarian ?? veterinarian;
+        if (!shouldSave || vetToSave == null) return;
         setShouldSave(false);
-        if (vetId === "new") {
-            // Send new data to API
-            VeterinariansManager.create(veterinarian)
-                .then((updatedVeterinarian) => {
+        setIsEditing(false);
+
+        if (isNewVeterinarian) {
+            createVeterinarianMutation(vetToSave, {
+                onSuccess: (updatedVeterinarian) => {
                     toast.success(t("veterinarians.message.veterinarianCreated"));
                     navigate(`/veterinarians/${updatedVeterinarian.id}`);
-                    // setVeterinarian(updatedVeterinarian);
-                })
-                .catch((err) => {
+                },
+                onError: (err) => {
                     console.error(err);
                     toast.error(`${t("common.errorCreate")}\n${err}`);
-                });
+                },
+            });
             return;
         }
 
-        // Send new data to API
-        VeterinariansManager.update(veterinarian)
-            .then(() => {
-                getVeterinarian();
+        updateVeterinarianMutation(vetToSave, {
+            onSuccess: () => {
+                refetchVeterinarian();
                 toast.success(t("veterinarians.message.veterinarianUpdated"));
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
-                getVeterinarian();
+                refetchVeterinarian();
                 toast.error(`${t("common.errorUpdate")}\n${err}`);
-            });
+            },
+        });
     };
 
     const deleteV = () => {
-        if (veterinarian === null) {
-            return;
-        }
-        VeterinariansManager.delete(veterinarian)
-            .then(() => {
+        const vetToDelete = isNewVeterinarian ? formVeterinarian : veterinarian;
+        if (vetToDelete == null) return;
+        deleteVeterinarianMutation(vetToDelete, {
+            onSuccess: () => {
                 toast.success(t("veterinarians.message.veterinarianDeleted"));
                 navigate("/veterinarians");
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
-                getVeterinarian();
+                refetchVeterinarian();
                 toast.error(`${t("common.errorDelete")}\n${err}`);
-            });
+            },
+        });
     };
 
-    let content = <div>Chargement...</div>;
-    if (veterinarian === undefined) {
-        content = <div>Vétérinaire non trouvé</div>;
-    } else if (veterinarian === null) {
-        content = <div>Chargement...</div>;
-    } else {
+    const displayVeterinarian = isNewVeterinarian ? formVeterinarian : (isEditing ? formVeterinarian : veterinarian) ?? veterinarian;
+
+    let content = <div>{t("common.loading")}</div>;
+
+    if (isNewVeterinarian) {
+        if (formVeterinarian) {
+            content = (
+                <div>
+                    <Row className="justify-content-end">
+                        <Col xs="auto">
+                            <Button className="ms-2" color="success" onClick={save}>
+                                <MdSave />
+                            </Button>
+                            <Button className="ms-2" onClick={handleRefresh}>
+                                <MdRefresh />
+                            </Button>
+                        </Col>
+                    </Row>
+                    <br />
+                    <Card>
+                        <CardHeader>
+                            <h2>{t("veterinarians.newVeterinarian")}</h2>
+                        </CardHeader>
+                        <CardBody>
+                            <Row>
+                                <Col xs={12}>
+                                    <Label>Nom</Label>
+                                    <Input
+                                        value={formVeterinarian.name || ""}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormVeterinarian({ ...formVeterinarian, name: evt.target.value })}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={6}>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>Téléphone</Label>
+                                            <Input
+                                                value={formVeterinarian.phone}
+                                                disabled={!isEditing}
+                                                onChange={(evt) => setFormVeterinarian({ ...formVeterinarian, phone: evt.target.value })}
+                                            />
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Label>E-mail</Label>
+                                            <Input
+                                                value={formVeterinarian.mail}
+                                                disabled={!isEditing}
+                                                onChange={(evt) => setFormVeterinarian({ ...formVeterinarian, mail: evt.target.value })}
+                                            />
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col xs={6}>
+                                    <Label>
+                                        {formVeterinarian.address !== undefined && (
+                                            <SourceLink link={`https://www.google.com/maps/place/${formVeterinarian.address}`}>
+                                                <span>Adresse <MdDirections /></span>
+                                            </SourceLink>
+                                        )}
+                                        {formVeterinarian.address === undefined && <span>Adresse</span>}
+                                    </Label>
+                                    <Input
+                                        type="textarea"
+                                        value={formVeterinarian.address}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormVeterinarian({ ...formVeterinarian, address: evt.target.value })}
+                                    />
+                                    {geocodeFound != null && (
+                                        <p className={geocodeFound ? "text-success" : "text-danger"}>
+                                            <small>{geocodeFound ? t("veterinarians.addressValid") : t("veterinarians.addressNotFound")}</small>
+                                        </p>
+                                    )}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={6}>
+                                    <Row>
+                                        <Col xs={6}><Label>Gestion des urgences</Label></Col>
+                                        <Col xs={6}><Label>Niveau de prix</Label></Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={6}>
+                                            <BooleanNullableDropdown
+                                                value={formVeterinarian.emergencies ?? null}
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => setFormVeterinarian({ ...formVeterinarian, emergencies: newValue ?? undefined })}
+                                            />
+                                        </Col>
+                                        <Col xs={6}>
+                                            <PriceLevelDropdown
+                                                value={formVeterinarian.priceLevel}
+                                                disabled={!isEditing}
+                                                onChange={(newValue) => setFormVeterinarian({ ...formVeterinarian, priceLevel: newValue })}
+                                            />
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col xs={6}>
+                                    <Label>Méthode de confirmation de rendez-vous</Label>
+                                    <Input
+                                        type="textarea"
+                                        value={formVeterinarian.appointmentConfirmationProcedure}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormVeterinarian({ ...formVeterinarian, appointmentConfirmationProcedure: evt.target.value })}
+                                    />
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={6}>
+                                    <Label>Date de paiement</Label>
+                                    <Input
+                                        type="textarea"
+                                        value={formVeterinarian.invoicePaymentDate}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormVeterinarian({ ...formVeterinarian, invoicePaymentDate: evt.target.value })}
+                                    />
+                                </Col>
+                                <Col xs={6}>
+                                    <Label>Moyen de paiement</Label>
+                                    <Input
+                                        type="textarea"
+                                        value={formVeterinarian.paymentMethod}
+                                        disabled={!isEditing}
+                                        onChange={(evt) => setFormVeterinarian({ ...formVeterinarian, paymentMethod: evt.target.value })}
+                                    />
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </div>
+            );
+        }
+    } else if (isVeterinarianPending && !veterinarian) {
+        content = <div>{t("common.loading")}</div>;
+    } else if (isVeterinarianError || (veterinarian === undefined && !isVeterinarianPending)) {
+        content = <div>{t("veterinarians.veterinarianNotFound")}</div>;
+    } else if (displayVeterinarian) {
         content = (
             <div>
-                <Row className={"justify-content-end"}>
-                    <Col xs={"auto"}>
+                <Row className="justify-content-end">
+                    <Col xs="auto">
                         {vetId !== "new" && isEditing && (
                             <Button color="danger" onClick={() => setShowDeleteConfirmationModal(true)}>
                                 <MdDelete />
                             </Button>
                         )}
                         {!isEditing && pagePermissions[Ressource.VET_INFO].can_update && (
-                            <Button className="ms-2" color="primary" onClick={() => setIsEditing(true)}>
+                            <Button className="ms-2" color="primary" onClick={handleStartEditing}>
                                 <MdOutlineModeEdit />
                             </Button>
                         )}
@@ -197,18 +325,15 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 <MdSave />
                             </Button>
                         )}
-                        <Button className="ms-2" onClick={refresh}>
+                        <Button className="ms-2" onClick={handleRefresh}>
                             <MdRefresh />
                         </Button>
                     </Col>
                 </Row>
-
                 <br />
-
                 <Card>
                     <CardHeader>
-                        {vetId === "new" && <h2>{t("veterinarians.newVeterinarian")}</h2>}
-                        {vetId !== "new" && <h2>{veterinarian.name}</h2>}
+                        <h2>{displayVeterinarian.name}</h2>
                     </CardHeader>
                     <CardBody>
                         {vetId === "new" && (
@@ -216,13 +341,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 <Col xs={12}>
                                     <Label>Nom</Label>
                                     <Input
-                                        value={veterinarian.name || ""}
+                                        value={displayVeterinarian.name || ""}
                                         disabled={!isEditing}
                                         onChange={(evt) =>
-                                            setVeterinarian({
-                                                ...veterinarian,
-                                                name: evt.target.value,
-                                            })
+                                            setFormVeterinarian(
+                                                formVeterinarian ? { ...formVeterinarian, name: evt.target.value } : { ...displayVeterinarian, name: evt.target.value }
+                                            )
                                         }
                                     />
                                 </Col>
@@ -234,13 +358,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                     <Col xs={12}>
                                         <Label>Téléphone</Label>
                                         <Input
-                                            value={veterinarian.phone}
+                                            value={displayVeterinarian.phone}
                                             disabled={!isEditing}
                                             onChange={(evt) =>
-                                                setVeterinarian({
-                                                    ...veterinarian,
-                                                    phone: evt.target.value,
-                                                })
+                                                setFormVeterinarian(
+                                                    formVeterinarian ? { ...formVeterinarian, phone: evt.target.value } : { ...displayVeterinarian, phone: evt.target.value }
+                                                )
                                             }
                                         />
                                     </Col>
@@ -249,13 +372,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                     <Col xs={12}>
                                         <Label>E-mail</Label>
                                         <Input
-                                            value={veterinarian.mail}
+                                            value={displayVeterinarian.mail}
                                             disabled={!isEditing}
                                             onChange={(evt) =>
-                                                setVeterinarian({
-                                                    ...veterinarian,
-                                                    mail: evt.target.value,
-                                                })
+                                                setFormVeterinarian(
+                                                    formVeterinarian ? { ...formVeterinarian, mail: evt.target.value } : { ...displayVeterinarian, mail: evt.target.value }
+                                                )
                                             }
                                         />
                                     </Col>
@@ -263,29 +385,26 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                             </Col>
                             <Col xs={6}>
                                 <Label>
-                                    {veterinarian.address !== undefined && (
-                                        <SourceLink link={`https://www.google.com/maps/place/${veterinarian.address}`}>
-                                            <span>
-                                                Adresse <MdDirections />
-                                            </span>
+                                    {displayVeterinarian.address !== undefined && (
+                                        <SourceLink link={`https://www.google.com/maps/place/${displayVeterinarian.address}`}>
+                                            <span>Adresse <MdDirections /></span>
                                         </SourceLink>
                                     )}
-                                    {veterinarian.address === undefined && <span>Adresse</span>}
+                                    {displayVeterinarian.address === undefined && <span>Adresse</span>}
                                 </Label>
                                 <Input
                                     type="textarea"
-                                    value={veterinarian.address}
+                                    value={displayVeterinarian.address}
                                     disabled={!isEditing}
                                     onChange={(evt) =>
-                                        setVeterinarian({
-                                            ...veterinarian,
-                                            address: evt.target.value,
-                                        })
+                                        setFormVeterinarian(
+                                            formVeterinarian ? { ...formVeterinarian, address: evt.target.value } : { ...displayVeterinarian, address: evt.target.value }
+                                        )
                                     }
                                 />
-                                {geocodeFound !== null && (
-                                    <p className={geocodeFound === true ? "text-success" : "text-danger"}>
-                                        <small>{geocodeFound === true ? t("veterinarians.addressValid") : t("veterinarians.addressNotFound")}</small>
+                                {geocodeFound != null && (
+                                    <p className={geocodeFound ? "text-success" : "text-danger"}>
+                                        <small>{geocodeFound ? t("veterinarians.addressValid") : t("veterinarians.addressNotFound")}</small>
                                     </p>
                                 )}
                             </Col>
@@ -293,36 +412,30 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                         <Row>
                             <Col xs={6}>
                                 <Row>
-                                    <Col xs={6}>
-                                        <Label>Gestion des urgences</Label>
-                                    </Col>
-                                    <Col xs={6}>
-                                        <Label>Niveau de prix</Label>
-                                    </Col>
+                                    <Col xs={6}><Label>Gestion des urgences</Label></Col>
+                                    <Col xs={6}><Label>Niveau de prix</Label></Col>
                                 </Row>
                                 <Row>
                                     <Col xs={6}>
                                         <BooleanNullableDropdown
-                                            value={veterinarian.emergencies ?? null}
+                                            value={displayVeterinarian.emergencies ?? null}
                                             disabled={!isEditing}
-                                            onChange={(newValue) => {
-                                                setVeterinarian({
-                                                    ...veterinarian,
-                                                    emergencies: newValue ?? undefined,
-                                                });
-                                            }}
+                                            onChange={(newValue) =>
+                                                setFormVeterinarian(
+                                                    formVeterinarian ? { ...formVeterinarian, emergencies: newValue ?? undefined } : { ...displayVeterinarian, emergencies: newValue ?? undefined }
+                                                )
+                                            }
                                         />
                                     </Col>
                                     <Col xs={6}>
                                         <PriceLevelDropdown
-                                            value={veterinarian.priceLevel}
+                                            value={displayVeterinarian.priceLevel}
                                             disabled={!isEditing}
-                                            onChange={(newValue) => {
-                                                setVeterinarian({
-                                                    ...veterinarian,
-                                                    priceLevel: newValue,
-                                                });
-                                            }}
+                                            onChange={(newValue) =>
+                                                setFormVeterinarian(
+                                                    formVeterinarian ? { ...formVeterinarian, priceLevel: newValue } : { ...displayVeterinarian, priceLevel: newValue }
+                                                )
+                                            }
                                         />
                                     </Col>
                                 </Row>
@@ -331,13 +444,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 <Label>Méthode de confirmation de rendez-vous</Label>
                                 <Input
                                     type="textarea"
-                                    value={veterinarian.appointmentConfirmationProcedure}
+                                    value={displayVeterinarian.appointmentConfirmationProcedure}
                                     disabled={!isEditing}
                                     onChange={(evt) =>
-                                        setVeterinarian({
-                                            ...veterinarian,
-                                            appointmentConfirmationProcedure: evt.target.value,
-                                        })
+                                        setFormVeterinarian(
+                                            formVeterinarian ? { ...formVeterinarian, appointmentConfirmationProcedure: evt.target.value } : { ...displayVeterinarian, appointmentConfirmationProcedure: evt.target.value }
+                                        )
                                     }
                                 />
                             </Col>
@@ -347,13 +459,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 <Label>Date de paiement</Label>
                                 <Input
                                     type="textarea"
-                                    value={veterinarian.invoicePaymentDate}
+                                    value={displayVeterinarian.invoicePaymentDate}
                                     disabled={!isEditing}
                                     onChange={(evt) =>
-                                        setVeterinarian({
-                                            ...veterinarian,
-                                            invoicePaymentDate: evt.target.value,
-                                        })
+                                        setFormVeterinarian(
+                                            formVeterinarian ? { ...formVeterinarian, invoicePaymentDate: evt.target.value } : { ...displayVeterinarian, invoicePaymentDate: evt.target.value }
+                                        )
                                     }
                                 />
                             </Col>
@@ -361,13 +472,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 <Label>Moyen de paiement</Label>
                                 <Input
                                     type="textarea"
-                                    value={veterinarian.paymentMethod}
+                                    value={displayVeterinarian.paymentMethod}
                                     disabled={!isEditing}
                                     onChange={(evt) =>
-                                        setVeterinarian({
-                                            ...veterinarian,
-                                            paymentMethod: evt.target.value,
-                                        })
+                                        setFormVeterinarian(
+                                            formVeterinarian ? { ...formVeterinarian, paymentMethod: evt.target.value } : { ...displayVeterinarian, paymentMethod: evt.target.value }
+                                        )
                                     }
                                 />
                             </Col>
@@ -383,22 +493,16 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
             className="VeterinarianPage"
             title={t("veterinarians.detailTitle")}
             breadcrumbs={[
-                {
-                    name: t("veterinarians.breadcrumb"),
-                    to: "/veterinarians",
-                } as CustomBreadcrumbItem,
+                { name: t("veterinarians.breadcrumb"), to: "/veterinarians" } as CustomBreadcrumbItem,
                 { name: t("veterinarians.breadcrumbDetail"), active: true } as CustomBreadcrumbItem,
             ]}
         >
             {content}
-
             <DeleteConfirmationModal
                 show={showDeleteConfirmationModal}
                 handleClose={(confirmed) => {
                     setShowDeleteConfirmationModal(false);
-                    if (confirmed) {
-                        deleteV();
-                    }
+                    if (confirmed) deleteV();
                 }}
                 bodyEntityName={t("veterinarians.entityName")}
             />

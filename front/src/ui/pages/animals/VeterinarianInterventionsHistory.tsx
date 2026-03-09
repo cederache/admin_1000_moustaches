@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdAddBox, MdAssignment, MdDelete } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import Animal from "../../../logic/entities/Animal";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
+import { useVeterinarianInterventionsByAnimal } from "../../../hooks/veterinarianInterventions/useVeterinarianInterventionsByAnimal";
+import { useDeleteVeterinarianIntervention } from "../../../hooks/veterinarianInterventions/useDeleteVeterinarianIntervention";
 
 interface VeterinarianInterventionsHistoryProps {
     animal: Animal;
@@ -17,56 +19,47 @@ interface VeterinarianInterventionsHistoryProps {
 
 const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps> = ({ animal, isOpen = true }) => {
     const { t } = useTranslation();
-    const [veterinarianInterventions, setVeterinarianInterventions] = useState<VeterinarianIntervention[]>([]);
-    const [loading, setLoading] = useState(false);
     const [modalVeterinarianIntervention, setModalVeterinarianIntervention] = useState<VeterinarianIntervention | null>(null);
 
-    const fetchInterventions = () => {
-        if (!animal?.id) return Promise.resolve([]);
-        setLoading(true);
-        return VeterinarianInterventionsManager.getByAnimalId(animal.id)
-            .then((interventions) =>
-                interventions.sort((a, b) => new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime())
-            )
-            .then((sorted) => {
-                setVeterinarianInterventions(sorted);
-                return sorted;
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`${t("common.errorFetch")}\n${err}`);
-                return [] as VeterinarianIntervention[];
-            })
-            .finally(() => setLoading(false));
-    };
+    const animalId = animal?.id ?? null;
+    const { data: interventionsData, isPending: isInterventionsPending, isError: isInterventionsError, refetch: refetchInterventions } = useVeterinarianInterventionsByAnimal(animalId);
+    const { mutate: deleteInterventionMutation } = useDeleteVeterinarianIntervention();
 
-    useEffect(() => {
-        if (isOpen && animal?.id) {
-            fetchInterventions();
-        }
-    }, [isOpen, animal?.id]);
+    const veterinarianInterventions = useMemo(
+        () =>
+            interventionsData
+                ? [...interventionsData].sort(
+                      (a, b) => new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime()
+                  )
+                : [],
+        [interventionsData]
+    );
 
-    const shouldRefresh = () => {
-        fetchInterventions();
-    };
+    const pagePermissions = useGetPermissions([Ressource.PET_HIST_VETO]);
 
     const showDetail = (veterinarianIntervention: VeterinarianIntervention) => {
         setModalVeterinarianIntervention(veterinarianIntervention);
     };
 
     const deleteVeterinarianIntervention = (veterinarianIntervention: VeterinarianIntervention) => {
-        VeterinarianInterventionsManager.delete(veterinarianIntervention)
-            .then(() => {
+        deleteInterventionMutation(veterinarianIntervention, {
+            onSuccess: () => {
                 toast.success(t("animals.message.interventionDeleted"));
-                shouldRefresh();
-            })
-            .catch((err) => {
+            },
+            onError: (err) => {
                 console.error(err);
                 toast.error(`${t("common.errorDelete")}\n${err}`);
-            });
+            },
+        });
     };
 
-    const pagePermissions = useGetPermissions([Ressource.PET_HIST_VETO]);
+    const handleCloseModal = (_shouldReload: boolean) => {
+        setModalVeterinarianIntervention(null);
+    };
+
+    if (!isOpen || !animal?.id) {
+        return null;
+    }
 
     return (
         <>
@@ -76,7 +69,7 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                         <Col>
                             <h3>{t("animals.history.veterinarianInterventionsTitle")}</h3>
                         </Col>
-                        <Col xs={"auto"}>
+                        <Col xs="auto">
                             {pagePermissions[Ressource.PET_HIST_VETO]?.can_create && (
                                 <Button
                                     color="primary"
@@ -85,7 +78,9 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                                             toast.error(t("animals.message.saveAnimalBeforeIntervention"));
                                             return;
                                         }
-                                        setModalVeterinarianIntervention(VeterinarianInterventionsManager.createVeterinarianIntervention());
+                                        setModalVeterinarianIntervention(
+                                            VeterinarianInterventionsManager.createVeterinarianIntervention()
+                                        );
                                     }}
                                 >
                                     <MdAddBox />
@@ -105,32 +100,30 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                             </tr>
                         </thead>
                         <tbody>
-                            {loading ? (
+                            {isInterventionsPending ? (
                                 <tr>
                                     <td colSpan={4}>{t("common.loading")}</td>
                                 </tr>
                             ) : (
-                            veterinarianInterventions
-                                .sort((a, b) => {
-                                    if (a.date === undefined) {
-                                        return -1;
-                                    } else if (b.date === undefined) {
-                                        return 1;
-                                    } else {
-                                        return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
-                                    }
-                                })
-                                .map((veterinarianIntervention, index) => (
-                                    <tr>
-                                        <th scope="row">{veterinarianIntervention.dateObject.readable ?? veterinarianIntervention.date}</th>
+                                veterinarianInterventions.map((veterinarianIntervention) => (
+                                    <tr key={veterinarianIntervention.id}>
+                                        <th scope="row">
+                                            {veterinarianIntervention.dateObject?.readable ?? veterinarianIntervention.date}
+                                        </th>
                                         <td>{veterinarianIntervention.description}</td>
                                         <td>
-                                            <Button color="info" onClick={() => showDetail(veterinarianIntervention)}>
+                                            <Button
+                                                color="info"
+                                                onClick={() => showDetail(veterinarianIntervention)}
+                                            >
                                                 <MdAssignment />
                                             </Button>
                                         </td>
                                         <td>
-                                            <Button color="danger" onClick={() => deleteVeterinarianIntervention(veterinarianIntervention)}>
+                                            <Button
+                                                color="danger"
+                                                onClick={() => deleteVeterinarianIntervention(veterinarianIntervention)}
+                                            >
                                                 <MdDelete />
                                             </Button>
                                         </td>
@@ -146,14 +139,8 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                 <VeterinarianInterventionModal
                     animal={animal}
                     veterinarianIntervention={modalVeterinarianIntervention}
-                    show={modalVeterinarianIntervention !== null}
-                    handleClose={(shouldReload) => {
-                        setModalVeterinarianIntervention(null);
-
-                        if (shouldReload) {
-                            shouldRefresh();
-                        }
-                    }}
+                    show={true}
+                    handleClose={handleCloseModal}
                 />
             )}
         </>
