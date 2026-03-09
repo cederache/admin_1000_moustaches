@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { MdAddBox, MdAssignment, MdDelete } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
 import VeterinarianInterventionsManager from "../../../managers/veterinarianInterventions.manager";
@@ -11,16 +11,42 @@ import { Ressource } from "../../../logic/entities/Permissions";
 
 interface VeterinarianInterventionsHistoryProps {
     animal: Animal;
-    veterinarianInterventions: VeterinarianIntervention[];
-    shouldRefresh: () => void;
+    isOpen?: boolean;
 }
 
-const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps> = ({
-    animal,
-    veterinarianInterventions,
-    shouldRefresh,
-}) => {
+const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps> = ({ animal, isOpen = true }) => {
+    const [veterinarianInterventions, setVeterinarianInterventions] = useState<VeterinarianIntervention[]>([]);
+    const [loading, setLoading] = useState(false);
     const [modalVeterinarianIntervention, setModalVeterinarianIntervention] = useState<VeterinarianIntervention | null>(null);
+
+    const fetchInterventions = () => {
+        if (!animal?.id) return Promise.resolve([]);
+        setLoading(true);
+        return VeterinarianInterventionsManager.getByAnimalId(animal.id)
+            .then((interventions) =>
+                interventions.sort((a, b) => new Date(b.date ?? "").getTime() - new Date(a.date ?? "").getTime())
+            )
+            .then((sorted) => {
+                setVeterinarianInterventions(sorted);
+                return sorted;
+            })
+            .catch((err) => {
+                console.error(err);
+                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                return [] as VeterinarianIntervention[];
+            })
+            .finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        if (isOpen && animal?.id) {
+            fetchInterventions();
+        }
+    }, [isOpen, animal?.id]);
+
+    const shouldRefresh = () => {
+        fetchInterventions();
+    };
 
     const showDetail = (veterinarianIntervention: VeterinarianIntervention) => {
         setModalVeterinarianIntervention(veterinarianIntervention);
@@ -77,7 +103,12 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                             </tr>
                         </thead>
                         <tbody>
-                            {veterinarianInterventions
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={4}>Chargement...</td>
+                                </tr>
+                            ) : (
+                            veterinarianInterventions
                                 .sort((a, b) => {
                                     if (a.date === undefined) {
                                         return -1;
@@ -102,7 +133,8 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                                             </Button>
                                         </td>
                                     </tr>
-                                ))}
+                                ))
+                            )}
                         </tbody>
                     </Table>
                 </CardBody>
