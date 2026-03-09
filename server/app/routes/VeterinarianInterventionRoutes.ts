@@ -29,6 +29,34 @@ router.get('/', checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.PE
     res.json(interventions)
 })
 
+router.get('/animal/:animalId', checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.PET_HIST_VETO, Method.GET), async (req, res) => {
+    /* #swagger.tags = ['Veterinary Interventions']
+       #swagger.summary = 'Get veterinary interventions by animal ID'
+       #swagger.description = 'Retrieve all veterinary interventions for a specific animal'
+       #swagger.parameters['animalId'] = {
+         in: 'path',
+         description: 'Animal ID',
+         required: true,
+         type: 'integer'
+       }
+       #swagger.responses[200] = {
+         description: 'List of veterinary interventions for the animal',
+         content: {
+           'application/json': {
+             schema: {
+               type: 'array',
+               items: { $ref: '#/components/schemas/VeterinarianIntervention' }
+             }
+           }
+         }
+       }
+       #swagger.responses[401] = { description: "Unauthorized" }
+       #swagger.responses[403] = { description: "Forbidden" }
+    */
+    const interventions = await interventionController.getInterventionsByAnimalId(parseInt(req.params.animalId))
+    res.json(interventions)
+})
+
 router.get('/:id', checkIfAuthenticated, getAuthUser, checkIfPermitted(Ressource.PET_HIST_VETO, Method.GET), async (req, res) => {
     /* #swagger.tags = ['Veterinary Interventions']
        #swagger.summary = 'Get veterinary intervention by ID'

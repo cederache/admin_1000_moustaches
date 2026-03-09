@@ -3,6 +3,7 @@ import VeterinarianIntervention from "../logic/entities/VeterinarianIntervention
 import fetchWithAuth from "../middleware/fetch-middleware";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = `${API_URL}/veterinarian-interventions`;
 
 class VeterinarianInterventionsManager {
     static createVeterinarianIntervention = (): VeterinarianIntervention => {
@@ -18,7 +19,7 @@ class VeterinarianInterventionsManager {
     };
 
     static getAll = () => {
-        return fetchWithAuth(`${API_URL}/veterinarianInterventions`, {
+        return fetchWithAuth(BASE_URL, {
             method: "GET",
         })
             .then((response) => {
@@ -33,7 +34,7 @@ class VeterinarianInterventionsManager {
     };
 
     static getById = (id: number) => {
-        return fetchWithAuth(`${API_URL}/veterinarianInterventions/${id}`, {
+        return fetchWithAuth(`${BASE_URL}/${id}`, {
             method: "GET",
         })
             .then((response) => {
@@ -48,7 +49,7 @@ class VeterinarianInterventionsManager {
     };
 
     static getByAnimalId = (animalId: number) => {
-        return fetchWithAuth(`${API_URL}/veterinarianInterventions/withAnimalId/${animalId}`, { method: "GET" })
+        return fetchWithAuth(`${BASE_URL}/animal/${animalId}`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -60,22 +61,9 @@ class VeterinarianInterventionsManager {
             .then((vetInters) => vetInters.map(VeterinarianInterventionsManager.format) as VeterinarianIntervention[]);
     };
 
-    static getByVeterinarianId = (vetId: number) => {
-        return fetchWithAuth(`${API_URL}/veterinarianInterventions/withVeterinarianId/${vetId}`, { method: "GET" })
-            .then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                return response.json().then((json) => {
-                    throw new Error(`Server error - ${json.message}`);
-                });
-            })
-            .then((vetInters) => vetInters.map(VeterinarianInterventionsManager.format));
-    };
-
     static create = (vetInter: VeterinarianIntervention) => {
         const vetInterToUpload = this.formatForServer(vetInter);
-        return fetchWithAuth(`${API_URL}/veterinarianInterventions`, {
+        return fetchWithAuth(BASE_URL, {
             method: "POST",
             body: JSON.stringify(vetInterToUpload),
             headers: {
@@ -95,7 +83,7 @@ class VeterinarianInterventionsManager {
 
     static update = (vetInter: VeterinarianIntervention) => {
         const vetInterToUpload = this.formatForServer(vetInter);
-        return fetchWithAuth(`${API_URL}/veterinarianInterventions/${vetInter.id}`, {
+        return fetchWithAuth(`${BASE_URL}/${vetInter.id}`, {
             method: "PUT",
             body: JSON.stringify(vetInterToUpload),
             headers: {
@@ -114,7 +102,7 @@ class VeterinarianInterventionsManager {
     };
 
     static delete = (vetInter: VeterinarianIntervention) => {
-        return fetchWithAuth(`${API_URL}/veterinarianInterventions/${vetInter.id}`, {
+        return fetchWithAuth(`${BASE_URL}/${vetInter.id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
