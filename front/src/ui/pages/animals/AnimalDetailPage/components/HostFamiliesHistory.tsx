@@ -2,18 +2,18 @@ import React, { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdAddBox, MdAssignment, MdDelete, MdEdit } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
-import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
+import AnimalsToHostFamiliesManager from "../../../../../managers/animalsToHostFamilies.manager";
 import AnimalToHostFamilyModal from "./AnimalToHostFamilyModal";
-import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
-import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
+import DeleteConfirmationModal from "../../../../components/DeleteConfirmationModal";
+import AnimalToHostFamily from "../../../../../logic/entities/AnimalToHostFamily";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Animal from "../../../logic/entities/Animal";
-import useGetPermissions from "../../../hooks/useGetPermissions";
-import { Ressource } from "../../../logic/entities/Permissions";
-import { useAnimalHostFamiliesByAnimal } from "../../../hooks/animalHostFamilies/useAnimalHostFamiliesByAnimal";
-import { useHostFamilies } from "../../../hooks/hostFamilies/useHostFamilies";
-import { useDeleteAnimalToHostFamily } from "../../../hooks/animalHostFamilies/useDeleteAnimalToHostFamily";
+import Animal from "../../../../../logic/entities/Animal";
+import useGetPermissions from "../../../../../hooks/useGetPermissions";
+import { Ressource } from "../../../../../logic/entities/Permissions";
+import { useAnimalHostFamiliesByAnimal } from "../../../../../hooks/animalHostFamilies/useAnimalHostFamiliesByAnimal";
+import { useHostFamilies } from "../../../../../hooks/hostFamilies/useHostFamilies";
+import { useDeleteAnimalToHostFamily } from "../../../../../hooks/animalHostFamilies/useDeleteAnimalToHostFamily";
 
 interface HostFamiliesHistoryProps {
     animal: Animal;
@@ -31,16 +31,11 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
     const { mutate: deleteAthfMutation } = useDeleteAnimalToHostFamily();
 
     const hostFamilies = useMemo(
-        () => (hostFamiliesData ? [...hostFamiliesData].sort((a, b) => (a.name?.localeCompare(b.name ?? "") ?? 0)) : []),
+        () => (hostFamiliesData ? [...hostFamiliesData].sort((a, b) => a.name?.localeCompare(b.name ?? "") ?? 0) : []),
         [hostFamiliesData]
     );
     const animalToHostFamilies = useMemo(
-        () =>
-            athfsData
-                ? [...athfsData].sort(
-                      (a, b) => new Date(b.entryDate ?? "").getTime() - new Date(a.entryDate ?? "").getTime()
-                  )
-                : [],
+        () => (athfsData ? [...athfsData].sort((a, b) => new Date(b.entryDate ?? "").getTime() - new Date(a.entryDate ?? "").getTime()) : []),
         [athfsData]
     );
 
@@ -92,9 +87,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                                             toast.error(t("animals.message.saveAnimalFirst"));
                                             return;
                                         }
-                                        setModalAnimalToHostFamily(
-                                            AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined)
-                                        );
+                                        setModalAnimalToHostFamily(AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined));
                                     }}
                                 >
                                     <MdAddBox />
@@ -121,29 +114,18 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                                 </tr>
                             ) : (
                                 animalToHostFamilies.map((animalToHostFamily) => {
-                                    const hostFamily = hostFamilies.find(
-                                        (hf) => hf.id === animalToHostFamily.hostFamily?.id
-                                    );
+                                    const hostFamily = hostFamilies.find((hf) => hf.id === animalToHostFamily.hostFamily?.id);
                                     return (
                                         <tr key={animalToHostFamily.id ?? `${animalToHostFamily.hostFamily?.id}-${animalToHostFamily.entryDate}`}>
                                             <th scope="row">{hostFamily?.displayName}</th>
+                                            <td>{animalToHostFamily.entryDateObject?.readable ?? animalToHostFamily.entryDate}</td>
                                             <td>
-                                                {animalToHostFamily.entryDateObject?.readable ??
-                                                    animalToHostFamily.entryDate}
-                                            </td>
-                                            <td>
-                                                <Button
-                                                    color="info"
-                                                    onClick={() => showDetail(animalToHostFamily)}
-                                                >
+                                                <Button color="info" onClick={() => showDetail(animalToHostFamily)}>
                                                     <MdAssignment />
                                                 </Button>
                                             </td>
                                             <td>
-                                                <Button
-                                                    color="info"
-                                                    onClick={() => setModalAnimalToHostFamily(animalToHostFamily)}
-                                                >
+                                                <Button color="info" onClick={() => setModalAnimalToHostFamily(animalToHostFamily)}>
                                                     <MdEdit />
                                                 </Button>
                                             </td>

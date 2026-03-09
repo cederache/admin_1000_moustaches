@@ -1,13 +1,12 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Card, CardBody, Col, Input, Label, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
-import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
+import { Button, Col, Input, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
+import { MdRefresh, MdAssignment, MdAddBox } from "react-icons/md";
 import { sortBy } from "../../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { BlueIcon, GreenIcon, RedIcon, UserIcon, YellowIcon } from "../../../utils/mapIcons";
-import Switch from "../../components/Switch";
 import SortableTable from "../../components/SortableTable";
 import Veterinarian from "../../../logic/entities/Veterinarian";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
@@ -15,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import useGetPermissions from "../../../hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
 import { useVeterinarians } from "../../../hooks/veterinarians/useVeterinarians";
+import VeterinariansPageFilters, { Filter, FilterType } from "./VeterinariansPageFilters";
 
 L.Marker.prototype.options.icon = BlueIcon;
 
@@ -25,34 +25,6 @@ interface VeterinariansPageProps {
 interface Position {
     lat: number;
     lng: number;
-}
-
-class Filter {
-    value: any;
-    type: FilterType;
-
-    constructor(value: any, type: FilterType) {
-        this.value = value;
-        this.type = type;
-    }
-
-    check(veterinarian: Veterinarian): boolean {
-        return FilterType.check(this.type, this.value, veterinarian);
-    }
-}
-
-enum FilterType {
-    EMERGENCIES = "Gère les urgences",
-}
-
-namespace FilterType {
-    export function check(filter: FilterType, value: any, veterinarian: Veterinarian): boolean {
-        if (value === null || value === undefined) return true;
-        switch (filter) {
-            case FilterType.EMERGENCIES:
-                return veterinarian.emergencies === value;
-        }
-    }
 }
 
 const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
@@ -173,32 +145,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                     </Button>
                 </Col>
             </Row>
-            <Card>
-                <CardBody>
-                    <Row>
-                        <Col xs="auto" className="mb-0 border-end">
-                            <MdFilterAlt />
-                        </Col>
-                        {filters.map((filter) => (
-                            <Col key={filter.type} className="mb-0">
-                                <Label>{t("veterinarians.filter.emergencies")}</Label>
-                                <Switch
-                                    id={filter.type}
-                                    isOn={filter.value === true}
-                                    disabled={false}
-                                    handleToggle={() => {
-                                        setFilters((prevFilters) =>
-                                            prevFilters.map((f) =>
-                                                f.type === filter.type ? new Filter(!f.value, f.type) : f
-                                            )
-                                        );
-                                    }}
-                                />
-                            </Col>
-                        ))}
-                    </Row>
-                </CardBody>
-            </Card>
+            <VeterinariansPageFilters filters={filters} setFilters={setFilters} />
 
             <br />
 

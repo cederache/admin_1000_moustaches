@@ -1,33 +1,33 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Col, Input, Label, Row } from "reactstrap";
-import AnimalsManager from "../../../managers/animals.manager";
+import AnimalsManager from "../../../../managers/animals.manager";
 import { MdRefresh, MdOutlineModeEdit, MdSave, MdDelete } from "react-icons/md";
-import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
-import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
-import NullableDropdown from "../../components/NullableDropdown";
-import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
-import Page, { CustomBreadcrumbItem } from "../../components/Page";
+import DeleteConfirmationModal from "../../../components/DeleteConfirmationModal";
+import BooleanNullableDropdown from "../../../components/BooleanNullableDropdown";
+import NullableDropdown from "../../../components/NullableDropdown";
+import AnimalsToHostFamiliesManager from "../../../../managers/animalsToHostFamilies.manager";
+import Page, { CustomBreadcrumbItem } from "../../../components/Page";
 import toast from "react-hot-toast";
-import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
-import Animal from "../../../logic/entities/Animal";
+import AnimalToHostFamily from "../../../../logic/entities/AnimalToHostFamily";
+import Animal from "../../../../logic/entities/Animal";
 import { useNavigate, useParams } from "react-router-dom";
-import useGetPermissions from "../../../hooks/useGetPermissions";
-import { Ressource } from "../../../logic/entities/Permissions";
-import HostFamiliesHistory from "./HostFamiliesHistory";
-import VeterinarianInterventionsHistory from "./VeterinarianInterventionsHistory";
-import AnimalInfoAccordion from "./AnimalInfoAccordion";
-import AnimalPecAccordion from "./AnimalPecAccordion";
-import AnimalHealthAccordion from "./AnimalHealthAccordion";
-import AnimalBehaviourAccordion from "./AnimalBehaviourAccordion";
-import AnimalExitAccordion from "./AnimalExitAccordion";
-import AnimalDeathAccordion from "./AnimalDeathAccordion";
-import { useAnimal } from "../../../hooks/animals/useAnimal";
-import { useSpecies } from "../../../hooks/animals/useSpecies";
-import { useSexes } from "../../../hooks/animals/useSexes";
-import { useCreateAnimal } from "../../../hooks/animals/useCreateAnimal";
-import { useUpdateAnimal } from "../../../hooks/animals/useUpdateAnimal";
-import { useDeleteAnimal } from "../../../hooks/animals/useDeleteAnimal";
+import useGetPermissions from "../../../../hooks/useGetPermissions";
+import { Ressource } from "../../../../logic/entities/Permissions";
+import HostFamiliesHistory from "./components/HostFamiliesHistory";
+import VeterinarianInterventionsHistory from "./components/VeterinarianInterventionsHistory";
+import AnimalInfoAccordion from "./components/AnimalInfoAccordion";
+import AnimalPecAccordion from "./components/AnimalPecAccordion";
+import AnimalHealthAccordion from "./components/AnimalHealthAccordion";
+import AnimalBehaviourAccordion from "./components/AnimalBehaviourAccordion";
+import AnimalExitAccordion from "./components/AnimalExitAccordion";
+import AnimalDeathAccordion from "./components/AnimalDeathAccordion";
+import { useAnimal } from "../../../../hooks/animals/useAnimal";
+import { useSpecies } from "../../../../hooks/animals/useSpecies";
+import { useSexes } from "../../../../hooks/animals/useSexes";
+import { useCreateAnimal } from "../../../../hooks/animals/useCreateAnimal";
+import { useUpdateAnimal } from "../../../../hooks/animals/useUpdateAnimal";
+import { useDeleteAnimal } from "../../../../hooks/animals/useDeleteAnimal";
 
 interface AnimalDetailPageProps {
     [key: string]: any;
@@ -86,14 +86,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     const { mutate: updateAnimalMutation } = useUpdateAnimal();
     const { mutate: deleteAnimalMutation } = useDeleteAnimal();
 
-    const species = useMemo(
-        () => (speciesData ? [...speciesData].sort((a, b) => a.name.localeCompare(b.name)) : []),
-        [speciesData]
-    );
-    const sexes = useMemo(
-        () => (sexesData ? [...sexesData].sort((a, b) => a.value.localeCompare(b.value)) : []),
-        [sexesData]
-    );
+    const species = useMemo(() => (speciesData ? [...speciesData].sort((a, b) => a.name.localeCompare(b.name)) : []), [speciesData]);
+    const sexes = useMemo(() => (sexesData ? [...sexesData].sort((a, b) => a.value.localeCompare(b.value)) : []), [sexesData]);
 
     const [accordions, setAccordions] = useState<AnimalDetailPageAccordionState[]>(
         Object.values(AnimalDetailPageAccordion)
@@ -204,13 +198,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                     animalToSave.hostFamilyRelations
                         ?.filter((athf) => athf.exitDate === undefined)
                         .forEach((athf) => {
-                            if (
-                                athf.animal?.id == null ||
-                                athf.hostFamily?.id == null
-                            ) return;
-                            AnimalsToHostFamiliesManager.update(
-                                new AnimalToHostFamily(undefined, athf.animal, athf.hostFamily, athf.entryDate, athf.exitDate)
-                            );
+                            if (athf.animal?.id == null || athf.hostFamily?.id == null) return;
+                            AnimalsToHostFamiliesManager.update(new AnimalToHostFamily(undefined, athf.animal, athf.hostFamily, athf.entryDate, athf.exitDate));
                         });
                 }
                 refetchAnimal();
@@ -307,16 +296,24 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     <NullableDropdown
                                         withNewLine={true}
                                         color={
-                                            formAnimal.needIcadDuplicate == null ? "warning" :
-                                            formAnimal.needIcadDuplicate === "received" ? "success" :
-                                            formAnimal.needIcadDuplicate === "waiting" ? "info" : "danger"
+                                            formAnimal.needIcadDuplicate == null
+                                                ? "warning"
+                                                : formAnimal.needIcadDuplicate === "received"
+                                                ? "success"
+                                                : formAnimal.needIcadDuplicate === "waiting"
+                                                ? "info"
+                                                : "danger"
                                         }
                                         value={formAnimal.needIcadDuplicate}
                                         values={["no", "waiting", "received"]}
                                         valueDisplayName={(value) =>
-                                            value == null ? t("common.nsp") :
-                                            value === "received" ? t("animals.dropdown.icadReceived") :
-                                            value === "waiting" ? t("animals.dropdown.icadWaiting") : t("animals.dropdown.icadNo")
+                                            value == null
+                                                ? t("common.nsp")
+                                                : value === "received"
+                                                ? t("animals.dropdown.icadReceived")
+                                                : value === "waiting"
+                                                ? t("animals.dropdown.icadWaiting")
+                                                : t("animals.dropdown.icadNo")
                                         }
                                         valueActiveCheck={(value) => formAnimal.needIcadDuplicate === value}
                                         key="needIcadDuplicate"
@@ -445,7 +442,14 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             </Button>
                         )}
                         {!isEditing && canEditAny && (
-                            <Button className="ms-2" color="primary" onClick={() => { setFormAnimal({ ...displayAnimal }); setIsEditing(true); }}>
+                            <Button
+                                className="ms-2"
+                                color="primary"
+                                onClick={() => {
+                                    setFormAnimal({ ...displayAnimal });
+                                    setIsEditing(true);
+                                }}
+                            >
                                 <MdOutlineModeEdit />
                             </Button>
                         )}
@@ -510,16 +514,24 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 <NullableDropdown
                                     withNewLine={true}
                                     color={
-                                        displayAnimal.needIcadDuplicate == null ? "warning" :
-                                        displayAnimal.needIcadDuplicate === "received" ? "success" :
-                                        displayAnimal.needIcadDuplicate === "waiting" ? "info" : "danger"
+                                        displayAnimal.needIcadDuplicate == null
+                                            ? "warning"
+                                            : displayAnimal.needIcadDuplicate === "received"
+                                            ? "success"
+                                            : displayAnimal.needIcadDuplicate === "waiting"
+                                            ? "info"
+                                            : "danger"
                                     }
                                     value={displayAnimal.needIcadDuplicate}
                                     values={["no", "waiting", "received"]}
                                     valueDisplayName={(value) =>
-                                        value == null ? t("common.nsp") :
-                                        value === "received" ? t("animals.dropdown.icadReceived") :
-                                        value === "waiting" ? t("animals.dropdown.icadWaiting") : t("animals.dropdown.icadNo")
+                                        value == null
+                                            ? t("common.nsp")
+                                            : value === "received"
+                                            ? t("animals.dropdown.icadReceived")
+                                            : value === "waiting"
+                                            ? t("animals.dropdown.icadWaiting")
+                                            : t("animals.dropdown.icadNo")
                                     }
                                     valueActiveCheck={(value) => displayAnimal.needIcadDuplicate === value}
                                     key="needIcadDuplicate"
@@ -620,13 +632,9 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                     </CardBody>
                 </Card>
                 <br />
-                {pagePermissions[Ressource.PET_HIST_VETO].can_read && (
-                    <VeterinarianInterventionsHistory animal={displayAnimal} />
-                )}
+                {pagePermissions[Ressource.PET_HIST_VETO].can_read && <VeterinarianInterventionsHistory animal={displayAnimal} />}
                 <br />
-                {pagePermissions[Ressource.PET_HIST_HF].can_read && (
-                    <HostFamiliesHistory animal={displayAnimal} />
-                )}
+                {pagePermissions[Ressource.PET_HIST_HF].can_read && <HostFamiliesHistory animal={displayAnimal} />}
             </div>
         );
     }

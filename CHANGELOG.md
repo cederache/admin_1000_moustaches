@@ -11,6 +11,7 @@
 - extract strings into i18n file
 - fix useGetPermissions now return defaultPermissions while loading
 - improve api calls with tanstack/react-query
+- split list pages into dedicated components (filters)
 
 ## [0.0.6] - 2026/02/09
 

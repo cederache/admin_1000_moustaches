@@ -14,11 +14,11 @@ const DashboardPage = React.lazy(() => import("./ui/pages/DashboardPage"));
 const AnimalsPage = React.lazy(() => import("./ui/pages/animals/AnimalsPage"));
 const AnimalDetailPage = React.lazy(() => import("./ui/pages/animals/AnimalDetailPage"));
 const VeterinariansPage = React.lazy(() => import("./ui/pages/veterinarians/VeterinariansPage"));
-const VeterinarianDetailPage = React.lazy(() => import("./ui/pages/veterinarians/VeterinarianDetailPage"));
+const VeterinarianDetailPage = React.lazy(() => import("./ui/pages/veterinarians/VeterinarianDetailPage/VeterinarianDetailPage"));
 const HostFamiliesPage = React.lazy(() => import("./ui/pages/hostFamilies/HostFamiliesPage"));
 const HostFamilyDetailPage = React.lazy(() => import("./ui/pages/hostFamilies/HostFamilyDetailPage"));
 const UsersPage = React.lazy(() => import("./ui/pages/users/UsersPage"));
-const UserDetailPage = React.lazy(() => import("./ui/pages/users/UserDetailPage"));
+const UserDetailPage = React.lazy(() => import("./ui/pages/users/UserDetailPage/UserDetailPage"));
 const PrivacyPolicy = React.lazy(() => import("./ui/pages/PrivacyPolicy"));
 
 const App = () => {
