@@ -61,7 +61,7 @@ class AnimalsManager {
     };
 
     static getByHostFamilyId = (hostFamilyId: number): Promise<AnimalToHostFamily[]> => {
-        return fetchWithAuth(`${API_URL}/animalsToHostFamilies/withHostFamilyId/${hostFamilyId}`, { method: "GET" })
+        return fetchWithAuth(`${API_URL}/animal-host-families/hostFamily/${hostFamilyId}`, { method: "GET" })
             .then((response) => {
                 if (response.status === 200) {
                     return response.json();
@@ -70,7 +70,10 @@ class AnimalsManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then((athfs) => athfs.map((athf: any) => new HostFamilyRelationDTO(athf).toEntity()));
+            .then((data) => {
+                const athfs = Array.isArray(data) ? data : data ? [data] : [];
+                return athfs.map((athf: any) => new HostFamilyRelationDTO(athf).toEntity());
+            });
     };
 
     static getSpecies = (): Promise<Species[]> => {

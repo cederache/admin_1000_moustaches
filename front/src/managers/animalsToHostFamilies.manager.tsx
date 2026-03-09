@@ -58,7 +58,10 @@ class AnimalsToHostFamiliesManager {
                     throw new Error(`Server error - ${json.message}`);
                 });
             })
-            .then((athfs) => athfs.map((athf: any) => new AnimalToHostFamilyDTO(athf).toEntity()));
+            .then((data) => {
+                const athfs = Array.isArray(data) ? data : data ? [data] : [];
+                return athfs.map((athf: any) => new AnimalToHostFamilyDTO(athf).toEntity());
+            });
     };
 
     static create = (animalToHostFamily: AnimalToHostFamily) => {

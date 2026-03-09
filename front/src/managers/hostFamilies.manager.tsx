@@ -76,7 +76,7 @@ class HostFamiliesManager {
     };
 
     static getByAnimalId = (id: number): Promise<AnimalToHostFamily[]> => {
-        return fetchWithAuth(`${API_URL}/animalsToHostFamilies/withAnimalId/${id}`, {
+        return fetchWithAuth(`${API_URL}/animal-host-families/animal/${id}`, {
             method: "GET",
         })
             .then((response) => {
