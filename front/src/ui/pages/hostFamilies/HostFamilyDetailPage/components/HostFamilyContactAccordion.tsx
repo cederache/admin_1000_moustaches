@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
-import SourceLink from "../../components/SourceLink";
+import SourceLink from "../../../../components/SourceLink";
 import { MdDirections } from "react-icons/md";
-import HostFamily from "../../../logic/entities/HostFamily";
+import HostFamily from "../../../../../logic/entities/HostFamily";
 
 interface HostFamilyContactAccordionProps {
     hostFamilyId: string;
@@ -31,11 +31,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
     const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
-        <Accordion
-            className="pb-3"
-            open={openId}
-            {...{ toggle: onToggle }}
-        >
+        <Accordion className="pb-3" open={openId} {...{ toggle: onToggle }}>
             <AccordionItem>
                 <AccordionHeader targetId="1">{t("hostFamilies.accordion.contactTitle")}</AccordionHeader>
                 <AccordionBody accordionId="1">
@@ -51,11 +47,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                             </Col>
                             <Col xs={6}>
                                 <Label>{t("hostFamilies.accordion.contactLastname")}</Label>
-                                <Input
-                                    value={hostFamily.name || ""}
-                                    disabled={disabled}
-                                    onChange={(evt) => onHostFamilyChange({ name: evt.target.value })}
-                                />
+                                <Input value={hostFamily.name || ""} disabled={disabled} onChange={(evt) => onHostFamilyChange({ name: evt.target.value })} />
                             </Col>
                         </Row>
                     )}
@@ -63,15 +55,9 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                         <Col xs={6}>
                             <Label>{t("hostFamilies.accordion.contactPhone")}</Label>
                             {isEditing && canUpdate && (
-                                <Input
-                                    type="tel"
-                                    value={hostFamily.phone || ""}
-                                    onChange={(evt) => onHostFamilyChange({ phone: evt.target.value })}
-                                />
+                                <Input type="tel" value={hostFamily.phone || ""} onChange={(evt) => onHostFamilyChange({ phone: evt.target.value })} />
                             )}
-                            {!isEditing && (
-                                <Input type="tel" value={formattedPhone ?? hostFamily.phone} disabled />
-                            )}
+                            {!isEditing && <Input type="tel" value={formattedPhone ?? hostFamily.phone} disabled />}
                         </Col>
                         <Col xs={6}>
                             <Label>{t("hostFamilies.accordion.contactEmail")}</Label>

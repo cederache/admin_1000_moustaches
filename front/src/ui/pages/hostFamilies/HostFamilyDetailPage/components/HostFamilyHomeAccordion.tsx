@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
-import HostFamily from "../../../logic/entities/HostFamily";
+import HostFamily from "../../../../../logic/entities/HostFamily";
 
 interface HostFamilyHomeAccordionProps {
     hostFamily: HostFamily;
@@ -12,14 +12,7 @@ interface HostFamilyHomeAccordionProps {
     onHostFamilyChange: (updates: Partial<HostFamily>) => void;
 }
 
-const HostFamilyHomeAccordion: FC<HostFamilyHomeAccordionProps> = ({
-    hostFamily,
-    isEditing,
-    canUpdate,
-    openId,
-    onToggle,
-    onHostFamilyChange,
-}) => {
+const HostFamilyHomeAccordion: FC<HostFamilyHomeAccordionProps> = ({ hostFamily, isEditing, canUpdate, openId, onToggle, onHostFamilyChange }) => {
     const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (

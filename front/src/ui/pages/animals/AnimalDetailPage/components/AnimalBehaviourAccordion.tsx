@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
-import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
-import NullableDropdown from "../../components/NullableDropdown";
-import Animal from "../../../logic/entities/Animal";
+import BooleanNullableDropdown from "../../../../components/BooleanNullableDropdown";
+import NullableDropdown from "../../../../components/NullableDropdown";
+import Animal from "../../../../../logic/entities/Animal";
 
 interface AnimalBehaviourAccordionProps {
     animal: Animal;
@@ -14,14 +14,7 @@ interface AnimalBehaviourAccordionProps {
     onAnimalChange: (updates: Partial<Animal>) => void;
 }
 
-const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
-    animal,
-    isEditing,
-    canUpdate,
-    openId,
-    onToggle,
-    onAnimalChange,
-}) => {
+const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({ animal, isEditing, canUpdate, openId, onToggle, onAnimalChange }) => {
     const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (

@@ -1,20 +1,10 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import {
-    Accordion,
-    AccordionItem,
-    AccordionHeader,
-    AccordionBody,
-    Col,
-    FormGroup,
-    Input,
-    Label,
-    Row,
-} from "reactstrap";
-import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
-import NullableDropdown from "../../components/NullableDropdown";
-import HostFamily from "../../../logic/entities/HostFamily";
-import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
+import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, FormGroup, Input, Label, Row } from "reactstrap";
+import BooleanNullableDropdown from "../../../../components/BooleanNullableDropdown";
+import NullableDropdown from "../../../../components/NullableDropdown";
+import HostFamily from "../../../../../logic/entities/HostFamily";
+import HostFamilyKind from "../../../../../logic/entities/HostFamilyKind";
 
 interface HostFamilyHostAccordionProps {
     hostFamily: HostFamily;
@@ -87,9 +77,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canProvideVeterinaryCare ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) =>
-                                    onHostFamilyChange({ canProvideVeterinaryCare: newValue ?? undefined })
-                                }
+                                onChange={(newValue) => onHostFamilyChange({ canProvideVeterinaryCare: newValue ?? undefined })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>
@@ -98,9 +86,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canProvideSociabilisation ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) =>
-                                    onHostFamilyChange({ canProvideSociabilisation: newValue ?? undefined })
-                                }
+                                onChange={(newValue) => onHostFamilyChange({ canProvideSociabilisation: newValue ?? undefined })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>
@@ -109,9 +95,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canHostDisableAnimal ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) =>
-                                    onHostFamilyChange({ canHostDisableAnimal: newValue ?? undefined })
-                                }
+                                onChange={(newValue) => onHostFamilyChange({ canHostDisableAnimal: newValue ?? undefined })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>
@@ -120,22 +104,14 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canProvideNightCare ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) =>
-                                    onHostFamilyChange({ canProvideNightCare: newValue ?? undefined })
-                                }
+                                onChange={(newValue) => onHostFamilyChange({ canProvideNightCare: newValue ?? undefined })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>
                             <Label>{t("hostFamilies.accordion.hostCanIsolate")}</Label>
                             <NullableDropdown
                                 withNewLine={true}
-                                color={
-                                    hostFamily.canIsolate === undefined
-                                        ? "warning"
-                                        : hostFamily.canIsolate === true
-                                        ? "success"
-                                        : "danger"
-                                }
+                                color={hostFamily.canIsolate === undefined ? "warning" : hostFamily.canIsolate === true ? "success" : "danger"}
                                 value={hostFamily.canIsolate}
                                 values={["no", "yes_short", "yes_long"]}
                                 valueDisplayName={(value) =>

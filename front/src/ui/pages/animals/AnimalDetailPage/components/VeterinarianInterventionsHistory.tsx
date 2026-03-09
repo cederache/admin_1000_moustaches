@@ -2,15 +2,15 @@ import React, { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdAddBox, MdAssignment, MdDelete } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
-import VeterinarianInterventionsManager from "../../../../../managers/veterinarianInterventions.manager";
+import VeterinarianInterventionsManager from "../../../../../api/managers/veterinarianInterventions.manager";
 import VeterinarianInterventionModal from "./VeterinarianInterventionModal";
 import VeterinarianIntervention from "../../../../../logic/entities/VeterinarianIntervention";
 import toast from "react-hot-toast";
 import Animal from "../../../../../logic/entities/Animal";
-import useGetPermissions from "../../../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../../../logic/entities/Permissions";
-import { useVeterinarianInterventionsByAnimal } from "../../../../../hooks/veterinarianInterventions/useVeterinarianInterventionsByAnimal";
-import { useDeleteVeterinarianIntervention } from "../../../../../hooks/veterinarianInterventions/useDeleteVeterinarianIntervention";
+import { useVeterinarianInterventionsByAnimal } from "../../../../../api/hooks/veterinarianInterventions/useVeterinarianInterventionsByAnimal";
+import { useDeleteVeterinarianIntervention } from "../../../../../api/hooks/veterinarianInterventions/useDeleteVeterinarianIntervention";
 
 interface VeterinarianInterventionsHistoryProps {
     animal: Animal;

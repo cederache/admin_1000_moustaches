@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDashboardAnimalsNonAdopted } from "../../../../hooks/dashboard/useDashboardAnimalsNonAdopted";
+import { useDashboardAnimalsNonAdopted } from "../../../../api/hooks/dashboard/useDashboardAnimalsNonAdopted";
 import AnimalsCard from "./AnimalsCard";
 
 const AnimalsNonAdopted = () => {

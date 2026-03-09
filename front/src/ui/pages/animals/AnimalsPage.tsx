@@ -6,13 +6,13 @@ import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import SortableTable from "../../components/SortableTable";
 import Animal from "../../../logic/entities/Animal";
 import { useNavigate } from "react-router-dom";
-import useGetPermissions from "../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
-import { useAnimals } from "../../../hooks/animals/useAnimals";
-import { useSpecies } from "../../../hooks/animals/useSpecies";
-import { useSexes } from "../../../hooks/animals/useSexes";
-import { useReferents } from "../../../hooks/users/useReferents";
-import { useHostFamilies } from "../../../hooks/hostFamilies/useHostFamilies";
+import { useAnimals } from "../../../api/hooks/animals/useAnimals";
+import { useSpecies } from "../../../api/hooks/animals/useSpecies";
+import { useSexes } from "../../../api/hooks/animals/useSexes";
+import { useReferents } from "../../../api/hooks/users/useReferents";
+import { useHostFamilies } from "../../../api/hooks/hostFamilies/useHostFamilies";
 import AnimalsPageFilters, { Filter, FilterType } from "./AnimalsPageFilters";
 
 interface AnimalsPageProps {}

@@ -2,9 +2,9 @@ import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { MdAssignment } from "react-icons/md";
-import AnimalToHostFamily from "../../../logic/entities/AnimalToHostFamily";
+import AnimalToHostFamily from "../../../../../logic/entities/AnimalToHostFamily";
 import { useNavigate } from "react-router-dom";
-import { useAnimalHostFamiliesByHostFamily } from "../../../hooks/animalHostFamilies/useAnimalHostFamiliesByHostFamily";
+import { useAnimalHostFamiliesByHostFamily } from "../../../../../api/hooks/animalHostFamilies/useAnimalHostFamiliesByHostFamily";
 
 interface HostFamilyAnimalsHistoryProps {
     hostFamilyId: string;
@@ -17,8 +17,7 @@ const HostFamilyAnimalsHistory: FC<HostFamilyAnimalsHistoryProps> = ({ hostFamil
     const numericId = hostFamilyId === "new" ? null : parseInt(hostFamilyId, 10);
     const validId = numericId != null && !Number.isNaN(numericId) ? numericId : null;
 
-    const { data: animalToHostFamiliesData, isPending: isAthfsPending } =
-        useAnimalHostFamiliesByHostFamily(validId);
+    const { data: animalToHostFamiliesData, isPending: isAthfsPending } = useAnimalHostFamiliesByHostFamily(validId);
 
     const animalToHostFamilies = animalToHostFamiliesData ?? [];
 
@@ -57,10 +56,7 @@ const HostFamilyAnimalsHistory: FC<HostFamilyAnimalsHistoryProps> = ({ hostFamil
                                     <td>{animalToHostFamily.entryDateObject?.readable}</td>
                                     <td>{animalToHostFamily.exitDateObject?.readable}</td>
                                     <td>
-                                        <Button
-                                            color="info"
-                                            onClick={() => showDetail(animalToHostFamily)}
-                                        >
+                                        <Button color="info" onClick={() => showDetail(animalToHostFamily)}>
                                             <MdAssignment />
                                         </Button>
                                     </td>

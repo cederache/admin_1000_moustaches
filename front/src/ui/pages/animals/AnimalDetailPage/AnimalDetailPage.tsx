@@ -1,18 +1,18 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Col, Input, Label, Row } from "reactstrap";
-import AnimalsManager from "../../../../managers/animals.manager";
+import AnimalsManager from "../../../../api/managers/animals.manager";
 import { MdRefresh, MdOutlineModeEdit, MdSave, MdDelete } from "react-icons/md";
 import DeleteConfirmationModal from "../../../components/DeleteConfirmationModal";
 import BooleanNullableDropdown from "../../../components/BooleanNullableDropdown";
 import NullableDropdown from "../../../components/NullableDropdown";
-import AnimalsToHostFamiliesManager from "../../../../managers/animalsToHostFamilies.manager";
+import AnimalsToHostFamiliesManager from "../../../../api/managers/animalsToHostFamilies.manager";
 import Page, { CustomBreadcrumbItem } from "../../../components/Page";
 import toast from "react-hot-toast";
 import AnimalToHostFamily from "../../../../logic/entities/AnimalToHostFamily";
 import Animal from "../../../../logic/entities/Animal";
 import { useNavigate, useParams } from "react-router-dom";
-import useGetPermissions from "../../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../../logic/entities/Permissions";
 import HostFamiliesHistory from "./components/HostFamiliesHistory";
 import VeterinarianInterventionsHistory from "./components/VeterinarianInterventionsHistory";
@@ -22,12 +22,12 @@ import AnimalHealthAccordion from "./components/AnimalHealthAccordion";
 import AnimalBehaviourAccordion from "./components/AnimalBehaviourAccordion";
 import AnimalExitAccordion from "./components/AnimalExitAccordion";
 import AnimalDeathAccordion from "./components/AnimalDeathAccordion";
-import { useAnimal } from "../../../../hooks/animals/useAnimal";
-import { useSpecies } from "../../../../hooks/animals/useSpecies";
-import { useSexes } from "../../../../hooks/animals/useSexes";
-import { useCreateAnimal } from "../../../../hooks/animals/useCreateAnimal";
-import { useUpdateAnimal } from "../../../../hooks/animals/useUpdateAnimal";
-import { useDeleteAnimal } from "../../../../hooks/animals/useDeleteAnimal";
+import { useAnimal } from "../../../../api/hooks/animals/useAnimal";
+import { useSpecies } from "../../../../api/hooks/animals/useSpecies";
+import { useSexes } from "../../../../api/hooks/animals/useSexes";
+import { useCreateAnimal } from "../../../../api/hooks/animals/useCreateAnimal";
+import { useUpdateAnimal } from "../../../../api/hooks/animals/useUpdateAnimal";
+import { useDeleteAnimal } from "../../../../api/hooks/animals/useDeleteAnimal";
 
 interface AnimalDetailPageProps {
     [key: string]: any;
@@ -196,8 +196,8 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                 const exitOrDeathDate = animalToSave.deathDate || animalToSave.exitDate;
                 if (exitOrDeathDate !== undefined && exitOrDeathDate !== "") {
                     animalToSave.hostFamilyRelations
-                        ?.filter((athf) => athf.exitDate === undefined)
-                        .forEach((athf) => {
+                        ?.filter((athf: AnimalToHostFamily) => athf.exitDate === undefined)
+                        .forEach((athf: AnimalToHostFamily) => {
                             if (athf.animal?.id == null || athf.hostFamily?.id == null) return;
                             AnimalsToHostFamiliesManager.update(new AnimalToHostFamily(undefined, athf.animal, athf.hostFamily, athf.entryDate, athf.exitDate));
                         });

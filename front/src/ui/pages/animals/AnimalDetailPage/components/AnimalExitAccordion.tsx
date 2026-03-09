@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
-import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
-import Animal from "../../../logic/entities/Animal";
+import BooleanNullableDropdown from "../../../../components/BooleanNullableDropdown";
+import Animal from "../../../../../logic/entities/Animal";
 
 interface AnimalExitAccordionProps {
     animal: Animal;
@@ -13,14 +13,7 @@ interface AnimalExitAccordionProps {
     onAnimalChange: (updates: Partial<Animal>) => void;
 }
 
-const AnimalExitAccordion: FC<AnimalExitAccordionProps> = ({
-    animal,
-    isEditing,
-    canUpdate,
-    openId,
-    onToggle,
-    onAnimalChange,
-}) => {
+const AnimalExitAccordion: FC<AnimalExitAccordionProps> = ({ animal, isEditing, canUpdate, openId, onToggle, onAnimalChange }) => {
     const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
@@ -40,12 +33,7 @@ const AnimalExitAccordion: FC<AnimalExitAccordionProps> = ({
                         </Col>
                         <Col xs={6} md={8}>
                             <Label>{t("animals.accordion.exitDate")}</Label>
-                            <Input
-                                type="date"
-                                value={animal.exitDate}
-                                disabled={disabled}
-                                onChange={(evt) => onAnimalChange({ exitDate: evt.target.value })}
-                            />
+                            <Input type="date" value={animal.exitDate} disabled={disabled} onChange={(evt) => onAnimalChange({ exitDate: evt.target.value })} />
                         </Col>
                         <Col xs={12}>
                             <Label>{t("animals.accordion.exitReason")}</Label>

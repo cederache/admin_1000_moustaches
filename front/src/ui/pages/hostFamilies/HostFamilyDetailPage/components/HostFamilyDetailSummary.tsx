@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Col, Input, Label, Row } from "reactstrap";
-import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
-import NullableDropdown from "../../components/NullableDropdown";
-import Switch from "../../components/Switch";
-import HostFamily from "../../../logic/entities/HostFamily";
-import User from "../../../logic/entities/User";
+import BooleanNullableDropdown from "../../../../components/BooleanNullableDropdown";
+import NullableDropdown from "../../../../components/NullableDropdown";
+import Switch from "../../../../components/Switch";
+import HostFamily from "../../../../../logic/entities/HostFamily";
+import User from "../../../../../logic/entities/User";
 
 interface HostFamilyDetailSummaryProps {
     hostFamily: HostFamily;
@@ -15,13 +15,7 @@ interface HostFamilyDetailSummaryProps {
     onHostFamilyChange: (updates: Partial<HostFamily>) => void;
 }
 
-const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
-    hostFamily,
-    referents,
-    isEditing,
-    canUpdateContact,
-    onHostFamilyChange,
-}) => {
+const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({ hostFamily, referents, isEditing, canUpdateContact, onHostFamilyChange }) => {
     const { t } = useTranslation();
     const disabled = !isEditing || !canUpdateContact;
     return (

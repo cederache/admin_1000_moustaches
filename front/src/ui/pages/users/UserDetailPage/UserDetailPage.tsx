@@ -5,11 +5,11 @@ import Page, { CustomBreadcrumbItem } from "../../../components/Page";
 import toast from "react-hot-toast";
 import User from "../../../../logic/entities/User";
 import { useNavigate, useParams } from "react-router-dom";
-import { setLoggedUser, useLoggedUser } from "../../../../hooks/useLoggedUser";
-import { useUser } from "../../../../hooks/users/useUser";
-import { useCreateUser } from "../../../../hooks/users/useCreateUser";
-import { useUpdateUser } from "../../../../hooks/users/useUpdateUser";
-import { useDeleteUser } from "../../../../hooks/users/useDeleteUser";
+import { setLoggedUser, useLoggedUser } from "../../../../api/hooks/useLoggedUser";
+import { useUser } from "../../../../api/hooks/users/useUser";
+import { useCreateUser } from "../../../../api/hooks/users/useCreateUser";
+import { useUpdateUser } from "../../../../api/hooks/users/useUpdateUser";
+import { useDeleteUser } from "../../../../api/hooks/users/useDeleteUser";
 import UserDetailPageActions from "./components/UserDetailPageActions";
 import UserDetailForm from "./components/UserDetailForm";
 
@@ -132,12 +132,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                         onDelete={() => setShowDeleteConfirmationModal(true)}
                     />
                     <br />
-                    <UserDetailForm
-                        user={formUser}
-                        isEditing={isEditing}
-                        isNew={true}
-                        onUserChange={onUserChange}
-                    />
+                    <UserDetailForm user={formUser} isEditing={isEditing} isNew={true} onUserChange={onUserChange} />
                 </div>
             );
         }
@@ -157,12 +152,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                     onDelete={() => setShowDeleteConfirmationModal(true)}
                 />
                 <br />
-                <UserDetailForm
-                    user={displayUser}
-                    isEditing={isEditing}
-                    isNew={false}
-                    onUserChange={onUserChange}
-                />
+                <UserDetailForm user={displayUser} isEditing={isEditing} isNew={false} onUserChange={onUserChange} />
             </div>
         );
     }

@@ -6,7 +6,7 @@ import { MdDashboard, MdPets, MdHealthAndSafety, MdHomeFilled, MdPeople, MdOutli
 import { NavLink } from "react-router-dom";
 import { Nav, Navbar, NavItem, NavLink as BSNavLink } from "reactstrap";
 import bn from "../../../utils/bemnames";
-import useGetPermissions from "../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
 
 interface SidebarItem {
@@ -15,14 +15,22 @@ interface SidebarItem {
     altKey: string;
     id: string;
     exact: boolean;
-    Icon: React.ComponentType<{ className?: string; size?: number, role: string }>;
+    Icon: React.ComponentType<{ className?: string; size?: number; role: string }>;
     ressourceName?: Ressource;
 }
 
 const navItems: SidebarItem[] = [
     { to: "/", nameKey: "dashboard", altKey: "altDashboard", id: "dashboard", exact: true, Icon: MdDashboard },
     { to: "/animals", nameKey: "animals", altKey: "altAnimals", id: "animaux", exact: false, Icon: MdPets, ressourceName: Ressource.PET_LIST },
-    { to: "/veterinarians", nameKey: "veterinarians", altKey: "altVeterinarians", id: "vet", exact: false, Icon: MdHealthAndSafety, ressourceName: Ressource.VET_LIST },
+    {
+        to: "/veterinarians",
+        nameKey: "veterinarians",
+        altKey: "altVeterinarians",
+        id: "vet",
+        exact: false,
+        Icon: MdHealthAndSafety,
+        ressourceName: Ressource.VET_LIST,
+    },
     { to: "/hostFamilies", nameKey: "hostFamilies", altKey: "altHostFamilies", id: "FA", exact: false, Icon: MdHomeFilled, ressourceName: Ressource.HF_LIST },
     { to: "/users", nameKey: "users", altKey: "altUsers", id: "utilisateur", exact: false, Icon: MdPeople, ressourceName: Ressource.USER_LIST },
 ];
@@ -48,7 +56,10 @@ const Sidebar: React.FC = () => {
                     </Navbar>
                     <Nav vertical>
                         {navItems.map((navItem, index) => {
-                            if (navItem.ressourceName === undefined || (navItem.ressourceName !== undefined && pagePermissions[navItem.ressourceName]?.can_read)) {
+                            if (
+                                navItem.ressourceName === undefined ||
+                                (navItem.ressourceName !== undefined && pagePermissions[navItem.ressourceName]?.can_read)
+                            ) {
                                 return (
                                     <NavItem key={index} className={bem.e("nav-item")}>
                                         <BSNavLink
@@ -69,20 +80,14 @@ const Sidebar: React.FC = () => {
                 </div>
                 <Nav>
                     <NavItem>
-                        <BSNavLink
-                            id="privacy-policy"
-                            tag={NavLink}
-                            to="/privacypolicy"
-                            end="false"
-                            className="text-black align-self-end"
-                        >
+                        <BSNavLink id="privacy-policy" tag={NavLink} to="/privacypolicy" end="false" className="text-black align-self-end">
                             <MdOutlineFileOpen className="me-2" />
                             {t("layout.sidebar.legal")}
                         </BSNavLink>
                     </NavItem>
                 </Nav>
             </div>
-        </aside >
+        </aside>
     );
 };
 

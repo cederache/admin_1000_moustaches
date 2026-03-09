@@ -12,6 +12,7 @@
 - fix useGetPermissions now return defaultPermissions while loading
 - improve api calls with tanstack/react-query
 - split list pages into dedicated components (filters)
+- move hooks and manager in api folder
 
 ## [0.0.6] - 2026/02/09
 

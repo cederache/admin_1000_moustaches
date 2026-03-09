@@ -5,7 +5,7 @@ import { Ressource } from "../../logic/entities/Permissions";
 import AnimalsNonAdopted from "../components/Card/Dashboard/AnimalsNonAdopted";
 import AnimalsAdopted from "../components/Card/Dashboard/AnimalsAdopted";
 import HostFamiliesAvailable from "../components/Card/Dashboard/HostFamiliesAvailable";
-import useGetPermissions from "../../hooks/useGetPermissions";
+import useGetPermissions from "../../api/hooks/useGetPermissions";
 
 interface Cards {
     ressourceName: Ressource;

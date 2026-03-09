@@ -7,7 +7,7 @@ import { PiRabbitFill } from "react-icons/pi";
 import { MdPestControlRodent } from "react-icons/md";
 import { SPECIES_ID } from "../../../../utils/constants";
 import { useNavigate } from "react-router-dom";
-import HostFamilyKindsManager from "../../../../managers/hostFamilyKinds.manager";
+import HostFamilyKindsManager from "../../../../api/managers/hostFamilyKinds.manager";
 
 // pagePermissions[navItem.ressourceName]?.can_read)
 const HostFamiliesCard = ({ title, datas }: { title: string; datas: SpeciesCounts | null }) => {

@@ -1,18 +1,18 @@
 import React, { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import VeterinariansManager from "../../../../managers/veterinarians.manager";
+import VeterinariansManager from "../../../../api/managers/veterinarians.manager";
 import DeleteConfirmationModal from "../../../components/DeleteConfirmationModal";
 import Geocode from "../../../../utils/geocode";
 import toast from "react-hot-toast";
 import Veterinarian from "../../../../logic/entities/Veterinarian";
 import Page, { CustomBreadcrumbItem } from "../../../components/Page";
 import { useNavigate, useParams } from "react-router-dom";
-import useGetPermissions from "../../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../../logic/entities/Permissions";
-import { useVeterinarian } from "../../../../hooks/veterinarians/useVeterinarian";
-import { useCreateVeterinarian } from "../../../../hooks/veterinarians/useCreateVeterinarian";
-import { useUpdateVeterinarian } from "../../../../hooks/veterinarians/useUpdateVeterinarian";
-import { useDeleteVeterinarian } from "../../../../hooks/veterinarians/useDeleteVeterinarian";
+import { useVeterinarian } from "../../../../api/hooks/veterinarians/useVeterinarian";
+import { useCreateVeterinarian } from "../../../../api/hooks/veterinarians/useCreateVeterinarian";
+import { useUpdateVeterinarian } from "../../../../api/hooks/veterinarians/useUpdateVeterinarian";
+import { useDeleteVeterinarian } from "../../../../api/hooks/veterinarians/useDeleteVeterinarian";
 import VeterinarianDetailPageActions from "./components/VeterinarianDetailPageActions";
 import VeterinarianDetailForm from "./components/VeterinarianDetailForm";
 

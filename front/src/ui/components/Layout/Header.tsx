@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdClearAll, MdExitToApp } from "react-icons/md";
 import { Button, ListGroup, ListGroupItem, Nav, Navbar, NavItem, NavLink, Popover, PopoverBody } from "reactstrap";
-import AuthManager from "../../../managers/auth.manager";
+import AuthManager from "../../../api/managers/auth.manager";
 import bn from "../../../utils/bemnames";
 import { UserCard } from "../Card";
-import { useLoggedUser } from "../../../hooks/useLoggedUser";
+import { useLoggedUser } from "../../../api/hooks/useLoggedUser";
 
 const bem = bn.create("header");
 
@@ -31,14 +31,16 @@ const Header: React.FC = () => {
 
     return (
         <Navbar light expand className={bem.b("bg-white")}>
-            <Button outline onClick={handleSidebarControlButton} >
+            <Button outline onClick={handleSidebarControlButton}>
                 {t("common.menu")}
                 <MdClearAll size={25} aria-label={t("layout.header.menuBurger")} role="img" />
             </Button>
 
             <Nav navbar className={bem.e("nav-right")}>
                 <NavItem>
-                    <Button id="Popover2" onClick={toggleUserCardPopover}>{loggedUser?.displayName || loggedUser?.email}</Button>
+                    <Button id="Popover2" onClick={toggleUserCardPopover}>
+                        {loggedUser?.displayName || loggedUser?.email}
+                    </Button>
 
                     <Popover
                         placement="bottom-end"

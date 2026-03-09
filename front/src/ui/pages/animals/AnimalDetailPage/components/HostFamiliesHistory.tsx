@@ -2,18 +2,18 @@ import React, { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdAddBox, MdAssignment, MdDelete, MdEdit } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
-import AnimalsToHostFamiliesManager from "../../../../../managers/animalsToHostFamilies.manager";
+import AnimalsToHostFamiliesManager from "../../../../../api/managers/animalsToHostFamilies.manager";
 import AnimalToHostFamilyModal from "./AnimalToHostFamilyModal";
 import DeleteConfirmationModal from "../../../../components/DeleteConfirmationModal";
 import AnimalToHostFamily from "../../../../../logic/entities/AnimalToHostFamily";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Animal from "../../../../../logic/entities/Animal";
-import useGetPermissions from "../../../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../../../logic/entities/Permissions";
-import { useAnimalHostFamiliesByAnimal } from "../../../../../hooks/animalHostFamilies/useAnimalHostFamiliesByAnimal";
-import { useHostFamilies } from "../../../../../hooks/hostFamilies/useHostFamilies";
-import { useDeleteAnimalToHostFamily } from "../../../../../hooks/animalHostFamilies/useDeleteAnimalToHostFamily";
+import { useAnimalHostFamiliesByAnimal } from "../../../../../api/hooks/animalHostFamilies/useAnimalHostFamiliesByAnimal";
+import { useHostFamilies } from "../../../../../api/hooks/hostFamilies/useHostFamilies";
+import { useDeleteAnimalToHostFamily } from "../../../../../api/hooks/animalHostFamilies/useDeleteAnimalToHostFamily";
 
 interface HostFamiliesHistoryProps {
     animal: Animal;

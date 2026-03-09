@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
-import Animal from "../../../logic/entities/Animal";
+import Animal from "../../../../../logic/entities/Animal";
 
 interface AnimalDeathAccordionProps {
     animal: Animal;
@@ -12,14 +12,7 @@ interface AnimalDeathAccordionProps {
     onAnimalChange: (updates: Partial<Animal>) => void;
 }
 
-const AnimalDeathAccordion: FC<AnimalDeathAccordionProps> = ({
-    animal,
-    isEditing,
-    canUpdate,
-    openId,
-    onToggle,
-    onAnimalChange,
-}) => {
+const AnimalDeathAccordion: FC<AnimalDeathAccordionProps> = ({ animal, isEditing, canUpdate, openId, onToggle, onAnimalChange }) => {
     const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (

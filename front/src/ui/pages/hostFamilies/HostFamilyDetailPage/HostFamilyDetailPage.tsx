@@ -1,39 +1,34 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardBody } from "reactstrap";
-import HostFamiliesManager from "../../../managers/hostFamilies.manager";
-import Geocode from "../../../utils/geocode";
-import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
-import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import HostFamily from "../../../logic/entities/HostFamily";
+import HostFamiliesManager from "../../../../api/managers/hostFamilies.manager";
+import Geocode from "../../../../utils/geocode";
+import DeleteConfirmationModal from "../../../components/DeleteConfirmationModal";
+import Page, { CustomBreadcrumbItem } from "../../../components/Page";
+import HostFamily from "../../../../logic/entities/HostFamily";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import useGetPermissions from "../../../hooks/useGetPermissions";
-import { Ressource } from "../../../logic/entities/Permissions";
-import HostFamilyDetailPageActions from "./HostFamilyDetailPageActions";
-import HostFamilyDetailHeader from "./HostFamilyDetailHeader";
-import HostFamilyDetailSummary from "./HostFamilyDetailSummary";
-import HostFamilyContactAccordion from "./HostFamilyContactAccordion";
-import HostFamilyHomeAccordion from "./HostFamilyHomeAccordion";
-import HostFamilyHostAccordion from "./HostFamilyHostAccordion";
-import HostFamilyAnimalsHistory from "./HostFamilyAnimalsHistory";
-import { useHostFamily } from "../../../hooks/hostFamilies/useHostFamily";
-import { useHostFamilyKinds } from "../../../hooks/hostFamilies/useHostFamilyKinds";
-import { useReferents } from "../../../hooks/users/useReferents";
-import { useCreateHostFamily } from "../../../hooks/hostFamilies/useCreateHostFamily";
-import { useUpdateHostFamily } from "../../../hooks/hostFamilies/useUpdateHostFamily";
-import { useDeleteHostFamily } from "../../../hooks/hostFamilies/useDeleteHostFamily";
+import useGetPermissions from "../../../../api/hooks/useGetPermissions";
+import { Ressource } from "../../../../logic/entities/Permissions";
+import HostFamilyDetailPageActions from "./components/HostFamilyDetailPageActions";
+import HostFamilyDetailHeader from "./components/HostFamilyDetailHeader";
+import HostFamilyDetailSummary from "./components/HostFamilyDetailSummary";
+import HostFamilyContactAccordion from "./components/HostFamilyContactAccordion";
+import HostFamilyHomeAccordion from "./components/HostFamilyHomeAccordion";
+import HostFamilyHostAccordion from "./components/HostFamilyHostAccordion";
+import HostFamilyAnimalsHistory from "./components/HostFamilyAnimalsHistory";
+import { useHostFamily } from "../../../../api/hooks/hostFamilies/useHostFamily";
+import { useHostFamilyKinds } from "../../../../api/hooks/hostFamilies/useHostFamilyKinds";
+import { useReferents } from "../../../../api/hooks/users/useReferents";
+import { useCreateHostFamily } from "../../../../api/hooks/hostFamilies/useCreateHostFamily";
+import { useUpdateHostFamily } from "../../../../api/hooks/hostFamilies/useUpdateHostFamily";
+import { useDeleteHostFamily } from "../../../../api/hooks/hostFamilies/useDeleteHostFamily";
 
 interface HostFamilyDetailPageProps {
     [key: string]: any;
 }
 
-const permissionsName: Ressource[] = [
-    Ressource.HF_CONTACT,
-    Ressource.HF_ADDRESS,
-    Ressource.HF_HOST,
-    Ressource.HF_HIST_PETS,
-];
+const permissionsName: Ressource[] = [Ressource.HF_CONTACT, Ressource.HF_ADDRESS, Ressource.HF_HOST, Ressource.HF_HIST_PETS];
 
 const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
     const { t } = useTranslation();
@@ -384,9 +379,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
                     </CardBody>
                 </Card>
                 <br />
-                {hostFamilyId !== "new" && pagePermissions[Ressource.HF_HIST_PETS].can_read && (
-                    <HostFamilyAnimalsHistory hostFamilyId={hostFamilyId} />
-                )}
+                {hostFamilyId !== "new" && pagePermissions[Ressource.HF_HIST_PETS].can_read && <HostFamilyAnimalsHistory hostFamilyId={hostFamilyId} />}
             </div>
         );
     }

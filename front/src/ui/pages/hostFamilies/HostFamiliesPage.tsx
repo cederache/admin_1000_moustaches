@@ -13,11 +13,11 @@ import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import HostFamily from "../../../logic/entities/HostFamily";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import useGetPermissions from "../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
-import { useHostFamilies } from "../../../hooks/hostFamilies/useHostFamilies";
-import { useHostFamilyKinds } from "../../../hooks/hostFamilies/useHostFamilyKinds";
-import { useReferents } from "../../../hooks/users/useReferents";
+import { useHostFamilies } from "../../../api/hooks/hostFamilies/useHostFamilies";
+import { useHostFamilyKinds } from "../../../api/hooks/hostFamilies/useHostFamilyKinds";
+import { useReferents } from "../../../api/hooks/users/useReferents";
 import HostFamiliesPageFilters, { Filter, FilterType } from "./HostFamiliesPageFilters";
 
 // Leaflet icon fix
@@ -163,13 +163,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     </Button>
                 </Col>
             </Row>
-            <HostFamiliesPageFilters
-                filters={filters}
-                setFilters={setFilters}
-                hostFamilyKinds={hostFamilyKinds}
-                referents={referents}
-                isLoading={isLoading}
-            />
+            <HostFamiliesPageFilters filters={filters} setFilters={setFilters} hostFamilyKinds={hostFamilyKinds} referents={referents} isLoading={isLoading} />
 
             <br />
 

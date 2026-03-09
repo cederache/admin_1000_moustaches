@@ -1,15 +1,15 @@
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { useState, FC, ReactElement, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink, } from "reactstrap";
+import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink } from "reactstrap";
 import logo from "../../assets/img/logo/Logo1000Moustaches.png";
-import UsersManager from "../../managers/users.manager";
+import UsersManager from "../../api/managers/users.manager";
 import SourceLink from "./SourceLink";
 import Permissions from "../../logic/entities/Permissions";
 import { MdOutlineFileOpen } from "react-icons/md";
 
 import { auth } from "../../firebase-config";
-import AuthManager from "../../managers/auth.manager";
+import AuthManager from "../../api/managers/auth.manager";
 import toast from "react-hot-toast";
 
 type PagePermissions = {
@@ -49,7 +49,7 @@ const AuthForm: FC<AuthFormProps> = ({
     confirmPasswordLabel,
     confirmPasswordInputProps,
     children,
-    onLogoClick = () => { },
+    onLogoClick = () => {},
     ...props
 }): ReactElement => {
     const { t } = useTranslation();
@@ -59,7 +59,6 @@ const AuthForm: FC<AuthFormProps> = ({
     const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
 
     const [pagePermissions, setPagePermissions] = useState<PagePermissions>({});
-
 
     let isLogin = () => {
         return authState === AuthFormState.LOGIN;
@@ -143,7 +142,13 @@ const AuthForm: FC<AuthFormProps> = ({
                 </SourceLink>
                 <FormGroup>
                     <Label for="email">{t("auth.email")}</Label>
-                    <Input name="email" type="email" placeholder={t("auth.placeholder.email")} value={username} onChange={(evt) => setUsername(evt.target.value)} />
+                    <Input
+                        name="email"
+                        type="email"
+                        placeholder={t("auth.placeholder.email")}
+                        value={username}
+                        onChange={(evt) => setUsername(evt.target.value)}
+                    />
                 </FormGroup>
                 <FormGroup>
                     <Label for="password">{t("auth.password")}</Label>
@@ -189,19 +194,12 @@ const AuthForm: FC<AuthFormProps> = ({
                 {children}
 
                 <div className="text-center mt-3">
-                    <NavLink
-                        id="privacy-policy"
-                        href="/privacypolicylogin"
-                        target="_blank"
-                        className="text-black text-decoration-none small"
-                    >
+                    <NavLink id="privacy-policy" href="/privacypolicylogin" target="_blank" className="text-black text-decoration-none small">
                         <MdOutlineFileOpen className="me-2" />
                         {t("auth.legal")}
                     </NavLink>
                 </div>
             </Form>
-
-
 
             <Modal isOpen={showForgotPasswordModal} {...props}>
                 <ModalHeader>

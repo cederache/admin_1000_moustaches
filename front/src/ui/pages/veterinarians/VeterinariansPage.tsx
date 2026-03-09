@@ -11,9 +11,9 @@ import SortableTable from "../../components/SortableTable";
 import Veterinarian from "../../../logic/entities/Veterinarian";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import { useNavigate } from "react-router-dom";
-import useGetPermissions from "../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
-import { useVeterinarians } from "../../../hooks/veterinarians/useVeterinarians";
+import { useVeterinarians } from "../../../api/hooks/veterinarians/useVeterinarians";
 import VeterinariansPageFilters, { Filter, FilterType } from "./VeterinariansPageFilters";
 
 L.Marker.prototype.options.icon = BlueIcon;
@@ -34,10 +34,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
 
     const { data: veterinariansData, isPending: isVeterinariansPending, isError: isVeterinariansError, refetch: refetchVeterinarians } = useVeterinarians();
 
-    const veterinarians = useMemo(
-        () => (veterinariansData ? sortBy([...veterinariansData], "name") : []),
-        [veterinariansData]
-    );
+    const veterinarians = useMemo(() => (veterinariansData ? sortBy([...veterinariansData], "name") : []), [veterinariansData]);
 
     const [searchText, setSearchText] = useState("");
     const [showMap, setShowMap] = useState(false);
@@ -127,12 +124,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
         >
             <Row>
                 <Col>
-                    <Input
-                        name="name"
-                        placeholder={t("veterinarians.searchPlaceholder")}
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                    />
+                    <Input name="name" placeholder={t("veterinarians.searchPlaceholder")} value={searchText} onChange={(e) => setSearchText(e.target.value)} />
                 </Col>
                 <Col xs="auto">
                     {pagePermissions[Ressource.VET_LIST]?.can_create && (
@@ -226,16 +218,10 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                                         <div className="text-center">
                                                             {veterinarian.name}
                                                             <br />
-                                                            <span title={veterinarian.priceLevelTooltip ?? ""}>
-                                                                {veterinarian.priceLevelText}
-                                                            </span>
+                                                            <span title={veterinarian.priceLevelTooltip ?? ""}>{veterinarian.priceLevelText}</span>
                                                             <br />
                                                             <div className="pt-2">
-                                                                <Button
-                                                                    title={t("common.seeDetail")}
-                                                                    color="primary"
-                                                                    onClick={() => showDetail(veterinarian)}
-                                                                >
+                                                                <Button title={t("common.seeDetail")} color="primary" onClick={() => showDetail(veterinarian)}>
                                                                     <MdAssignment />
                                                                 </Button>
                                                             </div>

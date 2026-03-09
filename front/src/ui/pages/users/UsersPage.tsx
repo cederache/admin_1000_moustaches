@@ -10,7 +10,7 @@ import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
 import User from "../../../logic/entities/User";
 import { useNavigate } from "react-router-dom";
-import { useUsers } from "../../../hooks/users/useUsers";
+import { useUsers } from "../../../api/hooks/users/useUsers";
 
 interface UsersPageProps {}
 

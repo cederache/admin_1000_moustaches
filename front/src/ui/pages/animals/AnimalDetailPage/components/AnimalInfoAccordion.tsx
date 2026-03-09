@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
-import Dropdown from "../../components/Dropdown";
-import NullableDropdown from "../../components/NullableDropdown";
-import Animal from "../../../logic/entities/Animal";
-import Species from "../../../logic/entities/Species";
-import { Sexe } from "../../../managers/animals.manager";
+import Dropdown from "../../../../components/Dropdown";
+import NullableDropdown from "../../../../components/NullableDropdown";
+import Animal from "../../../../../logic/entities/Animal";
+import Species from "../../../../../logic/entities/Species";
+import { Sexe } from "../../../../../api/managers/animals.manager";
 
 interface AnimalInfoAccordionProps {
     animal: Animal;
@@ -18,16 +18,7 @@ interface AnimalInfoAccordionProps {
     onAnimalChange: (updates: Partial<Animal>) => void;
 }
 
-const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
-    animal,
-    species,
-    sexes,
-    isEditing,
-    canUpdate,
-    openId,
-    onToggle,
-    onAnimalChange,
-}) => {
+const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({ animal, species, sexes, isEditing, canUpdate, openId, onToggle, onAnimalChange }) => {
     const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
@@ -43,11 +34,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                             <Row>
                                 <Col xs={12}>
                                     <Label>{t("animals.table.icad")}</Label>
-                                    <Input
-                                        value={animal.icad || ""}
-                                        disabled={disabled}
-                                        onChange={(evt) => onAnimalChange({ icad: evt.target.value })}
-                                    />
+                                    <Input value={animal.icad || ""} disabled={disabled} onChange={(evt) => onAnimalChange({ icad: evt.target.value })} />
                                 </Col>
                             </Row>
                             <Row>
@@ -71,11 +58,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                                         withNewLine={true}
                                         color="primary"
                                         disabled={disabled}
-                                        value={
-                                            animal.sexe === undefined || animal.sexe === null
-                                                ? null
-                                                : sexes.find((aSexe) => aSexe.key === animal?.sexe)
-                                        }
+                                        value={animal.sexe === undefined || animal.sexe === null ? null : sexes.find((aSexe) => aSexe.key === animal?.sexe)}
                                         values={sexes}
                                         valueDisplayName={(aSexe) => aSexe.value}
                                         valueActiveCheck={(aSexe) => aSexe.key === animal?.sexe}
@@ -87,11 +70,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                             <Row>
                                 <Col xs={6}>
                                     <Label>{t("animals.accordion.infoRace")}</Label>
-                                    <Input
-                                        value={animal.race || ""}
-                                        disabled={disabled}
-                                        onChange={(evt) => onAnimalChange({ race: evt.target.value })}
-                                    />
+                                    <Input value={animal.race || ""} disabled={disabled} onChange={(evt) => onAnimalChange({ race: evt.target.value })} />
                                 </Col>
                             </Row>
                         </Col>

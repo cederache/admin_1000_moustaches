@@ -2,15 +2,15 @@ import React, { FC, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdDelete, MdOutlineModeEdit } from "react-icons/md";
 import { Button, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
-import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
-import Dropdown from "../../components/Dropdown";
-import VeterinarianIntervention from "../../../logic/entities/VeterinarianIntervention";
+import DeleteConfirmationModal from "../../../../components/DeleteConfirmationModal";
+import Dropdown from "../../../../components/Dropdown";
+import VeterinarianIntervention from "../../../../../logic/entities/VeterinarianIntervention";
 import toast from "react-hot-toast";
-import Animal from "../../../logic/entities/Animal";
-import { useVeterinarians } from "../../../hooks/veterinarians/useVeterinarians";
-import { useCreateVeterinarianIntervention } from "../../../hooks/veterinarianInterventions/useCreateVeterinarianIntervention";
-import { useUpdateVeterinarianIntervention } from "../../../hooks/veterinarianInterventions/useUpdateVeterinarianIntervention";
-import { useDeleteVeterinarianIntervention } from "../../../hooks/veterinarianInterventions/useDeleteVeterinarianIntervention";
+import Animal from "../../../../../logic/entities/Animal";
+import { useVeterinarians } from "../../../../../api/hooks/veterinarians/useVeterinarians";
+import { useCreateVeterinarianIntervention } from "../../../../../api/hooks/veterinarianInterventions/useCreateVeterinarianIntervention";
+import { useUpdateVeterinarianIntervention } from "../../../../../api/hooks/veterinarianInterventions/useUpdateVeterinarianIntervention";
+import { useDeleteVeterinarianIntervention } from "../../../../../api/hooks/veterinarianInterventions/useDeleteVeterinarianIntervention";
 
 interface VeterinarianInterventionModalProps {
     animal: Animal;
@@ -19,13 +19,7 @@ interface VeterinarianInterventionModalProps {
     handleClose: (shouldReload: boolean) => void;
 }
 
-const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
-    animal,
-    veterinarianIntervention: vetInter,
-    show,
-    handleClose,
-    ...props
-}) => {
+const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({ animal, veterinarianIntervention: vetInter, show, handleClose, ...props }) => {
     const { t } = useTranslation();
     const [veterinarianIntervention, setVeterinarianIntervention] = useState<VeterinarianIntervention>(vetInter);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -136,9 +130,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                             disabled={!isEditing}
                             value={{
                                 id: veterinarianIntervention.veterinarianId,
-                                name:
-                                    veterinarians.find((vet) => vet.id === veterinarianIntervention.veterinarianId)
-                                        ?.name ?? "",
+                                name: veterinarians.find((vet) => vet.id === veterinarianIntervention.veterinarianId)?.name ?? "",
                             }}
                             values={veterinarians}
                             valueDisplayName={(vet) => vet.name}
