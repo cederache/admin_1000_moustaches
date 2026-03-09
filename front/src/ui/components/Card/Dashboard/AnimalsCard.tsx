@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardBody, CardTitle, CardText, Row, Col } from "reactstrap";
 import SpeciesCounts from "../../../../logic/entities/SpeciesCounts";
 import { PiCatFill, PiDogFill } from "react-icons/pi";
@@ -9,6 +10,7 @@ import { SPECIES_ID } from "../../../../utils/constants";
 
 // pagePermissions[navItem.ressourceName]?.can_read)
 const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | null }) => {
+    const { t } = useTranslation();
     const [countDog, setCountDog] = useState<number | undefined>(undefined);
     const [countRabbit, setCountRabbit] = useState<number | undefined>(undefined);
     const [countCat, setCountCat] = useState<number | undefined>(undefined);
@@ -33,29 +35,29 @@ const AnimalsCard = ({ title, datas }: { title: string; datas: SpeciesCounts | n
             <Row className="justify-content-center">
                 <Col className="d-flex align-items-center" xs="4">
                     <Card body className="cardBorder">
-                        <CardTitle className="fs-3"> Total </CardTitle>
+                        <CardTitle className="fs-3">{t("dashboard.card.total")}</CardTitle>
                         <CardText className="fs-1">{datas?.total}</CardText>
                     </Card>
                 </Col>
                 <Col xs="4">
                     <Card body className="cardBorder align-items-center">
-                        <PiDogFill size={35} aria-label="logo chien" role="img" />
+                        <PiDogFill size={35} aria-label={t("dashboard.aria.dog")} role="img" />
                         <CardText className="fs-2" > {countDog ?? "-"} </CardText>
                     </Card>
                     <br />
                     <Card body className="cardBorder align-items-center">
-                        <PiRabbitFill size={35} aria-label="logo lapin" role="img" />
+                        <PiRabbitFill size={35} aria-label={t("dashboard.aria.rabbit")} role="img" />
                         <CardText className="fs-2"> {countRabbit ?? "-"} </CardText>
                     </Card>
                 </Col>
                 <Col xs="4">
                     <Card body className="cardBorder align-items-center">
-                        <PiCatFill size={35} aria-label="logo chat" role="img" />
+                        <PiCatFill size={35} aria-label={t("dashboard.aria.cat")} role="img" />
                         <CardText className="fs-2"> {countCat ?? "-"} </CardText>
                     </Card>
                     <br />
                     <Card body className="cardBorder align-items-center">
-                        <MdPestControlRodent size={35} aria-label="logo souris" role="img" />
+                        <MdPestControlRodent size={35} aria-label={t("dashboard.aria.mouse")} role="img" />
                         <CardText className="fs-2"> {countOther ?? "-"} </CardText>
                     </Card>
                 </Col>

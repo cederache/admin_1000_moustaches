@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import hostFamiliesAvailabledManager from "../../../../managers/hostFamiliesAvailable.manager";
 import SpeciesCounts from "../../../../logic/entities/SpeciesCounts";
-import AnimalsCard from "./AnimalsCard";
 import HostFamiliesCard from "./HostFamiliesCard";
 
 const HostFamiliesAvailable = () => {
+    const { t } = useTranslation();
     const [hostFamiliesAvailableData, setHostFamiliesAvailableData] = useState<SpeciesCounts | null>(null);
 
     useEffect(() => {
@@ -18,6 +19,6 @@ const HostFamiliesAvailable = () => {
             });
     }, []);
 
-    return <HostFamiliesCard title="Nombre de familles d'accueil disponibles" datas={hostFamiliesAvailableData} />;
+    return <HostFamiliesCard title={t("dashboard.card.hostFamiliesAvailable")} datas={hostFamiliesAvailableData} />;
 };
 export default HostFamiliesAvailable;

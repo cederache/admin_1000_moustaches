@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardBody } from "reactstrap";
 import HostFamiliesManager from "../../../managers/hostFamilies.manager";
 import Geocode from "../../../utils/geocode";
@@ -33,6 +34,7 @@ const permissionsName: Ressource[] = [
 ];
 
 const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
+    const { t } = useTranslation();
     const { id: paramHostFamilyId } = useParams();
     const hostFamilyId = paramHostFamilyId ?? "new";
     const [hostFamily, setHostFamily] = useState<HostFamily | null>(null);
@@ -67,7 +69,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
             .then(setHostFamily)
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             });
     };
 
@@ -85,7 +87,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
             )
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             });
     };
 
@@ -95,7 +97,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
             .then(setReferents)
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             });
     };
 
@@ -170,23 +172,23 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
 
         if (hostFamilyId === "new") {
             if (hostFamily.firstname === undefined) {
-                toast.error("Le prénom est obligatoire");
+                toast.error(t("hostFamilies.validation.firstNameRequired"));
                 setIsEditing(true);
                 return;
             }
             if (hostFamily.name === undefined) {
-                toast.error("Le nom est obligatoire");
+                toast.error(t("hostFamilies.validation.lastNameRequired"));
                 setIsEditing(true);
                 return;
             }
             HostFamiliesManager.create(hostFamily)
                 .then((updatedHostFamily) => {
-                    toast.success("Famille d'Accueil créée");
+                    toast.success(t("hostFamilies.message.hostFamilyCreated"));
                     navigate(`/hostFamilies/${updatedHostFamily.id}`);
                 })
                 .catch((err) => {
                     console.error(err);
-                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
+                    toast.error(`${t("common.errorCreate")}\n${err}`);
                     setIsEditing(true);
                 });
             return;
@@ -195,12 +197,12 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
         HostFamiliesManager.update(hostFamily)
             .then(() => {
                 getHostFamily();
-                toast.success("Famille d'Accueil mis à jour");
+                toast.success(t("hostFamilies.message.hostFamilyUpdated"));
             })
             .catch((err) => {
                 console.error(err);
                 getHostFamily();
-                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
+                toast.error(`${t("common.errorUpdate")}\n${err}`);
             });
     };
 
@@ -208,13 +210,13 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
         if (hostFamily === null) return;
         HostFamiliesManager.delete(hostFamily)
             .then(() => {
-                toast.success("Famille d'Accueil supprimée");
+                toast.success(t("hostFamilies.message.hostFamilyDeleted"));
                 navigate("/hostFamilies");
             })
             .catch((err) => {
                 console.error(err);
                 getHostFamily();
-                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
+                toast.error(`${t("common.errorDelete")}\n${err}`);
             });
     };
 
@@ -235,10 +237,10 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
         pagePermissions[Ressource.HF_HOST].can_update ||
         pagePermissions[Ressource.HF_HIST_PETS].can_update;
 
-    let content = <div>Chargement...</div>;
+    let content = <div>{t("common.loading")}</div>;
 
     if (hostFamily === undefined) {
-        content = <div>Famille d'Accueil non trouvé</div>;
+        content = <div>{t("hostFamilies.hostFamilyNotFound")}</div>;
     } else if (hostFamily === null) {
         content = <div>Chargement...</div>;
     } else {
@@ -321,10 +323,10 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
     return (
         <Page
             className="HostFamilyPage"
-            title="Détail de la Famille d'Accueil"
+            title={t("hostFamilies.detailTitle")}
             breadcrumbs={[
-                { name: "Familles d'Accueil", to: "/hostFamilies" } as CustomBreadcrumbItem,
-                { name: "Famille d'Accueil", active: true } as CustomBreadcrumbItem,
+                { name: t("hostFamilies.breadcrumbList"), to: "/hostFamilies" } as CustomBreadcrumbItem,
+                { name: t("hostFamilies.breadcrumbDetail"), active: true } as CustomBreadcrumbItem,
             ]}
         >
             {content}
@@ -334,7 +336,7 @@ const HostFamilyDetailPage: FC<HostFamilyDetailPageProps> = () => {
                     setShowDeleteConfirmationModal(false);
                     if (confirmed) deleteHF();
                 }}
-                bodyEntityName="une Famille d'Accueil"
+                bodyEntityName={t("hostFamilies.entityName")}
             />
         </Page>
     );

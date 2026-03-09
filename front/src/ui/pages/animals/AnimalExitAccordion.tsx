@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
 import Animal from "../../../logic/entities/Animal";
@@ -20,15 +21,16 @@ const AnimalExitAccordion: FC<AnimalExitAccordionProps> = ({
     onToggle,
     onAnimalChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
         <Accordion className="pb-3" open={openId} toggle={onToggle}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Sortie</AccordionHeader>
+                <AccordionHeader targetId="1">{t("animals.accordion.exit")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={6} md={4}>
-                            <Label>Certificat de cession</Label>
+                            <Label>{t("animals.accordion.exitCessionCertificate")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={animal.transferCertificate ?? null}
@@ -37,7 +39,7 @@ const AnimalExitAccordion: FC<AnimalExitAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6} md={8}>
-                            <Label>Date de sortie</Label>
+                            <Label>{t("animals.accordion.exitDate")}</Label>
                             <Input
                                 type="date"
                                 value={animal.exitDate}
@@ -46,7 +48,7 @@ const AnimalExitAccordion: FC<AnimalExitAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={12}>
-                            <Label>Raison de sortie</Label>
+                            <Label>{t("animals.accordion.exitReason")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.exitReason || ""}

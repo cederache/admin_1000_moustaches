@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MdAddBox, MdAssignment, MdDelete, MdEdit } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
 import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
@@ -20,6 +21,7 @@ interface HostFamiliesHistoryProps {
 }
 
 const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = true, onAnimalUpdated }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const pagePermissions = useGetPermissions([Ressource.PET_HIST_HF]);
 
@@ -45,7 +47,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             })
             .finally(() => setLoading(false));
     };
@@ -73,12 +75,12 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
         }
         AnimalsToHostFamiliesManager.delete(toDelete)
             .then(() => {
-                toast.success("Lien Animal / Famille d'accueil supprimé");
+                toast.success(t("animals.message.linkDeleted"));
                 shouldRefresh();
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
+                toast.error(`${t("common.errorDelete")}\n${err}`);
             });
     };
 
@@ -88,7 +90,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                 <CardHeader>
                     <Row>
                         <Col>
-                            <h3>Historique des Familles d'Accueil</h3>
+                            <h3>{t("animals.history.hostFamiliesTitle")}</h3>
                         </Col>
                         <Col xs={"auto"}>
                             {pagePermissions[Ressource.PET_HIST_HF]?.can_create && (
@@ -96,7 +98,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                                     color="primary"
                                     onClick={() => {
                                         if (!animal.id) {
-                                            toast.error("Sauvegardez d'abord l'animal avant de lui attribuer une famille d'accueil");
+                                            toast.error(t("animals.message.saveAnimalFirst"));
                                             return;
                                         }
                                         setModalAnimalToHostFamily(AnimalsToHostFamiliesManager.createAnimalToHostFamily(animal, undefined));
@@ -112,17 +114,17 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                     <Table striped>
                         <thead>
                             <tr>
-                                <th scope="col">Prénom Nom</th>
-                                <th scope="col">Date d'entrée</th>
-                                <th scope="col">Fiche de la FA</th>
-                                <th scope="col">Modification</th>
-                                <th scope="col">Suppression</th>
+                                <th scope="col">{t("animals.history.hostFamiliesFirstnameName")}</th>
+                                <th scope="col">{t("animals.history.hostFamiliesEntryDate")}</th>
+                                <th scope="col">{t("animals.history.hostFamiliesSheet")}</th>
+                                <th scope="col">{t("animals.history.hostFamiliesEdit")}</th>
+                                <th scope="col">{t("animals.history.hostFamiliesDelete")}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5}>Chargement...</td>
+                                    <td colSpan={5}>{t("common.loading")}</td>
                                 </tr>
                             ) : (
                             animalToHostFamilies.map((animalToHostFamily, index) => {
@@ -192,7 +194,7 @@ const HostFamiliesHistory: FC<HostFamiliesHistoryProps> = ({ animal, isOpen = tr
                         deleteAnimalToHostFamily(toDelete);
                     }
                 }}
-                bodyEntityName={"le lien entre l'Animal et la Famille D'acceuil"}
+                bodyEntityName={t("animals.history.hostFamiliesLinkEntityName")}
             />
         </>
     );

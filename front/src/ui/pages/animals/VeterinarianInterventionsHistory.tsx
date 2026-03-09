@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MdAddBox, MdAssignment, MdDelete } from "react-icons/md";
 import { Button, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
 import VeterinarianInterventionsManager from "../../../managers/veterinarianInterventions.manager";
@@ -15,6 +16,7 @@ interface VeterinarianInterventionsHistoryProps {
 }
 
 const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps> = ({ animal, isOpen = true }) => {
+    const { t } = useTranslation();
     const [veterinarianInterventions, setVeterinarianInterventions] = useState<VeterinarianIntervention[]>([]);
     const [loading, setLoading] = useState(false);
     const [modalVeterinarianIntervention, setModalVeterinarianIntervention] = useState<VeterinarianIntervention | null>(null);
@@ -32,7 +34,7 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as VeterinarianIntervention[];
             })
             .finally(() => setLoading(false));
@@ -55,12 +57,12 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
     const deleteVeterinarianIntervention = (veterinarianIntervention: VeterinarianIntervention) => {
         VeterinarianInterventionsManager.delete(veterinarianIntervention)
             .then(() => {
-                toast.success("Intervention vétérinaire supprimée");
+                toast.success(t("animals.message.interventionDeleted"));
                 shouldRefresh();
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
+                toast.error(`${t("common.errorDelete")}\n${err}`);
             });
     };
 
@@ -72,7 +74,7 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                 <CardHeader>
                     <Row>
                         <Col>
-                            <h3>Historique des interventions vétérinaires</h3>
+                            <h3>{t("animals.history.veterinarianInterventionsTitle")}</h3>
                         </Col>
                         <Col xs={"auto"}>
                             {pagePermissions[Ressource.PET_HIST_VETO]?.can_create && (
@@ -80,7 +82,7 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                                     color="primary"
                                     onClick={() => {
                                         if (!animal.id) {
-                                            toast.error("Sauvegardez d'abord l'animal avant d'enregistrer une intervention vétérinaire");
+                                            toast.error(t("animals.message.saveAnimalBeforeIntervention"));
                                             return;
                                         }
                                         setModalVeterinarianIntervention(VeterinarianInterventionsManager.createVeterinarianIntervention());
@@ -96,16 +98,16 @@ const VeterinarianInterventionsHistory: FC<VeterinarianInterventionsHistoryProps
                     <Table striped>
                         <thead>
                             <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Notes</th>
-                                <th scope="col">Détail</th>
-                                <th scope="col">Suppression</th>
+                                <th scope="col">{t("animals.history.veterinarianInterventionsDate")}</th>
+                                <th scope="col">{t("animals.history.veterinarianInterventionsNotes")}</th>
+                                <th scope="col">{t("animals.history.veterinarianInterventionsDetail")}</th>
+                                <th scope="col">{t("animals.history.veterinarianInterventionsDelete")}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={4}>Chargement...</td>
+                                    <td colSpan={4}>{t("common.loading")}</td>
                                 </tr>
                             ) : (
                             veterinarianInterventions

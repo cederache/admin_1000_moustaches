@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import {
     Accordion,
     AccordionItem,
@@ -34,6 +35,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
     onToggle,
     onHostFamilyChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     const currentKinds = hostFamily.hostFamilyKinds ?? [];
 
@@ -53,11 +55,11 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
     return (
         <Accordion className="pb-3" open={openId} {...{ toggle: onToggle }}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Information sur l'accueil</AccordionHeader>
+                <AccordionHeader targetId="1">{t("hostFamilies.accordion.hostTitle")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={12}>
-                            <Label>Type de Famille d'Accueil</Label>
+                            <Label>{t("hostFamilies.accordion.hostType")}</Label>
                             <FormGroup check>
                                 {hostFamilyKinds.map((hfk) => (
                                     <Row key={hfk.id}>
@@ -80,7 +82,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={4} lg={3}>
-                            <Label>Peut donner soins véto</Label>
+                            <Label>{t("hostFamilies.accordion.hostVetCare")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={hostFamily.canProvideVeterinaryCare ?? null}
@@ -91,7 +93,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={4} lg={3}>
-                            <Label>Peut sociabiliser</Label>
+                            <Label>{t("hostFamilies.accordion.hostSocialize")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={hostFamily.canProvideSociabilisation ?? null}
@@ -102,7 +104,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={4} lg={3}>
-                            <Label>Peut accueillir des animaux handicapés</Label>
+                            <Label>{t("hostFamilies.accordion.hostHandicapped")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={hostFamily.canHostDisableAnimal ?? null}
@@ -113,7 +115,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={4} lg={3}>
-                            <Label>Peut donner des soins de nuit</Label>
+                            <Label>{t("hostFamilies.accordion.hostNightCare")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={hostFamily.canProvideNightCare ?? null}
@@ -124,7 +126,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={4} lg={3}>
-                            <Label>Peut isoler</Label>
+                            <Label>{t("hostFamilies.accordion.hostCanIsolate")}</Label>
                             <NullableDropdown
                                 withNewLine={true}
                                 color={
@@ -138,12 +140,12 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 values={["no", "yes_short", "yes_long"]}
                                 valueDisplayName={(value) =>
                                     value === null || value === undefined
-                                        ? "NSP"
+                                        ? t("common.nsp")
                                         : value === "yes_short"
-                                        ? "Oui, qqs jours"
+                                        ? t("hostFamilies.dropdown.canIsolateYesShort")
                                         : value === "yes_long"
-                                        ? "Oui, ok long terme"
-                                        : "Non"
+                                        ? t("hostFamilies.dropdown.canIsolateYesLong")
+                                        : t("hostFamilies.dropdown.canIsolateNo")
                                 }
                                 valueActiveCheck={(value) => hostFamily.canIsolate === value}
                                 key="can_isolate"
@@ -154,7 +156,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <Label>Conditions d'accueil (nb animaux, ...)</Label>
+                            <Label>{t("hostFamilies.accordion.hostConditions")}</Label>
                             <Input
                                 type="textarea"
                                 disabled={disabled}

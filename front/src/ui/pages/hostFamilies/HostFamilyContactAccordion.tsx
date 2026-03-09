@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import SourceLink from "../../components/SourceLink";
 import { MdDirections } from "react-icons/md";
@@ -27,6 +28,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
     formattedPhone,
     geocodeFound = null,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
         <Accordion
@@ -35,12 +37,12 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
             {...{ toggle: onToggle }}
         >
             <AccordionItem>
-                <AccordionHeader targetId="1">Information de contact</AccordionHeader>
+                <AccordionHeader targetId="1">{t("hostFamilies.accordion.contactTitle")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     {hostFamilyId === "new" && isEditing && (
                         <Row>
                             <Col xs={6}>
-                                <Label>Prénom</Label>
+                                <Label>{t("hostFamilies.accordion.contactFirstname")}</Label>
                                 <Input
                                     value={hostFamily.firstname || ""}
                                     disabled={disabled}
@@ -48,7 +50,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                                 />
                             </Col>
                             <Col xs={6}>
-                                <Label>Nom</Label>
+                                <Label>{t("hostFamilies.accordion.contactLastname")}</Label>
                                 <Input
                                     value={hostFamily.name || ""}
                                     disabled={disabled}
@@ -59,7 +61,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                     )}
                     <Row>
                         <Col xs={6}>
-                            <Label>Téléphone</Label>
+                            <Label>{t("hostFamilies.accordion.contactPhone")}</Label>
                             {isEditing && canUpdate && (
                                 <Input
                                     type="tel"
@@ -72,7 +74,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                             )}
                         </Col>
                         <Col xs={6}>
-                            <Label>E-mail</Label>
+                            <Label>{t("hostFamilies.accordion.contactEmail")}</Label>
                             <Input
                                 type="email"
                                 value={hostFamily.mail || ""}
@@ -83,7 +85,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={6}>
-                            <Label>Pseudo</Label>
+                            <Label>{t("hostFamilies.accordion.contactPseudo")}</Label>
                             <Input
                                 value={hostFamily.socialNetworkAlias || ""}
                                 disabled={disabled}
@@ -95,11 +97,11 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                                 {hostFamily.address !== undefined && (
                                     <SourceLink link={`https://www.google.com/maps/place/${hostFamily.address}`}>
                                         <span>
-                                            Adresse <MdDirections />
+                                            {t("hostFamilies.accordion.contactAddress")} <MdDirections />
                                         </span>
                                     </SourceLink>
                                 )}
-                                {hostFamily.address === undefined && <span>Adresse</span>}
+                                {hostFamily.address === undefined && <span>{t("hostFamilies.accordion.contactAddress")}</span>}
                             </Label>
                             <Input
                                 type="textarea"
@@ -109,7 +111,7 @@ const HostFamilyContactAccordion: FC<HostFamilyContactAccordionProps> = ({
                             />
                             {geocodeFound !== null && (
                                 <p className={geocodeFound === true ? "text-success" : "text-danger"}>
-                                    <small>{geocodeFound === true ? "Adresse valide" : "Adresse non trouvée"}</small>
+                                    <small>{geocodeFound === true ? t("hostFamilies.address.valid") : t("hostFamilies.address.notFound")}</small>
                                 </p>
                             )}
                         </Col>

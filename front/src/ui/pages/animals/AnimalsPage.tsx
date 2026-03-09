@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, Col, Input, Label, Row } from "reactstrap";
 import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
@@ -90,6 +91,7 @@ class AnimalsPageData {
 }
 
 const AnimalsPage: FC<AnimalsPageProps> = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState<AnimalsPageData>(new AnimalsPageData());
 
@@ -114,7 +116,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as Species[];
             });
     };
@@ -126,7 +128,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as Sexe[];
             });
     };
@@ -138,7 +140,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as Animal[];
             });
     };
@@ -150,7 +152,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as User[];
             });
     };
@@ -162,7 +164,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as HostFamily[];
             });
     };
@@ -202,14 +204,14 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
     return (
         <Page
             className="AnimalsPage"
-            title="Liste des Animaux"
-            breadcrumbs={[{ name: "Animaux", active: true } as CustomBreadcrumbItem]}
+            title={t("animals.listTitle")}
+            breadcrumbs={[{ name: t("animals.breadcrumbList"), active: true } as CustomBreadcrumbItem]}
         >
             <Row>
                 <Col>
                     <Input
                         name="animal"
-                        placeholder="Rechercher un animal"
+                        placeholder={t("animals.searchPlaceholder")}
                         value={filters.find((f) => f.type === FilterType.NAME)?.value ?? ""}
                         onChange={(e) =>
                             setFilters((previous) => previous.map((f) => (f.type === FilterType.NAME ? new Filter(e.target.value, FilterType.NAME) : f)))
@@ -236,13 +238,13 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                         <Col>
                             <Row>
                                 <Col className="mb-0">
-                                    <Label>Diffusable</Label>
+                                    <Label>{t("animals.filter.broadcastable")}</Label>
                                     <Dropdown
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filters.find((f) => f.type === FilterType.BROADCASTABLE)?.value}
                                         values={[true, false, null]}
-                                        valueDisplayName={(value) => (value === null ? "Tous" : value === true ? "Diffusable" : "Non diffusable")}
+                                        valueDisplayName={(value) => (value === null ? t("common.all") : value === true ? t("animals.filter.broadcastableYes") : t("animals.filter.broadcastableNo"))}
                                         valueActiveCheck={(value) => filters.find((f) => f.type === FilterType.BROADCASTABLE)?.value === value}
                                         key={"broadcastable"}
                                         onChange={(value) => {
@@ -253,13 +255,13 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                     />
                                 </Col>
                                 <Col className="mb-0">
-                                    <Label>Réservé·e</Label>
+                                    <Label>{t("animals.filter.reserved")}</Label>
                                     <Dropdown
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filters.find((f) => f.type === FilterType.RESERVED)?.value}
                                         values={[true, false, null]}
-                                        valueDisplayName={(value) => (value === null ? "Tous" : value === true ? "Réservé·e" : "Non réservé·es")}
+                                        valueDisplayName={(value) => (value === null ? t("common.all") : value === true ? t("animals.filter.reservedYes") : t("animals.filter.reservedNo"))}
                                         valueActiveCheck={(value) => filters.find((f) => f.type === FilterType.RESERVED)?.value === value}
                                         key={"reserved"}
                                         onChange={(value) => {
@@ -270,13 +272,13 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                     />
                                 </Col>
                                 <Col className="mb-0">
-                                    <Label>Adopté·e</Label>
+                                    <Label>{t("animals.filter.adopted")}</Label>
                                     <Dropdown
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filters.find((f) => f.type === FilterType.ADOPTED)?.value}
                                         values={[true, false, null]}
-                                        valueDisplayName={(value) => (value === null ? "Tous" : value === true ? "Adopté·e" : "Non adopté·es")}
+                                        valueDisplayName={(value) => (value === null ? t("common.all") : value === true ? t("animals.filter.adoptedYes") : t("animals.filter.adoptedNo"))}
                                         valueActiveCheck={(value) => filters.find((f) => f.type === FilterType.ADOPTED)?.value === value}
                                         key={"adopted"}
                                         onChange={(value) => {
@@ -287,13 +289,13 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                     />
                                 </Col>
                                 <Col className="mb-0">
-                                    <Label>Décédé·e</Label>
+                                    <Label>{t("animals.filter.dead")}</Label>
                                     <Dropdown
                                         withNewLine={true}
                                         color={"primary"}
                                         value={filters.find((f) => f.type === FilterType.DEAD)?.value}
                                         values={[true, false, null]}
-                                        valueDisplayName={(value) => (value === null ? "Tous" : value === true ? "Décédé·e" : "Vivant·e")}
+                                        valueDisplayName={(value) => (value === null ? t("common.all") : value === true ? t("animals.filter.deadYes") : t("animals.filter.alive"))}
                                         valueActiveCheck={(value) => filters.find((f) => f.type === FilterType.DEAD)?.value === value}
                                         key={"dead"}
                                         onChange={(value) => {
@@ -304,13 +306,13 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                     />
                                 </Col>
                                 <Col className="mb-0">
-                                    <Label>Espèce</Label>
+                                    <Label>{t("animals.filter.species")}</Label>
                                     <Dropdown
                                         withNewLine={true}
                                         color={"primary"}
                                         value={data.species.find((aSpecies) => aSpecies.id === filters.find((f) => f.type === FilterType.SPECIES)?.value)}
                                         values={[...data.species, null]}
-                                        valueDisplayName={(aSpecies) => (aSpecies === null ? "Toutes" : aSpecies?.name)}
+                                        valueDisplayName={(aSpecies) => (aSpecies === null ? t("animals.filter.speciesAll") : aSpecies?.name)}
                                         valueActiveCheck={(aSpecies) => aSpecies?.id === filters.find((f) => f.type === FilterType.SPECIES)?.value}
                                         key={"species"}
                                         onChange={(value) => {
@@ -321,13 +323,13 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                     />
                                 </Col>
                                 <Col className="mb-0">
-                                    <Label>Référent·e</Label>
+                                    <Label>{t("animals.filter.referent")}</Label>
                                     <Dropdown
                                         withNewLine={true}
                                         color={"primary"}
                                         value={data.referents.find((referent) => referent.id === filters.find((f) => f.type === FilterType.REFERENT)?.value)}
                                         values={[...data.referents, null]}
-                                        valueDisplayName={(referent) => (referent === null ? "Tous·tes" : referent?.displayName)}
+                                        valueDisplayName={(referent) => (referent === null ? t("animals.filter.referentAll") : referent?.displayName)}
                                         valueActiveCheck={(referent) => referent?.id === filters.find((f) => f.type === FilterType.REFERENT)?.value}
                                         key={"referents"}
                                         onChange={(value) => {
@@ -338,7 +340,7 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                                     />
                                 </Col>
                                 <Col className="mb-0">
-                                    <Label>ICAD manquant</Label>
+                                    <Label>{t("animals.filter.icadMissing")}</Label>
                                     <Switch
                                         disabled={false}
                                         isOn={filters.find((f) => f.type === FilterType.ICAD_MISSING)?.value}
@@ -361,27 +363,27 @@ const AnimalsPage: FC<AnimalsPageProps> = () => {
                 <Col xs={12} className="table-responsive">
                     <SortableTable
                         columns={[
-                            { key: "name", value: "Nom", isMain: true },
-                            { key: "sexe", value: "Sexe", isMain: false },
-                            { key: "icad", value: "ICAD", isMain: false },
+                            { key: "name", value: t("animals.table.name"), isMain: true },
+                            { key: "sexe", value: t("animals.table.sex"), isMain: false },
+                            { key: "icad", value: t("animals.table.icad"), isMain: false },
                             {
                                 key: "birthdate",
-                                value: "Date de naissance",
+                                value: t("animals.table.birthdate"),
                                 isMain: false,
                             },
                             {
                                 key: "hostFamily",
-                                value: "Famille d'acceuil",
+                                value: t("animals.table.hostFamily"),
                                 isMain: false,
                             },
                             {
                                 key: "pec_date",
-                                value: "Date de PEC",
+                                value: t("animals.table.pecDate"),
                                 isMain: false,
                             },
                             {
                                 key: "animal_detail",
-                                value: "Fiche animal",
+                                value: t("animals.table.animalSheet"),
                                 isMain: false,
                                 sortable: false,
                             },

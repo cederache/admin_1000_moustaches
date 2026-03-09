@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
 import NullableDropdown from "../../components/NullableDropdown";
@@ -21,15 +22,16 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
     onToggle,
     onAnimalChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
         <Accordion className="pb-3" open={openId} toggle={onToggle}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Comportement</AccordionHeader>
+                <AccordionHeader targetId="1">{t("animals.accordion.behaviour")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={12}>
-                            <Label>Caractère</Label>
+                            <Label>{t("animals.accordion.behaviourCharacter")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.behaviour || ""}
@@ -40,7 +42,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={6} md={3}>
-                            <Label>Besoin congénère</Label>
+                            <Label>{t("animals.accordion.behaviourNeedFriends")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={animal.needFriends ?? null}
@@ -49,7 +51,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6} md={3}>
-                            <Label>Attitude</Label>
+                            <Label>{t("animals.accordion.behaviourPosture")}</Label>
                             <NullableDropdown
                                 withNewLine={true}
                                 color={
@@ -65,13 +67,13 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
                                 values={["nsp", "fearfull", "shy", "sociable"]}
                                 valueDisplayName={(value) =>
                                     value === null || value === undefined
-                                        ? "NSP"
+                                        ? t("common.nsp")
                                         : value === "fearfull"
-                                        ? "Craintif"
+                                        ? t("animals.dropdown.postureFearful")
                                         : value === "shy"
-                                        ? "Peureux"
+                                        ? t("animals.dropdown.postureShy")
                                         : value === "sociable"
-                                        ? "Sociable"
+                                        ? t("animals.dropdown.postureSociable")
                                         : ""
                                 }
                                 valueActiveCheck={(value) => animal?.posture === value}
@@ -83,7 +85,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={6} md={3}>
-                            <Label>OK chats</Label>
+                            <Label>{t("animals.accordion.behaviourCatsOk")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={animal.catsOk ?? null}
@@ -92,7 +94,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6} md={3}>
-                            <Label>OK chiens</Label>
+                            <Label>{t("animals.accordion.behaviourDogsOk")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={animal.dogsOk ?? null}
@@ -101,7 +103,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6} md={3}>
-                            <Label>OK enfants</Label>
+                            <Label>{t("animals.accordion.behaviourKidsOk")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={animal.kidsOk ?? null}
@@ -112,7 +114,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <Label>Particularité</Label>
+                            <Label>{t("animals.accordion.behaviourParticularity")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.behaviorParticularity || ""}

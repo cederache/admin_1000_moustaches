@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import Animal from "../../../logic/entities/Animal";
 
@@ -19,15 +20,16 @@ const AnimalPecAccordion: FC<AnimalPecAccordionProps> = ({
     onToggle,
     onAnimalChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
         <Accordion className="pb-3" open={openId} toggle={onToggle}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Prise en charge</AccordionHeader>
+                <AccordionHeader targetId="1">{t("animals.accordion.pec")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={6}>
-                            <Label>Date de PEC</Label>
+                            <Label>{t("animals.accordion.pecDate")}</Label>
                             <Input
                                 type="date"
                                 value={animal.entryDate}
@@ -36,7 +38,7 @@ const AnimalPecAccordion: FC<AnimalPecAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6}>
-                            <Label>Lieu de PEC</Label>
+                            <Label>{t("animals.accordion.pecPlace")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.placeOfCare || ""}
@@ -47,7 +49,7 @@ const AnimalPecAccordion: FC<AnimalPecAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={6}>
-                            <Label>Raisons de PEC</Label>
+                            <Label>{t("animals.accordion.pecReasons")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.reasonForCare || ""}
@@ -56,7 +58,7 @@ const AnimalPecAccordion: FC<AnimalPecAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6}>
-                            <Label>Informations de PEC</Label>
+                            <Label>{t("animals.accordion.pecInfo")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.careInfos || ""}
@@ -67,7 +69,7 @@ const AnimalPecAccordion: FC<AnimalPecAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <Label>Cédant</Label>
+                            <Label>{t("animals.accordion.pecCeding")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.transferor || ""}

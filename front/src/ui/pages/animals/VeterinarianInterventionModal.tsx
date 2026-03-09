@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MdDelete, MdOutlineModeEdit } from "react-icons/md";
 import { Button, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
@@ -24,6 +25,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
     handleClose,
     ...props
 }) => {
+    const { t } = useTranslation();
     const [veterinarianIntervention, setVeterinarianIntervention] = useState<VeterinarianIntervention>(vetInter);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
@@ -34,7 +36,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
             .then(setVeterinarians)
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             });
     };
 
@@ -52,13 +54,13 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                 animalId: animal.id,
             })
                 .then((_) => {
-                    toast.success("Intervention vétérinaire créée");
+                    toast.success(t("animals.message.interventionCreated"));
                     handleClose(true);
                 })
                 .catch((err) => {
                     console.error(err);
                     setIsEditing(true);
-                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
+                    toast.error(`${t("common.errorCreate")}\n${err}`);
                 });
             return;
         }
@@ -66,25 +68,25 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
         // Send new data to API
         VeterinarianInterventionsManager.update(veterinarianIntervention)
             .then(() => {
-                toast.success("Intervention vétérinaire mise à jour");
+                toast.success(t("animals.message.interventionUpdated"));
                 handleClose(true);
             })
             .catch((err) => {
                 console.error(err);
                 setIsEditing(true);
-                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
+                toast.error(`${t("common.errorUpdate")}\n${err}`);
             });
     };
 
     const deleteVetInter = () => {
         VeterinarianInterventionsManager.delete(veterinarianIntervention)
             .then(() => {
-                toast.success("Intervention Vétérinaire supprimée");
+                toast.success(t("animals.message.interventionDeletedAlt"));
                 handleClose(true);
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
+                toast.error(`${t("common.errorDelete")}\n${err}`);
             });
     };
 
@@ -93,7 +95,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
             <ModalHeader closeButton>
                 <Row className={"justify-content-end"}>
                     <Col>
-                        <h1>Intervention vétérinaire</h1>
+                        <h1>{t("animals.modal.veterinarianInterventionTitle")}</h1>
                     </Col>
                     <Col xs={"auto"}>
                         {veterinarianIntervention.id !== -1 && isEditing && (
@@ -112,7 +114,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
             <ModalBody>
                 <Row>
                     <Col xs={6}>
-                        <Label>Date</Label>
+                        <Label>{t("animals.modal.veterinarianInterventionDate")}</Label>
                         <Input
                             type="date"
                             value={veterinarianIntervention.date}
@@ -126,7 +128,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                         />
                     </Col>
                     <Col xs={6}>
-                        <Label>Vétérinaire</Label>
+                        <Label>{t("animals.modal.veterinarianInterventionVeterinarian")}</Label>
                         <Dropdown
                             withNewLine={true}
                             withSearch={true}
@@ -152,7 +154,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                 </Row>
                 <Row>
                     <Col>
-                        <Label>Description</Label>
+                        <Label>{t("animals.modal.veterinarianInterventionDescription")}</Label>
                         <Input
                             type="textarea"
                             value={veterinarianIntervention.description}
@@ -175,7 +177,7 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                             deleteVetInter();
                         }
                     }}
-                    bodyEntityName={"une Intervention Vétérinaire"}
+                    bodyEntityName={t("animals.modal.interventionEntityName")}
                 />
             </ModalBody>
             <ModalFooter>
@@ -192,16 +194,16 @@ const VeterinarianInterventionModal: FC<VeterinarianInterventionModalProps> = ({
                                 }
                             }}
                         >
-                            Annuler
+                            {t("common.cancel")}
                         </Button>
                         <Button color="primary" onClick={() => save()}>
-                            Sauvegarder
+                            {t("common.save")}
                         </Button>
                     </>
                 )}
                 {!isEditing && (
                     <Button color="primary" onClick={() => handleClose(false)}>
-                        Fermer
+                        {t("common.close")}
                     </Button>
                 )}
             </ModalFooter>

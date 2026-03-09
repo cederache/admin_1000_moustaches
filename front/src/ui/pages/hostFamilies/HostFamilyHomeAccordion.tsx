@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import HostFamily from "../../../logic/entities/HostFamily";
 
@@ -19,15 +20,16 @@ const HostFamilyHomeAccordion: FC<HostFamilyHomeAccordionProps> = ({
     onToggle,
     onHostFamilyChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
         <Accordion className="pb-3" open={openId} {...{ toggle: onToggle }}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Information sur le foyer</AccordionHeader>
+                <AccordionHeader targetId="1">{t("hostFamilies.accordion.homeTitle")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={4}>
-                            <Label>Nombre d'enfant</Label>
+                            <Label>{t("hostFamilies.accordion.homeChildrenCount")}</Label>
                             <Input
                                 value={hostFamily.nbChildren?.toString() || ""}
                                 disabled={disabled}
@@ -40,7 +42,7 @@ const HostFamilyHomeAccordion: FC<HostFamilyHomeAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={8}>
-                            <Label>Informations enfant(s)</Label>
+                            <Label>{t("hostFamilies.accordion.homeChildrenInfo")}</Label>
                             <Input
                                 type="textarea"
                                 value={hostFamily.childrenInfos || ""}
@@ -51,7 +53,7 @@ const HostFamilyHomeAccordion: FC<HostFamilyHomeAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <Label>Informations animaux</Label>
+                            <Label>{t("hostFamilies.accordion.homeAnimalsInfo")}</Label>
                             <Input
                                 type="textarea"
                                 value={hostFamily.animalsInfos || ""}
@@ -62,7 +64,7 @@ const HostFamilyHomeAccordion: FC<HostFamilyHomeAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <Label>Observations</Label>
+                            <Label>{t("hostFamilies.accordion.homeObservations")}</Label>
                             <Input
                                 type="textarea"
                                 value={hostFamily.observations || ""}
@@ -73,7 +75,7 @@ const HostFamilyHomeAccordion: FC<HostFamilyHomeAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <Label>Informations sur le logement</Label>
+                            <Label>{t("hostFamilies.accordion.homeHousingInfo")}</Label>
                             <Input
                                 type="textarea"
                                 value={hostFamily.housingInformations || ""}

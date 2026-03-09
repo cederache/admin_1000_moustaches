@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { MdAssignment } from "react-icons/md";
 import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
@@ -10,6 +11,7 @@ interface HostFamilyAnimalsHistoryProps {
 }
 
 const HostFamilyAnimalsHistory: FC<HostFamilyAnimalsHistoryProps> = ({ hostFamilyId }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [animalToHostFamilies, setAnimalToHostFamilies] = useState<AnimalToHostFamily[]>([]);
     const [loading, setLoading] = useState(false);
@@ -45,22 +47,22 @@ const HostFamilyAnimalsHistory: FC<HostFamilyAnimalsHistoryProps> = ({ hostFamil
     return (
         <Card>
             <CardHeader>
-                <h3>Historique des animaux</h3>
+                <h3>{t("hostFamilies.history.animalsTitle")}</h3>
             </CardHeader>
             <CardBody className="table-responsive">
                 <Table striped>
                     <thead>
                         <tr>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Date d'entrée</th>
-                            <th scope="col">Date de sortie</th>
-                            <th scope="col">Fiche de l'animal</th>
+                            <th scope="col">{t("animals.table.name")}</th>
+                            <th scope="col">{t("hostFamilies.table.entryDate")}</th>
+                            <th scope="col">{t("hostFamilies.table.exitDate")}</th>
+                            <th scope="col">{t("hostFamilies.table.animalSheetLink")}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={4}>Chargement...</td>
+                                <td colSpan={4}>{t("common.loading")}</td>
                             </tr>
                         ) : (
                             animalToHostFamilies.map((animalToHostFamily) => (

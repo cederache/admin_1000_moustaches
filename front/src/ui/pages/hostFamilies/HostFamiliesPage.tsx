@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Col, Input, Row, Nav, NavItem, NavLink, TabContent, TabPane, Label, Card, CardBody } from "reactstrap";
 import HostFamiliesManager from "../../../managers/hostFamilies.manager";
 import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
@@ -95,6 +96,7 @@ class HostFamiliesPageData {
 }
 
 const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<HostFamiliesPageData>(new HostFamiliesPageData());
 
@@ -130,7 +132,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as HostFamily[];
             });
     };
@@ -142,7 +144,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as HostFamilyKind[];
             });
     };
@@ -154,7 +156,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as User[];
             });
     };
@@ -230,7 +232,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             case FilterType.MEMBERSHIP_LATE:
                 return (
                     <Col key={filter.type} className="mb-0">
-                        <Label>{filter.type}</Label>
+                        <Label>{filter.type === FilterType.MEMBERSHIP_LATE ? t("hostFamilies.filter.membershipLate") : t("hostFamilies.filter.hasVehicule")}</Label>
                         <br />
                         <Switch
                             disabled={isLoading}
@@ -245,13 +247,13 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             case FilterType.ON_A_BREAK:
                 return (
                     <Col key={filter.type} className="mb-0">
-                        <Label>Statut</Label>
+                        <Label>{t("hostFamilies.filter.status")}</Label>
                         <Dropdown
                             withNewLine={true}
                             color={"primary"}
                             value={filter.value}
                             values={[true, false, null]}
-                            valueDisplayName={(onBreak: boolean | null) => (onBreak === null ? "Toutes" : onBreak === true ? "En pause" : "Actives")}
+                            valueDisplayName={(onBreak: boolean | null) => (onBreak === null ? t("hostFamilies.filter.statusAll") : onBreak === true ? t("hostFamilies.filter.statusPaused") : t("hostFamilies.filter.statusActive"))}
                             valueActiveCheck={(onBreak: boolean | null) => onBreak === filter.value}
                             key={"onBreak"}
                             onChange={(newBreak) => setFilters((previous) => previous.map((f) => (f.type === filter.type ? new Filter(newBreak, f.type) : f)))}
@@ -261,7 +263,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             case FilterType.REFERENT:
                 return (
                     <Col key={filter.type} className="mb-0">
-                        <Label>Référent·e</Label>
+                        <Label>{t("hostFamilies.filter.referent")}</Label>
                         <Dropdown
                             withNewLine={true}
                             color={"primary"}
@@ -279,7 +281,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             case FilterType.TYPE:
                 return (
                     <Col key={filter.type} className="mb-0">
-                        <Label>Type de FA</Label>
+                        <Label>{t("hostFamilies.filter.typeFA")}</Label>
                         <Dropdown
                             withNewLine={true}
                             color={"primary"}
@@ -295,13 +297,13 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             case FilterType.TEMPORARY:
                 return (
                     <Col key={filter.type} className="mb-0">
-                        <Label>Tampon</Label>
+                        <Label>{t("hostFamilies.filter.temporary")}</Label>
                         <Dropdown
                             withNewLine={true}
                             color={"primary"}
                             value={filter.value}
                             values={[true, false, null]}
-                            valueDisplayName={(temporary) => (temporary === null ? "Toutes" : temporary === true ? "Tampon" : "Non tampon")}
+                            valueDisplayName={(temporary) => (temporary === null ? t("hostFamilies.filter.statusAll") : temporary === true ? t("hostFamilies.filter.temporaryYes") : t("hostFamilies.filter.temporaryNo"))}
                             valueActiveCheck={(temporary) => temporary === filter.value}
                             key={"temporay"}
                             onChange={(newTemporary) =>
@@ -316,10 +318,10 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
     return (
         <Page
             className="HostFamiliesPage"
-            title="Liste des Familles d'Accueil"
+            title={t("hostFamilies.listTitle")}
             breadcrumbs={[
                 {
-                    name: "Familles d'Accueil",
+                    name: t("hostFamilies.breadcrumbList"),
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
@@ -328,7 +330,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                 <Col>
                     <Input
                         name="hostFamily"
-                        placeholder="Rechercher une Famille d'Accueil"
+                        placeholder={t("hostFamilies.searchPlaceholder")}
                         value={searchText}
                         onChange={(e) => {
                             setSearchText(e.target.value);
@@ -367,12 +369,12 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     <Nav tabs>
                         <NavItem className="active">
                             <NavLink disabled={!showMap} onClick={toggleMap}>
-                                Liste
+                                {t("common.list")}
                             </NavLink>
                         </NavItem>
                         <NavItem>
                             <NavLink disabled={showMap} onClick={toggleMap}>
-                                Carte
+                                {t("common.map")}
                             </NavLink>
                         </NavItem>
                     </Nav>
@@ -384,27 +386,27 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                         columns={[
                                             {
                                                 key: "status",
-                                                value: "Statut",
+                                                value: t("hostFamilies.table.status"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "name",
-                                                value: "Nom Prénom",
+                                                value: t("hostFamilies.table.nameFirstname"),
                                                 isMain: true,
                                             },
                                             {
                                                 key: "phone",
-                                                value: "Téléphone",
+                                                value: t("hostFamilies.table.phone"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "situation",
-                                                value: "Situation",
+                                                value: t("hostFamilies.table.situation"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "hostFamilyDetail",
-                                                value: "Fiche FA",
+                                                value: t("hostFamilies.table.hostFamilySheet"),
                                                 isMain: false,
                                                 sortable: false,
                                             },
@@ -470,7 +472,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                                                 <br />
                                                                 <div className="pt-2">
                                                                     <Button
-                                                                        title="Voir le détail"
+                                                                        title={t("common.seeDetail")}
                                                                         color="primary"
                                                                         onClick={() => {
                                                                             showDetail(hostFamily);
@@ -486,7 +488,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                             })}
                                         {userPosition !== null && (
                                             <Marker
-                                                title={"Ma position"}
+                                                title={t("common.myPosition")}
                                                 key={"user_position"}
                                                 position={[userPosition.lat, userPosition.lng]}
                                                 icon={UserIcon}

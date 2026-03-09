@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Col, Input, Label, Row } from "reactstrap";
 import UsersManager from "../../../managers/users.manager";
 import { MdDelete, MdOutlineModeEdit, MdRefresh, MdSave } from "react-icons/md";
@@ -15,6 +16,7 @@ interface UserDetailPageProps {
 }
 
 const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
+    const { t } = useTranslation();
     let { id: paramUserId } = useParams();
     const userId = paramUserId ?? "new";
     const [user, setUser] = useState<User | null>(null);
@@ -38,7 +40,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
             .then(setUser)
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             });
     };
 
@@ -80,13 +82,13 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
             // Send new data to API
             UsersManager.create(user)
                 .then((updatedUser) => {
-                    toast.success("Utilisateur·ice créé");
+                    toast.success(t("users.message.userCreated"));
                     navigate(`/users/${updatedUser.id}`);
                     setUser(updatedUser);
                 })
                 .catch((err) => {
                     console.error(err);
-                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
+                    toast.error(`${t("common.errorCreate")}\n${err}`);
                 });
             return;
         }
@@ -95,7 +97,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
         UsersManager.update(user)
             .then(() => {
                 getUser();
-                toast.success("Utilisateur·ice mis à jour");
+                toast.success(t("users.message.userUpdated"));
 
                 if (parseInt(userId) === loggedUser?.id) {
                     setLoggedUser(user);
@@ -104,7 +106,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
             .catch((err) => {
                 console.error(err);
                 getUser();
-                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
+                toast.error(`${t("common.errorUpdate")}\n${err}`);
             });
     };
 
@@ -114,21 +116,21 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
         }
         UsersManager.delete(user)
             .then(() => {
-                toast.success("Utilisateur·ice supprimé");
+                toast.success(t("users.message.userDeleted"));
                 navigate("/users");
             })
             .catch((err) => {
                 console.error(err);
                 getUser();
-                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
+                toast.error(`${t("common.errorDelete")}\n${err}`);
             });
     };
 
-    let content = <div>Chargement...</div>;
+    let content = <div>{t("common.loading")}</div>;
     if (user === undefined) {
-        content = <div>Utilisateur·ice non trouvé</div>;
+        content = <div>{t("users.userNotFound")}</div>;
     } else if (user === null) {
-        content = <div>Chargement...</div>;
+        content = <div>{t("common.loading")}</div>;
     } else {
         content = (
             <div>
@@ -159,7 +161,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
 
                 <Card>
                     <CardHeader>
-                        {userId === "new" && <h2>Nouvel utilisateur</h2>}
+                        {userId === "new" && <h2>{t("users.newUser")}</h2>}
                         {userId !== "new" && (
                             <h2>
                                 {user.firstname} {user.name}
@@ -170,7 +172,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                         {(userId === "new" || isEditing) && (
                             <Row>
                                 <Col xs={6}>
-                                    <Label>Prénom</Label>
+                                    <Label>{t("users.formFirstname")}</Label>
                                     <Input
                                         value={user.firstname || ""}
                                         disabled={!isEditing}
@@ -183,7 +185,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                                     />
                                 </Col>
                                 <Col xs={6}>
-                                    <Label>Nom</Label>
+                                    <Label>{t("users.formLastname")}</Label>
                                     <Input
                                         value={user.name || ""}
                                         disabled={!isEditing}
@@ -199,7 +201,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                         )}
                         <Row>
                             <Col xs={12}>
-                                <Label>E-mail</Label>
+                                <Label>{t("users.formEmail")}</Label>
                                 <Input
                                     value={user.email}
                                     disabled={!isEditing}
@@ -214,7 +216,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                         </Row>
                         <Row>
                             <Col>
-                                <Label>Est référent·e</Label>
+                                <Label>{t("users.formIsReferent")}</Label>
                             </Col>
                             <Col xs={"auto"}>
                                 <Switch
@@ -239,14 +241,14 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
     return (
         <Page
             className="UserPage"
-            title="Détail de l'utilisateur·ice"
+            title={t("users.detailTitle")}
             breadcrumbs={[
                 {
-                    name: "Utilisateur·ice·s",
+                    name: t("users.breadcrumb"),
                     to: "/users",
                 } as CustomBreadcrumbItem,
                 {
-                    name: "Utilisateur·ice",
+                    name: t("users.breadcrumbDetail"),
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
@@ -261,7 +263,7 @@ const UserDetailPage: FC<UserDetailPageProps> = ({ props }) => {
                         deleteV();
                     }
                 }}
-                bodyEntityName={"un·e Utilisateur·ice"}
+                bodyEntityName={t("users.entityName")}
             />
         </Page>
     );

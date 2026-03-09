@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Col, Input, Label, Row } from "reactstrap";
 import VeterinariansManager from "../../../managers/veterinarians.manager";
 import { MdDelete, MdDirections, MdOutlineModeEdit, MdRefresh, MdSave } from "react-icons/md";
@@ -19,6 +20,7 @@ interface VeterinarianDetailPageProps {
 }
 
 const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
+    const { t } = useTranslation();
     const { id: paramVetId } = useParams();
     const vetId = paramVetId ?? "new";
     const [veterinarian, setVeterinarian] = useState<Veterinarian | null>(null);
@@ -47,7 +49,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                 })
                 .catch((err) => {
                     console.error(err);
-                    toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                    toast.error(`${t("common.errorFetch")}\n${err}`);
                 });
         } else {
             console.error("Can't get veterianrian with non number id");
@@ -130,13 +132,13 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
             // Send new data to API
             VeterinariansManager.create(veterinarian)
                 .then((updatedVeterinarian) => {
-                    toast.success("Vétérinaire créé");
+                    toast.success(t("veterinarians.message.veterinarianCreated"));
                     navigate(`/veterinarians/${updatedVeterinarian.id}`);
                     // setVeterinarian(updatedVeterinarian);
                 })
                 .catch((err) => {
                     console.error(err);
-                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
+                    toast.error(`${t("common.errorCreate")}\n${err}`);
                 });
             return;
         }
@@ -145,12 +147,12 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
         VeterinariansManager.update(veterinarian)
             .then(() => {
                 getVeterinarian();
-                toast.success("Vétérinaire mis à jour");
+                toast.success(t("veterinarians.message.veterinarianUpdated"));
             })
             .catch((err) => {
                 console.error(err);
                 getVeterinarian();
-                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
+                toast.error(`${t("common.errorUpdate")}\n${err}`);
             });
     };
 
@@ -160,13 +162,13 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
         }
         VeterinariansManager.delete(veterinarian)
             .then(() => {
-                toast.success("Vétérinaire supprimé");
+                toast.success(t("veterinarians.message.veterinarianDeleted"));
                 navigate("/veterinarians");
             })
             .catch((err) => {
                 console.error(err);
                 getVeterinarian();
-                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
+                toast.error(`${t("common.errorDelete")}\n${err}`);
             });
     };
 
@@ -205,7 +207,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
 
                 <Card>
                     <CardHeader>
-                        {vetId === "new" && <h2>Nouveau vétérinaire</h2>}
+                        {vetId === "new" && <h2>{t("veterinarians.newVeterinarian")}</h2>}
                         {vetId !== "new" && <h2>{veterinarian.name}</h2>}
                     </CardHeader>
                     <CardBody>
@@ -283,7 +285,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                                 />
                                 {geocodeFound !== null && (
                                     <p className={geocodeFound === true ? "text-success" : "text-danger"}>
-                                        <small>{geocodeFound === true ? "Adresse valide" : "Adresse non trouvée"}</small>
+                                        <small>{geocodeFound === true ? t("veterinarians.addressValid") : t("veterinarians.addressNotFound")}</small>
                                     </p>
                                 )}
                             </Col>
@@ -379,13 +381,13 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
     return (
         <Page
             className="VeterinarianPage"
-            title="Détail du vétérinaire"
+            title={t("veterinarians.detailTitle")}
             breadcrumbs={[
                 {
-                    name: "Vétérinaires",
+                    name: t("veterinarians.breadcrumb"),
                     to: "/veterinarians",
                 } as CustomBreadcrumbItem,
-                { name: "Vétérinaire", active: true } as CustomBreadcrumbItem,
+                { name: t("veterinarians.breadcrumbDetail"), active: true } as CustomBreadcrumbItem,
             ]}
         >
             {content}
@@ -398,7 +400,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                         deleteV();
                     }
                 }}
-                bodyEntityName={"un Vétérinaire"}
+                bodyEntityName={t("veterinarians.entityName")}
             />
         </Page>
     );

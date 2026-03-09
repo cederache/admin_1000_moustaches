@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
 import { SPECIES_ID } from "../../../utils/constants";
@@ -21,16 +22,17 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
     onToggle,
     onAnimalChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     const isCat = animal.species?.id === SPECIES_ID.CAT;
     return (
         <Accordion className="pb-3" open={openId} toggle={onToggle}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Santé</AccordionHeader>
+                <AccordionHeader targetId="1">{t("animals.accordion.health")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={6}>
-                            <Label>Primo vaccination</Label>
+                            <Label>{t("animals.accordion.healthPrimoVaccination")}</Label>
                             <Input
                                 type="date"
                                 value={animal.firstVaccinationDate}
@@ -39,7 +41,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6}>
-                            <Label>Rappel de vaccin</Label>
+                            <Label>{t("animals.accordion.healthVaccineRecall")}</Label>
                             <Input
                                 type="date"
                                 value={animal.secondVaccinationDate}
@@ -50,7 +52,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={6} md={3}>
-                            <Label>Stérilisé·e</Label>
+                            <Label>{t("animals.accordion.healthSterilized")}</Label>
                             <BooleanNullableDropdown
                                 withNewLine={true}
                                 value={animal.sterilised ?? null}
@@ -61,7 +63,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
                         {isCat && (
                             <>
                                 <Col xs={6} md={3}>
-                                    <Label>Extérieur obligatoire</Label>
+                                    <Label>{t("animals.accordion.healthOutdoorRequired")}</Label>
                                     <BooleanNullableDropdown
                                         withNewLine={true}
                                         value={animal.needExternalAccess ?? null}
@@ -70,7 +72,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
                                     />
                                 </Col>
                                 <Col xs={6} md={3}>
-                                    <Label>Négatif FIV</Label>
+                                    <Label>{t("animals.accordion.healthFivNegative")}</Label>
                                     <BooleanNullableDropdown
                                         withNewLine={true}
                                         value={animal.fivNegative ?? null}
@@ -79,7 +81,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
                                     />
                                 </Col>
                                 <Col xs={6} md={3}>
-                                    <Label>Négatif FELV</Label>
+                                    <Label>{t("animals.accordion.healthFelvNegative")}</Label>
                                     <BooleanNullableDropdown
                                         withNewLine={true}
                                         value={animal.felvNegative ?? null}
@@ -92,7 +94,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={6}>
-                            <Label>Date des anti-parasitaires</Label>
+                            <Label>{t("animals.accordion.healthAntiparasiticDate")}</Label>
                             <Input
                                 type="date"
                                 value={animal.antiParasiticDate}
@@ -103,7 +105,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <Label>Particularité de santé</Label>
+                            <Label>{t("animals.accordion.healthParticularity")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.healthIssues || ""}

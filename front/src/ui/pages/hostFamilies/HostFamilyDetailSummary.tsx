@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Col, Input, Label, Row } from "reactstrap";
 import BooleanNullableDropdown from "../../components/BooleanNullableDropdown";
 import NullableDropdown from "../../components/NullableDropdown";
@@ -21,12 +22,13 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
     canUpdateContact,
     onHostFamilyChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdateContact;
     return (
         <>
             <Row>
                 <Col>
-                    <Label>A jour des cotisations</Label>
+                    <Label>{t("hostFamilies.summary.membershipUpToDate")}</Label>
                 </Col>
                 <Col xs="auto">
                     <Switch
@@ -44,7 +46,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
             </Row>
             <Row>
                 <Col>
-                    <Label>Référent·e</Label>
+                    <Label>{t("hostFamilies.summary.referent")}</Label>
                 </Col>
                 <Col xs="auto">
                     <NullableDropdown
@@ -52,7 +54,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
                         disabled={disabled}
                         value={referents.find((usr) => usr.id === hostFamily.referent?.id)}
                         values={referents}
-                        valueDisplayName={(usr) => (usr === undefined ? "Aucun·e" : `${usr?.firstname} ${usr?.name}`)}
+                        valueDisplayName={(usr) => (usr === undefined ? t("hostFamilies.valueDisplayNone") : `${usr?.firstname} ${usr?.name}`)}
                         valueActiveCheck={(usr) => usr.id === hostFamily.referent?.id}
                         key="referents"
                         onChange={(newUser) => onHostFamilyChange({ referent: newUser })}
@@ -61,7 +63,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
             </Row>
             <Row>
                 <Col>
-                    <Label>Est tampon</Label>
+                    <Label>{t("hostFamilies.summary.isTemporary")}</Label>
                 </Col>
                 <Col xs="auto">
                     <Switch
@@ -79,7 +81,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
             </Row>
             <Row>
                 <Col xs={6}>
-                    <Label>Permis de conduire</Label>
+                    <Label>{t("hostFamilies.summary.drivingLicense")}</Label>
                     <BooleanNullableDropdown
                         withNewLine={true}
                         value={hostFamily.driverLicense ?? null}
@@ -88,7 +90,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
                     />
                 </Col>
                 <Col xs={6}>
-                    <Label>Véhiculé·e</Label>
+                    <Label>{t("hostFamilies.summary.hasVehicule")}</Label>
                     <BooleanNullableDropdown
                         withNewLine={true}
                         value={hostFamily.hasVehicule ?? null}
@@ -99,7 +101,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({
             </Row>
             <Row>
                 <Col>
-                    <Label>Situation</Label>
+                    <Label>{t("hostFamilies.summary.situation")}</Label>
                     <Input
                         type="textarea"
                         value={hostFamily.situation || ""}

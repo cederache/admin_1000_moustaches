@@ -1,4 +1,5 @@
 import React, { FC, ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 interface DeleteConfirmationModalProps {
@@ -14,21 +15,21 @@ const DeleteConfirmationModal: FC<DeleteConfirmationModalProps> = ({
     bodyEntityName,
     ...props
 }): ReactElement => {
+    const { t } = useTranslation();
     return (
         <Modal isOpen={show} {...props}>
             <ModalHeader closeButton>
-                <h1>Confirmer la suppression</h1>
+                <h1>{t("common.confirmDelete.title")}</h1>
             </ModalHeader>
             <ModalBody>
-                Vous êtes sur le point de supprimer {bodyEntityName || ""}.
-                Êtes-vous sûr ?
+                {t("common.confirmDelete.body", { entity: bodyEntityName || "" })}
             </ModalBody>
             <ModalFooter>
                 <Button color="success" onClick={() => handleClose(false)}>
-                    Annuler
+                    {t("common.cancel")}
                 </Button>
                 <Button color="danger" onClick={() => handleClose(true)}>
-                    Confirmer
+                    {t("common.confirm")}
                 </Button>
             </ModalFooter>
         </Modal>

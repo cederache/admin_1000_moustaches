@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Col, Input, Row } from "reactstrap";
 import UsersManager from "../../../managers/users.manager";
 import { MdRefresh, MdAddBox, MdAssignment } from "react-icons/md";
@@ -15,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 interface UsersPageProps {}
 
 const UsersPage: FC<UsersPageProps> = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [users, setUsers] = useState<any[]>([]);
     const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
@@ -34,7 +36,7 @@ const UsersPage: FC<UsersPageProps> = () => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             });
     };
 
@@ -77,10 +79,10 @@ const UsersPage: FC<UsersPageProps> = () => {
     return (
         <Page
             className="UsersPage"
-            title="Liste des Utilisateur·ice·s"
+            title={t("users.listTitle")}
             breadcrumbs={[
                 {
-                    name: "Utilisateur·ice·s",
+                    name: t("users.breadcrumb"),
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
@@ -89,7 +91,7 @@ const UsersPage: FC<UsersPageProps> = () => {
                 <Col>
                     <Input
                         name="name"
-                        placeholder="Rechercher un·e utilisateur·ice"
+                        placeholder={t("users.searchPlaceholder")}
                         value={searchText}
                         onChange={(e) => {
                             setSearchText(e.target.value);
@@ -97,10 +99,10 @@ const UsersPage: FC<UsersPageProps> = () => {
                     />
                 </Col>
                 <Col xs={"auto"}>
-                    <Button title="Créer un·e utilisateur·ice" className="ms-2" onClick={createUser} color={"success"}>
+                    <Button title={t("users.createButton")} className="ms-2" onClick={createUser} color={"success"}>
                         <MdAddBox />
                     </Button>
-                    <Button title="Rafraîchir les données" className="ms-2" onClick={getAllUsers}>
+                    <Button title={t("common.refresh")} className="ms-2" onClick={getAllUsers}>
                         <MdRefresh />
                     </Button>
                 </Col>
@@ -117,17 +119,17 @@ const UsersPage: FC<UsersPageProps> = () => {
                                     { key: "icon", value: "", isMain: false },
                                     {
                                         key: "name",
-                                        value: "Nom Prénom",
+                                        value: t("users.table.nameFirstname"),
                                         isMain: true,
                                     },
                                     {
                                         key: "mail",
-                                        value: "E-mail",
+                                        value: t("users.table.email"),
                                         isMain: false,
                                     },
                                     {
                                         key: "userDetail",
-                                        value: "Fiche utilisateur·ice",
+                                        value: t("users.table.userSheet"),
                                         isMain: false,
                                         sortable: false,
                                     },
@@ -138,7 +140,7 @@ const UsersPage: FC<UsersPageProps> = () => {
                                         name: `${user.firstname} ${user.name}`,
                                         mail: user.email,
                                         userDetail: (
-                                            <Button title="Voir le détail" color="info" onClick={() => showDetail(user)}>
+                                            <Button title={t("common.seeDetail")} color="info" onClick={() => showDetail(user)}>
                                                 <MdAssignment />
                                             </Button>
                                         ),

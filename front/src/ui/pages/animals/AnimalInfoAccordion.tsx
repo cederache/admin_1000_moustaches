@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import Dropdown from "../../components/Dropdown";
 import NullableDropdown from "../../components/NullableDropdown";
@@ -27,20 +28,21 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
     onToggle,
     onAnimalChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
         <Accordion className="pb-3" open={openId} toggle={onToggle}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Informations</AccordionHeader>
+                <AccordionHeader targetId="1">{t("animals.accordion.info")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={6}>
-                            <Label>Photo</Label>
+                            <Label>{t("animals.accordion.infoPhoto")}</Label>
                         </Col>
                         <Col xs={6}>
                             <Row>
                                 <Col xs={12}>
-                                    <Label>ICAD</Label>
+                                    <Label>{t("animals.table.icad")}</Label>
                                     <Input
                                         value={animal.icad || ""}
                                         disabled={disabled}
@@ -50,7 +52,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                             </Row>
                             <Row>
                                 <Col xs={6}>
-                                    <Label>Espèce</Label>
+                                    <Label>{t("animals.accordion.infoSpecies")}</Label>
                                     <Dropdown
                                         withNewLine={true}
                                         color="primary"
@@ -64,7 +66,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                                     />
                                 </Col>
                                 <Col xs={6}>
-                                    <Label>Sexe</Label>
+                                    <Label>{t("animals.accordion.infoSex")}</Label>
                                     <NullableDropdown
                                         withNewLine={true}
                                         color="primary"
@@ -84,7 +86,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                             </Row>
                             <Row>
                                 <Col xs={6}>
-                                    <Label>Race</Label>
+                                    <Label>{t("animals.accordion.infoRace")}</Label>
                                     <Input
                                         value={animal.race || ""}
                                         disabled={disabled}
@@ -96,7 +98,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                     </Row>
                     <Row>
                         <Col xs={6}>
-                            <Label>Date de naissance</Label>
+                            <Label>{t("animals.accordion.infoBirthdate")}</Label>
                             <Input
                                 type="date"
                                 value={animal.birthdate}
@@ -105,7 +107,7 @@ const AnimalInfoAccordion: FC<AnimalInfoAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6}>
-                            <Label>Signes distinctifs</Label>
+                            <Label>{t("animals.accordion.infoDistinctiveSigns")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.distinctiveSigns || ""}

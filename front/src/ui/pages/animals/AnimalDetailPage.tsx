@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, CardHeader, Col, Input, Label, Row } from "reactstrap";
 import AnimalsManager, { Sexe } from "../../../managers/animals.manager";
 import { MdRefresh, MdOutlineModeEdit, MdSave, MdDelete } from "react-icons/md";
@@ -73,6 +74,7 @@ const permissionsName: Ressource[] = [
 ];
 
 const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
+    const { t } = useTranslation();
     const { id: paramAnimalId } = useParams();
     const animalId = paramAnimalId ?? "new";
     const [data, setData] = useState<AnimalDetailPageData>(new AnimalDetailPageData());
@@ -122,7 +124,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
         }
         return AnimalsManager.getById(id).catch((err) => {
             console.error(err);
-            toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+            toast.error(`${t("common.errorFetch")}\n${err}`);
             return undefined;
         });
     };
@@ -132,7 +134,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             .then((species) => species.sort((a, b) => a.name.localeCompare(b.name)))
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as Species[];
             });
     };
@@ -142,7 +144,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             .then((sexes) => sexes.sort((a, b) => a.value.localeCompare(b.value)))
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
                 return [] as Sexe[];
             });
     };
@@ -163,7 +165,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                     getAnimal().then((animal) => {
                         if (animal === undefined) {
                             console.error("Animal not found");
-                            toast.error("Animal non trouvé");
+                            toast.error(t("animals.message.animalNotFound"));
                             return;
                         }
                         setData((previousData) => {
@@ -227,7 +229,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
             // Send new data to API
             AnimalsManager.create(data.animal)
                 .then((updatedAnimal) => {
-                    toast.success("Animal créé");
+                    toast.success(t("animals.message.animalCreated"));
                     navigate(`/animals/${updatedAnimal.id}`);
                     setData((previousData) => {
                         return {
@@ -238,7 +240,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                 })
                 .catch((err) => {
                     console.error(err);
-                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
+                    toast.error(`${t("common.errorCreate")}\n${err}`);
                 });
             return;
         }
@@ -266,12 +268,12 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                             });
                     }
                 });
-                toast.success("Animal mis à jour");
+                toast.success(t("animals.message.animalUpdated"));
             })
             .catch((err) => {
                 console.error(err);
                 getAnimal();
-                toast.error(`Une erreur s'est produite pendant la mise à jour des données\n${err}`);
+                toast.error(`${t("common.errorUpdate")}\n${err}`);
             });
     };
 
@@ -281,22 +283,22 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
         }
         AnimalsManager.delete(data.animal)
             .then(() => {
-                toast.success("Animal supprimé");
+                toast.success(t("animals.message.animalDeleted"));
                 navigate("/animals");
             })
             .catch((err) => {
                 console.error(err);
                 getAnimal();
-                toast.error(`Une erreur s'est produite pendant la suppression des données\n${err}`);
+                toast.error(`${t("common.errorDelete")}\n${err}`);
             });
     };
 
-    let content = <div>Chargement...</div>;
+    let content = <div>{t("common.loading")}</div>;
 
     if (data.animal === null) {
-        content = <div>Animal non trouvé</div>;
+        content = <div>{t("animals.message.animalNotFound")}</div>;
     } else if (data.animal === undefined) {
-        content = <div>Chargement...</div>;
+        content = <div>{t("common.loading")}</div>;
     } else {
         content = (
             <div>
@@ -336,14 +338,14 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
 
                 <Card>
                     <CardHeader>
-                        {animalId === "new" && <h2>Nouvel Animal</h2>}
+                        {animalId === "new" && <h2>{t("animals.newAnimal")}</h2>}
                         {animalId !== "new" && <h2>{data.animal.name}</h2>}
                     </CardHeader>
                     <CardBody>
                         {(animalId === "new" || isEditing === true) && (
                             <Row>
                                 <Col xs={12}>
-                                    <Label>Nom</Label>
+                                    <Label>{t("animals.table.name")}</Label>
                                     <Input
                                         value={data.animal.name || ""}
                                         disabled={!isEditing || !pagePermissions[Ressource.PET_INFO]?.can_update}
@@ -364,7 +366,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                         )}
                         <Row className="text-center">
                             <Col md={4} lg={3}>
-                                <Label>Diffusable</Label>
+                                <Label>{t("animals.detail.broadcastable")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.broadcastable ?? null}
@@ -383,7 +385,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                             <Col md={4} lg={3}>
-                                <Label>Réservable</Label>
+                                <Label>{t("animals.detail.reservable")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.bookable ?? null}
@@ -402,7 +404,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                             <Col md={4} lg={3}>
-                                <Label>Réservé·e</Label>
+                                <Label>{t("animals.detail.reserved")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.reserved ?? null}
@@ -421,7 +423,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                             <Col md={4} lg={3}>
-                                <Label>Duplicata ICAD nécessaire ?</Label>
+                                <Label>{t("animals.detail.needIcadDuplicate")}</Label>
                                 <NullableDropdown
                                     withNewLine={true}
                                     color={
@@ -437,12 +439,12 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     values={["no", "waiting", "received"]}
                                     valueDisplayName={(value) =>
                                         value === null || value === undefined
-                                            ? "NSP"
+                                            ? t("common.nsp")
                                             : value === "received"
-                                            ? "Oui, reçu"
+                                            ? t("animals.dropdown.icadReceived")
                                             : value === "waiting"
-                                            ? "Oui, demandé"
-                                            : "Non"
+                                            ? t("animals.dropdown.icadWaiting")
+                                            : t("animals.dropdown.icadNo")
                                     }
                                     valueActiveCheck={(value) => data.animal?.needIcadDuplicate === value}
                                     key={"needIcadDuplicate"}
@@ -461,7 +463,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                             <Col md={4} lg={3}>
-                                <Label>Adopté·e</Label>
+                                <Label>{t("animals.detail.adopted")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.adopted ?? null}
@@ -480,7 +482,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                             <Col md={4} lg={3}>
-                                <Label>Album créé</Label>
+                                <Label>{t("animals.detail.albumCreated")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.albumCreated ?? null}
@@ -499,7 +501,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                 />
                             </Col>
                             <Col md={4} lg={3}>
-                                <Label>Contrat envoyé</Label>
+                                <Label>{t("animals.detail.contractSent")}</Label>
                                 <BooleanNullableDropdown
                                     withNewLine={true}
                                     value={data.animal.contractSent ?? null}
@@ -605,10 +607,10 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
     return (
         <Page
             className="AnimalPage"
-            title="Détail de l'animal"
+            title={t("animals.detailTitle")}
             breadcrumbs={[
-                { name: "Animaux", to: "/animals", active: false } as CustomBreadcrumbItem,
-                { name: "Animal", active: true, to: null } as CustomBreadcrumbItem
+                { name: t("animals.breadcrumbList"), to: "/animals", active: false } as CustomBreadcrumbItem,
+                { name: t("animals.breadcrumbDetail"), active: true, to: null } as CustomBreadcrumbItem
             ]}
         >
             {content}
@@ -621,7 +623,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                         deleteA();
                     }
                 }}
-                bodyEntityName={"un Animal"}
+                bodyEntityName={t("animals.entityName")}
             />
         </Page>
     );

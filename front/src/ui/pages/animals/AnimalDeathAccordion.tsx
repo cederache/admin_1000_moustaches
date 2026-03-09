@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Accordion, AccordionItem, AccordionHeader, AccordionBody, Col, Input, Label, Row } from "reactstrap";
 import Animal from "../../../logic/entities/Animal";
 
@@ -19,15 +20,16 @@ const AnimalDeathAccordion: FC<AnimalDeathAccordionProps> = ({
     onToggle,
     onAnimalChange,
 }) => {
+    const { t } = useTranslation();
     const disabled = !isEditing || !canUpdate;
     return (
         <Accordion className="pb-3" open={openId} toggle={onToggle}>
             <AccordionItem>
-                <AccordionHeader targetId="1">Décès</AccordionHeader>
+                <AccordionHeader targetId="1">{t("animals.accordion.death")}</AccordionHeader>
                 <AccordionBody accordionId="1">
                     <Row>
                         <Col xs={6}>
-                            <Label>Date de décès</Label>
+                            <Label>{t("animals.accordion.deathDate")}</Label>
                             <Input
                                 type="date"
                                 value={animal.deathDate}
@@ -36,7 +38,7 @@ const AnimalDeathAccordion: FC<AnimalDeathAccordionProps> = ({
                             />
                         </Col>
                         <Col xs={6}>
-                            <Label>Raison du décès</Label>
+                            <Label>{t("animals.accordion.deathReason")}</Label>
                             <Input
                                 type="textarea"
                                 value={animal.deathReason || ""}

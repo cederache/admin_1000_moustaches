@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardBody, Col, Input, Label, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
 import VeterinariansManager from "../../../managers/veterinarians.manager";
 import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt } from "react-icons/md";
@@ -56,6 +57,7 @@ namespace FilterType {
 }
 
 const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [veterinarians, setVeterinarians] = useState<Veterinarian[]>([]);
     const [filteredVeterinarians, setFilteredVeterinarians] = useState<Veterinarian[]>([]);
@@ -89,7 +91,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
             })
             .catch((err) => {
                 console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
+                toast.error(`${t("common.errorFetch")}\n${err}`);
             });
     };
 
@@ -162,10 +164,10 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
     return (
         <Page
             className="VeterinariansPage"
-            title="Liste des Vétérinaires"
+            title={t("veterinarians.listTitle")}
             breadcrumbs={[
                 {
-                    name: "Vétérinaires",
+                    name: t("veterinarians.breadcrumb"),
                     active: true,
                     to: null,
                 } as CustomBreadcrumbItem,
@@ -175,7 +177,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                 <Col>
                     <Input
                         name="name"
-                        placeholder="Rechercher un vétérinaire"
+                        placeholder={t("veterinarians.searchPlaceholder")}
                         value={searchText}
                         onChange={(e) => {
                             setSearchText(e.target.value);
@@ -184,11 +186,11 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                 </Col>
                 <Col xs={"auto"}>
                     {pagePermissions[Ressource.VET_LIST]?.can_create && (
-                        <Button title="Créer un vétérinaire" className="ms-2" onClick={createVeterinarian} color={"success"}>
+                        <Button title={t("veterinarians.createButton")} className="ms-2" onClick={createVeterinarian} color={"success"}>
                             <MdAddBox />
                         </Button>
                     )}
-                    <Button title="Rafraîchir les données" className="ms-2" onClick={getAllVeterinarians}>
+                    <Button title={t("common.refresh")} className="ms-2" onClick={getAllVeterinarians}>
                         <MdRefresh />
                     </Button>
                 </Col>
@@ -201,8 +203,8 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                         </Col>
                         {filters.map((filter) => {
                             return (
-                                <Col className="mb-0">
-                                    <Label>{filter.type}</Label>
+                                <Col key={filter.type} className="mb-0">
+                                    <Label>{t("veterinarians.filter.emergencies")}</Label>
                                     <Switch
                                         id={filter.type}
                                         isOn={filter.value === true}
@@ -232,12 +234,12 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                     <Nav tabs>
                         <NavItem className="active">
                             <NavLink disabled={!showMap} onClick={toggleMap}>
-                                Liste
+                                {t("common.list")}
                             </NavLink>
                         </NavItem>
                         <NavItem>
                             <NavLink disabled={showMap} onClick={toggleMap}>
-                                Carte
+                                {t("common.map")}
                             </NavLink>
                         </NavItem>
                     </Nav>
@@ -249,26 +251,26 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                         columns={[
                                             {
                                                 key: "name",
-                                                value: "Nom",
+                                                value: t("veterinarians.table.name"),
                                                 isMain: true,
                                             },
                                             {
                                                 key: "mail",
-                                                value: "E-mail",
+                                                value: t("veterinarians.table.email"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "phone",
-                                                value: "Téléphone",
+                                                value: t("veterinarians.table.phone"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "price",
-                                                value: "Tarif",
+                                                value: t("veterinarians.table.price"),
                                             },
                                             {
                                                 key: "veterinarianDetail",
-                                                value: "Fiche vétérinaire",
+                                                value: t("veterinarians.table.veterinarianSheet"),
                                                 isMain: false,
                                                 sortable: false,
                                             },
@@ -280,7 +282,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                                 phone: vet.phone,
                                                 price: vet.priceLevelText,
                                                 veterinarianDetail: (
-                                                    <Button title="Voir le détail" color="info" onClick={() => showDetail(vet)}>
+                                                    <Button title={t("common.seeDetail")} color="info" onClick={() => showDetail(vet)}>
                                                         <MdAssignment />
                                                     </Button>
                                                 ),
@@ -333,7 +335,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                                                 <br />
                                                                 <div className="pt-2">
                                                                     <Button
-                                                                        title="Voir le détail"
+                                                                        title={t("common.seeDetail")}
                                                                         color="primary"
                                                                         onClick={() => {
                                                                             showDetail(veterinarian);
@@ -349,7 +351,7 @@ const VeterinariansPage: FC<VeterinariansPageProps> = ({ ...props }) => {
                                             })}
                                         {userPosition !== null && (
                                             <Marker
-                                                title={"Ma position"}
+                                                title={t("common.myPosition")}
                                                 key={"user_position"}
                                                 position={[userPosition.lat, userPosition.lng]}
                                                 icon={UserIcon}

@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import NullableDropdown from "../../components/NullableDropdown";
 import AnimalsToHostFamiliesManager from "../../../managers/animalsToHostFamilies.manager";
@@ -22,6 +23,7 @@ const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
     handleClose,
     ...props
 }) => {
+    const { t } = useTranslation();
     const [animalToHostFamily, setAnimalToHostFamily] = useState<AnimalToHostFamily>(athf);
     const modification = !!athf.hostFamily;
 
@@ -31,22 +33,22 @@ const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
         if (modification) {
             AnimalsToHostFamiliesManager.update(animalToHostFamily)
                 .then((_) => {
-                    toast.success("Lien Animal / Famille d'accueil modifié");
+                    toast.success(t("animals.message.linkUpdated"));
                     handleClose(true);
                 })
                 .catch((err) => {
                     console.error(err);
-                    toast.error(`Une erreur s'est produite pendant la modification des données\n${err}`);
+                    toast.error(`${t("common.errorUpdateData")}\n${err}`);
                 });
         } else {
             AnimalsToHostFamiliesManager.create(animalToHostFamily)
                 .then((_) => {
-                    toast.success("Lien Animal / Famille d'accueil créé");
+                    toast.success(t("animals.message.linkCreated"));
                     handleClose(true);
                 })
                 .catch((err) => {
                     console.error(err);
-                    toast.error(`Une erreur s'est produite pendant la création des données\n${err}`);
+                    toast.error(`${t("common.errorCreate")}\n${err}`);
                 });
         }
         return;
@@ -55,12 +57,12 @@ const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
     return (
         <Modal isOpen={show} {...props}>
             <ModalHeader closeButton>
-                <h1>Animal / Famille d'accueil</h1>
+                <h1>{t("animals.modal.animalToHostFamilyTitle")}</h1>
             </ModalHeader>
             <ModalBody>
                 <Row>
                     <Col xs={6}>
-                        <Label>Famille d'accueil</Label>
+                        <Label>{t("animals.modal.animalToHostFamilyHostFamily")}</Label>
                         <NullableDropdown
                             withNewLine={true}
                             withSearch={true}
@@ -82,7 +84,7 @@ const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
                         />
                     </Col>
                     <Col xs={6}>
-                        <Label>Date d'entrée</Label>
+                        <Label>{t("animals.modal.animalToHostFamilyEntryDate")}</Label>
                         <Input
                             type="date"
                             value={animalToHostFamily.entryDate}
@@ -98,10 +100,10 @@ const AnimalToHostFamilyModal: FC<AnimalToHostFamilyModalProps> = ({
             </ModalBody>
             <ModalFooter>
                 <Button color="danger" onClick={() => handleClose(false)}>
-                    Annuler
+                    {t("common.cancel")}
                 </Button>
                 <Button color="primary" onClick={() => save()} disabled={!animalToHostFamily.hostFamily}>
-                    Sauvegarder
+                    {t("common.save")}
                 </Button>
             </ModalFooter>
         </Modal>
