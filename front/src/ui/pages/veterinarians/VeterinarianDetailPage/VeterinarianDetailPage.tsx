@@ -75,6 +75,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
     };
 
     useEffect(() => {
+        if (!isNewVeterinarian && !isEditing) return;
         const vet = isNewVeterinarian ? formVeterinarian : formVeterinarian ?? veterinarian;
         if (vet != null && previousAddress !== vet.address) {
             setPreviousAddress(vet.address ?? null);
@@ -100,7 +101,7 @@ const VeterinarianDetailPage: FC<VeterinarianDetailPageProps> = ({ props }) => {
                     });
             }
         }
-    }, [isNewVeterinarian ? formVeterinarian?.address : (formVeterinarian ?? veterinarian)?.address]);
+    }, [isNewVeterinarian, isEditing, isNewVeterinarian ? formVeterinarian?.address : (formVeterinarian ?? veterinarian)?.address]);
 
     useEffect(() => {
         if (!isGeocoding && shouldSave) {

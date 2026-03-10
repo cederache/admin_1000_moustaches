@@ -14,6 +14,7 @@
 - split list pages into dedicated components (filters)
 - move hooks and manager in api folder
 - fix nullable fields (Animal, HostFamily, Veterinarian)
+- fix Veterinarian geocoding (only for new vet)
 
 ## [0.0.6] - 2026/02/09
 
