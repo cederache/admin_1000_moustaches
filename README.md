@@ -40,17 +40,19 @@ This project's documentation is organized into several specialized guides:
 
 ### Development Mode
 
-For active development with hot reload:
+Start the full dev stack (database, server, frontend with hot reload and fixtures) in one command:
 
 ```bash
-# Start database only
-npm run start:fresh:database-only
-
-# In separate terminals:
-cd server && npm run dev          # Start server
-cd server && npm run dev:fixtures # Load test data
-cd front && npm run start:dev     # Start frontend
+npm run start:dev:all
 ```
+
+This starts the database in the background, waits until MySQL is ready, loads fixtures, then runs the server and frontend. Use Ctrl+C to stop server and frontend; the database keeps running. Stop it with:
+
+```bash
+npm run dev:down
+```
+
+To run services manually in separate terminals, use `npm run start:fresh:database-only` then start the server and frontend from `server/` and `front/` (see [Development Guide](docs/development.md)).
 
 ## 🏗️ Architecture
 
@@ -63,10 +65,13 @@ cd front && npm run start:dev     # Start frontend
 
 | Command | Description |
 |---------|-------------|
-| `npm run start:fresh` | Fresh start with clean database |
-| `npm run start:fresh:fixtures` | Start with test data |
-| `npm run start:fresh:database-only` | Database only (for development) |
-| `npm run restart:docker -- <service>` | Restart specific service |
+| `npm run start:dev:all` | Start full dev stack (DB + server + front with fixtures) |
+| `npm run dev:down` | Stop Docker services |
+| `npm run start` | Start full stack with Docker Compose |
+| `npm run start:fresh` | Fresh start (clean DB, full stack) |
+| `npm run start:fresh:fixtures` | Fresh start with test data (full stack) |
+| `npm run start:fresh:database-only` | Database only, foreground |
+| `npm run restart:docker` | Restart Docker services |
 
 ## 🔧 CI/CD
 
