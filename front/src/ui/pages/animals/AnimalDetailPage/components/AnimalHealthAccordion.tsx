@@ -50,7 +50,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({ animal, isEditi
                                 withNewLine={true}
                                 value={animal.sterilised ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onAnimalChange({ sterilised: newValue ?? undefined })}
+                                onChange={(newValue) => onAnimalChange({ sterilised: newValue })}
                             />
                         </Col>
                         {isCat && (
@@ -61,7 +61,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({ animal, isEditi
                                         withNewLine={true}
                                         value={animal.needExternalAccess ?? null}
                                         disabled={disabled}
-                                        onChange={(newValue) => onAnimalChange({ needExternalAccess: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ needExternalAccess: newValue })}
                                     />
                                 </Col>
                                 <Col xs={6} md={3}>
@@ -70,7 +70,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({ animal, isEditi
                                         withNewLine={true}
                                         value={animal.fivNegative ?? null}
                                         disabled={disabled}
-                                        onChange={(newValue) => onAnimalChange({ fivNegative: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ fivNegative: newValue })}
                                     />
                                 </Col>
                                 <Col xs={6} md={3}>
@@ -79,7 +79,7 @@ const AnimalHealthAccordion: FC<AnimalHealthAccordionProps> = ({ animal, isEditi
                                         withNewLine={true}
                                         value={animal.felvNegative ?? null}
                                         disabled={disabled}
-                                        onChange={(newValue) => onAnimalChange({ felvNegative: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ felvNegative: newValue })}
                                     />
                                 </Col>
                             </>

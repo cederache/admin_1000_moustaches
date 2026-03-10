@@ -270,7 +270,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                         withNewLine={true}
                                         value={formAnimal.broadcastable ?? null}
                                         disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                        onChange={(newValue) => onAnimalChange({ broadcastable: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ broadcastable: newValue })}
                                     />
                                 </Col>
                                 <Col md={4} lg={3}>
@@ -279,7 +279,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                         withNewLine={true}
                                         value={formAnimal.bookable ?? null}
                                         disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                        onChange={(newValue) => onAnimalChange({ bookable: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ bookable: newValue })}
                                     />
                                 </Col>
                                 <Col md={4} lg={3}>
@@ -288,7 +288,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                         withNewLine={true}
                                         value={formAnimal.reserved ?? null}
                                         disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                        onChange={(newValue) => onAnimalChange({ reserved: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ reserved: newValue })}
                                     />
                                 </Col>
                                 <Col md={4} lg={3}>
@@ -327,7 +327,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                         withNewLine={true}
                                         value={formAnimal.adopted ?? null}
                                         disabled={!isEditing || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                        onChange={(newValue) => onAnimalChange({ adopted: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ adopted: newValue })}
                                     />
                                 </Col>
                                 <Col md={4} lg={3}>
@@ -336,7 +336,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                         withNewLine={true}
                                         value={formAnimal.albumCreated ?? null}
                                         disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                        onChange={(newValue) => onAnimalChange({ albumCreated: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ albumCreated: newValue })}
                                     />
                                 </Col>
                                 <Col md={4} lg={3}>
@@ -345,7 +345,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                         withNewLine={true}
                                         value={formAnimal.contractSent ?? null}
                                         disabled={!isEditing || formAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                        onChange={(newValue) => onAnimalChange({ contractSent: newValue ?? undefined })}
+                                        onChange={(newValue) => onAnimalChange({ contractSent: newValue })}
                                     />
                                 </Col>
                             </Row>
@@ -488,7 +488,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     withNewLine={true}
                                     value={displayAnimal.broadcastable ?? null}
                                     disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) => onAnimalChange({ broadcastable: newValue ?? undefined })}
+                                    onChange={(newValue) => onAnimalChange({ broadcastable: newValue })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
@@ -497,7 +497,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     withNewLine={true}
                                     value={displayAnimal.bookable ?? null}
                                     disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) => onAnimalChange({ bookable: newValue ?? undefined })}
+                                    onChange={(newValue) => onAnimalChange({ bookable: newValue })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
@@ -506,7 +506,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     withNewLine={true}
                                     value={displayAnimal.reserved ?? null}
                                     disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) => onAnimalChange({ reserved: newValue ?? undefined })}
+                                    onChange={(newValue) => onAnimalChange({ reserved: newValue })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
@@ -545,7 +545,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     withNewLine={true}
                                     value={displayAnimal.adopted ?? null}
                                     disabled={!isEditing || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) => onAnimalChange({ adopted: newValue ?? undefined })}
+                                    onChange={(newValue) => onAnimalChange({ adopted: newValue })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
@@ -554,7 +554,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     withNewLine={true}
                                     value={displayAnimal.albumCreated ?? null}
                                     disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) => onAnimalChange({ albumCreated: newValue ?? undefined })}
+                                    onChange={(newValue) => onAnimalChange({ albumCreated: newValue })}
                                 />
                             </Col>
                             <Col md={4} lg={3}>
@@ -563,7 +563,7 @@ const AnimalDetailPage: FC<AnimalDetailPageProps> = ({ props }) => {
                                     withNewLine={true}
                                     value={displayAnimal.contractSent ?? null}
                                     disabled={!isEditing || displayAnimal.adopted || !pagePermissions[Ressource.PET_INFO]?.can_update}
-                                    onChange={(newValue) => onAnimalChange({ contractSent: newValue ?? undefined })}
+                                    onChange={(newValue) => onAnimalChange({ contractSent: newValue })}
                                 />
                             </Col>
                         </Row>

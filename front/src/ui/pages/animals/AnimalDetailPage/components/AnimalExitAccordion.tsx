@@ -28,7 +28,7 @@ const AnimalExitAccordion: FC<AnimalExitAccordionProps> = ({ animal, isEditing, 
                                 withNewLine={true}
                                 value={animal.transferCertificate ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onAnimalChange({ transferCertificate: newValue ?? undefined })}
+                                onChange={(newValue) => onAnimalChange({ transferCertificate: newValue })}
                             />
                         </Col>
                         <Col xs={6} md={8}>

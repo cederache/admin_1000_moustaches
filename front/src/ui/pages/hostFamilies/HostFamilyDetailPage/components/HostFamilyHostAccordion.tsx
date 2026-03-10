@@ -77,7 +77,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canProvideVeterinaryCare ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onHostFamilyChange({ canProvideVeterinaryCare: newValue ?? undefined })}
+                                onChange={(newValue) => onHostFamilyChange({ canProvideVeterinaryCare: newValue })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>
@@ -86,7 +86,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canProvideSociabilisation ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onHostFamilyChange({ canProvideSociabilisation: newValue ?? undefined })}
+                                onChange={(newValue) => onHostFamilyChange({ canProvideSociabilisation: newValue })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>
@@ -95,7 +95,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canHostDisableAnimal ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onHostFamilyChange({ canHostDisableAnimal: newValue ?? undefined })}
+                                onChange={(newValue) => onHostFamilyChange({ canHostDisableAnimal: newValue })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>
@@ -104,7 +104,7 @@ const HostFamilyHostAccordion: FC<HostFamilyHostAccordionProps> = ({
                                 withNewLine={true}
                                 value={hostFamily.canProvideNightCare ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onHostFamilyChange({ canProvideNightCare: newValue ?? undefined })}
+                                onChange={(newValue) => onHostFamilyChange({ canProvideNightCare: newValue })}
                             />
                         </Col>
                         <Col xs={4} lg={3}>

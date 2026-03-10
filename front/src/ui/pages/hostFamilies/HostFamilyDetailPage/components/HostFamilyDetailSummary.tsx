@@ -80,7 +80,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({ hostFamily,
                         withNewLine={true}
                         value={hostFamily.driverLicense ?? null}
                         disabled={disabled}
-                        onChange={(newValue) => onHostFamilyChange({ driverLicense: newValue ?? undefined })}
+                        onChange={(newValue) => onHostFamilyChange({ driverLicense: newValue })}
                     />
                 </Col>
                 <Col xs={6}>
@@ -89,7 +89,7 @@ const HostFamilyDetailSummary: FC<HostFamilyDetailSummaryProps> = ({ hostFamily,
                         withNewLine={true}
                         value={hostFamily.hasVehicule ?? null}
                         disabled={disabled}
-                        onChange={(newValue) => onHostFamilyChange({ hasVehicule: newValue ?? undefined })}
+                        onChange={(newValue) => onHostFamilyChange({ hasVehicule: newValue })}
                     />
                 </Col>
             </Row>

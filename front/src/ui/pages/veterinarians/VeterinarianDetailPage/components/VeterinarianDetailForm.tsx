@@ -86,7 +86,7 @@ const VeterinarianDetailForm: FC<VeterinarianDetailFormProps> = ({ veterinarian,
                                 <BooleanNullableDropdown
                                     value={veterinarian.emergencies ?? null}
                                     disabled={!isEditing}
-                                    onChange={(newValue) => onVeterinarianChange({ emergencies: newValue ?? undefined })}
+                                    onChange={(newValue) => onVeterinarianChange({ emergencies: newValue })}
                                 />
                             </Col>
                             <Col xs={6}>

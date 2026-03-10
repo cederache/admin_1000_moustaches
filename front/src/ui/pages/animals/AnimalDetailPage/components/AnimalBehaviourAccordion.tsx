@@ -40,7 +40,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({ animal, i
                                 withNewLine={true}
                                 value={animal.needFriends ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onAnimalChange({ needFriends: newValue ?? undefined })}
+                                onChange={(newValue) => onAnimalChange({ needFriends: newValue })}
                             />
                         </Col>
                         <Col xs={6} md={3}>
@@ -83,7 +83,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({ animal, i
                                 withNewLine={true}
                                 value={animal.catsOk ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onAnimalChange({ catsOk: newValue ?? undefined })}
+                                onChange={(newValue) => onAnimalChange({ catsOk: newValue })}
                             />
                         </Col>
                         <Col xs={6} md={3}>
@@ -92,7 +92,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({ animal, i
                                 withNewLine={true}
                                 value={animal.dogsOk ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onAnimalChange({ dogsOk: newValue ?? undefined })}
+                                onChange={(newValue) => onAnimalChange({ dogsOk: newValue })}
                             />
                         </Col>
                         <Col xs={6} md={3}>
@@ -101,7 +101,7 @@ const AnimalBehaviourAccordion: FC<AnimalBehaviourAccordionProps> = ({ animal, i
                                 withNewLine={true}
                                 value={animal.kidsOk ?? null}
                                 disabled={disabled}
-                                onChange={(newValue) => onAnimalChange({ kidsOk: newValue ?? undefined })}
+                                onChange={(newValue) => onAnimalChange({ kidsOk: newValue })}
                             />
                         </Col>
                     </Row>

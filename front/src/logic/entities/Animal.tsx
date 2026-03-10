@@ -1,3 +1,4 @@
+import type { NullableBoolean } from "../types";
 import AnimalToHostFamily from "./AnimalToHostFamily";
 import DateObject from "./DateObject";
 import Species from "./Species";
@@ -21,32 +22,32 @@ class Animal {
     exitInfos?: string;
     deathDate?: string;
     deathReason?: string;
-    sterilised?: boolean;
+    sterilised?: NullableBoolean;
     firstVaccinationDate?: string;
     secondVaccinationDate?: string;
-    fivNegative?: boolean;
-    felvNegative?: boolean;
+    fivNegative?: NullableBoolean;
+    felvNegative?: NullableBoolean;
     healthIssues?: string;
     behaviour?: string;
-    needFriends?: boolean;
+    needFriends?: NullableBoolean;
     posture?: string;
-    catsOk?: boolean;
-    dogsOk?: boolean;
-    kidsOk?: boolean;
+    catsOk?: NullableBoolean;
+    dogsOk?: NullableBoolean;
+    kidsOk?: NullableBoolean;
     behaviorParticularity?: string;
-    adopted?: boolean;
-    broadcastable?: boolean;
-    bookable?: boolean;
-    needExternalAccess?: boolean;
+    adopted?: NullableBoolean;
+    broadcastable?: NullableBoolean;
+    bookable?: NullableBoolean;
+    needExternalAccess?: NullableBoolean;
     transferor?: string;
     antiParasiticDate?: string;
-    transferCertificate?: boolean;
-    reserved?: boolean;
+    transferCertificate?: NullableBoolean;
+    reserved?: NullableBoolean;
     needIcadDuplicate?: string;
     currentHostFamilyId?: string;
     currentHostFamilyReferentId?: number;
-    contractSent?: boolean;
-    albumCreated?: boolean;
+    contractSent?: NullableBoolean;
+    albumCreated?: NullableBoolean;
     hostFamilyRelations?: AnimalToHostFamily[];
     veterinarianInterventions?: VeterinarianIntervention[];
 
@@ -126,32 +127,32 @@ class Animal {
         exitInfos?: string,
         deathDate?: string,
         deathReason?: string,
-        sterilised?: boolean,
+        sterilised?: NullableBoolean,
         firstVaccinationDate?: string,
         secondVaccinationDate?: string,
-        fivNegative?: boolean,
-        felvNegative?: boolean,
+        fivNegative?: NullableBoolean,
+        felvNegative?: NullableBoolean,
         healthIssues?: string,
         behaviour?: string,
-        needFriends?: boolean,
+        needFriends?: NullableBoolean,
         posture?: string,
-        catsOk?: boolean,
-        dogsOk?: boolean,
-        kidsOk?: boolean,
+        catsOk?: NullableBoolean,
+        dogsOk?: NullableBoolean,
+        kidsOk?: NullableBoolean,
         behaviorParticularity?: string,
-        adopted?: boolean,
-        broadcastable?: boolean,
-        bookable?: boolean,
-        needExternalAccess?: boolean,
+        adopted?: NullableBoolean,
+        broadcastable?: NullableBoolean,
+        bookable?: NullableBoolean,
+        needExternalAccess?: NullableBoolean,
         transferor?: string,
         antiParasiticDate?: string,
-        transferCertificate?: boolean,
-        reserved?: boolean,
+        transferCertificate?: NullableBoolean,
+        reserved?: NullableBoolean,
         needIcadDuplicate?: string,
         currentHostFamilyId?: string,
         currentHostFamilyReferentId?: number,
-        contractSent?: boolean,
-        albumCreated?: boolean,
+        contractSent?: NullableBoolean,
+        albumCreated?: NullableBoolean,
         hostFamilyRelations?: AnimalToHostFamily[],
         veterinarianInterventions?: VeterinarianIntervention[]
     ) {
