@@ -1,3 +1,4 @@
+import type { NullableBoolean } from "../types";
 import Veterinarian from "../entities/Veterinarian";
 
 class VeterinarianDTO {
@@ -8,7 +9,7 @@ class VeterinarianDTO {
     mail: string;
     website: string;
     priceLevel: number;
-    emergencies: boolean;
+    emergencies?: NullableBoolean;
     appointmentConfirmationProcedure: string;
     invoicePaymentDate: string;
     paymentMethod: string;

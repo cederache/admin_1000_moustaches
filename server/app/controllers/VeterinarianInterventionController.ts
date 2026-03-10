@@ -23,6 +23,23 @@ export class VeterinarianInterventionController {
         })
     }
 
+    async getInterventionsByAnimalId(animalId: number) {
+        return await this.interventionRepository.find({
+            where: {
+                animal: {
+                    id: animalId
+                }
+            },
+            relations: {
+                veterinarian: true,
+                animal: true
+            },
+            order: {
+                date: 'DESC'
+            }
+        })
+    }
+
     async createIntervention(interventionData: Partial<VeterinarianIntervention>) {
         const intervention = this.interventionRepository.create(interventionData)
         return await this.interventionRepository.save(intervention)

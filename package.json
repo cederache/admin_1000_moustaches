@@ -12,11 +12,16 @@
     "start:fresh:detached": "docker compose --env-file .env.local down -v && docker compose --env-file .env.local up -d --build",
     "start:fresh:fixtures": "npm run start:fresh:detached && npm run docker:fixtures && docker compose logs -f",
     "docker:fixtures": "docker exec -it admin_1000_moustaches-server-1 //bin//sh -c \"cd server && npm run dev:fixtures\"",
-    "set-version": "node -e \"const fs=require('fs');const v=process.argv[1];['./package.json','./front/package.json','./server/package.json'].forEach(f=>{const pkg=JSON.parse(fs.readFileSync(f));pkg.version=v;fs.writeFileSync(f,JSON.stringify(pkg,null,2)+'\\n');});console.log('Version updated to '+v+' in all package.json files');\"",
-    "restart:docker": "docker compose --env-file .env.local up --build"
+    "start:dev:all": "docker compose --env-file .env.local down -v && docker compose --env-file .env.local up -d --build database && sh scripts/wait-for-db.sh && (cd server && npm run dev:fixtures) && concurrently -n server,front \"cd server && npm run dev\" \"cd front && npm run start:dev\"",
+    "dev:down": "docker compose --env-file .env.local down",
+    "restart:docker": "docker compose --env-file .env.local up --build",
+    "set-version": "node -e \"const fs=require('fs');const v=process.argv[1];['./package.json','./front/package.json','./server/package.json'].forEach(f=>{const pkg=JSON.parse(fs.readFileSync(f));pkg.version=v;fs.writeFileSync(f,JSON.stringify(pkg,null,2)+'\\n');});console.log('Version updated to '+v+' in all package.json files');\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
 }

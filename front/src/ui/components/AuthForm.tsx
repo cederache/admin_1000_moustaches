@@ -1,14 +1,15 @@
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { useState, FC, ReactElement, ReactNode } from "react";
-import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink, } from "reactstrap";
+import { useTranslation } from "react-i18next";
+import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, NavLink } from "reactstrap";
 import logo from "../../assets/img/logo/Logo1000Moustaches.png";
-import UsersManager from "../../managers/users.manager";
+import UsersManager from "../../api/managers/users.manager";
 import SourceLink from "./SourceLink";
 import Permissions from "../../logic/entities/Permissions";
 import { MdOutlineFileOpen } from "react-icons/md";
 
 import { auth } from "../../firebase-config";
-import AuthManager from "../../managers/auth.manager";
+import AuthManager from "../../api/managers/auth.manager";
 import toast from "react-hot-toast";
 
 type PagePermissions = {
@@ -48,16 +49,16 @@ const AuthForm: FC<AuthFormProps> = ({
     confirmPasswordLabel,
     confirmPasswordInputProps,
     children,
-    onLogoClick = () => { },
+    onLogoClick = () => {},
     ...props
 }): ReactElement => {
+    const { t } = useTranslation();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
 
     const [pagePermissions, setPagePermissions] = useState<PagePermissions>({});
-
 
     let isLogin = () => {
         return authState === AuthFormState.LOGIN;
@@ -71,21 +72,21 @@ const AuthForm: FC<AuthFormProps> = ({
         }
 
         if (isLogin()) {
-            return "Connexion";
+            return t("auth.login");
         } else {
-            return "Inscription";
+            return t("auth.signup");
         }
     };
 
     let handleForgotPassword = () => {
         sendPasswordResetEmail(auth, username)
             .then((response) => {
-                toast.success(`Un mail a été envoyé l'adresse ${username} pour réinitialiser le mot de passe`);
+                toast.success(t("auth.message.passwordResetSent", { email: username }));
                 setShowForgotPasswordModal(false);
             })
             .catch((error) => {
                 console.error(error);
-                toast.error(`Une erreur s'est produite pendant la réinitialisation du mot de passe. Veillez réessayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`);
+                toast.error(`${t("auth.message.errorPasswordReset")}\n${error}`);
                 setShowForgotPasswordModal(false);
             });
     };
@@ -94,20 +95,20 @@ const AuthForm: FC<AuthFormProps> = ({
         if (isLogin()) {
             AuthManager.login(username, password)
                 .then(() => {
-                    toast.success("Connexion réussie.\nBienvenue");
+                    toast.success(t("auth.message.loginSuccess"));
                     window.location.href = "/";
                 })
                 .catch((error) => {
                     console.error("Error for login");
                     console.error(error);
-                    toast.error("Connexion impossible. Merci de vérifier l'email et le mot de passe.\nEn cas de problème, merci de contacter le service informatique.");
+                    toast.error(t("auth.message.loginError"));
                 });
         } else {
             if (confirmPassword === password) {
                 // Check if user is prepared in database
                 UsersManager.getAll().then((users) => {
                     if (users.find((usr) => usr.email === username) === null) {
-                        toast.error("Le compte doit être préparé avec cet e-mail. Merci de contacter un administrateur.");
+                        toast.error(t("auth.message.accountNotPrepared"));
                         return;
                     } else {
                         createUserWithEmailAndPassword(auth, username, password)
@@ -118,12 +119,12 @@ const AuthForm: FC<AuthFormProps> = ({
                             .catch((error) => {
                                 console.error("Error for create user");
                                 console.error(error);
-                                toast.error(`Une erreur s'est produite pendant la création de l'utilisateur·ice. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.\n${error}`);
+                                toast.error(`${t("auth.message.errorCreateUser")}\n${error}`);
                             });
                     }
                 });
             } else {
-                toast.error("La confirmation de mot de passe n'est pas bonne");
+                toast.error(t("auth.message.passwordMismatch"));
             }
         }
     };
@@ -137,18 +138,24 @@ const AuthForm: FC<AuthFormProps> = ({
         <>
             <Form onSubmit={handleFormSubmit}>
                 <SourceLink link={"/"} className="navbar-brand d-flex justify-content-center" onClick={onLogoClick}>
-                    <img src={logo} height="100" alt="1000 Moustaches" />
+                    <img src={logo} height="100" alt={t("auth.logoAlt")} />
                 </SourceLink>
                 <FormGroup>
-                    <Label for="email">Email</Label>
-                    <Input name="email" type="email" placeholder="ton@email.fr" value={username} onChange={(evt) => setUsername(evt.target.value)} />
+                    <Label for="email">{t("auth.email")}</Label>
+                    <Input
+                        name="email"
+                        type="email"
+                        placeholder={t("auth.placeholder.email")}
+                        value={username}
+                        onChange={(evt) => setUsername(evt.target.value)}
+                    />
                 </FormGroup>
                 <FormGroup>
-                    <Label for="password">Mot de passe</Label>
+                    <Label for="password">{t("auth.password")}</Label>
                     <Input
                         name="password"
                         type="password"
-                        placeholder="Mot de passe"
+                        placeholder={t("auth.placeholder.password")}
                         autoComplete={isLogin() ? "current-password" : "new-password"}
                         value={password}
                         onChange={(evt) => setPassword(evt.target.value)}
@@ -156,11 +163,11 @@ const AuthForm: FC<AuthFormProps> = ({
                 </FormGroup>
                 {!isLogin() && (
                     <FormGroup>
-                        <Label for="confirmPassword">Confirmer le mot de passe</Label>
+                        <Label for="confirmPassword">{t("auth.confirmPassword")}</Label>
                         <Input
                             name="confirmPassword"
                             type="password"
-                            placeholder="Confirmer le mot de passe"
+                            placeholder={t("auth.placeholder.confirmPassword")}
                             autoComplete={"off"}
                             value={confirmPassword}
                             onChange={(evt) => setConfirmPassword(evt.target.value)}
@@ -170,7 +177,7 @@ const AuthForm: FC<AuthFormProps> = ({
                 <hr />
                 {isLogin() && (
                     <Label className="can-click" onClick={() => setShowForgotPasswordModal(true)}>
-                        Mot de passe oublié ?
+                        {t("auth.forgotPassword.label")}
                     </Label>
                 )}
                 <Button type="submit" size="lg" className="bg-gradient-theme-left border-0" block onClick={handleSubmit}>
@@ -180,41 +187,34 @@ const AuthForm: FC<AuthFormProps> = ({
                 {!isLogin() && (
                     <>
                         <br />
-                        <em>Un administrateur doit déjà avoir créé votre compte avant de pouvoir vous inscrire</em>
+                        <em>{t("auth.signupHint")}</em>
                     </>
                 )}
 
                 {children}
 
                 <div className="text-center mt-3">
-                    <NavLink
-                        id="privacy-policy"
-                        href="/privacypolicylogin"
-                        target="_blank"
-                        className="text-black text-decoration-none small"
-                    >
+                    <NavLink id="privacy-policy" href="/privacypolicylogin" target="_blank" className="text-black text-decoration-none small">
                         <MdOutlineFileOpen className="me-2" />
-                        Mentions légales
+                        {t("auth.legal")}
                     </NavLink>
                 </div>
             </Form>
 
-
-
             <Modal isOpen={showForgotPasswordModal} {...props}>
                 <ModalHeader>
-                    <h1>Mot de passe oublié ?</h1>
+                    <h1>{t("auth.forgotPassword.modalTitle")}</h1>
                 </ModalHeader>
                 <ModalBody>
-                    Merci d'entrer le mail du compte pour recevoir un lien de modification de mot passe.
+                    {t("auth.forgotPassword.modalBody")}
                     <Input value={username} onChange={(evt) => setUsername(evt.target.value)} />
                 </ModalBody>
                 <ModalFooter>
                     <Button color="danger" onClick={() => setShowForgotPasswordModal(false)}>
-                        Annuler
+                        {t("common.cancel")}
                     </Button>
                     <Button color="success" onClick={() => handleForgotPassword()}>
-                        Confirmer
+                        {t("common.confirm")}
                     </Button>
                 </ModalFooter>
             </Modal>

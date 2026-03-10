@@ -1,23 +1,12 @@
-import React, { useEffect, useState } from "react";
-import hostFamiliesAvailabledManager from "../../../../managers/hostFamiliesAvailable.manager";
-import SpeciesCounts from "../../../../logic/entities/SpeciesCounts";
-import AnimalsCard from "./AnimalsCard";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useDashboardHostFamiliesAvailable } from "../../../../api/hooks/dashboard/useDashboardHostFamiliesAvailable";
 import HostFamiliesCard from "./HostFamiliesCard";
 
 const HostFamiliesAvailable = () => {
-    const [hostFamiliesAvailableData, setHostFamiliesAvailableData] = useState<SpeciesCounts | null>(null);
+    const { t } = useTranslation();
+    const { data: hostFamiliesAvailableData } = useDashboardHostFamiliesAvailable();
 
-    useEffect(() => {
-        hostFamiliesAvailabledManager
-            .getAll()
-            .then((data) => {
-                setHostFamiliesAvailableData(data);
-            })
-            .catch((err) => {
-                console.error("Erreur lors du chargement des données:", err);
-            });
-    }, []);
-
-    return <HostFamiliesCard title="Nombre de familles d'accueil disponibles" datas={hostFamiliesAvailableData} />;
+    return <HostFamiliesCard title={t("dashboard.card.hostFamiliesAvailable")} datas={hostFamiliesAvailableData ?? null} />;
 };
 export default HostFamiliesAvailable;

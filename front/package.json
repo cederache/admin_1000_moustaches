@@ -3,6 +3,7 @@
   "version": "0.0.6",
   "private": true,
   "dependencies": {
+    "@tanstack/react-query": "^5.59.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.11",
     "@types/react": "^18.0.35",
@@ -18,7 +19,9 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "prop-types": "^15.7.2",
+    "i18next": "^23.7.0",
     "react": "19.1.0",
+    "react-i18next": "^14.0.0",
     "react-d3-map": "^0.8.3",
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.6.0",
@@ -54,7 +57,8 @@
     "build": "NODE_PATH=./src tsc && vite build && cp _headers dist/_headers",
     "serve": "NODE_PATH=./src vite preview",
     "deploy": "export NODE_ENV=production && npm run build && firebase deploy --only hosting",
-    "test": "echo \"No tests yet - passing automatically\" && exit 0"
+    "test": "echo \"No tests yet - passing automatically\" && exit 0",
+    "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [

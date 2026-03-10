@@ -5,7 +5,7 @@ import { Veterinarian } from "../dist/app/models/Veterinarian";
 // Used for dev (to get the typed entity)
 // import { Veterinarian } from "../app/models/Veterinarian";
 
-const createVeterinarian = (name: string, mail: string, phone: string, address: string, latitude: number, longitude: number, priceLevel: number) => {
+const createVeterinarian = (name: string, mail: string, phone: string, address: string, latitude: number, longitude: number, emergencies: boolean, priceLevel: number) => {
   const veterinarian = new Veterinarian();
   veterinarian.name = name;
   veterinarian.mail = mail;
@@ -13,6 +13,7 @@ const createVeterinarian = (name: string, mail: string, phone: string, address: 
   veterinarian.address = address;
   veterinarian.latitude = latitude;
   veterinarian.longitude = longitude;
+  veterinarian.emergencies = emergencies;
   veterinarian.priceLevel = priceLevel;
   return veterinarian;
 };
@@ -27,6 +28,7 @@ export const createVeterinarians = async (dataSource: DataSource) => {
       address: "12 rue de Strasbourg, 44001 Nantes",
       latitude: 47.21608201944448,
       longitude: -1.550908502387338,
+      emergencies: true,
       priceLevel: 0,
     }, {
       name: "Dr. Jane Doe",
@@ -35,11 +37,12 @@ export const createVeterinarians = async (dataSource: DataSource) => {
       address: "1 rue de la Paix, 44000 Nantes",
       latitude: 47.21442604511793,
       longitude: - 1.5543125786141285,
+      emergencies: false,
       priceLevel: 2,
     }
   ];
 
-  const veterinariansToSave = veterinarians.map(veterinarian => createVeterinarian(veterinarian.name, veterinarian.mail, veterinarian.phone, veterinarian.address, veterinarian.latitude, veterinarian.longitude, veterinarian.priceLevel));
+  const veterinariansToSave = veterinarians.map(veterinarian => createVeterinarian(veterinarian.name, veterinarian.mail, veterinarian.phone, veterinarian.address, veterinarian.latitude, veterinarian.longitude, veterinarian.emergencies, veterinarian.priceLevel));
 
   const veterinarianRepository = dataSource.getRepository(Veterinarian);
   for (const veterinarian of veterinariansToSave) {

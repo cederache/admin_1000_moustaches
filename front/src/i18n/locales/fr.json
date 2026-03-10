@@ -1,0 +1,373 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "home": "Accueil",
+    "seeDetail": "Voir le détail",
+    "refresh": "Rafraîchir les données",
+    "create": "Créer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "menu": "Menu",
+    "list": "Liste",
+    "map": "Carte",
+    "all": "Tous",
+    "all_f": "Toutes",
+    "all_neutral": "Tous·tes",
+    "none": "Aucun·e",
+    "nsp": "NSP",
+    "errorFetch": "Une erreur s'est produite pendant la récupération des données",
+    "errorCreate": "Une erreur s'est produite pendant la création des données",
+    "errorUpdate": "Une erreur s'est produite pendant la mise à jour des données",
+    "errorDelete": "Une erreur s'est produite pendant la suppression des données",
+    "errorUpdateData": "Une erreur s'est produite pendant la modification des données",
+    "myPosition": "Ma position",
+    "confirmDelete": {
+      "title": "Confirmer la suppression",
+      "body": "Vous êtes sur le point de supprimer {{entity}}. Êtes-vous sûr ?"
+    }
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "placeholder": {
+      "email": "ton@email.fr",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe"
+    },
+    "forgotPassword": {
+      "label": "Mot de passe oublié ?",
+      "modalTitle": "Mot de passe oublié ?",
+      "modalBody": "Merci d'entrer le mail du compte pour recevoir un lien de modification de mot passe."
+    },
+    "signupHint": "Un administrateur doit déjà avoir créé votre compte avant de pouvoir vous inscrire",
+    "logoAlt": "1000 Moustaches",
+    "legal": "Mentions légales",
+    "message": {
+      "passwordResetSent": "Un mail a été envoyé l'adresse {{email}} pour réinitialiser le mot de passe",
+      "errorPasswordReset": "Une erreur s'est produite pendant la réinitialisation du mot de passe. Veillez réessayer. Si l'erreur persiste, merci de contacter le service informatique.",
+      "loginSuccess": "Connexion réussie.\nBienvenue",
+      "loginError": "Connexion impossible. Merci de vérifier l'email et le mot de passe.\nEn cas de problème, merci de contacter le service informatique.",
+      "accountNotPrepared": "Le compte doit être préparé avec cet e-mail. Merci de contacter un administrateur.",
+      "errorCreateUser": "Une erreur s'est produite pendant la création de l'utilisateur·ice. Merci de ressayer. Si l'erreur persiste, merci de contacter le service informatique.",
+      "passwordMismatch": "La confirmation de mot de passe n'est pas bonne"
+    }
+  },
+  "layout": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "animals": "Animaux",
+      "veterinarians": "Vétérinaires",
+      "hostFamilies": "Familles d'Accueil",
+      "users": "Utilisateur·ice·s",
+      "legal": "Mentions légales",
+      "logoAlt": "logo de 1000 Moustaches",
+      "altDashboard": "logo Dashboard",
+      "altAnimals": "logo animaux",
+      "altVeterinarians": "logo vétérinaire",
+      "altHostFamilies": "logo famille d'accueil",
+      "altUsers": "logo Utilisateur·ice·s"
+    },
+    "header": {
+      "menuBurger": "logo menu burger",
+      "logout": "Déconnexion"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "breadcrumb": "Dashboard",
+    "card": {
+      "total": "Total",
+      "animalsNonAdopted": "Nombre d'animaux présents dans l'association",
+      "animalsAdopted": "Nombre d'animaux adoptés",
+      "hostFamiliesAvailable": "Nombre de familles d'accueil disponibles"
+    },
+    "aria": {
+      "dog": "logo chien",
+      "rabbit": "logo lapin",
+      "cat": "logo chat",
+      "mouse": "logo souris"
+    }
+  },
+  "animals": {
+    "listTitle": "Liste des Animaux",
+    "detailTitle": "Détail de l'animal",
+    "newAnimal": "Nouvel Animal",
+    "breadcrumbList": "Animaux",
+    "breadcrumbDetail": "Animal",
+    "searchPlaceholder": "Rechercher un animal",
+    "table": {
+      "name": "Nom",
+      "sex": "Sexe",
+      "birthdate": "Date de naissance",
+      "icad": "ICAD",
+      "pecDate": "Date de PEC",
+      "hostFamily": "Famille d'acceuil",
+      "animalSheet": "Fiche animal"
+    },
+    "filter": {
+      "broadcastable": "Diffusable",
+      "broadcastableYes": "Diffusable",
+      "broadcastableNo": "Non diffusable",
+      "reserved": "Réservé·e",
+      "reservedYes": "Réservé·e",
+      "reservedNo": "Non réservé·es",
+      "adopted": "Adopté·e",
+      "adoptedYes": "Adopté·e",
+      "adoptedNo": "Non adopté·es",
+      "dead": "Décédé·e",
+      "deadYes": "Décédé·e",
+      "alive": "Vivant·e",
+      "species": "Espèce",
+      "speciesAll": "Toutes",
+      "referent": "Référent·e",
+      "referentAll": "Tous·tes",
+      "icadMissing": "ICAD manquant"
+    },
+    "dropdown": {
+      "icadNo": "Non",
+      "icadReceived": "Oui, reçu",
+      "icadWaiting": "Oui, demandé",
+      "postureFearful": "Craintif",
+      "postureShy": "Peureux",
+      "postureSociable": "Sociable"
+    },
+    "message": {
+      "animalNotFound": "Animal non trouvé",
+      "saveAnimalFirst": "Sauvegardez d'abord l'animal avant de lui attribuer une famille d'accueil",
+      "saveAnimalBeforeIntervention": "Sauvegardez d'abord l'animal avant d'enregistrer une intervention vétérinaire",
+      "animalCreated": "Animal créé",
+      "animalUpdated": "Animal mis à jour",
+      "animalDeleted": "Animal supprimé",
+      "linkUpdated": "Lien Animal / Famille d'accueil modifié",
+      "linkCreated": "Lien Animal / Famille d'accueil créé",
+      "linkDeleted": "Lien Animal / Famille d'accueil supprimé",
+      "interventionCreated": "Intervention vétérinaire créée",
+      "interventionUpdated": "Intervention vétérinaire mise à jour",
+      "interventionDeleted": "Intervention vétérinaire supprimée",
+      "interventionDeletedAlt": "Intervention Vétérinaire supprimée"
+    },
+    "entityName": "un Animal",
+    "detail": {
+      "broadcastable": "Diffusable",
+      "reservable": "Réservable",
+      "reserved": "Réservé·e",
+      "needIcadDuplicate": "Duplicata ICAD nécessaire ?",
+      "adopted": "Adopté·e",
+      "albumCreated": "Album créé",
+      "contractSent": "Contrat envoyé"
+    },
+    "accordion": {
+      "info": "Informations",
+      "infoPhoto": "Photo",
+      "infoSpecies": "Espèce",
+      "infoSex": "Sexe",
+      "infoRace": "Race",
+      "infoBirthdate": "Date de naissance",
+      "infoDistinctiveSigns": "Signes distinctifs",
+      "pec": "Prise en charge",
+      "pecDate": "Date de PEC",
+      "pecPlace": "Lieu de PEC",
+      "pecReasons": "Raisons de PEC",
+      "pecInfo": "Informations de PEC",
+      "pecCeding": "Cédant",
+      "health": "Santé",
+      "healthPrimoVaccination": "Primo vaccination",
+      "healthVaccineRecall": "Rappel de vaccin",
+      "healthSterilized": "Stérilisé·e",
+      "healthOutdoorRequired": "Extérieur obligatoire",
+      "healthFivNegative": "Négatif FIV",
+      "healthFelvNegative": "Négatif FELV",
+      "healthAntiparasiticDate": "Date des anti-parasitaires",
+      "healthParticularity": "Particularité de santé",
+      "behaviour": "Comportement",
+      "behaviourCharacter": "Caractère",
+      "behaviourNeedFriends": "Besoin congénère",
+      "behaviourPosture": "Attitude",
+      "behaviourCatsOk": "OK chats",
+      "behaviourDogsOk": "OK chiens",
+      "behaviourKidsOk": "OK enfants",
+      "behaviourParticularity": "Particularité",
+      "exit": "Sortie",
+      "exitCessionCertificate": "Certificat de cession",
+      "exitDate": "Date de sortie",
+      "exitReason": "Raison de sortie",
+      "death": "Décès",
+      "deathDate": "Date de décès",
+      "deathReason": "Raison du décès"
+    },
+    "modal": {
+      "animalToHostFamilyTitle": "Animal / Famille d'accueil",
+      "animalToHostFamilyHostFamily": "Famille d'accueil",
+      "animalToHostFamilyEntryDate": "Date d'entrée",
+      "veterinarianInterventionTitle": "Intervention vétérinaire",
+      "veterinarianInterventionDate": "Date",
+      "veterinarianInterventionVeterinarian": "Vétérinaire",
+      "veterinarianInterventionDescription": "Description",
+      "interventionEntityName": "une Intervention Vétérinaire"
+    },
+    "history": {
+      "hostFamiliesTitle": "Historique des Familles d'Accueil",
+      "hostFamiliesFirstnameName": "Prénom Nom",
+      "hostFamiliesEntryDate": "Date d'entrée",
+      "hostFamiliesSheet": "Fiche de la FA",
+      "hostFamiliesEdit": "Modification",
+      "hostFamiliesDelete": "Suppression",
+      "hostFamiliesLinkEntityName": "le lien entre l'Animal et la Famille D'acceuil",
+      "veterinarianInterventionsTitle": "Historique des interventions vétérinaires",
+      "veterinarianInterventionsDate": "Date",
+      "veterinarianInterventionsNotes": "Notes",
+      "veterinarianInterventionsDetail": "Détail",
+      "veterinarianInterventionsDelete": "Suppression"
+    }
+  },
+  "users": {
+    "listTitle": "Liste des Utilisateur·ice·s",
+    "detailTitle": "Détail de l'utilisateur·ice",
+    "breadcrumb": "Utilisateur·ice·s",
+    "breadcrumbDetail": "Utilisateur·ice",
+    "newUser": "Nouvel utilisateur",
+    "userNotFound": "Utilisateur·ice non trouvé",
+    "formFirstname": "Prénom",
+    "formLastname": "Nom",
+    "formEmail": "E-mail",
+    "formIsReferent": "Est référent·e",
+    "searchPlaceholder": "Rechercher un·e utilisateur·ice",
+    "createButton": "Créer un·e utilisateur·ice",
+    "table": {
+      "nameFirstname": "Nom Prénom",
+      "email": "E-mail",
+      "userSheet": "Fiche utilisateur·ice"
+    },
+    "message": {
+      "userCreated": "Utilisateur·ice créé",
+      "userUpdated": "Utilisateur·ice mis à jour",
+      "userDeleted": "Utilisateur·ice supprimé"
+    },
+    "entityName": "un·e Utilisateur·ice"
+  },
+  "veterinarians": {
+    "listTitle": "Liste des Vétérinaires",
+    "detailTitle": "Détail du vétérinaire",
+    "breadcrumb": "Vétérinaires",
+    "breadcrumbDetail": "Vétérinaire",
+    "newVeterinarian": "Nouveau vétérinaire",
+    "searchPlaceholder": "Rechercher un vétérinaire",
+    "createButton": "Créer un vétérinaire",
+    "table": {
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "price": "Tarif",
+      "veterinarianSheet": "Fiche vétérinaire"
+    },
+    "filter": {
+      "emergencies": "Gère les urgences"
+    },
+    "message": {
+      "veterinarianCreated": "Vétérinaire créé",
+      "veterinarianUpdated": "Vétérinaire mis à jour",
+      "veterinarianDeleted": "Vétérinaire supprimé"
+    },
+    "entityName": "un Vétérinaire",
+    "addressValid": "Adresse valide",
+    "addressNotFound": "Adresse non trouvée"
+  },
+  "hostFamilies": {
+    "listTitle": "Liste des Familles d'Accueil",
+    "detailTitle": "Détail de la Famille d'Accueil",
+    "newHostFamily": "Nouvelle famille d'accueil",
+    "breadcrumbList": "Familles d'Accueil",
+    "breadcrumbDetail": "Famille d'Accueil",
+    "searchPlaceholder": "Rechercher une Famille d'Accueil",
+    "table": {
+      "name": "Nom",
+      "nameFirstname": "Nom Prénom",
+      "status": "Statut",
+      "phone": "Téléphone",
+      "situation": "Situation",
+      "hostFamilySheet": "Fiche FA",
+      "entryDate": "Date d'entrée",
+      "exitDate": "Date de sortie",
+      "animalSheetLink": "Fiche de l'animal"
+    },
+    "filter": {
+      "membershipLate": "En retard de cotisation uniquement",
+      "hasVehicule": "Véhiculé·e uniquement",
+      "status": "Statut",
+      "statusPaused": "En pause",
+      "statusActive": "Actives",
+      "statusAll": "Toutes",
+      "referent": "Référent·e",
+      "typeFA": "Type de FA",
+      "temporary": "Tampon",
+      "temporaryYes": "Tampon",
+      "temporaryNo": "Non tampon"
+    },
+    "dropdown": {
+      "canIsolateNo": "Non",
+      "canIsolateYesShort": "Oui, qqs jours",
+      "canIsolateYesLong": "Oui, ok long terme"
+    },
+    "address": {
+      "valid": "Adresse valide",
+      "notFound": "Adresse non trouvée"
+    },
+    "valueDisplayNone": "Aucun·e",
+    "validation": {
+      "firstNameRequired": "Le prénom est obligatoire",
+      "lastNameRequired": "Le nom est obligatoire"
+    },
+    "message": {
+      "hostFamilyCreated": "Famille d'Accueil créée",
+      "hostFamilyUpdated": "Famille d'Accueil mis à jour",
+      "hostFamilyDeleted": "Famille d'Accueil supprimée"
+    },
+    "entityName": "une Famille d'Accueil",
+    "hostFamilyNotFound": "Famille d'Accueil non trouvé",
+    "header": {
+      "newHostFamily": "Nouvelle famille d'accueil",
+      "status": "Statut"
+    },
+    "summary": {
+      "membershipUpToDate": "A jour des cotisations",
+      "referent": "Référent·e",
+      "isTemporary": "Est tampon",
+      "drivingLicense": "Permis de conduire",
+      "hasVehicule": "Véhiculé·e",
+      "situation": "Situation"
+    },
+    "accordion": {
+      "contactTitle": "Information de contact",
+      "contactFirstname": "Prénom",
+      "contactLastname": "Nom",
+      "contactPhone": "Téléphone",
+      "contactEmail": "E-mail",
+      "contactPseudo": "Pseudo",
+      "contactAddress": "Adresse",
+      "homeTitle": "Information sur le foyer",
+      "homeChildrenCount": "Nombre d'enfant",
+      "homeChildrenInfo": "Informations enfant(s)",
+      "homeAnimalsInfo": "Informations animaux",
+      "homeObservations": "Observations",
+      "homeHousingInfo": "Informations sur le logement",
+      "hostTitle": "Information sur l'accueil",
+      "hostType": "Type de Famille d'Accueil",
+      "hostVetCare": "Peut donner soins véto",
+      "hostSocialize": "Peut sociabiliser",
+      "hostHandicapped": "Peut accueillir des animaux handicapés",
+      "hostNightCare": "Peut donner des soins de nuit",
+      "hostCanIsolate": "Peut isoler",
+      "hostConditions": "Conditions d'accueil (nb animaux, ...)"
+    },
+    "history": {
+      "animalsTitle": "Historique des animaux"
+    }
+  }
+}

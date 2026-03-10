@@ -1,3 +1,4 @@
+import type { NullableBoolean } from "../types";
 import HostFamily from "../entities/HostFamily";
 import AnimalToHostFamilyDTO from "./AnimalToHostFamilyDTO";
 import HostFamilyKindDTO from "./HostFamilyKindDTO";
@@ -13,15 +14,15 @@ class HostFamilyDTO {
     address?: string;
     latitude?: number;
     longitude?: number;
-    driverLicense?: boolean;
-    hasVehicule?: boolean;
+    driverLicense?: NullableBoolean;
+    hasVehicule?: NullableBoolean;
     nbChildren?: number;
     childrenInfos?: string;
     animalsInfos?: string;
-    canProvideVeterinaryCare?: boolean;
-    canProvideSociabilisation?: boolean;
-    canHostDisableAnimal?: boolean;
-    canProvideNightCare?: boolean;
+    canProvideVeterinaryCare?: NullableBoolean;
+    canProvideSociabilisation?: NullableBoolean;
+    canHostDisableAnimal?: NullableBoolean;
+    canProvideNightCare?: NullableBoolean;
     observations?: string;
     housingInformations?: string;
     canIsolate?: boolean;

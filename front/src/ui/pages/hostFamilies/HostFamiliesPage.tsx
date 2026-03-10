@@ -1,8 +1,7 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { Button, Col, Input, Row, Nav, NavItem, NavLink, TabContent, TabPane, Label, Card, CardBody } from "reactstrap";
-import HostFamiliesManager from "../../../managers/hostFamilies.manager";
-import HostFamilyKindsManager from "../../../managers/hostFamilyKinds.manager";
-import { MdRefresh, MdAssignment, MdAddBox, MdFilterAlt, MdOutlineThumbUp } from "react-icons/md";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Button, Col, Input, Row, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+import { MdRefresh, MdAssignment, MdAddBox, MdOutlineThumbUp } from "react-icons/md";
 import { RiZzzFill } from "react-icons/ri";
 import { sortBy } from "../../../utils/sort";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -10,95 +9,59 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { HOST_FAMILY_KIND_ID } from "../../../utils/constants";
 import { BlueIcon, CatIcon, DogIcon, KittenFeedingIcon, KittenIcon, PuppyIcon, UserIcon, NACIcon } from "../../../utils/mapIcons";
-import Switch from "../../components/Switch";
-import UsersManager from "../../../managers/users.manager";
-import Dropdown from "../../components/Dropdown";
 import SortableTable from "../../components/SortableTable";
 import Page, { CustomBreadcrumbItem } from "../../components/Page";
-import toast from "react-hot-toast";
 import HostFamily from "../../../logic/entities/HostFamily";
-import HostFamilyKind from "../../../logic/entities/HostFamilyKind";
-import User from "../../../logic/entities/User";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import useGetPermissions from "../../../hooks/useGetPermissions";
+import useGetPermissions from "../../../api/hooks/useGetPermissions";
 import { Ressource } from "../../../logic/entities/Permissions";
+import { useHostFamilies } from "../../../api/hooks/hostFamilies/useHostFamilies";
+import { useHostFamilyKinds } from "../../../api/hooks/hostFamilies/useHostFamilyKinds";
+import { useReferents } from "../../../api/hooks/users/useReferents";
+import HostFamiliesPageFilters, { Filter, FilterType } from "./HostFamiliesPageFilters";
 
+// Leaflet icon fix
 L.Marker.prototype.options.icon = BlueIcon;
 
 interface HostFamiliesPageProps {
     [key: string]: any;
 }
 
-class Filter {
-    value: any;
-    type: FilterType;
-
-    constructor(value: any, type: FilterType) {
-        this.value = value;
-        this.type = type;
-    }
-
-    check(hostFamily: HostFamily): boolean {
-        return FilterType.check(this.type, this.value, hostFamily);
-    }
-}
-
-enum FilterType {
-    MEMBERSHIP_LATE = "En retard de cotisation uniquement",
-    HAS_A_VEHICULE = "Véhiculé·e uniquement",
-    ON_A_BREAK = "Statut",
-    TEMPORARY = "Tampon",
-    REFERENT = "Référent·e",
-    TYPE = "Type de FA",
-}
-
-namespace FilterType {
-    export function isSwitch(filter: FilterType): boolean {
-        switch (filter) {
-            case FilterType.MEMBERSHIP_LATE:
-            case FilterType.HAS_A_VEHICULE:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    export function check(filter: FilterType, value: any, hostFamily: HostFamily): boolean {
-        if (value === null || value === undefined) return true;
-        switch (filter) {
-            case FilterType.MEMBERSHIP_LATE:
-                return value === true ? hostFamily.membershipUpToDate === false : true;
-            case FilterType.HAS_A_VEHICULE:
-                return value === true ? hostFamily.hasVehicule === value : true;
-            case FilterType.ON_A_BREAK:
-                return hostFamily.onBreak === value;
-            case FilterType.TEMPORARY:
-                return hostFamily.isTemporary === value;
-            case FilterType.REFERENT:
-                return hostFamily.referent?.id === value;
-            case FilterType.TYPE:
-                return hostFamily.hostFamilyKinds?.map((hfk) => hfk.id).includes(value) ?? false;
-        }
-    }
-}
-
-class HostFamiliesPageData {
-    hostFamilies: HostFamily[];
-    hostFamilyKinds: HostFamilyKind[];
-    referents: User[];
-
-    constructor() {
-        this.hostFamilies = [];
-        this.hostFamilyKinds = [];
-        this.referents = [];
-    }
-}
-
 const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState<HostFamiliesPageData>(new HostFamiliesPageData());
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    const pagePermissions = useGetPermissions([Ressource.HF_LIST]);
+    const mapRef = useRef<L.Map | null>(null);
 
-    const [filteredHostFamilies, setFilteredHostFamilies] = useState<HostFamily[]>([]);
+    const [searchParams] = useSearchParams();
+    const kinds = searchParams.getAll("kinds");
+    const kindsIds = kinds != null ? kinds.map((kind) => parseInt(kind)) : undefined;
+    const isAvailableStr = searchParams.get("isAvailable");
+    const isAvailable = isAvailableStr == "true" ? true : isAvailableStr == "false" ? false : undefined;
+
+    const {
+        data: hostFamiliesData,
+        isPending: isHostFamiliesPending,
+        isError: isHostFamiliesError,
+        refetch: refetchHostFamilies,
+    } = useHostFamilies({
+        kinds: kindsIds,
+        isAvailable,
+    });
+    const {
+        data: hostFamilyKindsData,
+        isPending: isHostFamilyKindsPending,
+        isError: isHostFamilyKindsError,
+        refetch: refetchHostFamilyKinds,
+    } = useHostFamilyKinds();
+    const { data: referentsData, isPending: isReferentsPending, isError: isReferentsError, refetch: refetchReferents } = useReferents();
+
+    const hostFamilies = useMemo(() => (hostFamiliesData ? sortBy([...hostFamiliesData], "id") : []), [hostFamiliesData]);
+    const hostFamilyKinds = useMemo(() => (hostFamilyKindsData ? sortBy([...hostFamilyKindsData], "name") : []), [hostFamilyKindsData]);
+    const referents = useMemo(() => (referentsData ? sortBy([...referentsData], "displayName") : []), [referentsData]);
+
+    const isLoading = isHostFamiliesPending || isHostFamilyKindsPending || isReferentsPending;
+
     const [searchText, setSearchText] = useState("");
     const [showMap, setShowMap] = useState(false);
     const [userPosition, setUserPosition] = useState<any | null>(null);
@@ -112,68 +75,7 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
             .filter((f) => f !== null) as Filter[]
     );
 
-    const navigate = useNavigate();
-    const pagePermissions = useGetPermissions([Ressource.HF_LIST]);
-
-    const mapRef = useRef<L.Map | null>(null);
-
-    const [searchParams] = useSearchParams();
-    const kinds = searchParams.getAll("kinds");
-    const kindsIds = kinds != null ? kinds.map((kind) => parseInt(kind)) : undefined;
-    const isAvailableStr = searchParams.get("isAvailable");
-    const isAvailable = isAvailableStr == "true" ? true : isAvailableStr == "false" ? false : undefined;
-
-    const getAllHostFamilies = () => {
-        return HostFamiliesManager.getAll({ kinds: kindsIds, isAvailable })
-            .then((hostFamilies) => {
-                return sortBy(hostFamilies || [], "id") as HostFamily[];
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
-                return [] as HostFamily[];
-            });
-    };
-
-    const getHostFamilyKinds = () => {
-        return HostFamilyKindsManager.getAll()
-            .then((hostFamilyKinds) => {
-                return sortBy(hostFamilyKinds || [], "name");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
-                return [] as HostFamilyKind[];
-            });
-    };
-
-    const getReferents = () => {
-        return UsersManager.getAllReferents()
-            .then((referents) => {
-                return sortBy(referents || [], "displayName");
-            })
-            .catch((err) => {
-                console.error(err);
-                toast.error(`Une erreur s'est produite pendant la récupération des données\n${err}`);
-                return [] as User[];
-            });
-    };
-
-    useEffect(() => {
-        setIsLoading(true);
-        Promise.all([getHostFamilyKinds(), getAllHostFamilies(), getReferents()]).then(([hostFamilyKinds, hostFamilies, referents]) => {
-            setData({
-                hostFamilies,
-                hostFamilyKinds,
-                referents,
-            });
-            setIsLoading(false);
-        });
-    }, []);
-
-    useEffect(() => {
-        setFilteredHostFamilies(data.hostFamilies.filter((hf) => filters.every((f) => f.check(hf))));
-    }, [data, searchText, filters]);
+    const filteredHostFamiliesList = useMemo(() => hostFamilies.filter((hf) => filters.every((f) => f.check(hf))), [hostFamilies, filters]);
 
     useEffect(() => {
         const map = mapRef.current;
@@ -197,8 +99,14 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
         setShowMap(!showMap);
     };
 
+    const refetchAll = () => {
+        refetchHostFamilies();
+        refetchHostFamilyKinds();
+        refetchReferents();
+    };
+
     const hostFamilyKindNameForId = (id: number | undefined | null) => {
-        return data.hostFamilyKinds.find((hfk) => hfk.id === id)?.name;
+        return hostFamilyKinds.find((hfk) => hfk.id === id)?.name;
     };
 
     const iconForHostFamilyKind = (host_family_kind_id: number | undefined | null) => {
@@ -224,102 +132,13 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
         return BlueIcon;
     };
 
-    const filterBody = (filter: Filter) => {
-        switch (filter.type) {
-            case FilterType.HAS_A_VEHICULE:
-            case FilterType.MEMBERSHIP_LATE:
-                return (
-                    <Col key={filter.type} className="mb-0">
-                        <Label>{filter.type}</Label>
-                        <br />
-                        <Switch
-                            disabled={isLoading}
-                            id={filter.type}
-                            isOn={filter.value}
-                            handleToggle={() => {
-                                setFilters((previous) => previous.map((f) => (f.type === filter.type ? new Filter(!f.value, f.type) : f)));
-                            }}
-                        />
-                    </Col>
-                );
-            case FilterType.ON_A_BREAK:
-                return (
-                    <Col key={filter.type} className="mb-0">
-                        <Label>Statut</Label>
-                        <Dropdown
-                            withNewLine={true}
-                            color={"primary"}
-                            value={filter.value}
-                            values={[true, false, null]}
-                            valueDisplayName={(onBreak: boolean | null) => (onBreak === null ? "Toutes" : onBreak === true ? "En pause" : "Actives")}
-                            valueActiveCheck={(onBreak: boolean | null) => onBreak === filter.value}
-                            key={"onBreak"}
-                            onChange={(newBreak) => setFilters((previous) => previous.map((f) => (f.type === filter.type ? new Filter(newBreak, f.type) : f)))}
-                        />
-                    </Col>
-                );
-            case FilterType.REFERENT:
-                return (
-                    <Col key={filter.type} className="mb-0">
-                        <Label>Référent·e</Label>
-                        <Dropdown
-                            withNewLine={true}
-                            color={"primary"}
-                            value={data.referents.find((usr) => usr.id === filter.value)}
-                            values={[...data.referents, undefined]}
-                            valueDisplayName={(usr) => (usr === undefined ? "-" : `${usr?.name} ${usr?.firstname}`)}
-                            valueActiveCheck={(usr) => usr?.id === filter.value}
-                            key={"referents"}
-                            onChange={(newUser) =>
-                                setFilters((previous) => previous.map((f) => (f.type === filter.type ? new Filter(newUser?.id, f.type) : f)))
-                            }
-                        />
-                    </Col>
-                );
-            case FilterType.TYPE:
-                return (
-                    <Col key={filter.type} className="mb-0">
-                        <Label>Type de FA</Label>
-                        <Dropdown
-                            withNewLine={true}
-                            color={"primary"}
-                            value={data.hostFamilyKinds.find((hfk) => hfk.id === filter.value)}
-                            values={[...data.hostFamilyKinds, null]}
-                            valueDisplayName={(hfk) => (hfk === null ? "-" : hfk?.name ?? "")}
-                            valueActiveCheck={(hfk) => hfk?.id === filter.value}
-                            key={"hostFamilyKind"}
-                            onChange={(newHFK) => setFilters((previous) => previous.map((f) => (f.type === filter.type ? new Filter(newHFK?.id, f.type) : f)))}
-                        />
-                    </Col>
-                );
-            case FilterType.TEMPORARY:
-                return (
-                    <Col key={filter.type} className="mb-0">
-                        <Label>Tampon</Label>
-                        <Dropdown
-                            withNewLine={true}
-                            color={"primary"}
-                            value={filter.value}
-                            values={[true, false, null]}
-                            valueDisplayName={(temporary) => (temporary === null ? "Toutes" : temporary === true ? "Tampon" : "Non tampon")}
-                            valueActiveCheck={(temporary) => temporary === filter.value}
-                            key={"temporay"}
-                            onChange={(newTemporary) =>
-                                setFilters((previous) => previous.map((f) => (f.type === filter.type ? new Filter(newTemporary, f.type) : f)))
-                            }
-                        />
-                    </Col>
-                );
-        }
-    };
-
     return (
         <Page
             className="HostFamiliesPage"
-            title="Liste des Familles d'Accueil"
+            title={t("hostFamilies.listTitle")}
             breadcrumbs={[
                 {
-                    name: "Familles d'Accueil",
+                    name: t("hostFamilies.breadcrumbList"),
                     active: true,
                 } as CustomBreadcrumbItem,
             ]}
@@ -328,11 +147,9 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                 <Col>
                     <Input
                         name="hostFamily"
-                        placeholder="Rechercher une Famille d'Accueil"
+                        placeholder={t("hostFamilies.searchPlaceholder")}
                         value={searchText}
-                        onChange={(e) => {
-                            setSearchText(e.target.value);
-                        }}
+                        onChange={(e) => setSearchText(e.target.value)}
                     />
                 </Col>
                 <Col xs={"auto"}>
@@ -341,24 +158,12 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                             <MdAddBox />
                         </Button>
                     )}
-                    <Button className="ms-2" onClick={getAllHostFamilies}>
+                    <Button className="ms-2" onClick={refetchAll}>
                         <MdRefresh />
                     </Button>
                 </Col>
             </Row>
-            <Card>
-                <CardBody>
-                    <Row>
-                        <Col xs={"auto"} className="mb-0 border-end">
-                            <MdFilterAlt />
-                        </Col>
-                        <Col>
-                            <Row>{filters.filter((f) => FilterType.isSwitch(f.type)).map((filter) => filterBody(filter))}</Row>
-                            <Row>{filters.filter((f) => !FilterType.isSwitch(f.type)).map((filter) => filterBody(filter))}</Row>
-                        </Col>
-                    </Row>
-                </CardBody>
-            </Card>
+            <HostFamiliesPageFilters filters={filters} setFilters={setFilters} hostFamilyKinds={hostFamilyKinds} referents={referents} isLoading={isLoading} />
 
             <br />
 
@@ -367,12 +172,12 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                     <Nav tabs>
                         <NavItem className="active">
                             <NavLink disabled={!showMap} onClick={toggleMap}>
-                                Liste
+                                {t("common.list")}
                             </NavLink>
                         </NavItem>
                         <NavItem>
                             <NavLink disabled={showMap} onClick={toggleMap}>
-                                Carte
+                                {t("common.map")}
                             </NavLink>
                         </NavItem>
                     </Nav>
@@ -384,44 +189,42 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                         columns={[
                                             {
                                                 key: "status",
-                                                value: "Statut",
+                                                value: t("hostFamilies.table.status"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "name",
-                                                value: "Nom Prénom",
+                                                value: t("hostFamilies.table.nameFirstname"),
                                                 isMain: true,
                                             },
                                             {
                                                 key: "phone",
-                                                value: "Téléphone",
+                                                value: t("hostFamilies.table.phone"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "situation",
-                                                value: "Situation",
+                                                value: t("hostFamilies.table.situation"),
                                                 isMain: false,
                                             },
                                             {
                                                 key: "hostFamilyDetail",
-                                                value: "Fiche FA",
+                                                value: t("hostFamilies.table.hostFamilySheet"),
                                                 isMain: false,
                                                 sortable: false,
                                             },
                                         ]}
-                                        values={filteredHostFamilies.map((hostFamily) => {
-                                            return {
-                                                status: hostFamily.onBreak ? <RiZzzFill /> : <MdOutlineThumbUp />,
-                                                name: hostFamily.displayName,
-                                                phone: hostFamily.phone,
-                                                situation: hostFamily.situation,
-                                                hostFamilyDetail: (
-                                                    <Button color="info" onClick={() => showDetail(hostFamily)}>
-                                                        <MdAssignment />
-                                                    </Button>
-                                                ),
-                                            };
-                                        })}
+                                        values={filteredHostFamiliesList.map((hostFamily) => ({
+                                            status: hostFamily.onBreak ? <RiZzzFill /> : <MdOutlineThumbUp />,
+                                            name: hostFamily.displayName,
+                                            phone: hostFamily.phone,
+                                            situation: hostFamily.situation,
+                                            hostFamilyDetail: (
+                                                <Button color="info" onClick={() => showDetail(hostFamily)}>
+                                                    <MdAssignment />
+                                                </Button>
+                                            ),
+                                        }))}
                                         isLoading={isLoading}
                                     />
                                 </Col>
@@ -444,10 +247,8 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                         />
-                                        {filteredHostFamilies
-                                            .filter((hf) => {
-                                                return hf.latitude !== null && hf.longitude !== null;
-                                            })
+                                        {filteredHostFamiliesList
+                                            .filter((hf) => hf.latitude !== null && hf.longitude !== null)
                                             .map((hostFamily) => {
                                                 var hostFamilyKind = (hostFamily.hostFamilyKinds?.length ?? 0) > 0 ? hostFamily.hostFamilyKinds![0] : null;
                                                 return (
@@ -470,11 +271,9 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                                                 <br />
                                                                 <div className="pt-2">
                                                                     <Button
-                                                                        title="Voir le détail"
+                                                                        title={t("common.seeDetail")}
                                                                         color="primary"
-                                                                        onClick={() => {
-                                                                            showDetail(hostFamily);
-                                                                        }}
+                                                                        onClick={() => showDetail(hostFamily)}
                                                                     >
                                                                         <MdAssignment />
                                                                     </Button>
@@ -486,13 +285,13 @@ const HostFamiliesPage: FC<HostFamiliesPageProps> = (props) => {
                                             })}
                                         {userPosition !== null && (
                                             <Marker
-                                                title={"Ma position"}
+                                                title={t("common.myPosition")}
                                                 key={"user_position"}
                                                 position={[userPosition.lat, userPosition.lng]}
                                                 icon={UserIcon}
                                                 interactive={false}
                                                 pane="overlayPane"
-                                            ></Marker>
+                                            />
                                         )}
                                     </MapContainer>
                                 </Col>

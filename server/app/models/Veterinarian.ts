@@ -16,7 +16,7 @@ export class Veterinarian {
     mail: string
 
     @Column({ nullable: true, default: () => 'NULL' })
-    emergencies: string
+    emergencies: boolean
 
     @Column({ nullable: true, default: () => 'NULL' })
     appointmentConfirmationProcedure: string

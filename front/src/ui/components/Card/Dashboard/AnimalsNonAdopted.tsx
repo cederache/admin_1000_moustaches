@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from "react";
-import AnimalsNonAdoptedManager from "../../../../managers/AnimalsNonAdopted.manager";
-import SpeciesCounts from "../../../../logic/entities/SpeciesCounts";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useDashboardAnimalsNonAdopted } from "../../../../api/hooks/dashboard/useDashboardAnimalsNonAdopted";
 import AnimalsCard from "./AnimalsCard";
 
 const AnimalsNonAdopted = () => {
-    const [animalsNonAdoptedData, setAnimalsNonAdoptedData] = useState<SpeciesCounts | null>(null);
+    const { t } = useTranslation();
+    const { data: animalsNonAdoptedData } = useDashboardAnimalsNonAdopted();
 
-    useEffect(() => {
-        AnimalsNonAdoptedManager.getAll()
-            .then((data) => {
-                setAnimalsNonAdoptedData(data);
-            })
-            .catch((err) => {
-                console.error("Erreur lors du chargement des données:", err);
-            });
-    }, []);
-    return <AnimalsCard title="Nombre d'animaux présents dans l'association" datas={animalsNonAdoptedData} />;
+    return <AnimalsCard title={t("dashboard.card.animalsNonAdopted")} datas={animalsNonAdoptedData ?? null} />;
 };
 export default AnimalsNonAdopted;

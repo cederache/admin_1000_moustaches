@@ -1,4 +1,4 @@
-import AuthManager from "../managers/auth.manager";
+import AuthManager from "../api/managers/auth.manager";
 
 function fetchWithAuth(url: string, options: RequestInit): Promise<Response> {
     let token = sessionStorage.getItem("Auth Token");

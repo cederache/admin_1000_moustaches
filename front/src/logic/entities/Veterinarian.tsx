@@ -1,3 +1,4 @@
+import type { NullableBoolean } from "../types";
 import VeterinarianDTO from "../dto/VeterinarianDTO";
 import DateObject from "./DateObject";
 
@@ -9,7 +10,7 @@ class Veterinarian {
     address?: string;
     latitude?: number;
     longitude?: number;
-    emergencies?: boolean;
+    emergencies?: NullableBoolean;
     appointmentConfirmationProcedure?: string;
     invoicePaymentDate?: string;
     paymentMethod?: string;
@@ -45,7 +46,7 @@ class Veterinarian {
         address?: string,
         latitude?: number,
         longitude?: number,
-        emergencies?: boolean,
+        emergencies?: NullableBoolean,
         appointmentConfirmationProcedure?: string,
         invoicePaymentDate?: string,
         paymentMethod?: string,

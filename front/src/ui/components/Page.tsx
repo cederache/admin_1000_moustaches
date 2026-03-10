@@ -1,4 +1,5 @@
 import React, { FC, ReactElement, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import bn from "../../utils/bemnames";
 
 import { Breadcrumb, BreadcrumbItem } from "reactstrap";
@@ -23,6 +24,7 @@ interface PageProps {
 }
 
 const Page: FC<PageProps> = ({ title, breadcrumbs, className, children, ...restProps }): ReactElement => {
+    const { t } = useTranslation();
     const classes = bem.b("px-3", className);
 
     return (
@@ -31,7 +33,7 @@ const Page: FC<PageProps> = ({ title, breadcrumbs, className, children, ...restP
                 {breadcrumbs && (
                     <Breadcrumb className={bem.e("breadcrumb")}>
                         <BreadcrumbItem>
-                            <a href="/">Accueil</a>
+                            <a href="/">{t("common.home")}</a>
                         </BreadcrumbItem>
                         {breadcrumbs.length &&
                             breadcrumbs.map(({ name, active, to }, index) => (

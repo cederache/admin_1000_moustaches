@@ -1,3 +1,4 @@
+import type { NullableBoolean } from "../types";
 import AnimalToHostFamily from "./AnimalToHostFamily";
 import HostFamilyKind from "./HostFamilyKind";
 import User from "./User";
@@ -12,15 +13,15 @@ class HostFamily {
     address?: string;
     latitude?: number;
     longitude?: number;
-    driverLicense?: boolean;
-    hasVehicule?: boolean;
+    driverLicense?: NullableBoolean;
+    hasVehicule?: NullableBoolean;
     nbChildren?: number;
     childrenInfos?: string;
     animalsInfos?: string;
-    canProvideVeterinaryCare?: boolean;
-    canProvideSociabilisation?: boolean;
-    canHostDisableAnimal?: boolean;
-    canProvideNightCare?: boolean;
+    canProvideVeterinaryCare?: NullableBoolean;
+    canProvideSociabilisation?: NullableBoolean;
+    canHostDisableAnimal?: NullableBoolean;
+    canProvideNightCare?: NullableBoolean;
     observations?: string;
     housingInformations?: string;
     canIsolate?: boolean;
@@ -84,15 +85,15 @@ class HostFamily {
         address?: string,
         latitude?: number,
         longitude?: number,
-        driverLicense?: boolean,
-        hasVehicule?: boolean,
+        driverLicense?: NullableBoolean,
+        hasVehicule?: NullableBoolean,
         nbChildren?: number,
         childrenInfos?: string,
         animalsInfos?: string,
-        canProvideVeterinaryCare?: boolean,
-        canProvideSociabilisation?: boolean,
-        canHostDisableAnimal?: boolean,
-        canProvideNightCare?: boolean,
+        canProvideVeterinaryCare?: NullableBoolean,
+        canProvideSociabilisation?: NullableBoolean,
+        canHostDisableAnimal?: NullableBoolean,
+        canProvideNightCare?: NullableBoolean,
         observations?: string,
         housingInformations?: string,
         canIsolate?: boolean,
