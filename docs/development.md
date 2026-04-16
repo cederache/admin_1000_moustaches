@@ -21,18 +21,13 @@ This is the easiest way to get started and ensures consistency across different 
    cd admin_1000_moustaches
    ```
 
-2. **Create environment file**
-   
-   Create a `.env.local` file at the project root with the necessary environment variables:
+2. **Create local environment files**
+
+   Copy each `.env.example` file to its local counterpart:
    ```bash
-   # Database configuration
-   DB_HOST=localhost
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_NAME=admin_1000_moustaches
-   DB_ROOT_PASSWORD=your_root_password
-   
-   # Add other required environment variables
+   cp .env.example .env.local
+   cp server/.env.example server/.env
+   cp front/.env.example front/.env.local
    ```
 
 3. **Start the application**
@@ -175,7 +170,7 @@ For environments where Docker is not available or preferred.
 
 ### Frontend Environment Variables
 
-Create `.env` files in the `front` directory:
+Copy `front/.env.example` to `front/.env.local`, then fill values:
 
 ```bash
 # .env.local (for local development)
@@ -193,7 +188,7 @@ VITE_GEOAPPIFY_API_KEY=your_geoappify_key
 
 ### Server Environment Variables
 
-Create `.env` files in the `server` directory:
+Copy `server/.env.example` to `server/.env`, then fill values:
 
 ```bash
 # .env (for local development)

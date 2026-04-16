@@ -14,6 +14,7 @@ This project's documentation is organized into several specialized guides:
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 20
 - Docker and Docker Compose
 - Git
@@ -21,22 +22,28 @@ This project's documentation is organized into several specialized guides:
 ### Recommended Setup (Docker)
 
 1. **Clone and configure**
+
    ```bash
    git clone <repository-url>
    cd admin_1000_moustaches
    git config core.hooksPath .githooks
    ```
 
-2. **Create environment file**
+2. **Create local environment files** by copying each `.env.example` (paths are relative to the repository root; local files are gitignored)
+
+   | Path               | Role                                                                                                                                                                                          |
+   | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | `.env.local`       | Local copy of `.env.example` for Docker Compose (`npm run start:*`, `npm run dev:down`): database credentials, `NODE_ENV`, and `VITE_*` variables passed into containers (see `compose.yml`). |
+   | `server/.env`      | Local copy of `server/.env.example` for Node server, migrations, and fixtures.                                                                                                                |
+   | `front/.env.local` | Local copy of `front/.env.example` for Vite dev server (`front/`): `VITE_API_URL`, Firebase, Geoapify keys.                                                                                   |
+
    ```bash
-   # Create .env.local with your configuration
-   cp .env.example .env.local  # if available
+   cp .env.example .env.local
+   cp server/.env.example server/.env
+   cp front/.env.example front/.env.local
    ```
 
 3. **Start the application**
-   ```bash
-   npm run start:fresh
-   ```
 
 ### Development Mode
 
@@ -63,15 +70,15 @@ To run services manually in separate terminals, use `npm run start:fresh:databas
 
 ## 🛠️ Key Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run start:dev:all` | Start full dev stack (DB + server + front with fixtures) |
-| `npm run dev:down` | Stop Docker services |
-| `npm run start` | Start full stack with Docker Compose |
-| `npm run start:fresh` | Fresh start (clean DB, full stack) |
-| `npm run start:fresh:fixtures` | Fresh start with test data (full stack) |
-| `npm run start:fresh:database-only` | Database only, foreground |
-| `npm run restart:docker` | Restart Docker services |
+| Command                             | Description                                              |
+| ----------------------------------- | -------------------------------------------------------- |
+| `npm run start:dev:all`             | Start full dev stack (DB + server + front with fixtures) |
+| `npm run dev:down`                  | Stop Docker services                                     |
+| `npm run start`                     | Start full stack with Docker Compose                     |
+| `npm run start:fresh`               | Fresh start (clean DB, full stack)                       |
+| `npm run start:fresh:fixtures`      | Fresh start with test data (full stack)                  |
+| `npm run start:fresh:database-only` | Database only, foreground                                |
+| `npm run restart:docker`            | Restart Docker services                                  |
 
 ## 🔧 CI/CD
 
@@ -93,5 +100,5 @@ For detailed CI/CD information, see [CI/CD Documentation](docs/cicd.md).
 ## 🔗 Links
 
 - [Development Guide](docs/development.md) - Detailed development setup and workflows
-- [Git Workflow](docs/git-workflow.md) - Git conventions and branch strategy  
+- [Git Workflow](docs/git-workflow.md) - Git conventions and branch strategy
 - [CI/CD Documentation](docs/cicd.md) - GitHub Actions workflows and deployment
