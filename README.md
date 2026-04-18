@@ -53,6 +53,12 @@ Start the full dev stack (database, server, frontend with hot reload and fixture
 npm run start:dev:all
 ```
 
+or the command to launch in splitted terminal (tmux needed) :
+
+```bash
+npm run start:dev:all:split
+```
+
 This starts the database in the background, waits until MySQL is ready, loads fixtures, then runs the server and frontend. Use Ctrl+C to stop server and frontend; the database keeps running. Stop it with:
 
 ```bash
