@@ -22,7 +22,7 @@
     "migration:generate": "npm run typeorm -- migration:generate -d app/config/database.ts ./migrations/$npm_config_name",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d app/config/database.ts",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d app/config/database.ts",
-    "dev:fixtures": "cross-env TS_NODE=true && ts-node ./fixtures/index.ts",
+    "dev:fixtures": "npm run build && cross-env TS_NODE=true && ts-node ./fixtures/index.ts",
     "schema:sync": "npm run typeorm schema:sync -- -d app/config/database.ts",
     "schema:log": "npm run typeorm schema:log -- -d app/config/database.ts",
     "test": "echo \"No tests yet - passing automatically\" && exit 0",
