@@ -3,7 +3,7 @@
   "version": "0.0.6",
   "description": "",
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "scripts": {
     "start": "docker compose --env-file .env.local up --build",
@@ -24,6 +24,6 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "concurrently": "^9.0.0"
+    "concurrently": "~9.0.0"
   }
 }

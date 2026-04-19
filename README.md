@@ -15,7 +15,7 @@ This project's documentation is organized into several specialized guides:
 
 ### Prerequisites
 
-- Node.js 20
+- Node.js 22
 - Docker and Docker Compose
 - Git
 
